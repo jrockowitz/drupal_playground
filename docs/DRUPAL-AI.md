@@ -13,46 +13,13 @@ A step-by-step guide for installing and configuring the Drupal AI module suite t
 
 - Dashboard icon missing from navigation.
 
-## Install AI Modules
+## Install & Enable AI Modules
 
 ```bash
-ddev composer require drupal/ai\
-   drupal/ai_agents\
-   drupal/ai_dashboard\
-   drupal/ai_image_alt_text\
-   drupal/ai_provider_anthropic\
-   drupal/ai_provider_openai;
+ddev install ai
 ```
 
-## Enable the AI Modules
-
-Enable Core modules
-
-```bash
-ddev drush en -y ai\
-  ai_agents\
-  ai_provider_anthropic\
-  ai_provider_openai;
-```
-
-Enable additional modules
-
-```bash
-ddev drush en -y ai_dashboard\
-  ai_ckeditor\
-  ai_content_suggestions\
-  ai_image_alt_text\
-  ai_chatbot;
-```
-
-Enable development modules
-
-```bash
-ddev drush en -y ai_api_explorer\
-  ai_agents_explorer\
-  ai_logging\
-  ai_observability;
-```
+This installs Drupal, enables all AI modules, and configures logging/observability.
 
 Create a keys directory
 
@@ -75,7 +42,7 @@ ddev launch /admin/config/system/keys/add;
 - **Key name:** `OpenAI`
 - **Key type:** `Authentication`
 - **Key provider:** `File`
-- **File location:** `/keys/openai.key`
+- **File location:** `../keys/openai.key`
 - **Strip trailing line breaks:** `Yes`
 
 ```bash
@@ -101,7 +68,7 @@ ddev launch /admin/config/system/keys/add;
 - **Key name:** `Anthropic`
 - **Key type:** `Authentication`
 - **Key provider:** `File`
-- **File location:** `/keys/anthropic.key`
+- **File location:** `../keys/anthropic.key`
 - **Strip trailing line breaks:** `Yes`
 
 ```bash
@@ -152,11 +119,6 @@ ddev launch /admin/config/ai/suggestions
 This enables you to log any AI request and response as well as additional contextual information.
 
 ```bash
-ddev drush config:set -y ai_logging.settings prompt_logging 1;
-ddev drush config:set -y ai_logging.settings prompt_logging_output 1;
-```
-
-```bash
 ddev launch /admin/config/ai/logging/settings;
 ddev launch /admin/config/ai/logging/collection;
 ```
@@ -164,11 +126,6 @@ ddev launch /admin/config/ai/logging/collection;
 ## AI Observability
 
 Logs AI requests to the Drupal Logger and OpenTelemetry.
-
-```bash
-ddev drush config:set -y ai_observability.settings log_input 1;
-ddev drush config:set -y ai_observability.settings log_output 1;
-````
 
 ```bash
 ddev launch /admin/config/ai/observability;
