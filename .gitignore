@@ -19,7 +19,8 @@
 .editorconfig
 .gitattributes
 LICENSE.txt
-/recipes/
+/recipes/ai_*
+/recipes/drupal_cms_*
 /recipes/README.txt
 /web/.csslintrc
 /web/.eslintignore

@@ -10,7 +10,8 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebSearch",
-      "WebFetch(domain:docs.cweagans.net)"
+      "WebFetch(domain:docs.cweagans.net)",
+      "Bash(ddev exec:*)"
     ]
   }
 }

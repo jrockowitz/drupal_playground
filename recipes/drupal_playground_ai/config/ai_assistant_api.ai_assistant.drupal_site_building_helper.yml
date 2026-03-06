@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies: {  }
+id: drupal_site_building_helper
+label: 'Drupal Site Building Helper'
+description: 'An assistant that can help with Drupal site building and configuration tasks.'
+system_prompt: ''
+pre_action_prompt: ''
+instructions: 'You are an assistant helping a human site administrator on a Drupal website with site building and configuration tasks.'
+allow_history: session
+history_context_length: '2'
+error_message: 'I am sorry, something went terribly wrong. Please try to ask me again.'
+specific_error_messages:
+  AiBadRequestException: ''
+  AiRateLimitException: ''
+  AiQuotaException: ''
+  AiSetupFailureException: ''
+  AiRequestErrorException: ''
+llm_provider: openai
+llm_model: gpt-4o
+llm_configuration:
+  max_tokens: 4096
+  temperature: 1.0
+  frequency_penalty: 0
+  presence_penalty: 0
+  top_p: 1.0
+actions_enabled: {  }
+roles:
+  anonymous: 0
+  authenticated: 0
+  content_editor: 0
+  administrator: 0
+use_function_calling: false
+ai_agent: drupal_site_building_helper

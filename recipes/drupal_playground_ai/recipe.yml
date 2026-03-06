@@ -1,0 +1,122 @@
+name: 'Drupal Playground AI'
+description: >
+  Installs and configures the AI module suite: providers (OpenAI + Anthropic),
+  site building agents, DeepChat chatbot, CKEditor integration, content
+  suggestions, and image alt text.
+  Prerequisites: keys/openai.key and keys/anthropic.key must exist before applying.
+type: 'Site'
+
+install:
+  - ai
+  - ai_agents
+  - ai_provider_anthropic
+  - ai_provider_openai
+  - ai_dashboard
+  - ai_ckeditor
+  - ai_content_suggestions
+  - ai_image_alt_text
+  - ai_chatbot
+
+config:
+  strict: false
+  import:
+    ai: '*'
+    ai_assistant_api: '*'
+    ai_agents: '*'
+    ai_content_suggestions: '*'
+    key: '*'
+    block: '*'
+  actions:
+    ai_provider_openai.settings:
+      simpleConfigUpdate:
+        api_key: openai
+        moderation: true
+    ai_provider_anthropic.settings:
+      simpleConfigUpdate:
+        api_key: anthropic
+        version: '20240229'
+        openai_moderation: true
+    editor.editor.basic_html:
+      addItemToToolbar:
+        item_name: aickeditor
+        position: 0
+      setProperties:
+        settings.plugins.ai_ckeditor_ai:
+          dialog:
+            autoresize: 'min-width: 600px'
+            height: '750'
+            width: '900'
+            dialog_class: ai-ckeditor-modal
+          plugins:
+            ai_ckeditor_completion:
+              enabled: true
+              provider: ''
+            ai_ckeditor_help:
+              enabled: false
+            ai_ckeditor_modify_prompt:
+              enabled: false
+              provider: ''
+            ai_ckeditor_reformat_html:
+              enabled: true
+              provider: ''
+            ai_ckeditor_spellfix:
+              enabled: false
+              provider: ''
+            ai_ckeditor_summarize:
+              enabled: true
+              provider: ''
+            ai_ckeditor_tone:
+              enabled: false
+              provider: ''
+              autocreate: false
+              tone_vocabulary: tags
+              use_description: false
+            ai_ckeditor_translate:
+              enabled: false
+              provider: ''
+              language_source: lang
+              autocreate: false
+              translate_vocabulary: tags
+              use_description: false
+    editor.editor.full_html:
+      addItemToToolbar:
+        item_name: aickeditor
+        position: 0
+      setProperties:
+        settings.plugins.ai_ckeditor_ai:
+          dialog:
+            autoresize: 'min-width: 600px'
+            height: '750'
+            width: '900'
+            dialog_class: ai-ckeditor-modal
+          plugins:
+            ai_ckeditor_completion:
+              enabled: true
+              provider: ''
+            ai_ckeditor_help:
+              enabled: false
+            ai_ckeditor_modify_prompt:
+              enabled: false
+              provider: ''
+            ai_ckeditor_reformat_html:
+              enabled: true
+              provider: ''
+            ai_ckeditor_spellfix:
+              enabled: false
+              provider: ''
+            ai_ckeditor_summarize:
+              enabled: true
+              provider: ''
+            ai_ckeditor_tone:
+              enabled: false
+              provider: ''
+              autocreate: false
+              tone_vocabulary: tags
+              use_description: false
+            ai_ckeditor_translate:
+              enabled: false
+              provider: ''
+              language_source: lang
+              autocreate: false
+              translate_vocabulary: tags
+              use_description: false

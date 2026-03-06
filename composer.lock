@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ce7bc3eac242cbcd163290759925c27",
+    "content-hash": "666c28d4ef11ddd2cde021d12289c60d",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2108,6 +2108,32 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/dashboard",
                 "issues": "https://www.drupal.org/project/issues/dashboard"
+            }
+        },
+        {
+            "name": "drupal/drupal_playground_ai",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_ai",
+                "reference": "3541336a5a131373bb18942e93b3763aaccdcf6b"
+            },
+            "require": {
+                "drupal/ai": "^1",
+                "drupal/ai_agents": "^1",
+                "drupal/ai_dashboard": "^1",
+                "drupal/ai_provider_anthropic": "^1",
+                "drupal/ai_provider_openai": "^1",
+                "drupal/core": "^11.3",
+                "drupal/key": "^1"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Installs and configures the Drupal AI module suite: OpenAI + Anthropic providers, site-building agents, DeepChat chatbot, CKEditor integration, content suggestions, and image alt text.",
+            "transport-options": {
+                "relative": true
             }
         },
         {
@@ -4642,16 +4668,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.12.20",
+            "version": "v0.12.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "19678eb6b952a03b8a1d96ecee9edba518bb0373"
+                "reference": "4821fab5b7cd8c49a673a9fd5754dc9162bb9e97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/19678eb6b952a03b8a1d96ecee9edba518bb0373",
-                "reference": "19678eb6b952a03b8a1d96ecee9edba518bb0373",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/4821fab5b7cd8c49a673a9fd5754dc9162bb9e97",
+                "reference": "4821fab5b7cd8c49a673a9fd5754dc9162bb9e97",
                 "shasum": ""
             },
             "require": {
@@ -4715,9 +4741,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/psysh/issues",
-                "source": "https://github.com/bobthecow/psysh/tree/v0.12.20"
+                "source": "https://github.com/bobthecow/psysh/tree/v0.12.21"
             },
-            "time": "2026-02-11T15:05:28+00:00"
+            "time": "2026-03-06T21:21:28+00:00"
         },
         {
             "name": "ralouphie/getallheaders",

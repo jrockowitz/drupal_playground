@@ -1,0 +1,37 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - ai_chatbot
+  theme:
+    - gin
+id: gin_ai_deep_chat_bot
+theme: gin
+region: content
+weight: 0
+provider: null
+plugin: ai_deepchat_block
+settings:
+  id: ai_deepchat_block
+  label: 'AI DeepChat Chatbot'
+  label_display: visible
+  provider: ai_chatbot
+  ai_assistant: drupal_site_building_helper
+  bot_name: Assistant
+  bot_image: /modules/contrib/ai/modules/ai_chatbot/assets/ai-icon-gradient.svg
+  use_username: 0
+  default_username: ''
+  use_avatar: 0
+  default_avatar: ''
+  first_message: ''
+  stream: null
+  toggle_state: remember
+  width: auto
+  height: 100%
+  placement: toolbar
+  show_structured_results: false
+  show_copy_icon: true
+  collapse_minimal: false
+  style_file: 'module:ai_chatbot:toolbar.yml'
+  verbose_mode: true
+visibility: {  }

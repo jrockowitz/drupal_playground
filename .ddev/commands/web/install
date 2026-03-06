@@ -17,7 +17,7 @@ drush site:install standard \
 drush cr
 
 # Navigation
-drush pm:disable toolbar;
+drush pm:uninstall toolbar;
 drush pm:enable -y navigation navigation_extra_tools
 
 # Development modules
@@ -43,16 +43,8 @@ drush pm:enable -y key token
 drush cr
 
 if [ "$PRESET" = "ai" ]; then
-  echo "Enabling AI modules..."
-  drush pm:enable -y ai ai_agents ai_provider_anthropic ai_provider_openai
-  drush pm:enable -y ai_dashboard ai_ckeditor ai_content_suggestions ai_image_alt_text ai_chatbot
-  drush pm:enable -y ai_api_explorer ai_agents_explorer ai_logging ai_observability
-
-  drush config:set -y ai_logging.settings prompt_logging 1
-  drush config:set -y ai_logging.settings prompt_logging_output 1
-  drush config:set -y ai_observability.settings log_input 1
-  drush config:set -y ai_observability.settings log_output 1
-
+  echo "Applying AI recipe..."
+  drush recipe ../recipes/drupal_playground_ai
   drush cr
 fi
 

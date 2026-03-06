@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies: {  }
+id: drupal_site_building_helper
+label: 'Drupal Site Building Helper'
+description: 'An assistant that can help with Drupal site building and configuration tasks.'
+system_prompt: 'You are an assistant helping a human site administrator on a Drupal website with site building and configuration tasks.'
+secured_system_prompt: null
+tools:
+  'ai_agents::ai_agent::content_type_agent_triage': true
+  'ai_agents::ai_agent::field_agent_triage': true
+  'ai_agents::ai_agent::taxonomy_agent_config': true
+tool_settings: null
+orchestration_agent: true
+triage_agent: false
+max_loops: 3
+default_information_tools: null
+tool_usage_limits: {  }
+exclude_users_role: false
+masquerade_roles: {  }
+structured_output_enabled: null
+structured_output_schema: null
