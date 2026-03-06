@@ -30,41 +30,6 @@ ddev exec php -d memory_limit=-1 /usr/local/bin/composer install
 
 ---
 
-## Drush
-
-### Cache & Config
-
-```bash
-ddev drush cr                          # Clear all caches
-ddev drush config:export               # Export config to sync directory
-ddev drush config:import               # Import config from sync directory
-ddev drush updatedb                    # Run pending DB updates
-```
-
-### Modules
-
-```bash
-ddev drush pm:enable <module> -y       # Enable a module
-ddev drush pm:uninstall <module> -y    # Uninstall a module
-ddev drush pm:list --status=enabled    # List enabled modules
-```
-
-### Diagnostics
-
-```bash
-ddev drush status                      # Drupal status overview
-ddev drush site:status                 # Detailed site status
-ddev drush watchdog:show               # Recent log messages
-ddev drush watchdog:show --severity=Error  # Filter by severity
-ddev drush sql:connect                 # Get DB connection string
-ddev drush php:eval "code"             # Execute PHP in Drupal context
-ddev drush user:login                  # Generate one-time login link
-```
-
-> **Tip:** `ddev drush` is a shorthand for `ddev exec drush`. Both work identically.
-
----
-
 ## Database Operations
 
 ```bash
