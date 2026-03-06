@@ -1,0 +1,105 @@
+# Recommended .gitignore for Drupal 10/11 Composer-managed projects
+#
+# References:
+#   - https://github.com/github/gitignore/blob/main/Drupal.gitignore
+#   - https://www.drupal.org/project/drupal/issues/3082958
+#   - https://git.drupalcode.org/project/drupal (example.gitignore)
+#   - https://github.com/acquia/drupal-recommended-project
+
+# =============================================================================
+# Composer dependencies
+# =============================================================================
+# Ignore the root vendor directory. Do NOT ignore vendor directories inside
+# contrib or custom modules/themes (e.g. core/assets/vendor).
+/vendor/
+
+# =============================================================================
+# Drupal core and contrib (managed by Composer)
+# =============================================================================
+.editorconfig
+.gitattributes
+LICENSE.txt
+/recipes/
+/recipes/README.txt
+/web/.csslintrc
+/web/.eslintignore
+/web/.eslintrc.json
+/web/.ht.router.php
+/web/.htaccess
+/web/INSTALL.txt
+/web/README.md
+/web/autoload.php
+/web/core/
+/web/example.gitignore
+/web/index.php
+/web/libraries/
+/web/modules/README.txt
+/web/modules/contrib/
+/web/profiles/README.txt
+/web/profiles/contrib/
+/web/robots.txt
+/web/themes/README.txt
+/web/themes/contrib/
+/web/update.php
+/web/web.config
+
+# =============================================================================
+# Configuration files that may contain sensitive information
+# =============================================================================
+/web/sites/README.txt
+/web/sites/*settings*.php
+/web/sites/*sites*.php
+/web/sites/*services*.yml
+/web/sites/*/*settings*.php
+/web/sites/*/*services*.yml
+
+# =============================================================================
+# User-generated content
+# =============================================================================
+/web/sites/*/files/
+/web/sites/*/public/
+/web/sites/*/private/
+/web/sites/*/files-public/
+/web/sites/*/files-private/
+
+# =============================================================================
+# Development and testing
+# =============================================================================
+/web/sites/development.services.yml
+/web/sites/simpletest/
+
+# =============================================================================
+# IDE and editor files
+# =============================================================================
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+nbproject/
+
+# =============================================================================
+# OS-generated files
+# =============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+.directory
+
+# =============================================================================
+# Node / frontend build tools (if applicable)
+# =============================================================================
+node_modules/
+npm-debug.log
+yarn-error.log
