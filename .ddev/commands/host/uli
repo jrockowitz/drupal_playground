@@ -1,0 +1,7 @@
+#!/bin/bash
+
+## Description: Open Drupal and logs in
+## Usage: uli
+## Example: ddev ul
+
+ddev drush uli | xargs open;

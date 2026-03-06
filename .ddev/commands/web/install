@@ -1,0 +1,61 @@
+#!/bin/bash
+
+## Description: Install Drupal, optionally with a preset (e.g. ai)
+## Usage: install [preset]
+## Example: ddev install
+## Example: ddev install ai
+## ProjectTypes: drupal,drupal11
+
+PRESET="${1:-}"
+
+drush site:install standard \
+  --db-url=mysql://db:db@db/db \
+  --account-name=admin \
+  --account-pass=admin \
+  --yes
+
+drush cr
+
+# Navigation
+drush pm:disable toolbar;
+drush pm:enable -y navigation navigation_extra_tools
+
+# Development modules
+drush pm:enable -y devel devel_generate
+
+# Gin admin theme + dashboard + coffee
+drush theme:install -y gin
+drush pm:enable -y gin_toolbar dashboard coffee
+drush config:set -y system.theme admin gin
+
+# Media
+drush pm:enable -y media media_library
+
+# Translation
+drush pm:enable -y language content_translation locale config_translation
+drush language-add es
+drush locale-check
+drush locale-update
+
+# Required utilities
+drush pm:enable -y key token
+
+drush cr
+
+if [ "$PRESET" = "ai" ]; then
+  echo "Enabling AI modules..."
+  drush pm:enable -y ai ai_agents ai_provider_anthropic ai_provider_openai
+  drush pm:enable -y ai_dashboard ai_ckeditor ai_content_suggestions ai_image_alt_text ai_chatbot
+  drush pm:enable -y ai_api_explorer ai_agents_explorer ai_logging ai_observability
+
+  drush config:set -y ai_logging.settings prompt_logging 1
+  drush config:set -y ai_logging.settings prompt_logging_output 1
+  drush config:set -y ai_observability.settings log_input 1
+  drush config:set -y ai_observability.settings log_output 1
+
+  drush cr
+fi
+
+echo ""
+echo "Installation complete. One-time login URL:"
+drush uli

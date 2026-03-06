@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(chmod 755:*)",
+      "Bash(ddev composer:*)",
+      "Bash(ddev install:*)",
+      "WebFetch(domain:www.drupal.org)",
+      "WebFetch(domain:git.drupalcode.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "WebFetch(domain:docs.cweagans.net)"
+    ]
+  }
+}

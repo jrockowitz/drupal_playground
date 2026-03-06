@@ -61,6 +61,7 @@ LICENSE.txt
 /web/sites/*/private/
 /web/sites/*/files-public/
 /web/sites/*/files-private/
+/keys/
 
 # =============================================================================
 # Development and testing

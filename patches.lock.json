@@ -1,0 +1,17 @@
+{
+    "_hash": "dfb1dabc0fb45bc8c63a08b140d5f2734d620a20658392f8edef580a2af2f916",
+    "patches": {
+        "drupal/coffee": [
+            {
+                "package": "drupal/coffee",
+                "description": "Add Navigation TopBar integration for Gin toolbar (issue #3535874)",
+                "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch",
+                "sha256": "5f76e3b397171206f59f0497d12e300bae892607b9e8b7b36bca9385469b5744",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ]
+    }
+}
