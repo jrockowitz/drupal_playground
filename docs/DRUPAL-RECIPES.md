@@ -13,7 +13,7 @@ Key characteristics:
 - **Composable.** Recipes can include other recipes as dependencies, applied sequentially before the current recipe runs.
 - **Declarative, not functional.** Recipes contain no custom PHP code, hooks, or plugins. If you need code, the recipe should install a module that provides it.
 - **Additive only.** Config actions support updates and additions, not removals. This ensures recipes can coexist without breaking each other.
-- **Idempotent (by convention).** Recipes should be safe to apply multiple times without causing errors, using strategies like `create_if_not_exists`.
+- **Idempotent (by convention).** Recipes should be safe to apply multiple times without causing errors, using strategies like `createIfNotExists`.
 
 ## How Recipes Differ from Distributions and Install Profiles
 
@@ -145,7 +145,7 @@ config:
 
     # Update simple configuration values
     system.site:
-      simple_config_update:
+      simpleConfigUpdate:
         page.front: /homepage
 
     # Add a field to an entity view display
@@ -162,7 +162,7 @@ config:
 
     # Ensure a role exists before acting on it
     user.role.content_editor:
-      ensure_exists:
+      createIfNotExists:
         label: 'Content Editor'
 
     # Set third-party settings
@@ -174,7 +174,7 @@ config:
 
     # Create config only if it doesn't already exist
     block.block.my_custom_block:
-      create_if_not_exists:
+      createIfNotExists:
         # full config entity values here
 ```
 
@@ -208,10 +208,9 @@ Config actions are defined as `#[ActionMethod]` PHP attributes on config entity 
 
 | Action | Purpose | Example Target |
 |--------|---------|----------------|
-| `simple_config_update` | Update key-value pairs in any config | `system.site` |
+| `simpleConfigUpdate` | Update key-value pairs in any config | `system.site` |
 | `grantPermission` / `grantPermissions` | Add permissions to a role | `user.role.editor` |
-| `ensure_exists` | Create a role if it doesn't exist | `user.role.content_editor` |
-| `create_if_not_exists` | Create a config entity if missing | `block.block.my_block` |
+| `createIfNotExists` | Conditionally create a config entity if it doesn't already exist | `user.role.content_editor` |
 | `setComponent` / `setComponents` | Add fields to form/view displays | `core.entity_view_display.*` |
 | `setThirdPartySetting` / `setThirdPartySettings` | Set third-party settings | `node.type.article` |
 
@@ -473,7 +472,7 @@ config:
         - 'edit any blog_post content'
         - 'delete any blog_post content'
     user.role.content_editor:
-      ensure_exists:
+      createIfNotExists:
         label: 'Content Editor'
       grantPermissions:
         - 'create blog_post content'
@@ -500,8 +499,8 @@ With the corresponding config files in `config/`:
 ## Best Practices
 
 1. **Keep recipes small and focused.** A single recipe should do one thing well (e.g., create one content type). Compose larger functionality from smaller recipes.
-2. **Use `ensure_exists` for roles.** Don't assume roles exist; use the `ensure_exists` action to create them if missing.
-3. **Use `create_if_not_exists` for idempotency.** This prevents errors when a recipe is applied to a site that already has some of the config.
+2. **Use `createIfNotExists` for roles.** Don't assume roles exist; use the `createIfNotExists` action to create them if missing.
+3. **Use `createIfNotExists` for idempotency.** This prevents errors when a recipe is applied to a site that already has some of the config.
 4. **Strip `uuid` and `_core` from config files.** These are site-specific and will cause conflicts.
 5. **Test on both fresh and existing sites.** Recipes should work in both scenarios.
 6. **Document your recipe.** Include a `README.md` explaining what the recipe does, what modules it requires, and any manual steps needed after application.

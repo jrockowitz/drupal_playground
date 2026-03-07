@@ -13,7 +13,8 @@
       "WebFetch(domain:docs.cweagans.net)",
       "Bash(ddev exec:*)",
       "Bash(grep:*)",
-      "Bash(ddev:*)"
+      "Bash(ddev:*)",
+      "WebFetch(domain:project.pages.drupalcode.org)"
     ]
   }
 }

@@ -8,10 +8,12 @@
 
 PRESET="${1:-}"
 
-drush site:install standard \
+drush site:install core/recipes/standard \
   --db-url=mysql://db:db@db/db \
+  --site-name="Drupal Playground" \
   --account-name=admin \
   --account-pass=admin \
+  --account-mail=admin@example.com \
   --yes
 
 drush recipe ../recipes/drupal_playground_base
@@ -20,10 +22,10 @@ drush recipe ../recipes/drupal_playground_translation
 drush recipe ../recipes/drupal_playground_admin
 drush cr;
 
-# Uninstall the toolbar module
+# Uninstall the toolbar module, which can't be done via a recipe.
 drush pm:uninstall toolbar
 
-# Download and apply Spanish translations
+# Download and apply Spanish translations.
 drush locale-check
 drush locale-update
 

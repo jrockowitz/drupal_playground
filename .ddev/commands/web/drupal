@@ -1,0 +1,9 @@
+#!/bin/bash
+
+## Description: Run Drupal core CLI scripts (e.g. content:export, recipe)
+## Usage: drupal [command] [options]
+## Example: ddev drupal recipe ../recipes/my_recipe
+## Example: ddev drupal content:export node 42 --with-dependencies --dir=content
+## ProjectTypes: drupal,drupal11
+
+php web/core/scripts/drupal "$@"
