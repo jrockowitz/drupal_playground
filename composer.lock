@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0272c0b88045a55ff1ec6c6a9bbdef30",
+    "content-hash": "9253d24ff4986dac320dc6cdfe3785ab",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2441,6 +2441,40 @@
                 "source": "https://gitlab.com/drupalspoons/devel",
                 "issues": "https://gitlab.com/drupalspoons/devel/-/issues",
                 "slack": "https://drupal.slack.com/archives/C012WAW1MH6"
+            }
+        },
+        {
+            "name": "drupal/drupal_playground_admin",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_admin",
+                "reference": "af3fb3442946caaf30f5bda3313870666cf61214"
+            },
+            "require": {
+                "drupal/coffee": "^2",
+                "drupal/core": "^11.3",
+                "drupal/dashboard": "^2",
+                "drupal/gin": "^5",
+                "drupal/gin_toolbar": "^3",
+                "drupal/navigation_extra_tools": "^1"
+            },
+            "type": "drupal-recipe",
+            "extra": {
+                "patches": {
+                    "drupal/core": {
+                        "Persist is_syncing across container rebuilds (issue #3572171)": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff"
+                    },
+                    "drupal/coffee": {
+                        "Add Navigation TopBar integration for Gin toolbar (issue #3535874)": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch"
+                    }
+                }
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "transport-options": {
+                "relative": true
             }
         },
         {

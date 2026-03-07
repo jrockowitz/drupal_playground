@@ -1,5 +1,5 @@
 {
-    "_hash": "1fd40c61f5f6b981a03b55bafedbca697d469101b2214c16b2b2031827290d7e",
+    "_hash": "c5afe08e470f7c4d11eabef05e0c7a0c763a9a5701b6de3ad903e0d93e8a8487",
     "patches": {
         "drupal/core": [
             {
@@ -9,7 +9,7 @@
                 "sha256": "635c3ece0a99bc50ce3656ea671850160aabebf7f6e3d30e8af91a18da095a82",
                 "depth": 2,
                 "extra": {
-                    "provenance": "root"
+                    "provenance": "dependency:drupal/core"
                 }
             }
         ],
@@ -21,7 +21,7 @@
                 "sha256": "5f76e3b397171206f59f0497d12e300bae892607b9e8b7b36bca9385469b5744",
                 "depth": 1,
                 "extra": {
-                    "provenance": "root"
+                    "provenance": "dependency:drupal/coffee"
                 }
             }
         ]
