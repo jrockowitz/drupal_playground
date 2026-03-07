@@ -1,0 +1,36 @@
+name: 'Drupal Playground Admin'
+type: 'Site'
+description: 'Sets up Gin admin theme with Navigation, Dashboard, and Coffee.'
+install:
+  - coffee
+  - dashboard
+  - gin
+  - gin_toolbar
+  - navigation
+  - navigation_extra_tools
+config:
+  strict: false
+  import:
+    gin:
+      - block.block.gin_breadcrumbs
+      - block.block.gin_content
+      - block.block.gin_local_actions
+      - block.block.gin_messages
+      - block.block.gin_page_title
+      - block.block.gin_primary_local_tasks
+      - block.block.gin_secondary_local_tasks
+    navigation:
+      - system.menu.content
+      - system.menu.navigation-user-links
+    claro:
+      - block.block.claro_breadcrumbs
+      - block.block.claro_content
+      - block.block.claro_local_actions
+      - block.block.claro_messages
+      - block.block.claro_page_title
+      - block.block.claro_primary_local_tasks
+      - block.block.claro_secondary_local_tasks
+  actions:
+    system.theme:
+      simpleConfigUpdate:
+        admin: gin

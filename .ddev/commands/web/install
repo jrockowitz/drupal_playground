@@ -17,20 +17,15 @@ drush site:install standard \
 drush recipe ../recipes/drupal_playground_base
 drush recipe ../recipes/drupal_playground_devel
 drush recipe ../recipes/drupal_playground_translation
+drush recipe ../recipes/drupal_playground_admin
 drush cr;
+
+# Uninstall the toolbar module
+drush pm:uninstall toolbar
 
 # Download and apply Spanish translations
 drush locale-check
 drush locale-update
-
-# Navigation
-drush pm:uninstall toolbar;
-drush pm:enable -y navigation navigation_extra_tools
-
-# Gin admin theme + dashboard + coffee
-drush theme:install -y gin
-drush pm:enable -y gin_toolbar dashboard coffee
-drush config:set -y system.theme admin gin
 
 if [ "$PRESET" = "ai" ]; then
   echo "Applying AI recipe..."

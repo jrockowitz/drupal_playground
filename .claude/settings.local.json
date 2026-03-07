@@ -12,7 +12,8 @@
       "WebSearch",
       "WebFetch(domain:docs.cweagans.net)",
       "Bash(ddev exec:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(ddev:*)"
     ]
   }
 }

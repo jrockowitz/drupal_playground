@@ -1,0 +1,14 @@
+{
+  "name": "drupal/drupal_playground_admin",
+  "type": "drupal-recipe",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "require": {
+    "drupal/coffee": "^2",
+    "drupal/core": "^11.3",
+    "drupal/dashboard": "^2",
+    "drupal/gin": "^5",
+    "drupal/gin_toolbar": "^3",
+    "drupal/navigation_extra_tools": "^1"
+  }
+}
