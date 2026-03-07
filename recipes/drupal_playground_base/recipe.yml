@@ -1,0 +1,13 @@
+name: 'Drupal Playground Base'
+type: 'Site'
+recipes:
+  - core/recipes/audio_media_type
+  - core/recipes/document_media_type
+  - core/recipes/image_media_type
+  - core/recipes/local_video_media_type
+  - core/recipes/remote_video_media_type
+install:
+  - media
+  - media_library
+  - key
+  - token

@@ -1,6 +1,18 @@
 {
-    "_hash": "dfb1dabc0fb45bc8c63a08b140d5f2734d620a20658392f8edef580a2af2f916",
+    "_hash": "1fd40c61f5f6b981a03b55bafedbca697d469101b2214c16b2b2031827290d7e",
     "patches": {
+        "drupal/core": [
+            {
+                "package": "drupal/core",
+                "description": "Persist is_syncing across container rebuilds (issue #3572171)",
+                "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
+                "sha256": "635c3ece0a99bc50ce3656ea671850160aabebf7f6e3d30e8af91a18da095a82",
+                "depth": 2,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
         "drupal/coffee": [
             {
                 "package": "drupal/coffee",

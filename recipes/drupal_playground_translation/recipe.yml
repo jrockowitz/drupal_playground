@@ -1,0 +1,13 @@
+name: 'Drupal Playground Translation'
+type: 'Site'
+recipes:
+  - drupal_playground_base
+install:
+  - language
+  - content_translation
+  - locale
+  - config_translation
+config:
+  strict: false
+  import:
+    language: '*'

@@ -1,0 +1,7 @@
+name: 'Drupal Playground Devel'
+type: 'Site'
+recipes:
+  - drupal_playground_base
+install:
+  - devel
+  - devel_generate

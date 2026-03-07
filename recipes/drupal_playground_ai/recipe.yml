@@ -5,6 +5,9 @@ description: >
   suggestions, and image alt text.
   Prerequisites: keys/openai.key and keys/anthropic.key must exist before applying.
 type: 'Site'
+recipes:
+  - drupal_playground_base
+  - drupal_playground_translation
 
 install:
   - ai
@@ -16,7 +19,6 @@ install:
   - ai_content_suggestions
   - ai_image_alt_text
   - ai_chatbot
-
 config:
   strict: false
   import:
@@ -24,8 +26,11 @@ config:
     ai_assistant_api: '*'
     ai_agents: '*'
     ai_content_suggestions: '*'
+    ai_dashboard: '*'
+    ai_image_alt_text: '*'
     key: '*'
     block: '*'
+    dashboard: '*'
   actions:
     ai_provider_openai.settings:
       simpleConfigUpdate:

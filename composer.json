@@ -11,6 +11,18 @@
     "repositories": [
         {
             "type": "path",
+            "url": "recipes/drupal_playground_base"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_devel"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_translation"
+        },
+        {
+            "type": "path",
             "url": "recipes/drupal_playground_ai"
         },
         {
@@ -21,22 +33,20 @@
     "require": {
         "composer/installers": "^2.3",
         "cweagans/composer-patches": "^2",
+        "drupal/drupal_playground_base": "*",
+        "drupal/drupal_playground_devel": "*",
+        "drupal/drupal_playground_translation": "*",
         "drupal/drupal_playground_ai": "*",
         "drupal/coffee": "^2",
-        "drupal/core-composer-scaffold": "^11.3",
-        "drupal/core-project-message": "^11.3",
-        "drupal/core-recipe-unpack": "^11.3",
-        "drupal/core-recommended": "^11.3",
+        "drupal/core-composer-scaffold": "11.3.5",
+        "drupal/core-project-message": "11.3.5",
+        "drupal/core-recipe-unpack": "11.3.5",
+        "drupal/core-recommended": "11.3.5",
         "drupal/dashboard": "^2",
         "drupal/gin": "^5",
         "drupal/gin_toolbar": "^3",
-        "drupal/key": "^1",
         "drupal/navigation_extra_tools": "^1",
-        "drupal/token": "^1",
         "drush/drush": "^13.7"
-    },
-    "require-dev": {
-        "drupal/devel": "^5"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -96,6 +106,9 @@
             ]
         },
         "patches": {
+            "drupal/core": {
+                "Persist is_syncing across container rebuilds (issue #3572171)": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff"
+            },
             "drupal/coffee": {
                 "Add Navigation TopBar integration for Gin toolbar (issue #3535874)": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch"
             }
@@ -107,7 +120,7 @@
             ],
             "post-create-project-cmd-message": [
                 "<bg=blue;fg=white>                                                         </>",
-                "<bg=blue;fg=white>  Congratulations, you’ve installed the Drupal codebase  </>",
+                "<bg=blue;fg=white>  Congratulations, you've installed the Drupal codebase  </>",
                 "<bg=blue;fg=white>  from the drupal/recommended-project template!          </>",
                 "<bg=blue;fg=white>                                                         </>",
                 "",

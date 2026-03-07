@@ -1,0 +1,11 @@
+{
+  "name": "drupal/drupal_playground_base",
+  "type": "drupal-recipe",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "require": {
+    "drupal/core": "^11.3",
+    "drupal/key": "^1",
+    "drupal/token": "^1"
+  }
+}
