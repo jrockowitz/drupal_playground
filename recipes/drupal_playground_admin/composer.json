@@ -13,12 +13,24 @@
   },
   "extra": {
     "patches": {
-      "drupal/core": {
-        "Persist is_syncing across container rebuilds (issue #3572171)": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff"
-      },
-      "drupal/coffee": {
-        "Add Navigation TopBar integration for Gin toolbar (issue #3535874)": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch"
-      }
+      "drupal/core": [
+        {
+          "description": "Persist is_syncing across container rebuilds",
+          "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
+          "extra": {
+            "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3572171"
+          }
+        }
+      ],
+      "drupal/coffee": [
+        {
+          "description": "Add Navigation TopBar integration for Gin toolbar",
+          "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch",
+          "extra": {
+            "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874"
+          }
+        }
+      ]
     }
   }
 }

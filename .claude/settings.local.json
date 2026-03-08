@@ -14,7 +14,9 @@
       "Bash(ddev exec:*)",
       "Bash(grep:*)",
       "Bash(ddev:*)",
-      "WebFetch(domain:project.pages.drupalcode.org)"
+      "WebFetch(domain:project.pages.drupalcode.org)",
+      "Bash(do:*)",
+      "Bash(python3:*)"
     ]
   }
 }
