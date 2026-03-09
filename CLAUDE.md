@@ -91,6 +91,9 @@ ddev drush field:info <entity> <bundle>
 
 # Run pending database updates
 ddev drush updatedb
+
+# Inspect database tables
+ddev drush sql:query "DESCRIBE <table_name>;"
 ```
 
 ### Code Quality
@@ -125,8 +128,6 @@ Copy `web/core/phpunit.xml.dist` to `phpunit.xml` and configure:
 
 - `recipes/` — Custom Drupal Recipes (each has `recipe.yml` + `composer.json`)
 - `web/` — Drupal docroot (managed by Composer scaffolding)
-- `web/modules/contrib/` — Contrib modules
-- `web/themes/contrib/` — Contrib themes (Gin is the admin theme)
 - `.ddev/` — DDEV configuration, custom commands, PHP/Nginx overrides
 - `docs/` — Project documentation (DDEV setup, PHPStorm config)
 
@@ -148,15 +149,6 @@ ddev composer patches-doctor
 ## Debugging
 
 ```bash
-# View logs
-ddev drush watchdog:show --count=50
-
-# Inspect a config object
-ddev drush config:get <config.name>
-
-# Run PHP in Drupal context
-ddev drush php:eval "..."
-
 # Follow web container logs (stdout/stderr)
 ddev logs -f web
 
@@ -165,30 +157,6 @@ ddev xdebug on
 ddev xdebug off
 ```
 
-### Database Schema
-
-```bash
-# Inspect core node tables
-ddev drush sql:query "DESCRIBE node;"
-ddev drush sql:query "DESCRIBE node_field_data;"
-
-# Inspect a field storage table (replace field_name with actual field)
-ddev drush sql:query "DESCRIBE node__{field_name};"
-
-# List all node field tables
-ddev drush sql:query "SHOW TABLES LIKE 'node__%';"
-```
-
 ## Code Style & Standards
 
-- **PHP 8.3+**, Drupal coding standards enforced via PHPCS
-- Indentation: 2 spaces; line limit: 120 chars; comment limit: 80 chars
-- Naming: `CamelCase` classes/methods, `snake_case` variables, `ALL_CAPS` constants
 - Never use abbreviations in names — except widely accepted ones (`$io`, `src`, `href`, etc.)
-
-## Best Practices
-
-- Export config after any changes: `ddev drush cex`
-- Prefer contrib modules over custom code
-- Use dependency injection over `\Drupal::` static calls
-- Run `ddev drush updatedb` after pulling changes that include schema updates
