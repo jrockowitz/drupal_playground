@@ -320,15 +320,17 @@ claude update            # update to latest
 - [Configuration & Settings](https://code.claude.com/docs/en/settings)
 - [GitHub Actions Integration](https://code.claude.com/docs/en/github-actions)
 - [Anthropic Discord](https://www.anthropic.com/discord)
-- [Claude Code for Symfony and PHP — The Setup That Actually Works](https://dev.to/javiereguiluz/claude-code-for-symfony-and-php-the-setup-that-actually-works-1che)
-- [Claude Code | Drupal.org](https://www.drupal.org/project/claude_code)
+
+### Drupal
 - [Claude Code meets Drupal | Dries Buytaert](https://dri.es/claude-code-meets-drupal)
 - [Mastering Claude Code for Drupal Development](https://bonnici.co.nz/blog/mastering-claude-code-drupal-development) — five practical tips from real Drupal project experience
 - [I Tried Claude Code for a Month on Drupal](https://tresbien.tech/blog/i-tried-claude-code-month-drupal/)
+- [Claude Code for Symfony and PHP — The Setup That Actually Works](https://dev.to/javiereguiluz/claude-code-for-symfony-and-php-the-setup-that-actually-works-1che)
+- [Claude Code | Drupal.org](https://www.drupal.org/project/claude_code)
 - [FreelyGive/ddev-claude-code](https://github.com/FreelyGive/ddev-claude-code) — DDEV add-on for Claude Code
 - [Mastering Drupal AI: Drupal CMS + AI + Claude Code on Drupal Forge (YouTube)](https://www.youtube.com/watch?v=pHvZa8G2dx0)
 
-### CLAUDE.md
+### CLAUDE.md (AGENTS.md)
 - [CLAUDE.md Memory Files](https://code.claude.com/docs/en/memory)
 - [agents.md specification](https://agents.md/)
 - [amazeeio/drupal-agents-md](https://github.com/amazeeio/drupal-agents-md)
