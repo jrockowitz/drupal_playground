@@ -230,9 +230,98 @@ Instructions here...
 EOF
 ```
 
+### From skills.sh
+
+[skills.sh](https://skills.sh) is an open community skills directory with install telemetry that surfaces the most-used skills in the ecosystem. Skills are identified by `owner/repo` slugs (GitHub-style) and installed with the `skills` CLI via `npx`.
+
+```bash
+# Install a single skill into the current project
+npx skills add vercel-labs/agent-skills
+
+# Install into your global user skills directory
+npx skills add --user anthropics/skills
+
+# Search for skills by topic
+# Browse https://skills.sh/?q=drupal
+```
+
+Skills install into `.claude/skills/` (project) or `~/.claude/skills/` (user) by default. Each `owner/repo` can contain multiple skills; the CLI installs all of them unless you specify a path.
+
+**Noteworthy skills from skills.sh:**
+
+| Skill | Install | Description |
+|---|---|---|
+| `find-skills` | `npx skills add vercel-labs/skills` | Helps Claude discover relevant skills mid-session |
+| `systematic-debugging` | `npx skills add obra/superpowers` | Structured debugging process |
+| `test-driven-development` | `npx skills add obra/superpowers` | TDD workflow guidance |
+| `skill-creator` | `npx skills add anthropics/skills` | Build and iterate on your own skills |
+| `mcp-builder` | `npx skills add anthropics/skills` | Scaffold MCP servers |
+| `webapp-testing` | `npx skills add anthropics/skills` | End-to-end testing patterns |
+
+> **Security note:** skills.sh runs routine audits, but review a skill's source before installing. Skills execute in your agent's context and can influence its behavior significantly.
+
 ### From Claude.ai
 
 Pre-built skills work automatically for document creation (docx, pdf, pptx, xlsx). Custom skills can be uploaded as zip files through Settings → Features.
+
+---
+
+## Recommended Drupal Skills
+
+Three skill collections on [skills.sh](https://skills.sh/?q=drupal) stand out for general Drupal + Claude Code development.
+
+### `omedia/drupal-skill` — Frontend, backend, and tooling
+
+[skills.sh/omedia/drupal-skill](https://skills.sh/omedia/drupal-skill) · [GitHub](https://github.com/omedia/drupal-skill)
+
+```bash
+npx skills add omedia/drupal-skill
+```
+
+- `drupal-frontend` — Theming, Twig templates, preprocess functions, theme structure
+- `drupal-backend` — Hooks, module structure, custom entities, block plugins, form alterations
+- `drupal-tooling` — DDEV setup, Drush workflows, database operations, config export
+
+### `grasmash/drupal-claude-skills` — Comprehensive reference collection
+
+[skills.sh/grasmash/drupal-claude-skills](https://skills.sh/grasmash/drupal-claude-skills) · [GitHub](https://github.com/grasmash/drupal-claude-skills)
+
+A deep collection drawing from [drupalatyourfingertips.com](https://drupalatyourfingertips.com) by Selwyn Polit, Ivan Grynenko's OWASP cursor rules, and original authoring.
+
+```bash
+npx skills add grasmash/drupal-claude-skills
+```
+
+- `drupal-at-your-fingertips` — 50+ topics: core APIs, entities, forms, routing, theming, caching, testing
+- `drupal-ddev` — Complete `.ddev/config.yaml` reference, Xdebug, Mutagen, custom hooks
+- `drupal-config-mgmt` — Safe config inspection/sync, avoiding accidental imports, remote Drush safety flags
+- `drupal-contrib-mgmt` — Composer module updates, D11 compatibility, patch management
+- `ivangrynenko-cursorrules-drupal` — OWASP Top 10 security patterns: access control, XSS/SQLi prevention, SSRF
+
+### `kanopi/cms-cultivator` — CMS development toolkit
+
+[skills.sh/kanopi/cms-cultivator](https://skills.sh/kanopi/cms-cultivator) · [GitHub](https://github.com/kanopi/cms-cultivator)
+
+A broad CMS development toolkit from [Kanopi Studios](https://kanopi.com). Most skills are general-purpose (code quality, testing, accessibility, performance), with two Drupal.org-specific skills for contribution workflows.
+
+```bash
+npx skills add kanopi/cms-cultivator
+```
+
+- `responsive-styling` — Responsive CSS and styling patterns
+- `drupalorg-issue-helper` — Issue management on Drupal.org
+- `design-analyzer` — Design analysis and review
+- `code-standards-checker` — Code standards validation
+- `test-scaffolding` — Test setup and scaffolding patterns
+- `performance-analyzer` — Performance analysis and optimization
+- `drupalorg-contribution-helper` — Contribution workflow for Drupal.org
+- `security-scanner` — Security scanning patterns
+- `documentation-generator` — Documentation generation
+- `accessibility-checker` — Accessibility auditing
+- `coverage-analyzer` — Test coverage analysis
+- `test-plan-generator` — Test plan creation
+- `commit-message-generator` — Conventional commit message generation
+- `browser-validator` — Cross-browser validation
 
 ---
 
@@ -244,3 +333,4 @@ Pre-built skills work automatically for document creation (docx, pdf, pptx, xlsx
 - [awesome-claude-skills](https://github.com/travisvn/awesome-claude-skills) — Curated community list
 - [SkillsMP](https://skillsmp.com) — Marketplace with 400k+ skills
 - [Skills Explained Blog](https://claude.com/blog/skills-explained) — How skills fit in the Claude ecosystem
+- <https://skills.sh/?q=drupal>
