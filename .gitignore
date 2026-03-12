@@ -105,3 +105,13 @@ Desktop.ini
 node_modules/
 npm-debug.log
 yarn-error.log
+
+# =============================================================================
+# Agents / Claude skills
+# =============================================================================
+.agents
+.claude/skills/drupal-at-your-fingertips
+.claude/skills/drupal-config-mgmt
+.claude/skills/drupal-contrib-mgmt
+.claude/skills/drupal-ddev
+.claude/skills/ivangrynenko-cursorrules-drupal

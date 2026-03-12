@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "skills": {
+    "drupal-at-your-fingertips": {
+      "source": "grasmash/drupal-claude-skills",
+      "sourceType": "github",
+      "computedHash": "e982ad9238000f6b537b1756f87cb7584473ba8306ddd0c8b5a12244f0941b94"
+    },
+    "drupal-config-mgmt": {
+      "source": "grasmash/drupal-claude-skills",
+      "sourceType": "github",
+      "computedHash": "acb3851d7f0ddb8852d56ed793b6d1bbb48d68b7dfa14793718d21f40bcd8ee2"
+    },
+    "drupal-contrib-mgmt": {
+      "source": "grasmash/drupal-claude-skills",
+      "sourceType": "github",
+      "computedHash": "df8ce4558e53a954b83d43e5c44834ef44ac0a8bed8eb523ed04afc65be7cd23"
+    },
+    "drupal-ddev": {
+      "source": "grasmash/drupal-claude-skills",
+      "sourceType": "github",
+      "computedHash": "65846250353be5f12b5eee6c1b0ef1182a7c8ffbe68260df8ac186591c4f61bf"
+    },
+    "ivangrynenko-cursorrules-drupal": {
+      "source": "grasmash/drupal-claude-skills",
+      "sourceType": "github",
+      "computedHash": "428215cda56a811ae58d6f986846d22272418e50c476113467640af7f999f82d"
+    }
+  }
+}
