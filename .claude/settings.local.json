@@ -19,7 +19,8 @@
       "Bash(python3:*)",
       "Bash(for r in drupal_playground_admin drupal_playground_devel drupal_playground_translation)",
       "Read(//Users/rockowij/Sites/drupal_playground/recipes/$r/**)",
-      "Bash(done)"
+      "Bash(done)",
+      "WebFetch(domain:www.jrockowitz.com)"
     ]
   }
 }
