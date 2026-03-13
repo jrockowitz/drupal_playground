@@ -2,11 +2,7 @@
 
 ## Overview
 
-A Drupal 11 custom module (`telephone_filter`) that converts US phone numbers found in rendered HTML into clickable `tel:` links. Implemented as a Drupal **text format filter plugin** — the same approach Jacob Rockowitz used when building it with ChatGPT 4o.
-
-> **Reference:** [Building a Drupal Module Using AI](https://www.jrockowitz.com/blog/building-a-drupal-model-using-al) — Jacob Rockowitz documents his prompt-engineering workflow, the iterative refinement process, and the ~80/20 split between AI generation and human tweaking.
-
-This is the first custom module in the playground. It establishes the pattern for custom module structure and testing conventions.
+**This module** (`telephone_filter`) converts US phone numbers found in rendered HTML into clickable `tel:` links. Implemented as a Drupal **text format filter plugin**.
 
 ---
 
@@ -18,36 +14,48 @@ This is the first custom module in the playground. It establishes the pattern fo
 2. Wraps matches in `<a href="tel:+1XXXXXXXXXX">original text</a>` links.
 3. Supported numeric formats: `888-888-8888`, `888.888.8888`, `(888) 888-8888`.
 4. Supported vanity formats: `800-FLOWERS`, `800-ASK-HELP`.
-5. Configurable list of allowed area codes (default: `800`, `888`) — one per line in a textarea.
+5. Configurable list of allowed area codes stored as an array — entered one per line in a textarea. Leaving the list empty links **all** phone numbers regardless of area code.
 6. Skips numbers already inside `<a>` tags to prevent double-wrapping.
 7. Regex area-code alternation is built dynamically from the plugin settings at process time.
 
 ### Non-Functional
 
-- `declare(strict_types=1)` in every PHP file.
-- Fully typed method signatures throughout.
-- No `\Drupal::service()` static calls inside class methods — use constructor injection or the `FilterBase` base class helpers.
-- PHPCS `Drupal` / `DrupalPractice` clean.
+Standards and coding conventions that apply to every file in the module.
+
+- PHPCS `Drupal`/`DrupalPractice` sniffs; no errors or warnings.
+- `declare(strict_types=1)` in every PHP file; fully typed method signatures.
+- Dependency injection throughout — no `\Drupal::service()` or static calls inside class methods.
+- No hard dependencies beyond Drupal core.
 - PHPStan level 5+ clean.
 - Filter type: `FilterInterface::TYPE_TRANSFORM_REVERSIBLE`.
+- Unit tests for the filter plugin.
 
 ---
 
 ## Steps to Review (⚫ = step  ✅ = pass  ❌ = fail)
 
-| # | Step | Status |
-|---|---|---|
-| 1 | `telephone_filter.info.yml` exists and is valid | ⚫ |
-| 2 | `telephone_filter.module` implements `hook_help()` | ⚫ |
-| 3 | `config/schema/telephone_filter.schema.yml` defines filter settings | ⚫ |
-| 4 | `TelephoneFilter.php` discovered as a filter plugin | ⚫ |
-| 5 | Settings form renders area codes textarea | ⚫ |
-| 6 | Numeric formats produce correct `tel:` links | ⚫ |
-| 7 | Vanity numbers produce correct digit-only `tel:` links | ⚫ |
-| 8 | Numbers inside `<a>` tags are not double-wrapped | ⚫ |
-| 9 | Numbers with unlisted area codes are not wrapped | ⚫ |
-| 10 | Unit tests pass | ⚫ |
-| 11 | PHPCS reports no errors | ⚫ |
+### Filter plugin discovery
+
+- ⚫ Navigate to **Administration → Configuration → Content authoring → Text formats and editors** (`/admin/config/content/formats`).
+- ⚫ Edit a text format and confirm **Telephone filter** appears in the filter list.
+- ⚫ Enable the filter, save the format, and confirm no errors appear.
+
+### Settings form
+
+- ⚫ With the filter enabled, confirm the **Allowed area codes** textarea is present in the filter's settings row.
+- ⚫ Clear the textarea and save — confirm **all** phone numbers are linked (empty list = match all).
+- ⚫ Enter `800` and `888` (one per line), save, and confirm only numbers with those area codes are linked.
+- ⚫ Enter an invalid value such as `80X` in the area codes textarea and attempt to save — confirm an inline validation error appears and the format is **not** saved.
+- ⚫ Enter a wrong-length value such as `8000` and attempt to save — confirm the same inline error behaviour.
+
+### Phone number conversion
+
+- ⚫ Render text containing `888-888-8888` — confirm it becomes `<a href="tel:+18888888888">`.
+- ⚫ Render text containing `888.888.8888` — confirm dot format is linked correctly.
+- ⚫ Render text containing `(888) 888-8888` — confirm parentheses format is linked correctly.
+- ⚫ Render text containing `800-FLOWERS` — confirm vanity format produces `<a href="tel:+18003569377">`.
+- ⚫ Render text containing `<a href="tel:+18888888888">888-888-8888</a>` — confirm no double-wrapping.
+- ⚫ Render text containing `999-888-8888` with area codes set to `800`/`888` — confirm unlisted area code produces no link.
 
 ---
 
@@ -64,7 +72,7 @@ Admin UI → Text Format → TelephoneFilter enabled
                   ↓
            process($text, $langcode)
                   ↓
-       DOMDocument::loadHTML($text)
+          Html::load($text)
                   ↓
         Walk all DOMText nodes
                   ↓
@@ -74,16 +82,18 @@ Admin UI → Text Format → TelephoneFilter enabled
                   ↓
    Split text node → insert <a> DOM nodes
                   ↓
-        saveHTML() → FilterProcessResult
+     Html::serialize() → FilterProcessResult
 ```
 
 ### Phone Regex
 
 ```
-/\b(AREA_CODES)\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/i
+/\b(AREA_CODES)\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/
 ```
 
-`AREA_CODES` is replaced at runtime with a `|`-joined alternation built from `$this->settings['area_codes']` (e.g. `800|888`). Each line in the textarea becomes one alternation arm; empty lines and whitespace are stripped.
+`AREA_CODES` is replaced at runtime with a `|`-joined alternation built from `$this->settings['area_codes']`, which is a `list<string>` of digit-only area code strings (e.g. `['800', '888']`). When the array is empty, the area-code capture group is replaced with `[0-9]{3}`, matching any three-digit area code — all phone numbers are linked.
+
+The pattern has **no `i` flag**. The `[A-Z0-9]` character class matches uppercase letters and digits only. Vanity numbers must be entered in uppercase (`800-FLOWERS`) to be linked; lowercase (`800-flowers`) or mixed-case (`800-Flowers`) segments are treated as plain text and left unchanged.
 
 The three capture groups correspond to:
 1. Area code
@@ -92,11 +102,13 @@ The three capture groups correspond to:
 
 ### DOMDocument Approach
 
-`\DOMDocument::loadHTML()` is used to parse the HTML fragment. An `XPath` query or recursive tree walk identifies all `DOMText` nodes. Before processing a text node, the code walks `$node->parentNode` up the tree checking for any `<a>` ancestor — if found, the node is skipped.
+`Html::load()` (from `\Drupal\Component\Utility\Html`) parses the HTML fragment into a `\DOMDocument` using the Masterminds HTML5 parser with UTF-8 encoding and no namespace injection — no manual charset declaration or error suppression required. A recursive tree walk then identifies all `DOMText` nodes. Before processing a text node, the code walks `$node->parentNode` up the tree checking for any `<a>` ancestor — if found, the node is skipped. After the tree is modified, `Html::serialize()` extracts only the `<body>` children and returns a clean HTML string, handling newline normalisation internally — no `saveHTML()` post-processing needed.
+
+`DOMText::nodeValue` always contains **decoded** text — the HTML5 parser resolves all entities (e.g. `&amp;` → `&`) before the value is exposed to PHP. The phone regex therefore operates on plain characters with no risk of matching across entity boundaries.
 
 For each match within a text node:
 1. Split the text node around the match using `splitText()`.
-2. Create an `<a>` element with `href="tel:+1{digits}"`.
+2. Create an `<a>` element with `href="tel:+1{digits}"`. The element is created empty and the matched text is appended as a child `DOMText` node via `createTextNode()` — never passed as the second argument to `createElement()`, which does not HTML-encode its content and would be unsafe for text that contains `<` or `&`.
 3. Replace the match portion of the text with the new element.
 4. Digits are obtained by calling `vanityToDigits()` on each capture group before assembling the `href`.
 
@@ -117,87 +129,148 @@ For each match within a text node:
 
 Digits pass through unchanged. The result is a pure-digit string ready for a `tel:` URI.
 
+### Config Schema
+
+`filter_settings.telephone_filter` stores:
+
+| Key | Type | Label | Constraints |
+|---|---|---|---|
+| `area_codes` | `sequence` of `string` | Allowed area codes | Optional; empty = match all |
+
+Schema lives in `config/schema/telephone_filter.schema.yml`.
+
 ---
 
 ## Module File Structure
 
 ```
-web/modules/custom/telephone_filter/
+telephone_filter/
+├── .gitlab-ci.yml                                  # Drupal Association CI template
 ├── composer.json
+├── logo.png
 ├── README.md
-├── AGENTS.md                              (generated via `claude init`)
-├── telephone_filter.info.yml              ⬜ todo
-├── telephone_filter.module                ⬜ todo
+├── AGENTS.md
+├── CLAUDE.md
+├── telephone_filter.info.yml
+├── telephone_filter.module                         # hook_help() only
 ├── config/
 │   └── schema/
-│       └── telephone_filter.schema.yml    ⬜ todo
+│       └── telephone_filter.schema.yml             # filter settings schema
 └── src/
     └── Plugin/
         └── Filter/
-            └── TelephoneFilter.php        ⬜ todo
+            └── TelephoneFilter.php                 # FilterBase plugin
 tests/
 └── src/
     └── Unit/
-        └── TelephoneFilterTest.php        ⬜ todo
+        ├── TelephoneFilterTest.php
+        └── TelephoneFilterValidationTest.php         # validateConfigurationForm() / area-code validation
 ```
 
 ---
 
 ## Implementation
 
-Files listed in creation order: scaffolding → config → plugin → tests.
+---
+
+### .gitlab-ci.yml
+
+Use the Drupal Association's maintained template. The simplest setup via the GitLab UI:
+
+1. Open the repository on `git.drupalcode.org`.
+2. Add a new file named `.gitlab-ci.yml` using the repository file browser (not the Web IDE).
+3. Select the **Drupal Association `template.gitlab-ci.yml`** from the template picker.
+4. Commit to the default branch.
+
+Verify by navigating to **Build → Pipelines** — the pipeline should trigger automatically on commit.
+
+Reference: [GitLab CI — Using GitLab to contribute to Drupal](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci)
+
+---
+
+### logo.png
+
+512 × 512 px PNG, ≤ 10 KB, no rounded corners, no module name text. Optimise with `pngquant` at ~80% quality. Place in the repository root on the default branch.
+
+**Image generation prompt:**
+
+> Create a square 512×512 logo for a Drupal contributed module called **Telephone Filter**.
+>
+> The module converts US phone numbers in HTML text into clickable `tel:` links via a text format filter plugin.
+>
+> Design a clean, minimal icon that reads clearly at 64 × 64 px. Do not include the module name as text. Do not round the corners. Use a transparent or solid background.
+>
+> Suggested visual direction: a simple telephone handset overlaid with a small link-chain or cursor motif, rendered in Drupal blue (#0678BE) with a white accent. Flat, two-tone, no gradients, no drop shadows.
+>
+> Output a PNG at exactly 512 × 512 px. File size should be 10 KB or less.
+
+Reference: [Project Browser — Module logo](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/project-browser/module-maintainers-how-to-update-projects-to-be-compatible-with-project-browser#s-logo)
 
 ---
 
 ### README.md
 
+Brief user-facing documentation covering what the module does, requirements, installation, permissions, and usage.
+
 ```markdown
 # Telephone Filter
 
-A Drupal 11 text format filter plugin that converts US phone numbers in HTML
+A Drupal 10/11 text format filter plugin that converts US phone numbers in HTML
 text into clickable `tel:` links.
-
-## Features
-
-- Detects numeric formats: `888-888-8888`, `888.888.8888`, `(888) 888-8888`.
-- Detects vanity formats: `800-FLOWERS`, `800-ASK-HELP`.
-- Configurable list of allowed area codes (default: `800`, `888`).
-- Skips numbers already inside `<a>` tags — no double-wrapping.
-- Safe DOM-based HTML manipulation via `DOMDocument`.
 
 ## Requirements
 
-- Drupal core 11.x
+- Drupal core 10.3.x or 11.x
 - PHP 8.3+
 
 ## Installation
 
 ```bash
+composer require drupal/telephone_filter
 drush en telephone_filter
 ```
 
 Enable the filter on a text format at `/admin/config/content/formats`.
 
-## Development
+## Features
 
-See [AGENTS.md](AGENTS.md) for AI-assisted development guidelines.
+- Detects numeric formats: `888-888-8888`, `888.888.8888`, `(888) 888-8888`.
+- Detects vanity formats: `800-FLOWERS`, `800-ASK-HELP`.
+- Configurable list of allowed area codes — leave blank to link all phone numbers.
+- Skips numbers already inside `<a>` tags — no double-wrapping.
+- Safe DOM-based HTML manipulation via `DOMDocument`.
+
+## Usage
+
+1. Navigate to **Administration → Configuration → Content authoring → Text formats and editors**.
+2. Edit a text format and enable **Telephone filter**.
+3. Optionally enter allowed area codes (one per line) in the filter's settings. Leave blank to link all phone numbers.
+4. Save the format.
 ```
 
 ---
 
-### AGENTS.md
+### AGENTS.md / CLAUDE.md
 
-Do not hand-author this file. After the module directory is created and initial code is in place, generate it by running:
+Do not hand-author these files. After the module directory and initial code are in place, generate them by running:
 
 ```bash
 claude init
 ```
 
-`claude init` inspects the codebase and produces an `AGENTS.md` tailored to the actual file structure, coding patterns, and architecture it finds.
+`claude init` inspects the codebase and produces a `CLAUDE.md` tailored to the actual file structure, coding patterns, and architecture it finds.
+
+`AGENTS.md` is kept in sync with identical content. Both files serve the same purpose — project memory for AI coding agents. Copy `CLAUDE.md` to `AGENTS.md` after generation:
+
+```bash
+cp CLAUDE.md AGENTS.md
+```
 
 ---
 
 ### composer.json
+
+Standard Drupal module manifest. Keep the `drupal/core` constraint in sync with `core_version_requirement` in `telephone_filter.info.yml`.
 
 ```json
 {
@@ -211,31 +284,29 @@ claude init
         "source": "https://git.drupalcode.org/project/telephone_filter"
     },
     "require": {
-        "drupal/core": "^11"
+        "drupal/core": "^10 || ^11"
     }
 }
 ```
 
 ---
 
-### telephone_filter.info.yml ✅
-
-Already created. No changes needed.
+### telephone_filter.info.yml
 
 ```yaml
-name: Telephone Filter
+name: 'Telephone Filter'
 type: module
 description: 'Converts US phone numbers in text to clickable tel: links.'
-package: Custom
+package: Filter
 core_version_requirement: ^10.3 || ^11
 php: '8.3'
 ```
 
 ---
 
-### telephone_filter.module ✅
+### telephone_filter.module
 
-Already created. Implements `hook_help()` only.
+Implements `hook_help()` only.
 
 ```php
 <?php
@@ -277,8 +348,11 @@ filter_settings.telephone_filter:
   label: 'Telephone filter settings'
   mapping:
     area_codes:
-      type: string
-      label: 'Allowed area codes (one per line)'
+      type: sequence
+      label: 'Allowed area codes'
+      sequence:
+        type: string
+        label: 'Area code'
 ```
 
 ---
@@ -296,6 +370,7 @@ declare(strict_types=1);
 
 namespace Drupal\telephone_filter\Plugin\Filter;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\filter\FilterProcessResult;
@@ -308,25 +383,26 @@ use Drupal\filter\Plugin\FilterInterface;
  *
  * Supported formats:
  *   - Numeric:  888-888-8888 | 888.888.8888 | (888) 888-8888
- *   - Vanity:   800-FLOWERS  | 800-ASK-HELP
+ *   - Vanity:   800-FLOWERS  | 800-ASK-HELP  (uppercase letters only)
  *
  * Numbers already inside <a> tags are never double-wrapped.
  * Only numbers whose area code appears in the configured list are linked.
+ * Lowercase or mixed-case vanity segments are not matched.
  */
 #[Filter(
   id: 'telephone_filter',
   title: new TranslatableMarkup('Telephone filter'),
   description: new TranslatableMarkup('Converts US phone numbers to clickable tel: links.'),
   type: FilterInterface::TYPE_TRANSFORM_REVERSIBLE,
-  weight: 10,
 )]
-class TelephoneFilter extends FilterBase {
+final class TelephoneFilter extends FilterBase {
 
   /**
    * {@inheritdoc}
    */
   public function defaultConfiguration(): array {
-    return ['area_codes' => "800\n888"] + parent::defaultConfiguration();
+    // Empty array means all phone numbers are linked regardless of area code.
+    return ['area_codes' => []] + parent::defaultConfiguration();
   }
 
   /**
@@ -334,11 +410,12 @@ class TelephoneFilter extends FilterBase {
    */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $form['area_codes'] = [
-      '#type'          => 'textarea',
-      '#title'         => $this->t('Allowed area codes'),
-      '#description'   => $this->t('Enter one area code per line. Only phone numbers whose area code appears in this list will be converted to links.'),
-      '#default_value' => $this->settings['area_codes'],
-      '#rows'          => 5,
+      '#type' => 'textarea',
+      '#title' => $this->t('Allowed area codes'),
+      '#description' => $this->t('Enter one area code per line. Leave blank to link all phone numbers regardless of area code.'),
+      // Implode the stored array back to one-per-line for display in the textarea.
+      '#default_value' => implode("\n", $this->settings['area_codes']),
+      '#rows' => 5,
     ];
     return $form;
   }
@@ -346,38 +423,67 @@ class TelephoneFilter extends FilterBase {
   /**
    * {@inheritdoc}
    */
-  public function process(string $text, string $langcode): FilterProcessResult {
-    $area_codes = $this->getAreaCodeAlternation();
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
+    $raw = $form_state->getValue(['filters', $this->pluginId, 'settings', 'area_codes']) ?? '';
 
-    if ($area_codes === '') {
-      return new FilterProcessResult($text);
+    foreach (array_map('trim', explode("\n", $raw)) as $line) {
+      if ($line === '') {
+        continue;
+      }
+      if (!ctype_digit($line) || strlen($line) !== 3) {
+        $form_state->setErrorByName(
+          'filters][' . $this->pluginId . '][settings][area_codes',
+          $this->t('"%line" is not a valid area code. Each line must contain exactly 3 digits (e.g. 800).', ['%line' => $line]),
+        );
+        // One error message is enough; stop on the first invalid entry.
+        break;
+      }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
+    // Validation has already rejected non-digit and wrong-length entries, so
+    // only blank-line stripping is needed here.
+    $raw = $form_state->getValue(['filters', $this->pluginId, 'settings', 'area_codes']) ?? '';
+    $this->settings['area_codes'] = array_values(array_filter(
+      array_map('trim', explode("\n", $raw)),
+      static fn (string $code): bool => $code !== '',
+    ));
+    parent::submitConfigurationForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function process(string $text, string $langcode): FilterProcessResult {
+    $area_codes = $this->settings['area_codes'];
 
     // Pattern explanation:
     //   \b              — word boundary to avoid partial matches
-    //   (AREA_CODES)    — allowed area code alternation built from settings
+    //   (AREA_CODES)    — area code alternation; omitted entirely when list is empty
     //   \s*[-.]?\s*     — optional separator (space, dash, or dot) with surrounding whitespace
-    //   ([A-Z0-9]{3})   — exchange: 3 alphanumeric characters (vanity or digits)
+    //   ([A-Z0-9]{3})   — exchange: 3 uppercase alphanumeric characters (vanity or digits)
     //   \s*[-.]?\s*     — optional separator
-    //   ([A-Z0-9]{4})   — subscriber: 4 alphanumeric characters (vanity or digits)
+    //   ([A-Z0-9]{4})   — subscriber: 4 uppercase alphanumeric characters (vanity or digits)
     //   \b              — word boundary
-    $pattern = '/\b(' . $area_codes . ')\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/i';
+    // No i flag — lowercase vanity letters intentionally do not match.
+    // When area_codes is empty, a bare 3-digit group matches any area code.
+    if ($area_codes !== []) {
+      $alternation = implode('|', array_map('preg_quote', $area_codes, array_fill(0, count($area_codes), '/')));
+      $pattern = '/\b(' . $alternation . ')\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/';
+    }
+    else {
+      // No restriction — match any 3-digit area code.
+      $pattern = '/\b([0-9]{3})\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/';
+    }
 
-    $document = new \DOMDocument();
-    // Use UTF-8 charset declaration so loadHTML does not mangle multibyte chars.
-    @$document->loadHTML(
-      '<?xml encoding="utf-8"?>' . $text,
-      LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD,
-    );
-
+    $document = Html::load($text);
     $this->processNode($document, $document, $pattern);
 
-    // saveHTML() on the document returns the full document; strip the XML
-    // declaration and whitespace that loadHTML may have added.
-    $processed = $document->saveHTML();
-    $processed = preg_replace('/<\?xml[^?]*\?>\s*/i', '', $processed) ?? $processed;
-
-    return new FilterProcessResult($processed);
+    return new FilterProcessResult(Html::serialize($document));
   }
 
   /**
@@ -423,6 +529,9 @@ class TelephoneFilter extends FilterBase {
   private function replacePhoneNumbers(\DOMDocument $document, \DOMText $text_node, string $pattern): void {
     $value = $text_node->nodeValue ?? '';
 
+    // Guard: most text nodes contain no phone number. The cheap preg_match()
+    // check avoids the overhead of PREG_OFFSET_CAPTURE for the common case.
+    // preg_match_all() is only called when at least one match is confirmed.
     if (!preg_match($pattern, $value)) {
       return;
     }
@@ -448,13 +557,16 @@ class TelephoneFilter extends FilterBase {
       }
 
       // Build the digit-only phone number for the tel: href.
-      $area    = $this->vanityToDigits($matches[1][$index][0]);
-      $exchange = $this->vanityToDigits($matches[2][$index][0]);
+      $area       = $this->vanityToDigits($matches[1][$index][0]);
+      $exchange   = $this->vanityToDigits($matches[2][$index][0]);
       $subscriber = $this->vanityToDigits($matches[3][$index][0]);
-      $digits  = $area . $exchange . $subscriber;
+      $digits     = $area . $exchange . $subscriber;
 
-      $anchor = $document->createElement('a', $matched_text);
+      // createElement() does not encode its second argument, so the matched
+      // text is appended as a safe DOMText child node instead.
+      $anchor = $document->createElement('a');
       $anchor->setAttribute('href', 'tel:+1' . $digits);
+      $anchor->appendChild($document->createTextNode($matched_text));
       $fragment->appendChild($anchor);
 
       $offset = $match_offset + strlen($matched_text);
@@ -477,8 +589,11 @@ class TelephoneFilter extends FilterBase {
    * telephone keypad layout:
    *   ABC=2, DEF=3, GHI=4, JKL=5, MNO=6, PQRS=7, TUV=8, WXYZ=9
    *
-   * @param string $number  A single phone segment (area code, exchange, or subscriber).
-   * @return string         The segment with all letters converted to digits.
+   * @param string $number
+   *   A single phone segment (area code, exchange, or subscriber).
+   *
+   * @return string
+   *   The segment with all letters converted to digits.
    */
   private function vanityToDigits(string $number): string {
     return strtr(strtoupper($number), [
@@ -494,21 +609,6 @@ class TelephoneFilter extends FilterBase {
   }
 
   /**
-   * Builds the regex area-code alternation string from the plugin settings.
-   *
-   * Returns an empty string when no valid area codes are configured,
-   * in which case process() returns the text unmodified.
-   */
-  private function getAreaCodeAlternation(): string {
-    $raw_codes = $this->settings['area_codes'] ?? '';
-    $codes = array_filter(
-      array_map('trim', explode("\n", $raw_codes)),
-      static fn (string $code): bool => $code !== '' && ctype_digit($code),
-    );
-    return implode('|', array_map('preg_quote', $codes, array_fill(0, count($codes), '/')));
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function tips(bool $long = FALSE): TranslatableMarkup {
@@ -520,12 +620,17 @@ class TelephoneFilter extends FilterBase {
 
 ---
 
+## Tests
+
+The phone regex uses `[A-Z0-9]` (uppercase only) without the `i` flag, so vanity numbers must be uppercase to match. Lowercase or mixed-case letter segments are treated as plain text and not linked. `vanityToDigits()` is only ever called on segments that have already matched `[A-Z0-9]`.
+
+`area_codes` is stored as a `list<string>`. `createFilter()` in the test helper accepts that array directly. An empty array means all phone numbers are linked.
+
+---
+
 ### tests/src/Unit/TelephoneFilterTest.php
 
-- **Namespace:** `Drupal\Tests\telephone_filter\Unit`
-- **Extends:** `\Drupal\Tests\UnitTestCase`
-- Uses `\ReflectionMethod` to exercise `vanityToDigits()` directly as it is private.
-- Uses `@dataProvider` for all `process()` test cases.
+`UnitTestCase`. Every test method uses `@dataProvider`. Exercises `vanityToDigits()` directly via `\ReflectionMethod` (private method).
 
 ```php
 <?php
@@ -545,93 +650,264 @@ use Drupal\Tests\UnitTestCase;
  */
 class TelephoneFilterTest extends UnitTestCase {
 
+  // ---------------------------------------------------------------------------
+  // process() — cases that SHOULD produce a link
+  // ---------------------------------------------------------------------------
+
   /**
-   * Creates a TelephoneFilter instance configured with the given area codes.
+   * Tests that phone numbers matching the configured area codes are linked.
    *
-   * @param string $area_codes  Newline-separated area codes.
+   * @dataProvider processProducesLinkProvider
+   * @covers ::process
    */
-  private function createFilter(string $area_codes = "800\n888"): TelephoneFilter {
-    return new TelephoneFilter(
-      ['area_codes' => $area_codes],
-      'telephone_filter',
-      ['provider' => 'telephone_filter'],
+  public function testProcessProducesLink(string $input, string $expected_href): void {
+    $result = $this->createFilter()->process($input, 'en');
+    $this->assertStringContainsString(
+      'href="' . $expected_href . '"',
+      $result->getProcessedText(),
     );
   }
 
   /**
-   * Data provider for testProcess().
+   * Data provider for testProcessProducesLink().
+   *
+   * Each entry is [input, expected_href] using the default area codes ['800', '888'].
    *
    * @return array<string, array{string, string}>
    */
-  public static function processProvider(): array {
+  public static function processProducesLinkProvider(): array {
     return [
-      'dash format'              => ['Call 888-888-8888 now', 'tel:+18888888888'],
-      'parentheses format'       => ['Call (800) 555-1234 now', 'tel:+18005551234'],
-      'dot format'               => ['Call 888.888.8888 now', 'tel:+18888888888'],
-      'vanity FLOWERS'           => ['Call 800-FLOWERS today', 'tel:+18003569377'],
-      'vanity ASK-HELP'          => ['Call 800-ASK-HELP', 'tel:+18002754357'],
+      // --- Separator formats ---
+
+      // Standard dash-separated format.
+      'dash format' => ['Call 888-888-8888 now', 'tel:+18888888888'],
+
+      // Dot-separated format.
+      'dot format' => ['Call 888.888.8888 now', 'tel:+18888888888'],
+
+      // Parenthesised area code with space and dash.
+      'parens space dash format' => ['Call (800) 555-1234 now', 'tel:+18005551234'],
+
+      // Parenthesised area code, no space before exchange.
+      'parens no space' => ['Call (800)555-1234 now', 'tel:+18005551234'],
+
+      // Parenthesised area code with dot separator.
+      'parens dot separator' => ['Call (800) 555.1234 now', 'tel:+18005551234'],
+
+      // Space-separated (no dashes or dots).
+      'space separator' => ['Call 888 888 8888 now', 'tel:+18888888888'],
+
+      // Mixed separators — dash then dot.
+      'mixed separators' => ['Call 888-888.8888 now', 'tel:+18888888888'],
+
+      // --- Vanity formats (uppercase only) ---
+
+      // Uppercase vanity word — [A-Z0-9] character class matches.
+      'vanity FLOWERS uppercase' => ['Call 800-FLOWERS today', 'tel:+18003569377'],
+
+      // Two-segment uppercase vanity number.
+      'vanity ASK-HELP' => ['Call 800-ASK-HELP', 'tel:+18002754357'],
+
+      // --- Position in string ---
+
+      // Number appears at the very start — word boundary must fire at pos 0.
+      'number at string start' => ['888-888-8888 is our number', 'tel:+18888888888'],
+
+      // Number appears at the very end — word boundary must fire at end of string.
+      'number at string end' => ['Call us at 888-888-8888', 'tel:+18888888888'],
+
+      // --- Surrounding punctuation ---
+
+      // Period immediately after the number — boundary must not consume it.
+      'number followed by period' => ['Call 888-888-8888.', 'tel:+18888888888'],
+
+      // Comma immediately after the number.
+      'number followed by comma' => ['Call 888-888-8888, today', 'tel:+18888888888'],
+
+      // Number wrapped in parentheses (the prose kind, not the area code kind).
+      'number in prose parentheses' => ['(see 888-888-8888 for details)', 'tel:+18888888888'],
+
+      // Number wrapped in double quotes.
+      'number in double quotes' => ['"888-888-8888"', 'tel:+18888888888'],
+
+      // --- HTML context — number inside non-anchor inline elements ---
+
+      // Number inside a <p> tag — the text node should still be processed.
+      'number in p tag' => ['<p>Call 888-888-8888 now</p>', 'tel:+18888888888'],
+
+      // Number inside <strong> — not an anchor ancestor, must be linked.
+      'number in strong tag' => ['<strong>888-888-8888</strong>', 'tel:+18888888888'],
+
+      // Number inside <span> — not an anchor ancestor, must be linked.
+      'number in span tag' => ['<span>888-888-8888</span>', 'tel:+18888888888'],
     ];
   }
 
-  /**
-   * Tests that phone numbers are correctly converted to tel: links.
-   *
-   * @dataProvider processProvider
-   * @covers ::process
-   */
-  public function testProcess(string $input, string $expected_href): void {
-    $result = $this->createFilter()->process($input, 'en');
-    $this->assertStringContainsString('href="' . $expected_href . '"', $result->getProcessedText());
-  }
+  // ---------------------------------------------------------------------------
+  // process() — cases that should NOT produce a link
+  // ---------------------------------------------------------------------------
 
   /**
-   * Tests that numbers inside existing <a> tags are not double-wrapped.
+   * Tests that certain inputs produce no link.
    *
+   * @dataProvider processProducesNoLinkProvider
    * @covers ::process
    */
-  public function testNoDoubleWrap(): void {
-    $input = '<a href="tel:+18888888888">888-888-8888</a>';
-    $result = $this->createFilter()->process($input, 'en');
-    // Should contain exactly one <a> element.
-    $this->assertSame(1, substr_count($result->getProcessedText(), '<a '));
-  }
-
-  /**
-   * Tests that unlisted area codes are not wrapped.
-   *
-   * @covers ::process
-   */
-  public function testUnlistedAreaCodeNotWrapped(): void {
-    $result = $this->createFilter()->process('999-888-8888', 'en');
+  public function testProcessProducesNoLink(array $area_codes, string $input): void {
+    $result = $this->createFilter($area_codes)->process($input, 'en');
     $this->assertStringNotContainsString('<a ', $result->getProcessedText());
   }
 
   /**
-   * Tests that multiple numbers in one string are each wrapped independently.
+   * Data provider for testProcessProducesNoLink().
    *
+   * Each entry is [area_codes, input].
+   *
+   * @return array<string, array{list<string>, string}>
+   */
+  public static function processProducesNoLinkProvider(): array {
+    return [
+      // Area code not in the configured list — must not be linked.
+      'unlisted area code' => [['800', '888'], '999-888-8888'],
+
+      // 7-digit number with no area code — regex requires a 3-digit area code.
+      'seven digit number' => [['800', '888'], '555-1234'],
+
+      // Empty string — nothing to process.
+      'empty string' => [['800', '888'], ''],
+
+      // Plain text with no phone number at all.
+      'no phone number in text' => [['800', '888'], '<p>No phone number here.</p>'],
+
+      // Lowercase vanity — [A-Z0-9] does not match lowercase letters.
+      'vanity flowers lowercase' => [['800', '888'], 'Call 800-flowers today'],
+
+      // Mixed-case vanity — partial uppercase is not enough for a full match.
+      'vanity Flowers mixed case' => [['800', '888'], 'Call 800-Flowers today'],
+    ];
+  }
+
+  // ---------------------------------------------------------------------------
+  // process() — anchor count assertions
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Tests the number of <a> elements produced for various inputs.
+   *
+   * @dataProvider processAnchorCountProvider
    * @covers ::process
    */
-  public function testMultipleNumbersWrapped(): void {
-    $input = 'Call 888-888-8888 or 800-555-1234';
-    $result = $this->createFilter()->process($input, 'en');
-    $this->assertSame(2, substr_count($result->getProcessedText(), '<a '));
+  public function testProcessAnchorCount(array $area_codes, string $input, int $expected_count): void {
+    $result = $this->createFilter($area_codes)->process($input, 'en');
+    $this->assertSame($expected_count, substr_count($result->getProcessedText(), '<a '));
   }
 
   /**
-   * Data provider for testVanityToDigits().
+   * Data provider for testProcessAnchorCount().
    *
-   * @return array<string, array{string, string}>
+   * Each entry is [area_codes, input, expected_anchor_count].
+   *
+   * @return array<string, array{list<string>, string, int}>
    */
-  public static function vanityToDigitsProvider(): array {
+  public static function processAnchorCountProvider(): array {
     return [
-      'all digits passthrough'  => ['8888', '8888'],
-      'FLOWERS'                 => ['FLOWERS', '3569377'],
-      'ASK'                     => ['ASK', '275'],
-      'HELP'                    => ['HELP', '4357'],
-      'lowercase letters'       => ['flowers', '3569377'],
-      'mixed case'              => ['fLoWeRs', '3569377'],
+      // A number already inside an <a> tag must not be double-wrapped.
+      // The DOMDocument walk detects the <a> ancestor and skips the text node.
+      'no double wrap direct anchor' => [
+        ['800', '888'],
+        '<a href="tel:+18888888888">888-888-8888</a>',
+        1,
+      ],
+
+      // A number nested inside an inline element within an <a> must not be
+      // double-wrapped. The ancestor check must walk all the way up the tree,
+      // not just the immediate parent.
+      'no double wrap nested inside anchor' => [
+        ['800', '888'],
+        '<a href="tel:+18888888888"><strong>888-888-8888</strong></a>',
+        1,
+      ],
+
+      // A number inside a non-anchor inline element must be wrapped.
+      // <strong> is not an anchor ancestor.
+      'number in non-anchor inline element is wrapped' => [
+        ['800', '888'],
+        '<p>Call <strong>888-888-8888</strong> now.</p>',
+        1,
+      ],
+
+      // Multiple numbers in a single string must each be wrapped independently.
+      'multiple numbers each wrapped' => [
+        ['800', '888'],
+        'Call 888-888-8888 or 800-555-1234',
+        2,
+      ],
+
+      // When only 800 is configured, the 888 number must not be linked.
+      'only configured area code linked' => [
+        ['800'],
+        '800-555-1234 and 888-555-1234',
+        1,
+      ],
+
+      // Empty area_codes array — all phone numbers are linked.
+      'empty area codes links all numbers' => [
+        [],
+        'Call 999-888-8888',
+        1,
+      ],
     ];
   }
+
+  // ---------------------------------------------------------------------------
+  // process() — content preservation
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Tests content preservation through the DOMDocument round-trip.
+   *
+   * @dataProvider processPreservesContentProvider
+   * @covers ::process
+   */
+  public function testProcessPreservesContent(array $area_codes, string $input, string $expected_href, string $expected_text): void {
+    $result = $this->createFilter($area_codes)->process($input, 'en');
+    $this->assertStringContainsString('href="' . $expected_href . '"', $result->getProcessedText());
+    $this->assertStringContainsString($expected_text, $result->getProcessedText());
+  }
+
+  /**
+   * Data provider for testProcessPreservesContent().
+   *
+   * Each entry is [area_codes, input, expected_href, expected_text].
+   *
+   * @return array<string, array{list<string>, string, string, string}>
+   */
+  public static function processPreservesContentProvider(): array {
+    return [
+      // Multiple valid area codes stored in non-alphabetical order still produce
+      // links — the regex alternation matches any listed code regardless of order.
+      'valid codes in arbitrary order produce links' => [
+        ['888', '800'],
+        '888-555-1234',
+        'tel:+18885551234',
+        '888-555-1234',
+      ],
+
+      // Multibyte / Unicode characters surrounding a phone number must survive
+      // the Html::load() / Html::serialize() round-trip. The Masterminds HTML5
+      // parser used internally by Html::load() handles UTF-8 natively.
+      'multibyte content preserved' => [
+        "800\n888",
+        '<p>Appelez le 888-888-8888 s\'il vous plaît.</p>',
+        'tel:+18888888888',
+        'plaît',
+      ],
+    ];
+  }
+
+  // ---------------------------------------------------------------------------
+  // vanityToDigits() — via ReflectionMethod
+  // ---------------------------------------------------------------------------
 
   /**
    * Tests vanityToDigits() directly via reflection.
@@ -645,82 +921,323 @@ class TelephoneFilterTest extends UnitTestCase {
     $this->assertSame($expected, $method->invoke($filter, $input));
   }
 
+  /**
+   * Data provider for testVanityToDigits().
+   *
+   * vanityToDigits() is only called on segments that have already matched
+   * [A-Z0-9], so inputs here are uppercase. The method internally calls
+   * strtoupper() for safety, which is also verified here.
+   *
+   * @return array<string, array{string, string}>
+   */
+  public static function vanityToDigitsProvider(): array {
+    return [
+      // Pure digit string — must pass through unchanged.
+      'all digits passthrough' => ['8888', '8888'],
+
+      // Full word FLOWERS in uppercase.
+      'FLOWERS uppercase' => ['FLOWERS', '3569377'],
+
+      // Three-letter segment ASK.
+      'ASK' => ['ASK', '275'],
+
+      // Four-letter segment HELP.
+      'HELP' => ['HELP', '4357'],
+
+      // Each keypad row verified individually.
+      'ABC maps to 2' => ['ABC', '222'],
+      'DEF maps to 3' => ['DEF', '333'],
+      'GHI maps to 4' => ['GHI', '444'],
+      'JKL maps to 5' => ['JKL', '555'],
+      'MNO maps to 6' => ['MNO', '666'],
+      'PQRS maps to 7' => ['PQRS', '7777'],
+      'TUV maps to 8' => ['TUV', '888'],
+      'WXYZ maps to 9' => ['WXYZ', '9999'],
+    ];
+  }
+
+  // ---------------------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Creates a TelephoneFilter instance configured with the given area codes.
+   *
+   * @param list<string> $area_codes
+   *   Array of digit-only area code strings. Defaults to ['800', '888'].
+   *   Pass [] to link all phone numbers regardless of area code.
+   */
+  private function createFilter(array $area_codes = ['800', '888']): TelephoneFilter {
+    return new TelephoneFilter(
+      ['area_codes' => $area_codes],
+      'telephone_filter',
+      ['provider' => 'telephone_filter'],
+    );
+  }
+
 }
 ```
 
-#### Test cases summary
-
-| # | Input | Expected outcome |
-|---|---|---|
-| 1 | `888-888-8888` | Wrapped in `<a href="tel:+18888888888">` |
-| 2 | `(800) 555-1234` | Wrapped in `<a href="tel:+18005551234">` |
-| 3 | `888.888.8888` | Wrapped in `<a href="tel:+18888888888">` |
-| 4 | `800-FLOWERS` | Wrapped in `<a href="tel:+18003569377">` |
-| 5 | `800-ASK-HELP` | Wrapped in `<a href="tel:+18002754357">` |
-| 6 | `<a href="tel:...">888-888-8888</a>` | **Not** double-wrapped |
-| 7 | `999-888-8888` (area code not in list) | **Not** wrapped |
-| 8 | Multiple numbers in one string | Each wrapped independently |
-
 ---
 
-## Skills
+### tests/src/Unit/TelephoneFilterValidationTest.php
 
-The following `/skills` should be loaded when using Claude Code to generate the `telephone_filter` module. Each skill provides domain knowledge or coding patterns that directly inform one or more files.
+`UnitTestCase`. Dedicated to `validateConfigurationForm()` and `submitConfigurationForm()`. Asserts that invalid lines trigger a `FormState` error and that valid inputs (including empty textarea) produce no error. Uses `Drupal\Core\Form\FormState` to invoke each method exactly as Drupal would; reads back `settings['area_codes']` via `\ReflectionProperty` where needed.
 
-| Skill | Role |
-|---|---|
-| `drupal-at-your-fingertips` | Filter plugin boilerplate (`FilterBase`, `#[Filter]` attribute, `settingsForm()`, `FilterProcessResult`), hook patterns, plugin system conventions |
-| `ivangrynenko-cursorrules-drupal` | XSS-safe HTML output, input sanitisation, OWASP patterns — ensures `DOMDocument` output is not re-injecting unsanitised strings |
-| `drupal-ddev` | Commands for enabling the module, running unit tests with `phpunit`, enabling Xdebug for step-debugging the filter pipeline |
-| `drupal-config-mgmt` | Exporting and inspecting the text format config after wiring up the filter; verifying `filter.format.*.yml` changes are captured in config sync |
-| `simplify` | Post-implementation review pass — checks for DRY violations, overly complex regex handling, and any redundant DOM manipulation |
+```php
+<?php
 
-### How to invoke skills before generating code
+declare(strict_types=1);
 
+namespace Drupal\Tests\telephone_filter\Unit;
+
+use Drupal\Core\Form\FormState;
+use Drupal\telephone_filter\Plugin\Filter\TelephoneFilter;
+use Drupal\Tests\UnitTestCase;
+
+/**
+ * Unit tests for TelephoneFilter area-code validation.
+ *
+ * Covers validateConfigurationForm() — which sets a FormState error for any
+ * line that is not exactly 3 digits — and the downstream effect on
+ * submitConfigurationForm(), which stores only non-empty lines once
+ * validation has passed.
+ *
+ * @coversDefaultClass \Drupal\telephone_filter\Plugin\Filter\TelephoneFilter
+ * @group telephone_filter
+ */
+class TelephoneFilterValidationTest extends UnitTestCase {
+
+  // ---------------------------------------------------------------------------
+  // validateConfigurationForm() — error produced for invalid input
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Tests that an invalid area-code line triggers a form error.
+   *
+   * @dataProvider invalidAreaCodesProvider
+   * @covers ::validateConfigurationForm
+   *
+   * @param string $textarea_value
+   *   Raw textarea input that contains at least one invalid line.
+   * @param string $expected_fragment
+   *   A substring that must appear in the first error message.
+   */
+  public function testValidateConfigurationFormSetsError(
+    string $textarea_value,
+    string $expected_fragment,
+  ): void {
+    $filter = $this->createFilter();
+    $form_state = new FormState();
+    $form_state->setValue(
+      ['filters', 'telephone_filter', 'settings', 'area_codes'],
+      $textarea_value,
+    );
+
+    $form = [];
+    $filter->validateConfigurationForm($form, $form_state);
+
+    $errors = $form_state->getErrors();
+    $this->assertNotEmpty($errors, 'Expected a form error but none was set.');
+
+    $error_text = implode(' ', array_map('strval', $errors));
+    $this->assertStringContainsString($expected_fragment, $error_text);
+  }
+
+  /**
+   * Data provider for testValidateConfigurationFormSetsError().
+   *
+   * Each entry is [textarea_value, expected_fragment_in_error_message].
+   *
+   * @return array<string, array{string, string}>
+   */
+  public static function invalidAreaCodesProvider(): array {
+    return [
+
+      // A letter-only string is not a valid area code; it appears in the error.
+      'letters only' => ['ABC', 'ABC'],
+
+      // An alphanumeric string is rejected; the offending value is reported.
+      'alphanumeric' => ['80A', '80A'],
+
+      // A plus-prefixed string is rejected.
+      'plus prefix' => ['+800', '+800'],
+
+      // A hyphenated string is rejected.
+      'hyphen' => ['800-888', '800-888'],
+
+      // A 2-digit string fails the length check.
+      'two digits' => ['80', '80'],
+
+      // A 4-digit string fails the length check.
+      'four digits' => ['8008', '8008'],
+
+      // A 10-digit string (full phone number) fails the length check.
+      'ten digits' => ['8008888888', '8008888888'],
+
+      // When the first line is valid but a later line is invalid, an error is
+      // still set. The invalid line text appears in the error message.
+      'invalid after valid' => ["800\n80A\n888", '80A'],
+
+      // An invalid line among otherwise blank lines is still caught.
+      'invalid among blank lines' => ["\n\nABC\n", 'ABC'],
+
+    ];
+  }
+
+  // ---------------------------------------------------------------------------
+  // validateConfigurationForm() — no error for valid input
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Tests that valid textarea input produces no form error.
+   *
+   * @dataProvider validAreaCodesProvider
+   * @covers ::validateConfigurationForm
+   *
+   * @param string $textarea_value
+   *   Raw textarea input containing only valid (or blank) lines.
+   */
+  public function testValidateConfigurationFormNoError(string $textarea_value): void {
+    $filter = $this->createFilter();
+    $form_state = new FormState();
+    $form_state->setValue(
+      ['filters', 'telephone_filter', 'settings', 'area_codes'],
+      $textarea_value,
+    );
+
+    $form = [];
+    $filter->validateConfigurationForm($form, $form_state);
+
+    $this->assertEmpty($form_state->getErrors(), 'Expected no form errors but errors were set.');
+  }
+
+  /**
+   * Data provider for testValidateConfigurationFormNoError().
+   *
+   * @return array<string, array{string}>
+   */
+  public static function validAreaCodesProvider(): array {
+    return [
+      // Empty textarea — "link all" mode, no validation required.
+      'empty textarea' => [''],
+
+      // Single valid code.
+      'single valid code' => ['800'],
+
+      // Multiple valid codes on separate lines.
+      'multiple valid codes' => ["800\n888\n877"],
+
+      // Valid codes with surrounding whitespace — trim() normalises them.
+      'whitespace around code' => ["  800  \n888"],
+
+      // Windows-style CRLF endings — trim() strips the \r.
+      'crlf line endings' => ["800\r\n888\r\n877"],
+
+      // Blank lines interspersed with valid codes are skipped.
+      'blank lines between valid codes' => ["\n800\n\n888\n\n"],
+
+      // Whitespace-only lines are treated as blank and skipped.
+      'whitespace only lines' => ["   \n800\n   \n888"],
+    ];
+  }
+
+  // ---------------------------------------------------------------------------
+  // submitConfigurationForm() — stored value after a clean (no-error) save
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Tests that submitConfigurationForm() stores only non-empty trimmed lines.
+   *
+   * validateConfigurationForm() is presumed to have already run and passed,
+   * so every non-blank line here is a valid 3-digit code. The submit handler
+   * is responsible only for stripping blank lines.
+   *
+   * @dataProvider submitStoresValidCodesProvider
+   * @covers ::submitConfigurationForm
+   *
+   * @param string $textarea_value
+   *   Raw textarea input (valid codes + optional blank lines).
+   * @param list<string> $expected_codes
+   *   The array that should be stored in settings after submission.
+   */
+  public function testSubmitConfigurationFormStoresCodes(
+    string $textarea_value,
+    array $expected_codes,
+  ): void {
+    $filter = $this->createFilter();
+    $form_state = new FormState();
+    $form_state->setValue(
+      ['filters', 'telephone_filter', 'settings', 'area_codes'],
+      $textarea_value,
+    );
+
+    $form = [];
+    $filter->submitConfigurationForm($form, $form_state);
+
+    $reflection = new \ReflectionProperty($filter, 'settings');
+    $settings = $reflection->getValue($filter);
+
+    $this->assertSame($expected_codes, $settings['area_codes']);
+  }
+
+  /**
+   * Data provider for testSubmitConfigurationFormStoresCodes().
+   *
+   * @return array<string, array{string, list<string>}>
+   */
+  public static function submitStoresValidCodesProvider(): array {
+    return [
+      // Empty textarea stores an empty array — enables "link all" mode.
+      'empty stores empty array' => ['', []],
+
+      // Single valid code stored as one-element array.
+      'single valid code' => ['800', ['800']],
+
+      // Two valid codes on separate lines.
+      'two valid codes' => ["800\n888", ['800', '888']],
+
+      // Blank lines are stripped; valid codes are preserved.
+      'blank lines stripped' => ["\n800\n\n888\n\n", ['800', '888']],
+
+      // Whitespace around codes is trimmed before storage.
+      'whitespace trimmed' => ["  800  \n888", ['800', '888']],
+
+      // Windows CRLF endings produce the same result as LF.
+      'crlf endings' => ["800\r\n888\r\n877", ['800', '888', '877']],
+    ];
+  }
+
+  // ---------------------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Creates a TelephoneFilter instance with an empty area_codes setting.
+   */
+  private function createFilter(): TelephoneFilter {
+    return new TelephoneFilter(
+      ['area_codes' => []],
+      'telephone_filter',
+      ['provider' => 'telephone_filter'],
+    );
+  }
+
+}
 ```
-/drupal-at-your-fingertips
-/ivangrynenko-cursorrules-drupal
-```
-
-Load both before asking Claude to generate `TelephoneFilter.php`. The skills load relevant Drupal filter plugin boilerplate and security patterns into context, which significantly improves the quality of the first generation pass.
-
-After generation, run:
-
-```
-/simplify
-```
-
-to review the produced code for unnecessary complexity, missed abstractions, or style violations before committing.
-
 ---
 
-## Verification Commands
+## Reference
 
-```bash
-# Enable the module
-ddev drush en telephone_filter -y
+### Drupal APIs
 
-# Check for errors in the log
-ddev drush watchdog:show --count=20
+- [Html](https://api.drupal.org/api/drupal/core!lib!Drupal!Component!Utility!Html.php/class/Html/11.x) — `Html::load()` / `Html::serialize()` for DOM parsing and serialization
+- [FilterBase](https://api.drupal.org/api/drupal/core!modules!filter!src!Plugin!FilterBase.php/class/FilterBase/11.x) — base class for text format filter plugins
+- [FilterInterface](https://api.drupal.org/api/drupal/core!modules!filter!src!Plugin!FilterInterface.php/interface/FilterInterface/11.x) — filter plugin interface and type constants
+- [FilterProcessResult](https://api.drupal.org/api/drupal/core!modules!filter!src!FilterProcessResult.php/class/FilterProcessResult/11.x) — return value of `process()`
+- [Filter attribute](https://api.drupal.org/api/drupal/core!modules!filter!src!Attribute!Filter.php/class/Filter/11.x) — PHP 8 attribute for registering filter plugins (replaces annotation)
 
-# Run unit tests
-ddev exec vendor/bin/phpunit web/modules/custom/telephone_filter/tests/
+### Drupal.org Project Setup
 
-# Check code style
-ddev exec vendor/bin/phpcs --standard=Drupal web/modules/custom/telephone_filter/
-
-# Auto-fix style violations
-ddev exec vendor/bin/phpcbf --standard=Drupal web/modules/custom/telephone_filter/
-
-# Static analysis
-ddev exec vendor/bin/phpstan analyse web/modules/custom/telephone_filter/
-
-# Open the text formats admin page to wire up the filter
-ddev launch /admin/config/content/formats
-
-# Export config after enabling the filter on a format
-ddev drush config:export -y
-
-# Inspect the saved filter config
-ddev drush config:get filter.format.basic_html
-```
+- [GitLab CI — Using GitLab to contribute to Drupal](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci) — configuring automated testing via `.gitlab-ci.yml` and the Drupal Association's maintained template
+- [Project Browser — Module logo](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/project-browser/module-maintainers-how-to-update-projects-to-be-compatible-with-project-browser#s-logo) — `logo.png` specification and requirements for Project Browser display

@@ -208,7 +208,9 @@ Both `EntityLabelsController` and `EntityLabelsImportForm` `use EntityLabelsType
 
 ```
 entity_labels/
+├── .gitlab-ci.yml
 ├── composer.json
+├── logo.png
 ├── README.md
 ├── AGENTS.md
 ├── entity_labels.info.yml
@@ -255,6 +257,81 @@ entity_labels/
 ## Implementation
 
 Files listed creation-order: scaffolding → infrastructure → src (thin to thick) → tests.
+
+---
+
+### .gitlab-ci.yml
+
+GitLab CI is enabled for all projects on Drupal.org. Add a `.gitlab-ci.yml` file to the repository root to activate automated testing via the [Drupal Association's GitLab CI template](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci).
+
+The recommended approach is to use the Drupal Association's maintained template, which covers PHPCS, PHPStan, PHPUnit (unit + functional), and compatibility testing against multiple Drupal core versions and PHP/database environments. The template is updated centrally by the Drupal Association — projects that include it stay current automatically without local changes.
+
+**Create via the GitLab UI (easiest):**
+
+1. From the project page on `git.drupalcode.org`, open the repository file browser (not the Web IDE).
+2. Add a new file named `.gitlab-ci.yml`.
+3. When prompted to select a template, choose the **Drupal Association's `template.gitlab-ci.yml`** from the top of the list.
+4. Commit directly to the default branch.
+
+**Create manually:**
+
+```yaml
+# See https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci
+include:
+  - project: $_GITLAB_TEMPLATES_REPO
+    ref: $_GITLAB_TEMPLATES_REF
+    file:
+      - '/includes/include.drupalci.main.yml'
+```
+
+> Copy the full template content from:
+> `https://git.drupalcode.org/project/gitlab_templates/-/blob/main/gitlab-ci.yml`
+>
+> You do **not** need to copy the supplementary `include` files — GitLab references those directly from the template project.
+
+**Verify:** After committing, navigate to **Build → Pipelines** in the GitLab sidebar. The pipeline should trigger automatically. Click through to see individual job results (PHPCS, PHPStan, PHPUnit, etc.).
+
+**Optional overrides** for this module (add to the root `.gitlab-ci.yml` after the `include` block):
+
+```yaml
+variables:
+  # Opt in to testing against the next minor/major Drupal core release.
+  OPT_IN_TEST_NEXT_MINOR: 1
+  OPT_IN_TEST_NEXT_MAJOR: 1
+```
+
+Reference: [GitLab CI — Using GitLab to contribute to Drupal](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci)
+
+---
+
+### logo.png
+
+Place a `logo.png` in the repository root on the default branch. This image is displayed in the [Project Browser](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/project-browser/module-maintainers-how-to-update-projects-to-be-compatible-with-project-browser#s-logo), on `drupalcode.org` as the project avatar, and on the `drupal.org` project page.
+
+**Specification:**
+
+- **Format:** PNG, no animations
+- **Dimensions:** 512 × 512 px (square)
+- **File size:** 10 KB or less (use a lossy tool such as `pngquant` at ~80% quality)
+- **Filename:** `logo.png` (exact)
+- **Do not** round the corners in the PNG itself
+- **Do not** include the module name in the image (unless there is a compelling branding reason)
+- If designed in a vector format, also provide `logo_svg.txt` (SVG content in a `.txt` file) to facilitate future changes
+- Logos are cached and may take up to an hour to appear after pushing
+
+**Image generation prompt:**
+
+> Create a square 512×512 logo for a Drupal contributed module called **Entity Labels**.
+>
+> The module provides a Reports page in Drupal's admin UI where site builders can browse all entity types, bundles, and fields — viewing and bulk-editing their labels, descriptions, and help text via CSV export and import. It is a developer/administrator tool focused on data organisation and content modelling visibility.
+>
+> Design a clean, minimal icon suitable for use as a small avatar (it must read clearly at 64 × 64 px). Do not include the module name as text. Do not round the corners. Use a transparent or solid background.
+>
+> Suggested visual direction: a tag or label shape combined with a subtle data/list motif — for example, a price-tag or entity-node icon overlaid with small horizontal lines suggesting rows of data, rendered in Drupal's blue (#0678BE) with a white or light accent. The style should feel at home alongside other Drupal admin module icons: flat, two-tone, no gradients, no drop shadows.
+>
+> Output a PNG at exactly 512 × 512 px. File size should be 10 KB or less.
+
+Reference: [Project Browser — Module Maintainers: How to update projects to be compatible with Project Browser](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/project-browser/module-maintainers-how-to-update-projects-to-be-compatible-with-project-browser#s-logo)
 
 ---
 
@@ -335,6 +412,62 @@ claude init
 ```
 
 `claude init` inspects the codebase and produces an `AGENTS.md` tailored to the actual file structure, coding patterns, and architecture it finds.
+
+---
+
+### .gitlab-ci.yml
+
+GitLab CI is enabled for every project on Drupal.org. The `.gitlab-ci.yml` file in the root of the repository configures automated testing via the Drupal Association's shared template, which handles PHP/DB environment matrix, PHPCS, PHPStan, and PHPUnit runs. The template is maintained upstream so it stays current with supported Drupal/PHP/DB versions without requiring local changes.
+
+Create the file via the GitLab repository UI (recommended) or manually:
+
+1. On `git.drupalcode.org`, navigate to the project, add a new file named `.gitlab-ci.yml`, and choose the **Drupal Association template** from the template picker.
+2. Alternatively, copy the template directly from `https://git.drupalcode.org/project/gitlab_templates/-/blob/main/gitlab-ci.yml` and commit it.
+
+Minimal starting content (the `include` pulls all job definitions from the upstream template):
+
+```yaml
+include:
+  - project: $_GITLAB_TEMPLATES_REPO
+    ref: $_GITLAB_TEMPLATES_REF
+    file:
+      - '/includes/include.drupalci.main.yml'
+      - '/includes/include.drupalci.variables.yml'
+      - '/includes/include.drupalci.workflows.yml'
+```
+
+Pipelines run automatically on merge request events, commits to the default branch, tags, and manual triggers. No additional configuration is needed for a standard contrib module. To opt in to additional test environments (e.g. previous/next major Drupal versions or max PHP):
+
+```yaml
+variables:
+  OPT_IN_TEST_PREVIOUS_MAJOR: 1
+  OPT_IN_TEST_NEXT_MINOR: 1
+  OPT_IN_TEST_MAX_PHP: 1
+```
+
+See [GitLab CI — Using GitLab to contribute to Drupal](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci) for full documentation.
+
+---
+
+### logo.png
+
+A 512×512 PNG logo is required for the module to display correctly in [Project Browser](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/project-browser/module-maintainers-how-to-update-projects-to-be-compatible-with-project-browser#s-logo) and as the project avatar on `drupalcode.org` and `drupal.org`.
+
+**Specifications:**
+
+- **Dimensions:** 512×512 pixels, square
+- **Format:** PNG, no animations
+- **File size:** 10 KB or less (use a lossy tool such as `pngquant` at ~80% quality)
+- **Filename:** `logo.png` (placed in the repository root on the default branch)
+- Do **not** round the corners in the PNG itself
+- Do **not** include the module name as text in the image (unless there is a compelling branding reason)
+- If designed in a vector format, also commit `logo_svg.txt` (SVG content) to the repo root to facilitate future edits
+
+Logos are cached and may take up to an hour to appear after committing.
+
+**AI image-generation prompt:**
+
+> A minimal, flat icon representing structured data labels and entity relationships in a Drupal site. The icon should suggest taxonomy or classification — for example, a grid of labelled cards or a layered hierarchy of tag/label shapes with subtle connector lines. Use a clean, modern style with a limited palette of two or three colours (blue-grey tones work well). No text. No gradients. Transparent or white background. Suitable for use as a square module icon at small sizes (512×512 px output). The module — Entity Labels — helps site builders view, export, and bulk-update the human-readable labels and descriptions attached to Drupal entity types, bundles, and fields via CSV.
 
 ---
 
@@ -1386,6 +1519,11 @@ public function testCustomFieldImport(): void {
 
 ## Reference
 
+### Drupal.org Contrib Standards
+
+- [GitLab CI — Using GitLab to contribute to Drupal](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci) — configuring `.gitlab-ci.yml` for automated testing on Drupal.org
+- [Project Browser: logo and compatibility requirements for module maintainers](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/project-browser/module-maintainers-how-to-update-projects-to-be-compatible-with-project-browser#s-logo) — `logo.png` specifications (512×512 PNG, ≤10 KB) and Project Browser card requirements
+
 ### Drupal APIs
 
 - [EntityTypeManagerInterface](https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Entity!EntityTypeManagerInterface.php/interface/EntityTypeManagerInterface/11.x) — `getDefinitions()`, `getStorage()`
@@ -1412,4 +1550,9 @@ public function testCustomFieldImport(): void {
 
 - [Field Data module](https://www.drupal.org/project/field_data) — inspiration for the single-controller + `$type` route-default pattern and the Controller + Service architecture used here
 - [xurizaemon/csvimport — CSVimportForm.php](https://github.com/xurizaemon/csvimport/blob/8.x-1.x/src/Form/CSVimportForm.php) — reference implementation for plain `#type => 'file'` CSV upload using `file_save_upload()` in an element validator
+
+### Drupal.org Project Setup
+
+- [GitLab CI — Using GitLab to contribute to Drupal](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci) — how to configure automated testing via `.gitlab-ci.yml` and the Drupal Association's maintained template
+- [Project Browser — Module logo and compatibility](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/project-browser/module-maintainers-how-to-update-projects-to-be-compatible-with-project-browser#s-logo) — `logo.png` specification and requirements for Project Browser display
 
