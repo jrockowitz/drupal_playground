@@ -36,7 +36,7 @@ class TelephoneFilterTest extends UnitTestCase {
   /**
    * Data provider for testProcessProducesLink().
    *
-   * Each entry is [input, expected_href] using area codes ['800', '888'].
+   * Each entry is [input, expected_href] using area codes '800,888'.
    *
    * @return array
    *   Test data.
@@ -114,7 +114,7 @@ class TelephoneFilterTest extends UnitTestCase {
    * @dataProvider processProducesNoLinkProvider
    * @covers ::process
    */
-  public function testProcessProducesNoLink(array $area_codes, string $input): void {
+  public function testProcessProducesNoLink(string $area_codes, string $input): void {
     $result = $this->createFilter($area_codes)->process($input, 'en');
     $this->assertStringNotContainsString('<a ', $result->getProcessedText());
   }
@@ -130,22 +130,22 @@ class TelephoneFilterTest extends UnitTestCase {
   public static function processProducesNoLinkProvider(): array {
     return [
       // Area code not in the configured list — must not be linked.
-      'unlisted area code' => [['800', '888'], '999-888-8888'],
+      'unlisted area code' => ['800,888', '999-888-8888'],
 
       // 7-digit number with no area code — regex requires a 3-digit area code.
-      'seven digit number' => [['800', '888'], '555-1234'],
+      'seven digit number' => ['800,888', '555-1234'],
 
       // Empty string — nothing to process.
-      'empty string' => [['800', '888'], ''],
+      'empty string' => ['800,888', ''],
 
       // Plain text with no phone number at all.
-      'no phone number in text' => [['800', '888'], '<p>No phone number here.</p>'],
+      'no phone number in text' => ['800,888', '<p>No phone number here.</p>'],
 
       // Lowercase vanity — [A-Z0-9] does not match lowercase letters.
-      'vanity flowers lowercase' => [['800', '888'], 'Call 800-flowers today'],
+      'vanity flowers lowercase' => ['800,888', 'Call 800-flowers today'],
 
       // Mixed-case vanity — partial uppercase is not enough for a full match.
-      'vanity Flowers mixed case' => [['800', '888'], 'Call 800-Flowers today'],
+      'vanity Flowers mixed case' => ['800,888', 'Call 800-Flowers today'],
     ];
   }
 
@@ -159,7 +159,7 @@ class TelephoneFilterTest extends UnitTestCase {
    * @dataProvider processAnchorCountProvider
    * @covers ::process
    */
-  public function testProcessAnchorCount(array $area_codes, string $input, int $expected_count): void {
+  public function testProcessAnchorCount(string $area_codes, string $input, int $expected_count): void {
     $result = $this->createFilter($area_codes)->process($input, 'en');
     $this->assertSame($expected_count, substr_count($result->getProcessedText(), '<a '));
   }
@@ -177,7 +177,7 @@ class TelephoneFilterTest extends UnitTestCase {
       // A number already inside an <a> tag must not be double-wrapped.
       // The DOMDocument walk detects the <a> ancestor and skips the text node.
       'no double wrap direct anchor' => [
-        ['800', '888'],
+        '800,888',
         '<a href="tel:+18888888888">888-888-8888</a>',
         1,
       ],
@@ -186,7 +186,7 @@ class TelephoneFilterTest extends UnitTestCase {
       // double-wrapped. The ancestor check must walk all the way up the tree,
       // not just the immediate parent.
       'no double wrap nested inside anchor' => [
-        ['800', '888'],
+        '800,888',
         '<a href="tel:+18888888888"><strong>888-888-8888</strong></a>',
         1,
       ],
@@ -194,28 +194,28 @@ class TelephoneFilterTest extends UnitTestCase {
       // A number inside a non-anchor inline element must be wrapped.
       // <strong> is not an anchor ancestor.
       'number in non-anchor inline element is wrapped' => [
-        ['800', '888'],
+        '800,888',
         '<p>Call <strong>888-888-8888</strong> now.</p>',
         1,
       ],
 
       // Multiple numbers in a single string must each be wrapped independently.
       'multiple numbers each wrapped' => [
-        ['800', '888'],
+        '800,888',
         'Call 888-888-8888 or 800-555-1234',
         2,
       ],
 
       // When only 800 is configured, the 888 number must not be linked.
       'only configured area code linked' => [
-        ['800'],
+        '800',
         '800-555-1234 and 888-555-1234',
         1,
       ],
 
-      // Empty area_codes array — all phone numbers are linked.
+      // Empty area_codes string — all phone numbers are linked.
       'empty area codes links all numbers' => [
-        [],
+        '',
         'Call 999-888-8888',
         1,
       ],
@@ -232,7 +232,7 @@ class TelephoneFilterTest extends UnitTestCase {
    * @dataProvider processPreservesContentProvider
    * @covers ::process
    */
-  public function testProcessPreservesContent(array $area_codes, string $input, string $expected_href, string $expected_text): void {
+  public function testProcessPreservesContent(string $area_codes, string $input, string $expected_href, string $expected_text): void {
     $result = $this->createFilter($area_codes)->process($input, 'en');
     $this->assertStringContainsString('href="' . $expected_href . '"', $result->getProcessedText());
     $this->assertStringContainsString($expected_text, $result->getProcessedText());
@@ -251,7 +251,7 @@ class TelephoneFilterTest extends UnitTestCase {
       // Non-alphabetical area codes still produce links — alternation matches
       // any listed code regardless of order.
       'valid codes in arbitrary order produce links' => [
-        ['888', '800'],
+        '888,800',
         '888-555-1234',
         'tel:+18885551234',
         '888-555-1234',
@@ -261,7 +261,7 @@ class TelephoneFilterTest extends UnitTestCase {
       // the Html::load() / Html::serialize() round-trip. The Masterminds HTML5
       // parser used internally by Html::load() handles UTF-8 natively.
       'multibyte content preserved' => [
-        ['800', '888'],
+        '800,888',
         '<p>Appelez le 888-888-8888 s\'il vous plaît.</p>',
         'tel:+18888888888',
         'plaît',
@@ -328,11 +328,11 @@ class TelephoneFilterTest extends UnitTestCase {
   /**
    * Creates a TelephoneFilter instance configured with the given area codes.
    *
-   * @param list<string> $area_codes
-   *   Array of digit-only area code strings. Defaults to ['800', '888'].
-   *   Pass [] to link all phone numbers regardless of area code.
+   * @param string $area_codes
+   *   Comma-delimited area code string. Defaults to '800,888'.
+   *   Pass '' to link all phone numbers regardless of area code.
    */
-  private function createFilter(array $area_codes = ['800', '888']): TelephoneFilter {
+  private function createFilter(string $area_codes = '800,888'): TelephoneFilter {
     return new TelephoneFilter(
       ['settings' => ['area_codes' => $area_codes]],
       'telephone_filter',

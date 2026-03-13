@@ -11,10 +11,10 @@ use Drupal\Tests\UnitTestCase;
 /**
  * Unit tests for TelephoneFilter area-code validation.
  *
- * Covers validateConfigurationForm() — which sets a FormState error for any
- * line that is not exactly 3 digits — and the downstream effect on
- * submitConfigurationForm(), which stores only non-empty lines once
- * validation has passed.
+ * Covers validateAreaCodes() — which sets a FormState error for any
+ * comma-separated token that is not exactly 3 digits — and the downstream
+ * effect on submitConfigurationForm(), which stores a clean comma-delimited
+ * string once validation has passed.
  *
  * @coversDefaultClass \Drupal\telephone_filter\Plugin\Filter\TelephoneFilter
  * @group telephone_filter
@@ -22,33 +22,28 @@ use Drupal\Tests\UnitTestCase;
 class TelephoneFilterValidationTest extends UnitTestCase {
 
   // ---------------------------------------------------------------------------
-  // validateConfigurationForm() — error produced for invalid input
+  // validateAreaCodes() — error produced for invalid input
   // ---------------------------------------------------------------------------
 
   /**
-   * Tests that an invalid area-code line triggers a form error.
+   * Tests that an invalid area-code token triggers a form error.
    *
-   * @param string $textarea_value
-   *   Raw textarea input that contains at least one invalid line.
+   * @param string $field_value
+   *   Raw textfield input that contains at least one invalid token.
    * @param string $expected_fragment
    *   A substring that must appear in the first error message.
    *
    * @dataProvider invalidAreaCodesProvider
-   * @covers ::validateConfigurationForm
+   * @covers ::validateAreaCodes
    */
-  public function testValidateConfigurationFormSetsError(
-    string $textarea_value,
+  public function testValidateAreaCodesSetsError(
+    string $field_value,
     string $expected_fragment,
   ): void {
-    $filter = $this->createFilter();
     $form_state = new FormState();
-    $form_state->setValue(
-      ['filters', 'telephone_filter', 'settings', 'area_codes'],
-      $textarea_value,
-    );
+    $element = ['#value' => $field_value, '#parents' => ['area_codes']];
 
-    $form = [];
-    $filter->validateConfigurationForm($form, $form_state);
+    TelephoneFilter::validateAreaCodes($element, $form_state);
 
     $errors = $form_state->getErrors();
     $this->assertNotEmpty($errors, 'Expected a form error but none was set.');
@@ -58,9 +53,9 @@ class TelephoneFilterValidationTest extends UnitTestCase {
   }
 
   /**
-   * Data provider for testValidateConfigurationFormSetsError().
+   * Data provider for testValidateAreaCodesSetsError().
    *
-   * Each entry is [textarea_value, expected_fragment_in_error_message].
+   * Each entry is [field_value, expected_fragment_in_error_message].
    *
    * @return array
    *   Test data.
@@ -89,71 +84,63 @@ class TelephoneFilterValidationTest extends UnitTestCase {
       // A 10-digit string (full phone number) fails the length check.
       'ten digits' => ['8008888888', '8008888888'],
 
-      // When the first line is valid but a later line is invalid, an error is
-      // still set. The invalid line text appears in the error message.
-      'invalid after valid' => ["800\n80A\n888", '80A'],
+      // When the first token is valid but a later token is invalid, an error is
+      // still set. The invalid token text appears in the error message.
+      'invalid after valid' => ['800,80A,888', '80A'],
 
-      // An invalid line among otherwise blank lines is still caught.
-      'invalid among blank lines' => ["\n\nABC\n", 'ABC'],
+      // An invalid token among otherwise blank tokens is still caught.
+      'invalid among blank tokens' => [',ABC,', 'ABC'],
 
     ];
   }
 
   // ---------------------------------------------------------------------------
-  // validateConfigurationForm() — no error for valid input
+  // validateAreaCodes() — no error for valid input
   // ---------------------------------------------------------------------------
 
   /**
-   * Tests that valid textarea input produces no form error.
+   * Tests that valid textfield input produces no form error.
    *
-   * @param string $textarea_value
-   *   Raw textarea input containing only valid (or blank) lines.
+   * @param string $field_value
+   *   Raw textfield input containing only valid (or blank) tokens.
    *
    * @dataProvider validAreaCodesProvider
-   * @covers ::validateConfigurationForm
+   * @covers ::validateAreaCodes
    */
-  public function testValidateConfigurationFormNoError(string $textarea_value): void {
-    $filter = $this->createFilter();
+  public function testValidateAreaCodesNoError(string $field_value): void {
     $form_state = new FormState();
-    $form_state->setValue(
-      ['filters', 'telephone_filter', 'settings', 'area_codes'],
-      $textarea_value,
-    );
+    $element = ['#value' => $field_value, '#parents' => ['area_codes']];
 
-    $form = [];
-    $filter->validateConfigurationForm($form, $form_state);
+    TelephoneFilter::validateAreaCodes($element, $form_state);
 
     $this->assertEmpty($form_state->getErrors(), 'Expected no form errors but errors were set.');
   }
 
   /**
-   * Data provider for testValidateConfigurationFormNoError().
+   * Data provider for testValidateAreaCodesNoError().
    *
    * @return array
    *   Test data.
    */
   public static function validAreaCodesProvider(): array {
     return [
-      // Empty textarea — "link all" mode, no validation required.
-      'empty textarea' => [''],
+      // Empty field — "link all" mode, no validation required.
+      'empty field' => [''],
 
       // Single valid code.
       'single valid code' => ['800'],
 
-      // Multiple valid codes on separate lines.
-      'multiple valid codes' => ["800\n888\n877"],
+      // Multiple valid codes, comma-separated.
+      'multiple valid codes' => ['800,888,877'],
 
       // Valid codes with surrounding whitespace — trim() normalises them.
-      'whitespace around code' => ["  800  \n888"],
+      'whitespace around code' => ['  800  ,888'],
 
-      // Windows-style CRLF endings — trim() strips the \r.
-      'crlf line endings' => ["800\r\n888\r\n877"],
+      // Blank tokens from extra commas are skipped.
+      'blank tokens between valid codes' => [',800,,888,'],
 
-      // Blank lines interspersed with valid codes are skipped.
-      'blank lines between valid codes' => ["\n800\n\n888\n\n"],
-
-      // Whitespace-only lines are treated as blank and skipped.
-      'whitespace only lines' => ["   \n800\n   \n888"],
+      // Whitespace-only tokens are treated as blank and skipped.
+      'whitespace only tokens' => ['   ,800,   ,888'],
     ];
   }
 
@@ -162,29 +149,29 @@ class TelephoneFilterValidationTest extends UnitTestCase {
   // ---------------------------------------------------------------------------
 
   /**
-   * Tests that submitConfigurationForm() stores only non-empty trimmed lines.
+   * Tests that submitConfigurationForm() stores only non-empty trimmed tokens.
    *
-   * ValidateConfigurationForm() is presumed to have already run and passed,
-   * so every non-blank line here is a valid 3-digit code. The submit handler
-   * is responsible only for stripping blank lines.
+   * ValidateAreaCodes() is presumed to have already run and passed, so every
+   * non-blank token here is a valid 3-digit code. The submit handler is
+   * responsible only for stripping blank tokens and re-joining with commas.
    *
-   * @param string $textarea_value
-   *   Raw textarea input (valid codes + optional blank lines).
-   * @param list<string> $expected_codes
-   *   The array that should be stored in settings after submission.
+   * @param string $field_value
+   *   Raw textfield input (valid codes + optional blank tokens).
+   * @param string $expected_codes
+   *   The string that should be stored in settings after submission.
    *
    * @dataProvider submitStoresValidCodesProvider
    * @covers ::submitConfigurationForm
    */
   public function testSubmitConfigurationFormStoresCodes(
-    string $textarea_value,
-    array $expected_codes,
+    string $field_value,
+    string $expected_codes,
   ): void {
     $filter = $this->createFilter();
     $form_state = new FormState();
     $form_state->setValue(
       ['filters', 'telephone_filter', 'settings', 'area_codes'],
-      $textarea_value,
+      $field_value,
     );
 
     $form = [];
@@ -204,23 +191,23 @@ class TelephoneFilterValidationTest extends UnitTestCase {
    */
   public static function submitStoresValidCodesProvider(): array {
     return [
-      // Empty textarea stores an empty array — enables "link all" mode.
-      'empty stores empty array' => ['', []],
+      // Empty field stores an empty string — enables "link all" mode.
+      'empty stores empty string' => ['', ''],
 
-      // Single valid code stored as one-element array.
-      'single valid code' => ['800', ['800']],
+      // Single valid code stored as-is.
+      'single valid code' => ['800', '800'],
 
-      // Two valid codes on separate lines.
-      'two valid codes' => ["800\n888", ['800', '888']],
+      // Two valid codes stored comma-delimited.
+      'two valid codes' => ['800,888', '800,888'],
 
-      // Blank lines are stripped; valid codes are preserved.
-      'blank lines stripped' => ["\n800\n\n888\n\n", ['800', '888']],
+      // Blank tokens from extra commas are stripped.
+      'blank tokens stripped' => [',800,,888,', '800,888'],
 
       // Whitespace around codes is trimmed before storage.
-      'whitespace trimmed' => ["  800  \n888", ['800', '888']],
+      'whitespace trimmed' => ['  800  ,888', '800,888'],
 
-      // Windows CRLF endings produce the same result as LF.
-      'crlf endings' => ["800\r\n888\r\n877", ['800', '888', '877']],
+      // Three codes in order.
+      'three codes' => ['800,888,877', '800,888,877'],
     ];
   }
 
@@ -233,7 +220,7 @@ class TelephoneFilterValidationTest extends UnitTestCase {
    */
   private function createFilter(): TelephoneFilter {
     $filter = new TelephoneFilter(
-      ['settings' => ['area_codes' => []]],
+      ['settings' => ['area_codes' => '']],
       'telephone_filter',
       ['provider' => 'telephone_filter'],
     );

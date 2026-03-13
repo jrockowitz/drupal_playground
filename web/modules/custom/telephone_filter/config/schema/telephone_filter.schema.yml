@@ -3,8 +3,5 @@ filter_settings.telephone_filter:
   label: 'Telephone filter settings'
   mapping:
     area_codes:
-      type: sequence
+      type: string
       label: 'Allowed area codes'
-      sequence:
-        type: string
-        label: 'Area code'

@@ -28,73 +28,62 @@ use Drupal\filter\Plugin\FilterInterface;
   title: new TranslatableMarkup('Telephone filter'),
   description: new TranslatableMarkup('Converts US phone numbers to clickable tel: links.'),
   type: FilterInterface::TYPE_TRANSFORM_REVERSIBLE,
+  settings: [
+    "area_codes" => "",
+  ],
 )]
 final class TelephoneFilter extends FilterBase {
 
   /**
    * {@inheritdoc}
    */
-  public function defaultConfiguration(): array {
-    // Empty array means all phone numbers are linked regardless of area code.
-    return ['area_codes' => []] + parent::defaultConfiguration();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function settingsForm(array $form, FormStateInterface $form_state): array {
     $form['area_codes'] = [
-      '#type' => 'textarea',
+      '#type' => 'textfield',
       '#title' => $this->t('Allowed area codes'),
-      '#description' => $this->t('Enter one area code per line. Leave blank to link all phone numbers regardless of area code.'),
-      // Implode the stored array back to one-per-line for the textarea.
-      '#default_value' => implode("\n", $this->settings['area_codes']),
-      '#rows' => 5,
+      '#description' => $this->t('Comma-separated 3-digit area codes (e.g. 800, 888). Leave blank to link all phone numbers regardless of area code.'),
+      '#default_value' => $this->settings['area_codes'],
+      '#maxlength' => 255,
+      '#element_validate' => [[static::class, 'validateAreaCodes']],
     ];
     return $form;
   }
 
   /**
-   * {@inheritdoc}
+   * Validates the area_codes textfield value.
+   *
+   * Called via #element_validate so it is invoked by the filter settings form.
+   * Each comma-separated token must be exactly 3 digits; blank tokens from
+   * leading/trailing/doubled commas are silently skipped.
+   *
+   * @param array $element
+   *   The form element being validated.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current form state.
    */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
-    $raw = $form_state->getValue(['filters', $this->pluginId, 'settings', 'area_codes']) ?? '';
-
-    foreach (array_map('trim', explode("\n", $raw)) as $line) {
-      if ($line === '') {
+  public static function validateAreaCodes(array &$element, FormStateInterface $form_state): void {
+    $raw = $element['#value'] ?? '';
+    foreach (array_map('trim', explode(',', $raw)) as $code) {
+      if ($code === '') {
         continue;
       }
-      if (!ctype_digit($line) || strlen($line) !== 3) {
-        $form_state->setErrorByName(
-          'filters][' . $this->pluginId . '][settings][area_codes',
-          $this->t('"%line" is not a valid area code. Each line must contain exactly 3 digits (e.g. 800).', ['%line' => $line]),
+      if (!ctype_digit($code) || strlen($code) !== 3) {
+        $form_state->setError(
+          $element,
+          t('"@code" is not a valid area code. Each value must contain exactly 3 digits (e.g. 800).', ['@code' => $code]),
         );
-        // One error message is enough; stop on the first invalid entry.
-        break;
+        return;
       }
     }
-  }
-
-  /**
-   * Processes the filter settings form submission.
-   *
-   * Converts the raw textarea value (one area code per line) into a clean
-   * array of digit-only area code strings and stores it in $this->settings.
-   * FilterBase does not provide a parent implementation of this method.
-   */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
-    $raw = $form_state->getValue(['filters', $this->pluginId, 'settings', 'area_codes']) ?? '';
-    $this->settings['area_codes'] = array_values(array_filter(
-      array_map('trim', explode("\n", $raw)),
-      static fn (string $code): bool => $code !== '',
-    ));
   }
 
   /**
    * {@inheritdoc}
    */
   public function process($text, $langcode): FilterProcessResult {
-    $area_codes = $this->settings['area_codes'];
+    $area_codes = array_values(array_filter(
+      array_map('trim', explode(',', $this->settings['area_codes'])),
+    ));
 
     // Pattern: \(?\b(AREA)\)?\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b
     // \(? and \)? make area-code parentheses optional.
