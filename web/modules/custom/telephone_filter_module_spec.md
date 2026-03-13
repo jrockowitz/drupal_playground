@@ -1240,6 +1240,18 @@ class TelephoneFilterValidationTest extends UnitTestCase {
 ```
 ---
 
+## Agent Skills
+
+Load the following skills before building this module to provide accurate Drupal API patterns, security guardrails, and development workflow context.
+
+- **`drupal-at-your-fingertips`** — Covers filter plugins (`FilterBase`, `FilterInterface`), settings forms with validation (`settingsForm`, `validateConfigurationForm`), `hook_help()`, config schema, and PHPUnit testing patterns — directly relevant to every component in this module.
+- **`ivangrynenko-cursorrules-drupal`** — The filter does HTML manipulation (DOMDocument) and regex-based text replacement — both high-risk areas for XSS and injection. Provides OWASP Top 10 patterns, injection prevention rules, and Drupal coding standards enforcement (PHPCS `Drupal`/`DrupalPractice`, PHPStan).
+- **`drupal-ddev`** — Needed for the development workflow: running PHPUnit tests inside the container, enabling the module, clearing caches, checking logs, and running PHPCS/PHPStan. All verification steps in this spec go through DDEV commands.
+- **`drupal-config-mgmt`** — The module ships a config schema (`config/schema/telephone_filter.schema.yml`) for `filter_settings.telephone_filter`. Provides correct patterns for filter plugin config schemas and safe patterns for exporting and inspecting config during development.
+- **`drupal-contrib-mgmt`** — The module has its own `composer.json`. Covers Composer conventions for contrib modules — package naming, `type: drupal-module`, dependency declarations — ensuring the file is correct for drupal.org packaging.
+
+---
+
 ## Reference
 
 ### Drupal APIs
