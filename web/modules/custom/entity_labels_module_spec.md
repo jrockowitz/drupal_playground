@@ -209,7 +209,7 @@ Both `EntityLabelsController` and `EntityLabelsImportForm` `use EntityLabelsType
 ```
 entity_labels/
 ├── .gitlab-ci.yml
-├── composer.json
+├── composer.jsexion
 ├── logo.png
 ├── README.md
 ├── AGENTS.md
