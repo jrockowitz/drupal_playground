@@ -1,0 +1,15 @@
+{
+    "name": "drupal/telephone_filter",
+    "description": "Text format filter that converts US phone numbers to clickable tel: links.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://drupal.org/project/telephone_filter",
+    "support": {
+        "issues": "https://drupal.org/project/issues/telephone_filter",
+        "source": "https://git.drupalcode.org/project/telephone_filter"
+    },
+    "require": {
+        "php": "^8.3",
+        "drupal/core": "^10.3 || ^11"
+    }
+}

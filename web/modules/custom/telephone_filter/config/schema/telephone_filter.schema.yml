@@ -1,0 +1,10 @@
+filter_settings.telephone_filter:
+  type: filter
+  label: 'Telephone filter settings'
+  mapping:
+    area_codes:
+      type: sequence
+      label: 'Allowed area codes'
+      sequence:
+        type: string
+        label: 'Area code'

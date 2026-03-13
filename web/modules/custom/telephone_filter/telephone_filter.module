@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @file
+ * Converts US phone numbers in text filters to clickable tel: links.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function telephone_filter_help(string $route_name, RouteMatchInterface $route_match): string {
+  return match ($route_name) {
+    'help.page.telephone_filter' => (string) t(
+      'Provides a text filter that converts US phone numbers to clickable tel: links. '
+      . 'Enable the filter on a text format at <a href=":url">Text formats</a>.',
+      [':url' => '/admin/config/content/formats'],
+    ),
+    default => '',
+  };
+}

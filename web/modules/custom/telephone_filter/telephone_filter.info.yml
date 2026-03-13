@@ -1,0 +1,7 @@
+name: 'Telephone Filter'
+type: module
+description: 'Converts US phone numbers in text to clickable tel: links.'
+package: Filter
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - drupal:filter
