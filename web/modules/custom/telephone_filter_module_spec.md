@@ -88,10 +88,12 @@ Admin UI → Text Format → TelephoneFilter enabled
 ### Phone Regex
 
 ```
-/\b(AREA_CODES)\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/
+/\(?\b(AREA_CODES)\)?\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/
 ```
 
 `AREA_CODES` is replaced at runtime with a `|`-joined alternation built from `$this->settings['area_codes']`, which is a `list<string>` of digit-only area code strings (e.g. `['800', '888']`). When the array is empty, the area-code capture group is replaced with `[0-9]{3}`, matching any three-digit area code — all phone numbers are linked.
+
+The leading `\(?` and trailing `\)?` make the parentheses around the area code optional, supporting `(888) 888-8888` alongside bare `888-888-8888`. The word boundary `\b` fires between `(` and the first area-code digit (or before the digit when no `(` is present), so partial matches inside longer digit strings are still rejected. When parentheses are present, `$matches[0]` includes them in the matched text used as the anchor's visible label, but capture groups 1–3 contain only the bare area code, exchange, and subscriber digits/letters — the `href` is always correct.
 
 The pattern has **no `i` flag**. The `[A-Z0-9]` character class matches uppercase letters and digits only. Vanity numbers must be entered in uppercase (`800-FLOWERS`) to be linked; lowercase (`800-flowers`) or mixed-case (`800-Flowers`) segments are treated as plain text and left unchanged.
 
@@ -156,15 +158,15 @@ telephone_filter/
 ├── config/
 │   └── schema/
 │       └── telephone_filter.schema.yml             # filter settings schema
-└── src/
-    └── Plugin/
-        └── Filter/
-            └── TelephoneFilter.php                 # FilterBase plugin
-tests/
-└── src/
-    └── Unit/
-        ├── TelephoneFilterTest.php
-        └── TelephoneFilterValidationTest.php         # validateConfigurationForm() / area-code validation
+├── src/
+│   └── Plugin/
+│       └── Filter/
+│           └── TelephoneFilter.php                 # FilterBase plugin
+└── tests/
+    └── src/
+        └── Unit/
+            ├── TelephoneFilterTest.php
+            └── TelephoneFilterValidationTest.php   # validateConfigurationForm() / area-code validation
 ```
 
 ---
@@ -284,7 +286,8 @@ Standard Drupal module manifest. Keep the `drupal/core` constraint in sync with 
         "source": "https://git.drupalcode.org/project/telephone_filter"
     },
     "require": {
-        "drupal/core": "^10 || ^11"
+        "php": "^8.3",
+        "drupal/core": "^10.3 || ^11"
     }
 }
 ```
@@ -299,7 +302,8 @@ type: module
 description: 'Converts US phone numbers in text to clickable tel: links.'
 package: Filter
 core_version_requirement: ^10.3 || ^11
-php: '8.3'
+dependencies:
+  - drupal:filter
 ```
 
 ---
@@ -445,14 +449,16 @@ final class TelephoneFilter extends FilterBase {
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
-    // Validation has already rejected non-digit and wrong-length entries, so
-    // only blank-line stripping is needed here.
+    // Read the raw textarea value before the parent overwrites $this->settings.
+    // parent::submitConfigurationForm() sets $this->settings directly from form
+    // state, which would store the raw string. We call parent first, then
+    // overwrite area_codes with the cleaned array.
     $raw = $form_state->getValue(['filters', $this->pluginId, 'settings', 'area_codes']) ?? '';
+    parent::submitConfigurationForm($form, $form_state);
     $this->settings['area_codes'] = array_values(array_filter(
       array_map('trim', explode("\n", $raw)),
       static fn (string $code): bool => $code !== '',
     ));
-    parent::submitConfigurationForm($form, $form_state);
   }
 
   /**
@@ -462,8 +468,10 @@ final class TelephoneFilter extends FilterBase {
     $area_codes = $this->settings['area_codes'];
 
     // Pattern explanation:
-    //   \b              — word boundary to avoid partial matches
+    //   \(?             — optional opening parenthesis around the area code
+    //   \b              — word boundary (fires between ( and digit, or before bare digit)
     //   (AREA_CODES)    — area code alternation; omitted entirely when list is empty
+    //   \)?             — optional closing parenthesis after the area code
     //   \s*[-.]?\s*     — optional separator (space, dash, or dot) with surrounding whitespace
     //   ([A-Z0-9]{3})   — exchange: 3 uppercase alphanumeric characters (vanity or digits)
     //   \s*[-.]?\s*     — optional separator
@@ -473,11 +481,11 @@ final class TelephoneFilter extends FilterBase {
     // When area_codes is empty, a bare 3-digit group matches any area code.
     if ($area_codes !== []) {
       $alternation = implode('|', array_map('preg_quote', $area_codes, array_fill(0, count($area_codes), '/')));
-      $pattern = '/\b(' . $alternation . ')\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/';
+      $pattern = '/\(?\b(' . $alternation . ')\)?\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/';
     }
     else {
       // No restriction — match any 3-digit area code.
-      $pattern = '/\b([0-9]{3})\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/';
+      $pattern = '/\(?\b([0-9]{3})\)?\s*[-.]?\s*([A-Z0-9]{3})\s*[-.]?\s*([A-Z0-9]{4})\b/';
     }
 
     $document = Html::load($text);
@@ -625,6 +633,11 @@ final class TelephoneFilter extends FilterBase {
 The phone regex uses `[A-Z0-9]` (uppercase only) without the `i` flag, so vanity numbers must be uppercase to match. Lowercase or mixed-case letter segments are treated as plain text and not linked. `vanityToDigits()` is only ever called on segments that have already matched `[A-Z0-9]`.
 
 `area_codes` is stored as a `list<string>`. `createFilter()` in the test helper accepts that array directly. An empty array means all phone numbers are linked.
+
+```bash
+# Run all telephone_filter unit tests inside DDEV
+ddev exec vendor/bin/phpunit web/modules/custom/telephone_filter/tests/
+```
 
 ---
 
@@ -897,7 +910,7 @@ class TelephoneFilterTest extends UnitTestCase {
       // the Html::load() / Html::serialize() round-trip. The Masterminds HTML5
       // parser used internally by Html::load() handles UTF-8 natively.
       'multibyte content preserved' => [
-        "800\n888",
+        ['800', '888'],
         '<p>Appelez le 888-888-8888 s\'il vous plaît.</p>',
         'tel:+18888888888',
         'plaît',
@@ -969,7 +982,7 @@ class TelephoneFilterTest extends UnitTestCase {
    */
   private function createFilter(array $area_codes = ['800', '888']): TelephoneFilter {
     return new TelephoneFilter(
-      ['area_codes' => $area_codes],
+      ['settings' => ['area_codes' => $area_codes]],
       'telephone_filter',
       ['provider' => 'telephone_filter'],
     );
@@ -1217,7 +1230,7 @@ class TelephoneFilterValidationTest extends UnitTestCase {
    */
   private function createFilter(): TelephoneFilter {
     return new TelephoneFilter(
-      ['area_codes' => []],
+      ['settings' => ['area_codes' => []]],
       'telephone_filter',
       ['provider' => 'telephone_filter'],
     );
