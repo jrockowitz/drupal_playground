@@ -1,4 +1,4 @@
-# COMPOSER.md — PHP Dependency Manager Cheatsheet
+# PHP-COMPOSER.md — PHP Dependency Manager Cheatsheet
 
 ## What Is Composer?
 
@@ -9,19 +9,6 @@ Key files:
 - **`composer.json`** — Declares your project's dependencies, autoload rules, scripts, and metadata.
 - **`composer.lock`** — Records the exact resolved versions installed. Commit this to version control for reproducible builds.
 - **`vendor/`** — Where packages are installed. Always gitignore this directory.
-
----
-
-## Installation
-
-```bash
-# Download and install globally (Linux/macOS)
-curl -sS https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
-
-# Verify
-composer --version
-```
 
 ---
 
@@ -59,14 +46,17 @@ composer update
 # Update a single package
 composer update vendor/package
 
-# Update lock file only (no install)
+# Update with a temporary constraint override (test upgrade paths without editing composer.json)
+composer update --with vendor/package:^3.0
+
+# Regenerate lock file only (no install — useful after merge conflicts in composer.lock)
 composer update --lock
 
-# Show why a package is installed
-composer why vendor/package
+# Bump composer.json constraints to match currently locked versions
+composer bump
 
-# Show what prevents a package from being installed/updated
-composer why-not vendor/package:^3.0
+# Reinstall a package from scratch without modifying the lock file
+composer reinstall vendor/package
 ```
 
 ---
@@ -88,6 +78,15 @@ composer outdated
 
 # Search Packagist
 composer search keyword
+
+# Show why a package is installed (which packages depend on it)
+composer why vendor/package
+
+# Show what prevents a package from being installed/updated
+composer why-not vendor/package:^3.0
+
+# Show funding links for installed packages
+composer fund
 ```
 
 ---
@@ -105,18 +104,13 @@ composer dump-autoload --optimize    # or -o
 composer dump-autoload --classmap-authoritative   # or -a
 ```
 
-Example `composer.json` autoload config:
+Example `composer.json` autoload config (`autoload-dev` follows the same pattern for test namespaces):
 
 ```json
 {
   "autoload": {
     "psr-4": {
       "App\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "App\\Tests\\": "tests/"
     }
   }
 }
@@ -184,43 +178,76 @@ composer global show
 
 ---
 
+## Private Repositories & Auth
+
+```bash
+# Add a private Composer repository (e.g. Private Packagist, Satis, Drupal)
+composer config repositories.my-repo composer https://packages.example.com
+
+# Add a VCS repository (pull directly from a Git repo)
+composer config repositories.my-fork vcs https://github.com/you/forked-package
+
+# Store credentials in auth.json (per-project, gitignored)
+composer config http-basic.packages.example.com username token
+
+# Store credentials globally (~/.composer/auth.json)
+composer config --global http-basic.packages.example.com username token
+```
+
+> `auth.json` supports `http-basic`, `bearer`, `bitbucket-oauth`, `github-oauth`, and `gitlab-oauth` types. Keep it out of version control.
+
+---
+
+## Platform Overrides
+
+Force dependency resolution to target a specific PHP version or extension set, regardless of your local environment:
+
+```bash
+# Pin the target PHP version
+composer config platform.php 8.3.0
+
+# Pin a specific extension version
+composer config platform.ext-gd 2.1.0
+
+# Remove a platform override
+composer config --unset platform.php
+```
+
+> Useful for ensuring `composer update` resolves against production's PHP version even if your local machine runs a different one.
+
+---
+
 ## Version Constraints Quick Reference
 
-| Constraint        | Meaning                                         |
-| ----------------- | ----------------------------------------------- |
-| `1.2.3`           | Exact version                                   |
-| `>=1.2`           | Greater than or equal to 1.2                    |
-| `^1.2`            | >=1.2.0 and <2.0.0 (next major break)           |
-| `~1.2`            | >=1.2.0 and <1.3.0 (next minor break)           |
-| `^1.2 \|\| ^2.0` | Either range (OR)                               |
-| `1.2.*`           | Any patch in 1.2.x                              |
-| `dev-main`        | Latest commit on the `main` branch              |
+| Constraint       | Meaning                                |
+| ---------------- | -------------------------------------- |
+| `1.2.3`          | Exact version                          |
+| `>=1.2`          | Greater than or equal to 1.2           |
+| `^1.2`           | >=1.2.0 and <2.0.0 (next major break) |
+| `~1.2`           | >=1.2.0 and <1.3.0 (next minor break) |
+| `^1.2 || ^2.0`   | Either range (OR)                      |
+| `1.2.*`          | Any patch in 1.2.x                     |
+| `dev-main`       | Latest commit on the `main` branch     |
 
 ---
 
 ## Useful Flags
 
-| Flag                     | Purpose                                           |
-| ------------------------ | ------------------------------------------------- |
-| `--prefer-dist`          | Download zip archives (faster, default)           |
-| `--prefer-source`        | Clone from VCS (useful for debugging)             |
-| `--no-dev`               | Skip dev dependencies                             |
-| `--dry-run`              | Preview what would change without doing it        |
-| `-v` / `-vv` / `-vvv`   | Increase output verbosity                         |
-| `--no-plugins`           | Disable plugins during command                    |
-| `--no-scripts`           | Skip script execution                             |
-| `--ignore-platform-reqs` | Ignore PHP/extension version mismatches           |
+| Flag                      | Purpose                                         |
+| ------------------------- | ----------------------------------------------- |
+| `--prefer-dist`           | Download zip archives (faster, default)         |
+| `--prefer-source`         | Clone from VCS (useful for debugging)           |
+| `--no-dev`                | Skip dev dependencies                           |
+| `--dry-run`               | Preview what would change without doing it      |
+| `-v` / `-vv` / `-vvv`    | Increase output verbosity                       |
+| `--no-plugins`            | Disable plugins during command                  |
+| `--no-scripts`            | Skip script execution                           |
+| `--ignore-platform-reqs`  | Ignore PHP/extension version mismatches         |
+| `--with vendor/pkg:^3.0`  | Temporary constraint override during update     |
 
 ---
 
-## Common Workflows
-
-**Starting a new project:**
-
-```bash
-composer init
-composer require symfony/console monolog/monolog
-```
+## Recipes
 
 **Locking deps for CI / production:**
 
@@ -232,6 +259,30 @@ git commit -m "Update dependencies"
 
 # CI / production runs:
 composer install --no-dev --optimize-autoloader
+```
+
+**Resolving merge conflicts in `composer.lock`:**
+
+```bash
+# Accept either side of the conflict, then regenerate from composer.json
+git checkout --theirs composer.lock
+composer update --lock
+```
+
+**Testing an upgrade path without editing `composer.json`:**
+
+```bash
+composer update --with vendor/package:^3.0 --dry-run   # preview first
+composer update --with vendor/package:^3.0              # apply if it looks good
+```
+
+**Tightening constraints after updates:**
+
+```bash
+composer update
+composer bump              # align composer.json constraints to locked versions
+git add composer.json composer.lock
+git commit -m "Bump dependency constraints"
 ```
 
 **Adding a Drupal module (Drupal-specific):**
