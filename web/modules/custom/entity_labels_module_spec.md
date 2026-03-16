@@ -30,10 +30,13 @@ A Drupal 10/11 contributed module (`entity_labels`) providing a **Reports** page
 
 No hard dependency on contrib modules. When the following are installed, the Fields report, export, and import are extended automatically:
 
-| Module | Version | Behaviour |
-|---|---|---|
-| `field_group` | any | Groups from the default form mode appear as rows with `field_type = field_group`; group label and description are exportable and importable. |
-| `custom_field` | 4.x only | Each column within a `custom_field` field gets its own row, identified by a `field_column` CSV column; column label and description are exportable and importable. Other major versions are skipped with a warning. |
+- `field_group` (any)
+  - Groups from the default form mode appear as rows with `field_type = field_group`
+  - Group label and description are exportable and importable.
+- `custom_field` (4.x only)
+  - If the Custom Field module is installed, column labels are exported, and column labels may be imported.
+  - Each column within a `custom_field` field gets its own row, identified by a `field_column` CSV column
+  - Other major versions are skipped with a warning.
 
 ### Non-Functional
 
@@ -51,7 +54,7 @@ No hard dependency on contrib modules. When the following are installed, the Fie
 ### Entities report
 
 - ⚫ Navigate to **Administration → Reports → Entity labels** (`/admin/reports/entity-labels/entity`).
-- ⚫ Confirm the **Entities** primary tab is active and the table lists entity types that support bundles (e.g. Content, Taxonomy term) with machine-name column headers: `entity_type`, `bundle`, `label`, `description`, `help`.
+- ⚫ Confirm the **Entities** primary tab is active and the table lists entity types that support bundles (e.g. Content, Taxonomy term) with machine-name column headers: `langcode`, `entity_type`, `bundle`, `label`, `description`, `help`.
 - ⚫ Click an **entity_type** cell (e.g. "node") — confirm the view filters to that type only and the breadcrumb updates to show the entity type label.
 - ⚫ Click a **bundle** cell (e.g. "article") — confirm the view filters to that bundle and the breadcrumb updates to show the bundle label.
 - ⚫ Click **Entity labels** in the breadcrumb — confirm navigation returns to the full unfiltered Entities list.
@@ -103,7 +106,7 @@ Reports
         └── Import  [secondary tab]        entity_labels.field.import
 ```
 
-Both primary tabs share `entity_labels.entity.report` as their `base_route`. Each primary tab's secondary tabs use that tab's own route as their `base_route`.
+Both primary tabs share `entity_labels.entity.report` as their `base_route`. Each primary tab's secondary tabs use `parent_id` pointing to their parent primary tab (e.g. `parent_id: entity_labels.entity.report` for entity Export/Import); `base_route` is omitted on secondary tabs since Drupal inherits it from the parent.
 
 ### Routing
 
@@ -209,7 +212,7 @@ Both `EntityLabelsController` and `EntityLabelsImportForm` `use EntityLabelsType
 ```
 entity_labels/
 ├── .gitlab-ci.yml
-├── composer.jsexion
+├── composer.json
 ├── logo.png
 ├── README.md
 ├── AGENTS.md
@@ -257,81 +260,6 @@ entity_labels/
 ## Implementation
 
 Files listed creation-order: scaffolding → infrastructure → src (thin to thick) → tests.
-
----
-
-### .gitlab-ci.yml
-
-GitLab CI is enabled for all projects on Drupal.org. Add a `.gitlab-ci.yml` file to the repository root to activate automated testing via the [Drupal Association's GitLab CI template](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci).
-
-The recommended approach is to use the Drupal Association's maintained template, which covers PHPCS, PHPStan, PHPUnit (unit + functional), and compatibility testing against multiple Drupal core versions and PHP/database environments. The template is updated centrally by the Drupal Association — projects that include it stay current automatically without local changes.
-
-**Create via the GitLab UI (easiest):**
-
-1. From the project page on `git.drupalcode.org`, open the repository file browser (not the Web IDE).
-2. Add a new file named `.gitlab-ci.yml`.
-3. When prompted to select a template, choose the **Drupal Association's `template.gitlab-ci.yml`** from the top of the list.
-4. Commit directly to the default branch.
-
-**Create manually:**
-
-```yaml
-# See https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci
-include:
-  - project: $_GITLAB_TEMPLATES_REPO
-    ref: $_GITLAB_TEMPLATES_REF
-    file:
-      - '/includes/include.drupalci.main.yml'
-```
-
-> Copy the full template content from:
-> `https://git.drupalcode.org/project/gitlab_templates/-/blob/main/gitlab-ci.yml`
->
-> You do **not** need to copy the supplementary `include` files — GitLab references those directly from the template project.
-
-**Verify:** After committing, navigate to **Build → Pipelines** in the GitLab sidebar. The pipeline should trigger automatically. Click through to see individual job results (PHPCS, PHPStan, PHPUnit, etc.).
-
-**Optional overrides** for this module (add to the root `.gitlab-ci.yml` after the `include` block):
-
-```yaml
-variables:
-  # Opt in to testing against the next minor/major Drupal core release.
-  OPT_IN_TEST_NEXT_MINOR: 1
-  OPT_IN_TEST_NEXT_MAJOR: 1
-```
-
-Reference: [GitLab CI — Using GitLab to contribute to Drupal](https://www.drupal.org/docs/develop/git/using-gitlab-to-contribute-to-drupal/gitlab-ci)
-
----
-
-### logo.png
-
-Place a `logo.png` in the repository root on the default branch. This image is displayed in the [Project Browser](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/project-browser/module-maintainers-how-to-update-projects-to-be-compatible-with-project-browser#s-logo), on `drupalcode.org` as the project avatar, and on the `drupal.org` project page.
-
-**Specification:**
-
-- **Format:** PNG, no animations
-- **Dimensions:** 512 × 512 px (square)
-- **File size:** 10 KB or less (use a lossy tool such as `pngquant` at ~80% quality)
-- **Filename:** `logo.png` (exact)
-- **Do not** round the corners in the PNG itself
-- **Do not** include the module name in the image (unless there is a compelling branding reason)
-- If designed in a vector format, also provide `logo_svg.txt` (SVG content in a `.txt` file) to facilitate future changes
-- Logos are cached and may take up to an hour to appear after pushing
-
-**Image generation prompt:**
-
-> Create a square 512×512 logo for a Drupal contributed module called **Entity Labels**.
->
-> The module provides a Reports page in Drupal's admin UI where site builders can browse all entity types, bundles, and fields — viewing and bulk-editing their labels, descriptions, and help text via CSV export and import. It is a developer/administrator tool focused on data organisation and content modelling visibility.
->
-> Design a clean, minimal icon suitable for use as a small avatar (it must read clearly at 64 × 64 px). Do not include the module name as text. Do not round the corners. Use a transparent or solid background.
->
-> Suggested visual direction: a tag or label shape combined with a subtle data/list motif — for example, a price-tag or entity-node icon overlaid with small horizontal lines suggesting rows of data, rendered in Drupal's blue (#0678BE) with a white or light accent. The style should feel at home alongside other Drupal admin module icons: flat, two-tone, no gradients, no drop shadows.
->
-> Output a PNG at exactly 512 × 512 px. File size should be 10 KB or less.
-
-Reference: [Project Browser — Module Maintainers: How to update projects to be compatible with Project Browser](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/project-browser/module-maintainers-how-to-update-projects-to-be-compatible-with-project-browser#s-logo)
 
 ---
 
@@ -591,19 +519,10 @@ entity_labels.entity.report:
 ### entity_labels.links.task.yml
 
 ```yaml
+# Primary tabs (grouped under the same base_route).
 entity_labels.entity.report:
   route_name: entity_labels.entity.report
   title: 'Entities'
-  base_route: entity_labels.entity.report
-
-entity_labels.entity.export:
-  route_name: entity_labels.entity.export
-  title: 'Export'
-  base_route: entity_labels.entity.report
-
-entity_labels.entity.import:
-  route_name: entity_labels.entity.import
-  title: 'Import'
   base_route: entity_labels.entity.report
 
 entity_labels.field.report:
@@ -611,15 +530,27 @@ entity_labels.field.report:
   title: 'Fields'
   base_route: entity_labels.entity.report
 
+# Secondary tabs under Entities (parent_id replaces base_route).
+entity_labels.entity.export:
+  route_name: entity_labels.entity.export
+  title: 'Export'
+  parent_id: entity_labels.entity.report
+
+entity_labels.entity.import:
+  route_name: entity_labels.entity.import
+  title: 'Import'
+  parent_id: entity_labels.entity.report
+
+# Secondary tabs under Fields (parent_id replaces base_route).
 entity_labels.field.export:
   route_name: entity_labels.field.export
   title: 'Export'
-  base_route: entity_labels.field.report
+  parent_id: entity_labels.field.report
 
 entity_labels.field.import:
   route_name: entity_labels.field.import
   title: 'Import'
-  base_route: entity_labels.field.report
+  parent_id: entity_labels.field.report
 ```
 
 ---
@@ -801,7 +732,8 @@ interface EntityLabelsEntityImporterInterface extends EntityLabelsImporterInterf
    * Parses and processes a CSV string, updating bundle config entity labels.
    *
    * Required CSV headers: langcode, entity_type, bundle, label, description.
-   * notes column silently ignored if present.
+   * Optional: help (imported for entity types whose bundle config entity exposes
+   * setHelp(), e.g. node types; silently ignored otherwise), notes (always ignored).
    *
    * Rows where the bundle config entity cannot be loaded (NULL) are counted as
    * skipped and their identifier (entity_type.bundle) recorded in 'null_fields'.
@@ -955,7 +887,7 @@ No constructor injection in v1 — uses static bundle config entity loading.
 **`import(string $csv)` notes:**
 - Parse `$csv` via `fgetcsv()` on a memory stream; throw `EntityLabelsCsvParseException` if malformed or required headers missing.
 - Required headers: `langcode`, `entity_type`, `bundle`, `label`, `description`.
-- Silently ignore `notes` column if present.
+- Optional headers: `help`, `notes`. `notes` is silently ignored if present. `help` is imported for entity types whose bundle config entity exposes a `setHelp()` method (e.g. node types) and silently ignored for entity types that do not support it.
 - Per row: load the bundle config entity. If the entity is `NULL` (unknown entity type or bundle), increment `$skipped`, append `"{entity_type}.{bundle}"` to `$null_fields`, and continue.
 - For successfully loaded entities: `->getTranslation($langcode)` (creates if absent); set label/description; save.
 - Return `['updated' => $updated, 'skipped' => $skipped, 'errors' => $errors, 'null_fields' => $null_fields]`.
@@ -983,7 +915,7 @@ public function __construct(
 When `$bundle` is provided (field detail scope):
 - `$this->fieldManager->getFieldDefinitions($entity_type_id, $bundle)`.
 - `is_base_field`: `$def instanceof BaseFieldDefinition && !($def instanceof BaseFieldOverride)`.
-- `allowed_values`: serialize as `key1|Label 1,key2|Label 2` or `''`.
+- `allowed_values`: serialize as `key1|Label 1;key2|Label 2` or `''`.
 - **Cross-bundle summary row** — emitted **only** when the field exists on more than one bundle of the same entity type (`is_summary_row = TRUE`, `bundle = NULL`); single-bundle fields get no summary row:
   - Resolve storage-level default: `FieldConfig` fields → `FieldStorageConfig::load("{entity_type}.{field_name}")->getLabel()`; base fields → unoverridden `BaseFieldDefinition` label.
   - Collect labels/descriptions from all sibling bundles via `$this->fieldManager->getFieldDefinitions($entity_type_id, $other_bundle)`.
@@ -1230,16 +1162,29 @@ Granular: one test method per behaviour. Mock all dependencies against interface
 **PHPDoc conventions for test classes:**
 - Data-provider methods use `@return array` (no generics) with a plain-English description on the next line.
 - `@param` tags must appear **before** `@dataProvider` in the docblock — PHPCS enforces this ordering.
-- Example:
+- Example (provider method):
   ```php
   /**
    * Data provider for testImportUpdatesBundleConfigLabel().
    *
    * @return array
    *   Keyed test cases; each value is [csv string, expected updated count].
+   */
+  public function provideImportCsvCases(): array {
+  ```
+- Example (test method consuming the provider):
+  ```php
+  /**
+   * Tests that import updates the bundle config label.
+   *
+   * @param string $csv
+   *   The CSV string to import.
+   * @param int $expected_updated
+   *   The expected updated count.
    *
    * @dataProvider provideImportCsvCases
    */
+  public function testImportUpdatesBundleConfigLabel(string $csv, int $expected_updated): void {
   ```
 
 ##### `EntityLabelsEntityExportTest`
@@ -1340,7 +1285,7 @@ public function testEntityReport(): void {
   // Check that a user with 'access site reports' gets a 200 response.
 
   // --- Bundle list view (no params) ---
-  // Check that table headers include: entity_type, bundle, label, description, help.
+  // Check that table headers include: langcode, entity_type, bundle, label, description, help.
   // Check that only entity types with bundle support appear.
   // Check that rows are sorted by entity type, then bundle.
   // Check that each entity_type cell links to /admin/reports/entity-labels/entity/{entity_type}.
@@ -1386,7 +1331,7 @@ public function testEntityImport(): void {
   // Check that uploading a CSV missing 'bundle' header catches EntityLabelsCsvParseException and displays the error.
 
   // --- Successful bundle label update ---
-  // Check that exporting entity CSV, editing one bundle label, and re-uploading shows status "1 rows updated".
+  // Check that exporting entity CSV, editing one bundle label, and re-uploading shows status "1 row updated".
   // Check that the bundle config entity now has the updated label.
   // Check that other bundles are unchanged.
 
@@ -1459,8 +1404,8 @@ public function testFieldImport(): void {
   // Check that uploading a CSV missing 'field_name' catches EntityLabelsCsvParseException and displays the error.
 
   // --- Successful field label update ---
-  // Check that exporting field CSV for node/article, changing 'title' label → 'Headline', and uploading shows "1 rows updated".
-  // Check that FieldConfig for node.article.title now has label 'Headline'.
+  // Check that exporting field CSV for node/article, changing 'title' label → 'Headline', and uploading shows "1 row updated".
+  // Check that BaseFieldOverride for node.article.title now has label 'Headline'.
   // Check that other fields are unchanged.
 
   // --- Edge cases ---
@@ -1567,6 +1512,7 @@ public function testCustomFieldImport(): void {
 - [FormBase](https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Form!FormBase.php/class/FormBase/11.x) — base class for forms
 - [file_save_upload()](https://api.drupal.org/api/drupal/core!modules!file!file.module/function/file_save_upload/11.x) — saves an uploaded file to a temporary location; used in element validators
 - [Routing — optional parameters](https://www.drupal.org/docs/drupal-apis/routing-system/parameters-in-routes#s-parameters-with-default-values) — how to define defaults: `param: ~`
+- [Providing module-defined local tasks](https://www.drupal.org/docs/drupal-apis/menu-api/providing-module-defined-local-tasks) — `base_route` for primary tabs, `parent_id` for secondary tabs
 - [Config entity translations (getTranslation())](https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Entity!EntityInterface.php/function/EntityInterface%3A%3AgetTranslation/11.x) — creating or loading a translation
 
 ### Drupal/Symfony Patterns
