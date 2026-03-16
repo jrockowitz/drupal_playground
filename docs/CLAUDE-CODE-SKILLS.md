@@ -167,6 +167,160 @@ Research $ARGUMENTS thoroughly:
 
 ---
 
+## Skill Intent Taxonomy
+
+The "Reference / Task / Forked" distinction above describes *how* a skill executes. A complementary framing is *why* a skill exists — what gap it fills between Claude's defaults and what you actually need. Three intent categories cover most real-world use cases.
+
+> **Note:** This taxonomy is a design thinking tool, not a technical classification. The LLM doesn't recognize category names — all it sees is instruction specificity. These types are a framework for humans designing skills. A single skill can span multiple categories, and the boundaries are intentionally fuzzy.
+
+---
+
+### 1. Knowledge Skills — Filling the Gap
+
+Claude has broad general knowledge but shallow depth in specialized domains. Knowledge skills inject the expertise Claude is missing: APIs, platform conventions, architectural patterns, tribal knowledge that would otherwise need to be pasted in at the start of every session.
+
+**When to write one:** Claude gives generic answers in a domain you know well, misses platform idioms, or reaches for the wrong abstraction.
+
+**Examples:**
+- Framework-specific API conventions and patterns
+- Internal platform or codebase architecture
+- Domain-specific data models and terminology
+- Tool configuration reference (CLI flags, config keys, environment setup)
+
+```markdown
+---
+name: platform-conventions
+description: >
+  Internal platform conventions and architectural patterns. Use when
+  writing services, data models, or API integrations in this codebase.
+---
+
+## Service Layer
+Always inject dependencies via constructor. Never use static service locators.
+Service classes go in `src/Service/`. Register via `services.yml`.
+
+## Data Access
+Use the repository pattern. No direct database calls in controllers.
+Repositories live in `src/Repository/`.
+```
+
+**Signal:** You keep pasting the same reference, correcting the same mistakes, or adding the same boilerplate reminder at the start of every session.
+
+---
+
+### 2. Intent Skills — Clarifying the Quality Bar
+
+Intent skills don't add knowledge — they shift how Claude evaluates and produces work. They define a quality bar, a perspective, or a constraint to apply on top of whatever task is underway. System prompts define tone, identity, and high-level constraints. Intent skills are the bridge: reusable quality gates that load when relevant rather than bloating the system prompt.
+
+**When to write one:** Claude produces technically correct output that misses a non-negotiable dimension — accessibility, security, performance, editorial voice, brand compliance, or design system rules.
+
+**Examples:**
+- Accessibility: WCAG 2.1 AA compliance, keyboard navigation, ARIA roles
+- Security: OWASP Top 10, input validation, authorization checks
+- Performance: caching strategies and render pipeline
+- Editorial voice: tone, vocabulary, sentence length, reading level
+- Design system: component usage rules, spacing tokens, allowed patterns
+
+```markdown
+---
+name: accessibility
+description: >
+  Accessibility standards. Use when generating or reviewing any
+  user-facing output: markup, forms, interactive components,
+  rich text content.
+---
+
+Before finalizing any output, verify:
+- All images have meaningful alt text (or alt="" if decorative)
+- Form inputs have associated <label> elements, not just placeholder text
+- Interactive elements are keyboard-reachable with visible focus states
+- Color is never the sole means of conveying information
+- Heading levels are sequential and not skipped
+- Dynamic content uses appropriate ARIA live regions
+```
+
+**Signal:** You find yourself appending the same quality constraint to many different tasks — "and make sure it's accessible" or "and check for injection vulnerabilities" — rather than it being baked in automatically.
+
+---
+
+### 3. Process Skills — Defining How Work Gets Done
+
+Process skills encode *how work gets done*, not just what Claude should know or evaluate. They define a multi-step process — often spanning planning, implementation, review, and refinement — and may orchestrate multiple agents across those phases. A process skill is the playbook that coordinates both.
+
+**When to write one:** A recurring task has a non-obvious sequence that Claude improvises poorly, or it's complex enough to benefit from explicit phase gates, specialist subagents, or parallel work.
+
+**Examples:**
+- Feature build: spec → scaffold → implement → test → review
+- Content pipeline: research → outline → draft → edit → publish
+- Data analysis: ingest → clean → analyze → visualize → summarize
+- Security audit: enumerate attack surface → test → triage → report
+
+```markdown
+---
+name: feature-build
+description: >
+  Full feature build process: spec, implement, test, review.
+  Use when building a new feature or significant addition to
+  an existing module.
+context: fork
+agent: Plan
+---
+
+## Phase 1 — Spec
+Before writing any code:
+1. Define the single responsibility of this feature
+2. List the extension points, APIs, and data models required
+3. Write a brief spec in `SPEC.md` and confirm with the user
+
+## Phase 2 — Scaffold
+1. Create directory structure and stub files
+2. Add empty class files with constructor signatures (no implementation yet)
+3. Verify the scaffolding loads cleanly
+
+## Phase 3 — Implement
+Work through the spec one unit at a time. After each:
+- Confirm expected behavior with an inline test or manual check
+- Keep each class under 200 lines; extract helpers when they grow
+
+## Phase 4 — Test
+1. Write an integration test covering the primary user flow
+2. Write unit tests for non-trivial business logic
+3. Run the test suite and fix failures before proceeding
+
+## Phase 5 — Review
+Invoke the `accessibility` and `security` intent skills.
+Run code quality checks. Address all findings before marking complete.
+```
+
+**Signal:** You give Claude a multi-step briefing at the start of each session for the same class of task, or quality depends heavily on whether Claude guesses the right sequence.
+
+---
+
+### Combining All Three
+
+The categories compose naturally. A process skill orchestrates the steps; knowledge skills give each phase the domain depth it needs; intent skills enforce quality gates.
+
+```
+feature-build      (process)
+  └── Phase 2 uses  → platform-conventions  (knowledge)
+  └── Phase 5 uses  → accessibility         (intent)
+                   → security               (intent)
+```
+
+A forked process skill can call other skills by name in its instructions, or Claude will auto-invoke matching skills based on their descriptions as each phase's sub-task triggers them.
+
+---
+
+### Further Reading
+
+- [Anthropic — How Skills Work](https://claude.com/blog/skills-explained) — Skills vs. subagents vs. MCP vs. Projects
+- [Anthropic — Complete Guide to Building Skills](https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf) — Authoring patterns and design principles
+- [DataCamp — What Are Agent Skills](https://www.datacamp.com/blog/agent-skills) — Architecture overview including the system prompt vs. skills boundary
+- [DEV.to — Per-Step Constraint Design](https://dev.to/akari_iku/how-to-stop-claude-code-skills-from-drifting-with-per-step-constraint-design-2ogd) — How to control drift within process skills using criteria vs. procedural steps
+- [Daniel Miessler — Skills vs. Workflows vs. Agents](https://danielmiessler.com/blog/when-to-use-skills-vs-commands-vs-agents) — One practitioner's structural taxonomy for organizing large skill libraries
+
+---
+
 ## Writing Effective Descriptions
 
 The `description` field is the primary mechanism determining whether Claude invokes a skill. Be specific and slightly "pushy" — Claude tends to under-trigger skills.

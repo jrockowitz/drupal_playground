@@ -38,7 +38,7 @@ No hard dependency on contrib modules. When the following are installed, the Fie
 ### Non-Functional
 
 - PHPCS `Drupal`/`DrupalPractice` sniffs.
-- `declare(strict_types=1)` in every PHP file; fully typed method signatures; `@return array<...>` docblocks where shape matters.
+- `declare(strict_types=1)` in every PHP file; fully typed method signatures; `@return array` docblocks; describe the shape in the doc comment body, not in the type expression (PHPCS cannot parse PHPStan generic syntax like `array<...>` or `array{...}` in `@return` tags).
 - All function parameters use snake_case (e.g. `$entity_type_id`, not `$entityTypeId`).
 - DI throughout — no `\Drupal::service()` or static calls inside classes (exception: importers use static config entity loading in v1).
 - No hard dependencies beyond Drupal core.
@@ -695,14 +695,16 @@ interface EntityLabelsExporterInterface {
    * Row shape and sort order vary by implementation.
    * Every row includes a 'notes' key (string, may be empty).
    *
-   * @return array<int, array<string, string|bool|null>>
+   * @return array
+   *   Rows of report data; each row is a map of column name to value.
    */
   public function getData(?string $entity_type_id = NULL, ?string $bundle = NULL): array;
 
   /**
    * Builds CSV rows (header first, notes column last) ready for fputcsv().
    *
-   * @return array<int, list<string>>
+   * @return array
+   *   CSV rows as lists of strings; first row is the header.
    */
   public function export(?string $entity_type_id = NULL, ?string $bundle = NULL): array;
 
@@ -732,9 +734,10 @@ interface EntityLabelsImporterInterface {
    * @throws \Drupal\entity_labels\Exception\EntityLabelsImportException
    *   On row-level failures that should abort the import.
    *
-   * @return array{updated: int, skipped: int, errors: list<string>, null_fields: list<string>}
-   *   'null_fields' lists identifiers (entity_type.bundle or entity_type.bundle.field_name)
-   *   of rows where the config entity could not be loaded (NULL result).
+   * @return array
+   *   Result map with keys: 'updated' (int), 'skipped' (int), 'errors' (string[]),
+   *   'null_fields' (string[]) — identifiers (entity_type.bundle or
+   *   entity_type.bundle.field_name) of rows where the config entity could not be loaded.
    */
   public function import(string $csv): array;
 
@@ -764,7 +767,8 @@ interface EntityLabelsEntityExporterInterface extends EntityLabelsExporterInterf
    * The 'help' value is populated only for entity types whose bundle config entity
    * exposes a getHelp() method (e.g. node types); it is an empty string otherwise.
    *
-   * @return array<int, array<string, string>>
+   * @return array
+   *   Entity/bundle report rows; each row is a string map of column name to value.
    */
   public function getData(?string $entity_type_id = NULL, ?string $bundle = NULL): array;
 
@@ -772,7 +776,8 @@ interface EntityLabelsEntityExporterInterface extends EntityLabelsExporterInterf
    * Builds CSV rows (header first) ready for fputcsv().
    * Header: langcode,entity_type,bundle,label,description,help,notes
    *
-   * @return array<int, list<string>>
+   * @return array
+   *   CSV rows as lists of strings; first row is the header.
    */
   public function export(?string $entity_type_id = NULL, ?string $bundle = NULL): array;
 
@@ -804,7 +809,10 @@ interface EntityLabelsEntityImporterInterface extends EntityLabelsImporterInterf
    * @throws \Drupal\entity_labels\Exception\EntityLabelsCsvParseException
    * @throws \Drupal\entity_labels\Exception\EntityLabelsImportException
    *
-   * @return array{updated: int, skipped: int, errors: list<string>, null_fields: list<string>}
+   * @return array
+   *   Result map with keys: 'updated' (int), 'skipped' (int), 'errors' (string[]),
+   *   'null_fields' (string[]) — identifiers (entity_type.bundle) of rows where
+   *   the bundle config entity could not be loaded.
    */
   public function import(string $csv): array;
 
@@ -841,7 +849,8 @@ interface EntityLabelsFieldExporterInterface extends EntityLabelsExporterInterfa
    * field_type = 'field_group'. When custom_field 4.x is installed,
    * additional rows are appended per column with field_column set.
    *
-   * @return array<int, array<string, string|bool|null>>
+   * @return array
+   *   Field report rows; each row is a map of column name to string, bool, or null value.
    */
   public function getData(?string $entity_type_id = NULL, ?string $bundle = NULL): array;
 
@@ -852,7 +861,8 @@ interface EntityLabelsFieldExporterInterface extends EntityLabelsExporterInterfa
    * Header without custom_field:
    *   langcode,entity_type,bundle,field_name,field_type,label,description,allowed_values,notes
    *
-   * @return array<int, list<string>>
+   * @return array
+   *   CSV rows as lists of strings; first row is the header.
    */
   public function export(?string $entity_type_id = NULL, ?string $bundle = NULL): array;
 
@@ -898,7 +908,10 @@ interface EntityLabelsFieldImporterInterface extends EntityLabelsImporterInterfa
    * @throws \Drupal\entity_labels\Exception\EntityLabelsCsvParseException
    * @throws \Drupal\entity_labels\Exception\EntityLabelsImportException
    *
-   * @return array{updated: int, skipped: int, errors: list<string>, null_fields: list<string>}
+   * @return array
+   *   Result map with keys: 'updated' (int), 'skipped' (int), 'errors' (string[]),
+   *   'null_fields' (string[]) — identifiers (entity_type.bundle.field_name) of rows
+   *   where neither FieldConfig nor BaseFieldOverride could be loaded.
    */
   public function import(string $csv): array;
 
@@ -1107,7 +1120,7 @@ class EntityLabelsController extends ControllerBase {
   // getExporter(), getExportRoute(), getReportRoute(), and label helpers
   // are provided by EntityLabelsTypeTrait.
 
-  public function title(?string $entity_type = NULL, ?string $bundle = NULL): TranslatableMarkup|string;
+  public function title(?string $entity_type = NULL, ?string $bundle = NULL): TranslatableMarkup;
   public function report(?string $entity_type = NULL, ?string $bundle = NULL): array;
   public function export(Request $request): StreamedResponse;
 
@@ -1117,6 +1130,7 @@ class EntityLabelsController extends ControllerBase {
 **`title()` notes:**
 - Returns the bundle label when both `$entity_type` and `$bundle` are set, the entity type label when only `$entity_type` is set, or the plural tab label (e.g. "Entities" / "Fields") when neither is set.
 - Uses `$this->getPluralLabel()` for the no-params case so entity and field tabs show their respective titles.
+- Always return `TranslatableMarkup`. Wrap plain-string labels (e.g. from `getLabel()`) with `$this->t('@label', ['@label' => $label])` so the return type is consistently `TranslatableMarkup` with no union. PHPStan level 5 flags unreachable branches in a `string|TranslatableMarkup` union.
 
 **`report()` notes:**
 - Calls `$this->getExporter()->getData($entity_type, $bundle)`.
@@ -1212,6 +1226,21 @@ Implements `BreadcrumbBuilderInterface`. Constructor args resolved via file-leve
 #### Unit Tests
 
 Granular: one test method per behaviour. Mock all dependencies against interfaces.
+
+**PHPDoc conventions for test classes:**
+- Data-provider methods use `@return array` (no generics) with a plain-English description on the next line.
+- `@param` tags must appear **before** `@dataProvider` in the docblock — PHPCS enforces this ordering.
+- Example:
+  ```php
+  /**
+   * Data provider for testImportUpdatesBundleConfigLabel().
+   *
+   * @return array
+   *   Keyed test cases; each value is [csv string, expected updated count].
+   *
+   * @dataProvider provideImportCsvCases
+   */
+  ```
 
 ##### `EntityLabelsEntityExportTest`
 
