@@ -1,4 +1,4 @@
-I have a Drupal module implementation plan in /Users/rockowij/Sites/drupal_playground/web/modules/custom/entity_labels_module_spec.md
+I have a Drupal module implementation plan in @path/to/spec.md.
 
 Implement this module incrementally, pausing to ask me questions at each
 stage before proceeding. Follow this workflow:
