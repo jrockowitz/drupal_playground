@@ -28,5 +28,18 @@
         "drupal/simple_sitemap": "^4.0",
         "drupal/smart_date": "^4.0",
         "drupal/type_tray": "^1.0"
+    },
+    "extra": {
+        "patches": {
+            "drupal/schemadotorg": [
+                {
+                    "description": "Disable Gin sticky actions for Schema.org mapping forms",
+                    "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/291.diff",
+                    "extra": {
+                        "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3579621"
+                    }
+                }
+            ]
+        }
     }
 }

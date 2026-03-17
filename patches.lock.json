@@ -1,14 +1,15 @@
 {
-    "_hash": "c5afe08e470f7c4d11eabef05e0c7a0c763a9a5701b6de3ad903e0d93e8a8487",
+    "_hash": "0e3027a7fc0926e7187afdfc09b26220c6f09b8c53ed406952eea25a52efb2e2",
     "patches": {
         "drupal/core": [
             {
                 "package": "drupal/core",
-                "description": "Persist is_syncing across container rebuilds (issue #3572171)",
+                "description": "Persist is_syncing across container rebuilds",
                 "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
                 "sha256": "635c3ece0a99bc50ce3656ea671850160aabebf7f6e3d30e8af91a18da095a82",
                 "depth": 2,
                 "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3572171",
                     "provenance": "dependency:drupal/core"
                 }
             }
@@ -16,12 +17,26 @@
         "drupal/coffee": [
             {
                 "package": "drupal/coffee",
-                "description": "Add Navigation TopBar integration for Gin toolbar (issue #3535874)",
+                "description": "Add Navigation TopBar integration for Gin toolbar",
                 "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch",
                 "sha256": "5f76e3b397171206f59f0497d12e300bae892607b9e8b7b36bca9385469b5744",
                 "depth": 1,
                 "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874",
                     "provenance": "dependency:drupal/coffee"
+                }
+            }
+        ],
+        "drupal/schemadotorg": [
+            {
+                "package": "drupal/schemadotorg",
+                "description": "Disable Gin sticky actions for Schema.org mapping forms",
+                "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/291.diff",
+                "sha256": "74780ff4a2829764c90fda49b8f72e63748b60856a096129c1f58d1018f43613",
+                "depth": 1,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3579621",
+                    "provenance": "dependency:drupal/schemadotorg"
                 }
             }
         ]

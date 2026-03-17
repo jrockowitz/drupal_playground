@@ -3530,7 +3530,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_schemadotorg",
-                "reference": "e69508bfdad6805164133a431e09f25328b5d09d"
+                "reference": "9d58440d63fd5ab9ced39d30f319248a1fc3417c"
             },
             "require": {
                 "drupal/address": "^2.0",
@@ -3558,6 +3558,19 @@
                 "drupal/type_tray": "^1.0"
             },
             "type": "drupal-recipe",
+            "extra": {
+                "patches": {
+                    "drupal/schemadotorg": [
+                        {
+                            "description": "Disable Gin sticky actions for Schema.org mapping forms",
+                            "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/291.diff",
+                            "extra": {
+                                "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3579621"
+                            }
+                        }
+                    ]
+                }
+            },
             "license": [
                 "GPL-2.0-or-later"
             ],
