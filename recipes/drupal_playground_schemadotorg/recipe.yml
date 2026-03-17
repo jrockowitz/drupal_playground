@@ -33,6 +33,8 @@ install:
   - schemadotorg_ui
   # Schema.org Blueprints translation
   - schemadotorg_translation
+  # Schema.org Blueprints development
+  - schemadotorg_devel
   # Contrib modules
   - address
   - allowed_formats
