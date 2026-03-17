@@ -1,10 +1,11 @@
 #!/bin/bash
 
-## Description: Install Drupal, optionally with one or more presets (e.g. ai, schemadotorg)
+## Description: Install Drupal, optionally with one or more presets (e.g. ai, schemadotorg, translation)
 ## Usage: install [preset...]
 ## Example: ddev install
 ## Example: ddev install ai
 ## Example: ddev install schemadotorg
+## Example: ddev install translation
 ## Example: ddev install ai schemadotorg
 ## ProjectTypes: drupal,drupal11
 
@@ -17,17 +18,12 @@ drush site:install core/recipes/standard \
   --yes
 
 drush recipe ../recipes/drupal_playground_base
-drush recipe ../recipes/drupal_playground_devel
-drush recipe ../recipes/drupal_playground_translation
 drush recipe ../recipes/drupal_playground_admin
+drush recipe ../recipes/drupal_playground_devel
 drush cr;
 
 # Uninstall the toolbar module, which can't be done via a recipe.
 drush pm:uninstall toolbar
-
-# Download and apply Spanish translations.
-drush locale-check
-drush locale-update
 
 for PRESET in "$@"; do
   if [ "$PRESET" = "ai" ]; then
@@ -37,6 +33,12 @@ for PRESET in "$@"; do
   elif [ "$PRESET" = "schemadotorg" ]; then
     echo "Applying Schema.org Blueprints recipe..."
     drush recipe ../recipes/drupal_playground_schemadotorg
+    drush cr
+  elif [ "$PRESET" = "translation" ]; then
+    echo "Applying translation recipe..."
+    drush recipe ../recipes/drupal_playground_translation
+    drush locale-check
+    drush locale-update
     drush cr
   fi
 done

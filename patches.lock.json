@@ -1,5 +1,5 @@
 {
-    "_hash": "0e3027a7fc0926e7187afdfc09b26220c6f09b8c53ed406952eea25a52efb2e2",
+    "_hash": "1c234f2aa11e057b3375870222c1a904224908e039dad0ec17d45b7932cfbb22",
     "patches": {
         "drupal/core": [
             {
@@ -36,6 +36,17 @@
                 "depth": 1,
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3579621",
+                    "provenance": "dependency:drupal/schemadotorg"
+                }
+            },
+            {
+                "package": "drupal/schemadotorg",
+                "description": "Support custom_field 4.x",
+                "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/272.diff",
+                "sha256": "e6d07e7458b3988e10b7f5edd6873590eddeddf1436555b68fca445c17d75f68",
+                "depth": 1,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3551008",
                     "provenance": "dependency:drupal/schemadotorg"
                 }
             }

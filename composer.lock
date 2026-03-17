@@ -1808,6 +1808,10 @@
                     "homepage": "https://www.drupal.org/user/655282"
                 },
                 {
+                    "name": "harivansh",
+                    "homepage": "https://www.drupal.org/user/3678656"
+                },
+                {
                     "name": "jurgenhaas",
                     "homepage": "https://www.drupal.org/user/168924"
                 },
@@ -3194,17 +3198,17 @@
         },
         {
             "name": "drupal/custom_field",
-            "version": "3.1.15",
+            "version": "4.0.6",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/custom_field.git",
-                "reference": "3.1.15"
+                "reference": "4.0.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/custom_field-3.1.15.zip",
-                "reference": "3.1.15",
-                "shasum": "7fa56fd0e2787cae1d79d04860eeb918bd496c9c"
+                "url": "https://ftp.drupal.org/files/projects/custom_field-4.0.6.zip",
+                "reference": "4.0.6",
+                "shasum": "2cb2b318a0107e0e28d4c42ea4d38e9a10c28b41"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11"
@@ -3214,7 +3218,7 @@
                 "drupal/entity_browser": "^2",
                 "drupal/entity_usage": "^2",
                 "drupal/feeds": "^3",
-                "drupal/graphql_compose": "^2",
+                "drupal/graphql_compose": "2.4.x-dev",
                 "drupal/linkit": "^6.1 || ^7",
                 "drupal/paragraphs": "^1",
                 "drupal/search_api": "^1",
@@ -3224,8 +3228,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "3.1.15",
-                    "datestamp": "1756498850",
+                    "version": "4.0.6",
+                    "datestamp": "1773263041",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -3234,7 +3238,7 @@
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
             "license": [
-                "GPL-2.0+"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
@@ -3530,7 +3534,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_schemadotorg",
-                "reference": "9d58440d63fd5ab9ced39d30f319248a1fc3417c"
+                "reference": "b2c06fa6a3d1827622e0ecf3cdc4be150df53061"
             },
             "require": {
                 "drupal/address": "^2.0",
@@ -3539,7 +3543,7 @@
                 "drupal/cer": "^5.0@beta",
                 "drupal/content_model_documentation": "^1.0",
                 "drupal/core": "^11.3",
-                "drupal/custom_field": "^3.0",
+                "drupal/custom_field": "^4.0",
                 "drupal/epp": "^1.7",
                 "drupal/existing_values_autocomplete_widget": "^2.0",
                 "drupal/field_group": "^3.0",
@@ -3566,6 +3570,13 @@
                             "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/291.diff",
                             "extra": {
                                 "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3579621"
+                            }
+                        },
+                        {
+                            "description": "Support custom_field 4.x",
+                            "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/272.diff",
+                            "extra": {
+                                "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3551008"
                             }
                         }
                     ]

@@ -10,10 +10,10 @@ A Drupal 10/11 contributed module (`entity_labels`) providing a **Reports** page
 
 ### Functional
 
-1. **Entities tab** — lists entity types that support bundles, with their bundle label/description/help metadata; drill-down by entity type and bundle.
+1. **Entities tab** — lists entity types that support bundles, with their bundle label/description/help metadata; drill-down by entity type only.
 2. **Fields tab** — lists all fields across all bundles; drill-down by entity type and bundle; includes base fields and storage-level summary rows.
-3. Both tabs support drill-down via **optional route path parameters** (`{entity_type}`, `{bundle}`) — not query strings.
-4. Both tabs allow clicking the entity type cell to filter to that type, and the bundle cell to drill into that bundle.
+3. The **Entities tab** supports drill-down via one **optional route path parameter** (`{entity_type}`) — not query strings. The **Fields tab** supports drill-down via two optional route path parameters (`{entity_type}`, `{bundle}`) — not query strings.
+4. Clicking an entity type cell always filters to that type. On the **Fields tab**, clicking a bundle cell also drills into that bundle; the **Entities tab** has no bundle-level drill-down.
 5. Language is determined by Drupal's core translation detection system — no explicit language resolution in module code.
 6. All report table headers and all CSV column headers use **machine names** (e.g. `entity_type`, `bundle`, `field_name`). Human-readable labels are never used as column headers.
 7. CSV export scoped to the current view; a **⇩ Download CSV** button appears at the bottom of each report table.
@@ -43,7 +43,7 @@ No hard dependency on contrib modules. When the following are installed, the Fie
 - PHPCS `Drupal`/`DrupalPractice` sniffs.
 - `declare(strict_types=1)` in every PHP file; fully typed method signatures; `@return array` docblocks; describe the shape in the doc comment body, not in the type expression (PHPCS cannot parse PHPStan generic syntax like `array<...>` or `array{...}` in `@return` tags).
 - All function parameters use snake_case (e.g. `$entity_type_id`, not `$entityTypeId`).
-- DI throughout — no `\Drupal::service()` or static calls inside classes (exception: importers use static config entity loading in v1).
+- Dependency Injection throughout — no `\Drupal::service()` or static calls inside classes (exception: importers use static config entity loading in v1).
 - No hard dependencies beyond Drupal core.
 - Tests covering controllers, services, and import forms.
 
@@ -56,8 +56,6 @@ No hard dependency on contrib modules. When the following are installed, the Fie
 - ⚫ Navigate to **Administration → Reports → Entity labels** (`/admin/reports/entity-labels/entity`).
 - ⚫ Confirm the **Entities** primary tab is active and the table lists entity types that support bundles (e.g. Content, Taxonomy term) with machine-name column headers: `langcode`, `entity_type`, `bundle`, `label`, `description`, `help`.
 - ⚫ Click an **entity_type** cell (e.g. "node") — confirm the view filters to that type only and the breadcrumb updates to show the entity type label.
-- ⚫ Click a **bundle** cell (e.g. "article") — confirm the view filters to that bundle and the breadcrumb updates to show the bundle label.
-- ⚫ Click **Entity labels** in the breadcrumb — confirm navigation returns to the full unfiltered Entities list.
 
 ### Entities export
 
@@ -73,7 +71,7 @@ No hard dependency on contrib modules. When the following are installed, the Fie
 
 ### Fields report
 
-- ⚫ Click the **Fields** primary tab — confirm the table lists fields across all bundles with machine-name column headers: `langcode`, `entity_type`, `bundle`, `field_name`, `field_type`, `label`, `description`, `allowed_values`, `notes`.
+- ⚫ Click the **Fields** primary tab — confirm the table lists fields across all bundles with machine-name column headers: `langcode`, `entity_type`, `bundle`, `field_name`, `field_type`, `label`, `description`, `allowed_values`, `notes` (when `custom_field` 4.x is installed, `field_column` also appears between `field_name` and `field_type`).
 - ⚫ Click an **entity_type** cell — confirm the view filters to fields for that type and the breadcrumb updates.
 - ⚫ Click a **bundle** cell — confirm the view shows fields for that bundle, each field shared across multiple bundles has a cross-bundle summary row (bundle = "(default / all bundles)") before its per-bundle row with blank `label`/`description` when they match the default, and base fields (e.g. `title`) are present and marked.
 - ⚫ Confirm the note appears below the table stating that `allowed_values` and `field_type` cannot be updated via CSV import.
@@ -114,8 +112,8 @@ Report routes use optional path params; export routes use fixed paths with query
 
 | Route | Path | Scope |
 |---|---|---|
-| `entity_labels.entity.report` | `/admin/reports/entity-labels/entity/{entity_type}/{bundle}` | Optional path params, both `NULL` |
-| `entity_labels.entity.export` | `/admin/reports/entity-labels/entity/export` | `?entity_type=X&bundle=Y` |
+| `entity_labels.entity.report` | `/admin/reports/entity-labels/entity/{entity_type}` | Optional path param, `NULL` by default |
+| `entity_labels.entity.export` | `/admin/reports/entity-labels/entity/export` | `?entity_type=X` |
 | `entity_labels.entity.import` | `/admin/reports/entity-labels/entity/import` | None |
 | `entity_labels.field.report` | `/admin/reports/entity-labels/field/{entity_type}/{bundle}` | Optional path params, both `NULL` |
 | `entity_labels.field.export` | `/admin/reports/entity-labels/field/export` | `?entity_type=X&bundle=Y` |
@@ -129,14 +127,16 @@ Single `EntityLabelsBreadcrumbBuilder` applies to all six routes. Route name pre
 |---|---|
 | Neither | Home › Administration › Reports › Entity labels › **Entities** or **Fields** |
 | `{entity_type}` only | … › Entity labels › Entities/Fields › **{Entity Type Label}** |
-| Both | … › Entity labels › Entities/Fields › {Entity Type Label} › **{Bundle Label}** |
+| Both (`{entity_type}` + `{bundle}`, Fields tab only) | … › Entity labels › Fields › {Entity Type Label} › **{Bundle Label}** |
+
+Note: export and import routes have no path params; they always show only the base trail (neither-params row). The "Both" row applies only to the Fields tab — the Entities tab has no bundle-level route.
 
 - **`applies()`:** Return `TRUE` when `str_starts_with($route_match->getRouteName(), 'entity_labels.')`.
 - Reads params via `RouteMatchInterface::getParameter()`, not the request query bag.
 - "Entity labels" crumb always links to `entity_labels.entity.report` (the Reports menu entry, no params).
 - "Entities" or "Fields" crumb links to the current tab's base report route (`entity_labels.entity.report` or `entity_labels.field.report`, no params). This crumb is always present and is the active (unlinked) crumb when no `{entity_type}` is set, or a link when drilling deeper.
 - `{Entity Type Label}` links to the base report route with `{entity_type}` only.
-- `{Bundle Label}` is the unlinked active crumb when both params are set.
+- `{Bundle Label}` is the unlinked active crumb when both params are set (Fields tab only).
 
 ### Cross-bundle summary rows
 
@@ -252,7 +252,9 @@ entity_labels/
         ├── EntityLabelsEntityReportTest.php
         ├── EntityLabelsEntityImportTest.php
         ├── EntityLabelsFieldReportTest.php
-        └── EntityLabelsFieldImportTest.php
+        ├── EntityLabelsFieldImportTest.php
+        ├── EntityLabelsFieldGroupTest.php
+        └── EntityLabelsCustomFieldTest.php
 ```
 
 ---
@@ -275,7 +277,7 @@ description, allowed values) — with CSV export and CSV import for bulk updates
 ## Features
 
 - **Entities tab** — browse all entity types that support bundles; drill down by
-  entity type and bundle; view label, description, and help text.
+  entity type; view label, description, and help text.
 - **Fields tab** — browse all fields across all bundles; drill down by entity type
   and bundle; view label, description, field type, and allowed values. Cross-bundle
   summary rows highlight shared fields and any per-bundle overrides.
@@ -295,10 +297,10 @@ description, allowed values) — with CSV export and CSV import for bulk updates
 
 When the following contrib modules are installed, the Fields tab, export, and import are automatically extended:
 
-| Module | Version | Additional behaviour |
-|---|---|---|
-| `field_group` | any | Groups from the default form mode appear as rows with `field_type = field_group`; group label and description are exportable and importable. |
-| `custom_field` | 4.x only | Each column within a `custom_field` field gets its own row with a `field_column` identifier; column label and description are exportable and importable. |
+- **`field_group` (any version)** — Groups from the default form mode appear as rows
+  with `field_type = field_group`; group label and description are exportable and importable.
+- **`custom_field` (4.x only)** — Each column within a `custom_field` field gets its own row
+  with a `field_column` identifier; column label and description are exportable and importable.
 
 ## Installation
 
@@ -320,7 +322,7 @@ drush en entity_labels
 
 1. Navigate to **Administration → Reports → Entity labels**.
 2. Use the **Entities** and **Fields** primary tabs to browse metadata.
-3. Click an entity type cell to filter; click a bundle cell to drill in.
+3. Click an entity type cell to filter by type. On the Fields tab, click a bundle cell to drill into that bundle.
 4. Click **⇩ Download CSV** to export the current view.
 5. Edit the CSV, then use the **Import** secondary tab to upload and apply changes.
 
@@ -444,13 +446,12 @@ The `type` default is passed to both the controller and the form, letting a sing
 
 ```yaml
 entity_labels.entity.report:
-  path: '/admin/reports/entity-labels/entity/{entity_type}/{bundle}'
+  path: '/admin/reports/entity-labels/entity/{entity_type}'
   defaults:
     _controller: '\Drupal\entity_labels\Controller\EntityLabelsController::report'
     _title_callback: '\Drupal\entity_labels\Controller\EntityLabelsController::title'
     type: 'entity'
     entity_type: ~
-    bundle: ~
   requirements:
     _permission: 'access site reports'
 
@@ -689,7 +690,7 @@ namespace Drupal\entity_labels;
 interface EntityLabelsEntityExporterInterface extends EntityLabelsExporterInterface {
 
   /**
-   * Returns entity/bundle report rows, optionally filtered by entity type or bundle.
+   * Returns entity/bundle report rows, optionally filtered by entity type.
    *
    * Only entity types that support bundles are included.
    * Rows sorted by entity type, then bundle.
@@ -697,6 +698,9 @@ interface EntityLabelsEntityExporterInterface extends EntityLabelsExporterInterf
    * Keys: langcode, entity_type, bundle, label, description, help, notes.
    * The 'help' value is populated only for entity types whose bundle config entity
    * exposes a getHelp() method (e.g. node types); it is an empty string otherwise.
+   *
+   * Note: $bundle is accepted for interface compatibility but ignored by this
+   * implementation — the Entities tab supports entity-type-level drill-down only.
    *
    * @return array
    *   Entity/bundle report rows; each row is a string map of column name to value.
@@ -866,7 +870,7 @@ public function __construct(
 
 **`getData()` notes:**
 - Iterate `$this->entityTypeManager->getDefinitions()`; skip entity types where `$entity_type->getBundleEntityType()` returns `NULL`.
-- Filter by `$entity_type_id` if set; filter to `$bundle` if set.
+- Filter by `$entity_type_id` if set; `$bundle` is accepted but ignored (entity-type-level drill-down only).
 - Load bundle config entities via `$this->entityTypeManager->getStorage($bundle_entity_type)->load($bundle_id)`.
 - Duck-type `getDescription()` and `getHelp()` via `method_exists()`. The `help` field is only populated for entity types whose bundle config entity exposes `getHelp()` (e.g. `NodeType`); it is an empty string otherwise — **do not** add a `help` column note to the report for entity types that do not support it.
 - Sort by entity type, then bundle.
@@ -1067,8 +1071,8 @@ class EntityLabelsController extends ControllerBase {
 **`report()` notes:**
 - Calls `$this->getExporter()->getData($entity_type, $bundle)`.
 - All table headers use machine names matching the row keys.
-- Entity type and bundle links are built from `$this->getReportRoute()` so they always stay on the current tab.
-- Field detail view: appends a note below the table that `allowed_values` and `field_type` cannot be imported; applies `entity-labels--summary` CSS class to summary rows.
+- Entity type cell links are built for both tabs: `$this->getReportRoute()` with `{entity_type}` only. Bundle cell links are built for the **Fields tab** only: `$this->getReportRoute()` with both `{entity_type}` and `{bundle}`. The Entities tab renders bundle cells as plain text (no link), since bundle-level drill-down is not supported.
+- Field detail view: appends a note below the table that `allowed_values` and `field_type` cannot be imported; applies `entity-labels--summary` CSS class to summary rows. When `custom_field` 4.x is installed, the `field_column` column appears in the report table between `field_name` and `field_type`.
 - **Download CSV button:** rendered as a Drupal link styled as a button (`#type => 'link'`, `#attributes => ['class' => ['button']]`) pointing to `Url::fromRoute($this->getExportRoute(), [], ['query' => array_filter(['entity_type' => $entity_type, 'bundle' => $bundle])])`. The button label is `'⇩ Download CSV'`. It appears immediately below the table.
 
 **`export()` notes:**
@@ -1221,7 +1225,7 @@ testGetDataSummaryRowEmittedOnlyForMultiBundleFields()  // single-bundle field �
 testGetDataSummaryRowAppearsBeforePerBundleRow()
 testGetDataSummaryRowHasBlankLabelWhenAllBundlesAgree()
 testGetDataSummaryRowHasNotesWhenBundlesDisagree()
-testGetDataHandlesAllowedValues()                       // 'foo|Foo,bar|Bar'
+testGetDataHandlesAllowedValues()                       // 'foo|Foo;bar|Bar'
 testGetDataHandlesFieldsWithNoAllowedValues()           // empty string
 testGetDataRowIncludesNotesKey()
 testExportReturnsHeaderRow()                            // header ends with 'notes'
@@ -1299,16 +1303,12 @@ public function testEntityReport(): void {
   // Check that only node bundles are returned.
   // Check that the breadcrumb reads: … > Entity labels > Content.
   // Check that the export link points to /entity/export?entity_type=node.
-
-  // --- Bundle detail view (/entity/node/article) ---
-  // Check that the page returns 200 with the node/article bundle row.
-  // Check that the breadcrumb reads: … > Entity labels > Content > Article.
-  // Check that the export link points to ?entity_type=node&bundle=article.
+  // Check that bundle cells are rendered as plain text (no link) — no bundle-level drill-down on Entities tab.
 
   // --- CSV export ---
   // Check that GET /entity/export returns Content-Type: text/csv.
   // Check that the first CSV row contains headers: langcode,entity_type,bundle,label,description,help,notes.
-  // Check that GET ?entity_type=node&bundle=article returns 200 with Content-Disposition filename containing 'node' and 'article'.
+  // Check that GET ?entity_type=node returns Content-Disposition filename containing 'node'.
   // Check that the CSV row order matches the on-screen sort order.
 }
 ```
