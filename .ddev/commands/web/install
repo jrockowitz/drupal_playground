@@ -1,12 +1,12 @@
 #!/bin/bash
 
-## Description: Install Drupal, optionally with a preset (e.g. ai)
-## Usage: install [preset]
+## Description: Install Drupal, optionally with one or more presets (e.g. ai, schemadotorg)
+## Usage: install [preset...]
 ## Example: ddev install
 ## Example: ddev install ai
+## Example: ddev install schemadotorg
+## Example: ddev install ai schemadotorg
 ## ProjectTypes: drupal,drupal11
-
-PRESET="${1:-}"
 
 drush site:install core/recipes/standard \
   --db-url=mysql://db:db@db/db \
@@ -29,11 +29,17 @@ drush pm:uninstall toolbar
 drush locale-check
 drush locale-update
 
-if [ "$PRESET" = "ai" ]; then
-  echo "Applying AI recipe..."
-  drush recipe ../recipes/drupal_playground_ai
-  drush cr
-fi
+for PRESET in "$@"; do
+  if [ "$PRESET" = "ai" ]; then
+    echo "Applying AI recipe..."
+    drush recipe ../recipes/drupal_playground_ai
+    drush cr
+  elif [ "$PRESET" = "schemadotorg" ]; then
+    echo "Applying Schema.org Blueprints recipe..."
+    drush recipe ../recipes/drupal_playground_schemadotorg
+    drush cr
+  fi
+done
 
 echo ""
 echo "Installation complete. One-time login URL:"

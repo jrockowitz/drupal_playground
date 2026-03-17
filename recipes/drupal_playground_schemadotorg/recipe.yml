@@ -1,0 +1,100 @@
+name: 'Drupal Playground Schema.org Blueprints'
+description: >
+  Installs and configures the Schema.org Blueprints module suite with core
+  and contributed module integrations for structured content modelling.
+  Built on top of drupal_playground_base and the editorial workflow recipe.
+type: 'Site'
+recipes:
+  - drupal_playground_base
+  - core/recipes/editorial_workflow
+
+install:
+  # Core Drupal modules
+  - block_content
+  - path
+  - taxonomy
+  - views
+  # Schema.org Blueprints core submodules
+  - schemadotorg
+  - schemadotorg_additional_mappings
+  - schemadotorg_additional_type
+  - schemadotorg_block_content
+  - schemadotorg_content_moderation
+  - schemadotorg_content_model_documentation
+  - schemadotorg_descriptions
+  - schemadotorg_diagram
+  - schemadotorg_export
+  - schemadotorg_help
+  - schemadotorg_media
+  - schemadotorg_node
+  - schemadotorg_options
+  - schemadotorg_report
+  - schemadotorg_taxonomy
+  - schemadotorg_ui
+  # Schema.org Blueprints translation
+  - schemadotorg_translation
+  # Contrib modules
+  - address
+  - allowed_formats
+  - auto_entitylabel
+  - cer
+  - custom_field
+  - epp
+  - existing_values_autocomplete_widget
+  - field_group
+  - field_validation
+  - focal_point
+  - geolocation
+  - jsonapi_extras
+  - metatag
+  - office_hours
+  - pathauto
+  - physical
+  - simple_sitemap
+  - smart_date
+  - type_tray
+  # Schema.org Blueprints contrib integrations
+  - schemadotorg_address
+  - schemadotorg_allowed_formats
+  - schemadotorg_auto_entitylabel
+  - schemadotorg_cer
+  - schemadotorg_custom_field
+  - schemadotorg_epp
+  - schemadotorg_existing_values_autocomplete_widget
+  - schemadotorg_field_group
+  - schemadotorg_field_prefix
+  - schemadotorg_field_validation
+  - schemadotorg_geolocation
+  - schemadotorg_metatag
+  - schemadotorg_office_hours
+  - schemadotorg_pathauto
+  - schemadotorg_physical
+  - schemadotorg_simple_sitemap
+  - schemadotorg_smart_date
+  - schemadotorg_type_tray
+  # Schema.org Blueprints JSON-API submodules
+  - schemadotorg_jsonapi
+  - schemadotorg_jsonapi_preview
+  # Schema.org Blueprints JSON-LD submodules
+  - schemadotorg_jsonld
+  - schemadotorg_jsonld_breadcrumb
+  - schemadotorg_jsonld_custom
+  - schemadotorg_jsonld_embed
+  - schemadotorg_jsonld_endpoint
+  - schemadotorg_jsonld_preview
+
+config:
+  strict: false
+  import:
+    block_content: '*'
+    path: '*'
+    taxonomy: '*'
+    schemadotorg: '*'
+    schemadotorg_block_content: '*'
+    schemadotorg_media: '*'
+    schemadotorg_taxonomy: '*'
+    pathauto: '*'
+    smart_date: '*'
+  actions:
+    core.extension:
+      executeInstallHook: schemadotorg_smart_date
