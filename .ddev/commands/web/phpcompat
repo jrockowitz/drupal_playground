@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Description: Runs PHP CodeCompatibility
+## Usage: phpcompat [flags] [args]
+## Example: ddev phpcompat\nddev phpcompat web/modules/sandbox/schemadotorg
+
+# @see https://www.drupal.org/node/2924272
+
+source .commands.sh
+
+./vendor/bin/phpcs --runtime-set testVersion 8.2 --standard=./vendor/phpcompatibility/php-compatibility/PHPCompatibility --extensions=php,module,inc,install,test,profile,theme $OPTIONS $PARAMETERS

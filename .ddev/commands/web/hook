@@ -1,0 +1,14 @@
+#!/bin/bash
+
+## Description: Runs a Drupal hook/function without arguments.
+## Usage: hook [function]
+## Example: ddev hook MODULE_update_N();
+
+if [[ "$@" =~ install$ ]]; then
+  # Include $is_syncing parameter to hook_install() and hook_uninstall() calls.
+  evaluate="$@(FALSE)"
+else
+  evaluate="$@()"
+fi
+
+drush php-eval "\Drupal::moduleHandler()->loadAllIncludes('install');\Drupal::moduleHandler()->loadAllIncludes('post_update.php');\Drupal::moduleHandler()->loadAllIncludes('deploy.php');$evaluate;";

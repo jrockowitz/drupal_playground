@@ -20,7 +20,11 @@
       "Bash(for r in drupal_playground_admin drupal_playground_devel drupal_playground_translation)",
       "Read(//Users/rockowij/Sites/drupal_playground/recipes/$r/**)",
       "Bash(done)",
-      "WebFetch(domain:www.jrockowitz.com)"
+      "WebFetch(domain:www.jrockowitz.com)",
+      "Bash(find /Users/rockowij/Sites/drupal_playground/web/modules/custom/telephone_filter/tests/src/Functional -name *.php)",
+      "Bash(chmod 777 /Users/rockowij/Sites/drupal_playground/web/sites/simpletest/browser_output)",
+      "Read(//var/www/html/vendor/drupal/**)",
+      "Read(//var/www/html/web/core/modules/**)"
     ]
   }
 }

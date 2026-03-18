@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Description: Runs Cspell
+## Usage: cspell [flags] [args]
+## Example: ddev cspell\nddev cspell web/modules/sandbox/schemadotorg\nddev cspell --words-only | sort | uniq
+
+# @see https://www.drupal.org/docs/develop/development-tools/cspell
+
+source .commands.sh
+
+$DDEV_DOCROOT/core/node_modules/.bin/cspell -c  .cspell.json --show-suggestions --show-context --no-progress  $OPTIONS $PARAMETERS

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Description: Runs Drupal Check
+## Usage: drupal-check [flags] [args]
+## Example: ddev drupal-check\nddev drupal-check web/modules/sandbox/schemadotorg
+
+# @see https://github.com/mglaman/drupal-check
+
+source .commands.sh
+
+php vendor/bin/drupal-check $OPTIONS $PARAMETERS

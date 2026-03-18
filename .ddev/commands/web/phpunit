@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Description: Runs PHPUnit
+## Usage: phpunit [flags] [args]
+## Example: ddev phpunit\nddev phpunit web/modules/custom
+
+# @see https://www.drupal.org/docs/automated-testing/phpunit-in-drupal/running-phpunit-tests
+
+source .commands.sh
+
+./vendor/bin/phpunit -c $DDEV_DOCROOT/core $OPTIONS $PARAMETERS

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+## Description: Runs Stylelint
+## Usage: stylelint [flags] [args]
+## Example: ddev stylelint\nddev stylelint web/modules/sandbox/schemadotorg
+
+# @see https://www.drupal.org/node/2940458
+
+source .commands.sh
+
+if [ -d "$PARAMETERS" ]; then
+  PARAMETERS=../../$PARAMETERS/**/*.css
+fi
+$DDEV_DOCROOT/core/node_modules/.bin/stylelint --formatter --config=$DDEV_DOCROOT/core/.stylelintrc.json web/modules/sandbox/**/*.css
+
+#if [ -d "$PARAMETERS" ]; then
+#  PARAMETERS=../../$PARAMETERS/**/*.css
+#else
+#  PARAMETERS=$(echo $PARAMETERS | sed -r "s|$DDEV_DOCROOT/|../../$DDEV_DOCROOT/|g")
+#fi
+#
+#yarn --silent --cwd=$DDEV_DOCROOT/core stylelint --allow-empty-input --formatter --config=./.stylelintrc.json $OPTIONS $PARAMETERS

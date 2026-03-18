@@ -1,0 +1,12 @@
+#!/bin/bash
+
+## Description: Runs PHPStan
+## Usage: phpstan [flags] [args]
+## Example: ddev phpstan\nddev phpstan web/modules/sandbox/schemadotorg
+
+# @see https://mglaman.dev/blog/tighten-your-drupal-code-using-phpstan
+# @see https://phpstan.org/user-guide/rule-levels
+
+source .commands.sh
+
+./vendor/bin/phpstan --level=6 $OPTIONS analyse $PARAMETERS

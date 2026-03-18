@@ -1,0 +1,7 @@
+#!/bin/bash
+
+## Description: Run robo commands inside the web container.
+## Usage: robo [flags] [args]
+## Example: ddev robo
+
+./vendor/bin/robo $@

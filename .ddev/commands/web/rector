@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Description: Runs Drupal Rector
+## Usage: rector [flags] [args]
+## Example: ddev rector\nddev rector web/modules/sandbox/schemadotorg
+
+# @see https://github.com/palantirnet/drupal-rector
+
+source .commands.sh
+
+./vendor/bin/rector process --dry-run $OPTIONS $PARAMETERS

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+## Description: Runs PHP CodeBeautify
+## Usage: phpcbf [flags] [args]
+## Example: ddev phpcbf\nddev phpcbf web/modules/sandbox/schemadotorg
+
+# @see phpcbf
+
+source .commands.sh
+
+./vendor/bin/phpcbf $OPTIONS $PARAMETERS

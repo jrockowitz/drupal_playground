@@ -1,0 +1,13 @@
+#!/bin/bash
+
+## Description: Runs PHP CodeSniffer
+## Usage: phpcs [flags] [args]
+## Example: ddev phpcs\nddev phpcs web/modules/sandbox/schemadotorg
+
+# @see https://www.drupal.org/docs/contributed-modules/code-review-module
+# @see https://www.drupal.org/docs/contributed-modules/code-review-module/installing-coder-sniffer
+# @see https://www.drupal.org/docs/contributed-modules/code-review-module/php-codesniffer-command-line-usage
+
+source .commands.sh
+
+./vendor/bin/phpcs $OPTIONS -s $PARAMETERS

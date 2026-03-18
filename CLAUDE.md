@@ -159,4 +159,4 @@ ddev xdebug off
 
 ## Code Style & Standards
 
-- Never use abbreviations in names — except widely accepted ones (`$io`, `src`, `href`, etc.)
+- Never use abbreviations in names. Write the full word every time — `$definition` not `$def`, `$configuration` not `$config`, `$identifier` not `$id`, `$parameters` not `$params`, `$temporary` not `$tmp`. Exceptions for widely accepted conventions: `$io`, `src`, `href`, `url`, `id` (when it is literally an ID/primary key), `html`, `csv`, `api`, `sql`, `php`, language codes like `$langcode`.
