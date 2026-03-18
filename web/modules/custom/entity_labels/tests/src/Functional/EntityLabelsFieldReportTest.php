@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\entity_labels\Functional;
 
-use Drupal\Tests\BrowserTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -19,7 +18,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('entity_labels')]
 #[RunTestsInSeparateProcesses]
-class EntityLabelsFieldReportTest extends BrowserTestBase {
+class EntityLabelsFieldReportTest extends EntityLabelsTestBase {
 
   /**
    * {@inheritdoc}
@@ -29,14 +28,8 @@ class EntityLabelsFieldReportTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'stark';
-
-  /**
-   * {@inheritdoc}
-   */
   protected function setUp(): void {
     parent::setUp();
-    $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
     $this->drupalLogin(
       $this->drupalCreateUser(['access site reports'])
     );

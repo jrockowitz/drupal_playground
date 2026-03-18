@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\entity_labels\Functional;
 
-use Drupal\Tests\BrowserTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -19,17 +18,12 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('entity_labels')]
 #[RunTestsInSeparateProcesses]
-class EntityLabelsFieldGroupTest extends BrowserTestBase {
+class EntityLabelsFieldGroupTest extends EntityLabelsTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = ['node', 'entity_labels'];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
@@ -41,7 +35,6 @@ class EntityLabelsFieldGroupTest extends BrowserTestBase {
       $this->markTestSkipped('field_group module is not available.');
     }
 
-    $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
     $this->drupalLogin(
       $this->drupalCreateUser(['access site reports'])
     );
@@ -112,21 +105,6 @@ class EntityLabelsFieldGroupTest extends BrowserTestBase {
     ];
     $display->setThirdPartySetting('field_group', $group_name, $group);
     $display->save();
-  }
-
-  /**
-   * Writes CSV content to a temporary file and returns its path.
-   *
-   * @param string $content
-   *   The CSV content to write.
-   *
-   * @return string
-   *   Absolute path to the temporary file.
-   */
-  private function writeTemporaryCsv(string $content): string {
-    $path = $this->tempFilesDirectory . '/' . $this->randomMachineName() . '.csv';
-    file_put_contents($path, $content);
-    return $path;
   }
 
 }

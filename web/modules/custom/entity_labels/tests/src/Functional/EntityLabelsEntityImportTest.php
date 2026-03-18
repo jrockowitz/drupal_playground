@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\entity_labels\Functional;
 
-use Drupal\Tests\BrowserTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -18,7 +17,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('entity_labels')]
 #[RunTestsInSeparateProcesses]
-class EntityLabelsEntityImportTest extends BrowserTestBase {
+class EntityLabelsEntityImportTest extends EntityLabelsTestBase {
 
   /**
    * {@inheritdoc}
@@ -28,14 +27,8 @@ class EntityLabelsEntityImportTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'stark';
-
-  /**
-   * {@inheritdoc}
-   */
   protected function setUp(): void {
     parent::setUp();
-    $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
     $this->drupalLogin(
       $this->drupalCreateUser(['access site reports', 'administer site configuration'])
     );
@@ -96,21 +89,6 @@ class EntityLabelsEntityImportTest extends BrowserTestBase {
       'Import CSV',
     );
     $this->assertSession()->statusMessageExists('error');
-  }
-
-  /**
-   * Writes CSV content to a temporary file and returns its path.
-   *
-   * @param string $content
-   *   The CSV content to write.
-   *
-   * @return string
-   *   Absolute path to the temporary file.
-   */
-  private function writeTemporaryCsv(string $content): string {
-    $path = $this->tempFilesDirectory . '/' . $this->randomMachineName() . '.csv';
-    file_put_contents($path, $content);
-    return $path;
   }
 
 }
