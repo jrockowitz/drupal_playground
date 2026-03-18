@@ -4,6 +4,7 @@ description: 'Sets up Gin admin theme with Navigation, Dashboard, and Coffee.'
 install:
   - coffee
   - dashboard
+  - help
   - gin
   - gin_toolbar
   - navigation
@@ -14,6 +15,7 @@ config:
     gin:
       - block.block.gin_breadcrumbs
       - block.block.gin_content
+      - block.block.gin_help
       - block.block.gin_local_actions
       - block.block.gin_messages
       - block.block.gin_page_title
@@ -25,6 +27,7 @@ config:
     claro:
       - block.block.claro_breadcrumbs
       - block.block.claro_content
+      - block.block.claro_help
       - block.block.claro_local_actions
       - block.block.claro_messages
       - block.block.claro_page_title
