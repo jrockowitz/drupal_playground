@@ -136,6 +136,21 @@ class EntityLabelsController extends ControllerBase {
       '#empty' => $this->t('No data found.'),
     ];
 
+    // Bundle-level field report: note about display-only columns and base fields.
+    if ($this->type === 'field' && $bundle !== NULL) {
+      $build['import_note'] = [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['messages', 'messages--warning']],
+        'message' => [
+          '#markup' => $this->t(
+            'The <em>allowed_values</em> and <em>field_type</em> columns are'
+            . ' display-only. Base fields (such as <em>title</em>) cannot be'
+            . ' updated via import.',
+          ),
+        ],
+      ];
+    }
+
     // Download CSV button.
     $build['export_link'] = [
       '#type' => 'link',

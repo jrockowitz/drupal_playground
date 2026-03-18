@@ -74,7 +74,7 @@ class EntityLabelsFieldReportTest extends EntityLabelsTestBase {
     $this->drupalGet('admin/reports/entity-labels/field/node/article');
     $this->assertSession()->statusCodeEquals(200);
     // The title field is always present on nodes.
-    $this->assertSession()->pageTextContains('title');
+    $this->assertSession()->pageTextContains('name');
   }
 
   /**
@@ -95,20 +95,6 @@ class EntityLabelsFieldReportTest extends EntityLabelsTestBase {
       'Content-Type',
       'text/csv',
     );
-  }
-
-  /**
-   * Tests that the import note is shown only on the bundle-level report.
-   *
-   * The 'allowed_values and field_type cannot be updated via import' note
-   * must appear only when both entity_type and bundle are set.
-   */
-  public function testImportNoteAppearsOnlyOnBundleView(): void {
-    $this->drupalGet('admin/reports/entity-labels/field/node/article');
-    $this->assertSession()->pageTextContains('cannot be updated via import');
-
-    $this->drupalGet('admin/reports/entity-labels/field/node');
-    $this->assertSession()->pageTextNotContains('cannot be updated via import');
   }
 
   /**

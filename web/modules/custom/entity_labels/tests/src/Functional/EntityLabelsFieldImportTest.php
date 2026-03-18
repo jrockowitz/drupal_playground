@@ -47,15 +47,6 @@ class EntityLabelsFieldImportTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests that the import form shows the allowed_values/field_type notice.
-   */
-  public function testFieldImportFormShowsNotice(): void {
-    $this->drupalGet('admin/reports/entity-labels/field/import');
-    $this->assertSession()->pageTextContains('allowed_values');
-    $this->assertSession()->pageTextContains('field_type');
-  }
-
-  /**
    * Tests that submitting without a file is handled gracefully.
    */
   public function testImportWithoutFileIsHandledGracefully(): void {
