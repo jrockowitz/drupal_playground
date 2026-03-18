@@ -93,13 +93,13 @@ class EntityLabelsFieldGroupTest extends EntityLabelsTestBase {
     }
 
     $group = [
-      'label'           => $label,
-      'children'        => [],
-      'parent_name'     => '',
-      'weight'          => 0,
-      'format_type'     => 'details',
+      'label' => $label,
+      'children' => [],
+      'parent_name' => '',
+      'weight' => 0,
+      'format_type' => 'details',
       'format_settings' => [
-        'open'        => FALSE,
+        'open' => FALSE,
         'description' => 'Group description',
       ],
     ];

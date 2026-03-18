@@ -59,10 +59,10 @@ class EntityLabelsEntityImporter implements EntityLabelsEntityImporterInterface 
       }
 
       $entity_type_id = $row[$col['entity_type']] ?? '';
-      $bundle_id      = $row[$col['bundle']] ?? '';
-      $label          = $row[$col['label']] ?? '';
-      $description    = $row[$col['description']] ?? '';
-      $help           = $row[$col['help']] ?? '';
+      $bundle_id = $row[$col['bundle']] ?? '';
+      $label = $row[$col['label']] ?? '';
+      $description = $row[$col['description']] ?? '';
+      $help = $row[$col['help']] ?? '';
 
       $entity_type = $this->entityTypeManager->getDefinition(
         $entity_type_id,
@@ -102,9 +102,9 @@ class EntityLabelsEntityImporter implements EntityLabelsEntityImporterInterface 
     fclose($handle);
 
     return [
-      'updated'     => $updated,
-      'skipped'     => $skipped,
-      'errors'      => $errors,
+      'updated' => $updated,
+      'skipped' => $skipped,
+      'errors' => $errors,
       'null_fields' => $null_fields,
     ];
   }

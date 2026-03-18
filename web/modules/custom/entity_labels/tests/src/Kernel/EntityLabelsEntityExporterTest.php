@@ -44,10 +44,10 @@ class EntityLabelsEntityExporterTest extends KernelTestBase {
    */
   public function testGetData(): void {
     NodeType::create([
-      'type'        => 'article',
-      'name'        => 'Article',
+      'type' => 'article',
+      'name' => 'Article',
       'description' => 'Article description',
-      'help'        => 'Article help',
+      'help' => 'Article help',
     ])->save();
     NodeType::create(['type' => 'page', 'name' => 'Page'])->save();
 

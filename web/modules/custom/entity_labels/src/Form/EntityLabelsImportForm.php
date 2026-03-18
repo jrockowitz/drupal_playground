@@ -58,14 +58,14 @@ class EntityLabelsImportForm extends FormBase {
     $form['#attributes']['enctype'] = 'multipart/form-data';
 
     $form['csv_upload'] = [
-      '#type'             => 'file',
-      '#title'            => $this->t('CSV file'),
-      '#description'      => $this->t('Upload a CSV file to import.'),
+      '#type' => 'file',
+      '#title' => $this->t('CSV file'),
+      '#description' => $this->t('Upload a CSV file to import.'),
       '#element_validate' => [[$this, 'validateFileUpload']],
     ];
 
     $form['submit'] = [
-      '#type'  => 'submit',
+      '#type' => 'submit',
       '#value' => $this->t('Import CSV'),
     ];
 
@@ -182,7 +182,7 @@ class EntityLabelsImportForm extends FormBase {
    *   The target report URL.
    */
   private function buildRedirectUrl(string $filename): Url {
-    $name   = pathinfo($filename, PATHINFO_FILENAME);
+    $name = pathinfo($filename, PATHINFO_FILENAME);
     $prefix = 'entity-labels-' . $this->getPluralName();
 
     if (!str_starts_with($name, $prefix)) {
@@ -197,9 +197,9 @@ class EntityLabelsImportForm extends FormBase {
     }
 
     // Machine names are [a-z0-9_]; dashes are always separators.
-    $parts       = explode('-', $remaining, 2);
+    $parts = explode('-', $remaining, 2);
     $entity_type = $parts[0] !== '' ? $parts[0] : NULL;
-    $bundle      = ($this->type === 'field') ? ($parts[1] ?? NULL) : NULL;
+    $bundle = ($this->type === 'field') ? ($parts[1] ?? NULL) : NULL;
 
     return Url::fromRoute(
       $this->getReportRoute(),

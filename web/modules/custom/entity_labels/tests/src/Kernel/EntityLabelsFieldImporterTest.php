@@ -56,15 +56,15 @@ class EntityLabelsFieldImporterTest extends KernelTestBase {
   private function createField(string $bundle, string $field_name, string $label): void {
     if (FieldStorageConfig::load('node.' . $field_name) === NULL) {
       FieldStorageConfig::create([
-        'field_name'  => $field_name,
+        'field_name' => $field_name,
         'entity_type' => 'node',
-        'type'        => 'string',
+        'type' => 'string',
       ])->save();
     }
     FieldConfig::create([
       'field_storage' => FieldStorageConfig::load('node.' . $field_name),
-      'bundle'        => $bundle,
-      'label'         => $label,
+      'bundle' => $bundle,
+      'label' => $label,
     ])->save();
   }
 

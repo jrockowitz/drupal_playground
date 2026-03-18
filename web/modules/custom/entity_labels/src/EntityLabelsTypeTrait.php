@@ -19,8 +19,8 @@ trait EntityLabelsTypeTrait {
    */
   protected function getSingularLabel(): TranslatableMarkup {
     return match ($this->type) {
-      'field'  => $this->t('Field'),
-      default  => $this->t('Entity'),
+      'field' =>$this->t('Field'),
+      default =>$this->t('Entity'),
     };
   }
 
@@ -29,8 +29,8 @@ trait EntityLabelsTypeTrait {
    */
   protected function getPluralLabel(): TranslatableMarkup {
     return match ($this->type) {
-      'field'  => $this->t('Fields'),
-      default  => $this->t('Entities'),
+      'field' =>$this->t('Fields'),
+      default =>$this->t('Entities'),
     };
   }
 

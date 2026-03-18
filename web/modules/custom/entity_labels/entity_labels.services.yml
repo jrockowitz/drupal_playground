@@ -27,6 +27,9 @@ services:
   Drupal\entity_labels\EntityLabelsFieldImporterInterface:
     alias: entity_labels.field.importer
 
+  Drupal\entity_labels\Hook\EntityLabelsHooks:
+    autowire: true
+
   entity_labels.breadcrumb_builder:
     class: Drupal\entity_labels\Breadcrumb\EntityLabelsBreadcrumbBuilder
     tags:

@@ -64,9 +64,9 @@ class EntityLabelsController extends ControllerBase {
         if ($col === 'entity_type' && (string) $value !== '') {
           $cells[] = [
             'data' => [
-              '#type'  => 'link',
+              '#type' => 'link',
               '#title' => $value,
-              '#url'   => Url::fromRoute(
+              '#url' => Url::fromRoute(
                 $this->getReportRoute(),
                 ['entity_type' => $value],
               ),
@@ -82,13 +82,13 @@ class EntityLabelsController extends ControllerBase {
         ) {
           $cells[] = [
             'data' => [
-              '#type'  => 'link',
+              '#type' => 'link',
               '#title' => $value,
-              '#url'   => Url::fromRoute(
+              '#url' => Url::fromRoute(
                 $this->getReportRoute(),
                 [
                   'entity_type' => $row['entity_type'],
-                  'bundle'      => $value,
+                  'bundle' => $value,
                 ],
               ),
             ],
@@ -129,24 +129,24 @@ class EntityLabelsController extends ControllerBase {
     $build = [];
 
     $build['table'] = [
-      '#type'   => 'table',
+      '#type' => 'table',
       '#header' => $header,
-      '#rows'   => $table_rows,
+      '#rows' => $table_rows,
       '#sticky' => TRUE,
-      '#empty'  => $this->t('No data found.'),
+      '#empty' => $this->t('No data found.'),
     ];
 
     // Download CSV button.
     $build['export_link'] = [
-      '#type'       => 'link',
-      '#title'      => $this->t('⇩ Download CSV'),
-      '#url'        => Url::fromRoute(
+      '#type' => 'link',
+      '#title' => $this->t('⇩ Download CSV'),
+      '#url' => Url::fromRoute(
         $this->getExportRoute(),
         [],
         [
           'query' => array_filter([
             'entity_type' => $entity_type,
-            'bundle'      => $bundle,
+            'bundle' => $bundle,
           ]),
         ],
       ),
@@ -196,7 +196,7 @@ class EntityLabelsController extends ControllerBase {
       $bundles = $this->bundleInfo->getBundleInfo($entity_type);
       $label = $bundles[$bundle]['label'] ?? $bundle;
       return $this->t('@type: @label', [
-        '@type'  => $this->getPluralLabel(),
+        '@type' => $this->getPluralLabel(),
         '@label' => $label,
       ]);
     }
@@ -206,7 +206,7 @@ class EntityLabelsController extends ControllerBase {
         ->getDefinition($entity_type, FALSE);
       $label = $definition ? (string) $definition->getLabel() : $entity_type;
       return $this->t('@type: @label', [
-        '@type'  => $this->getPluralLabel(),
+        '@type' => $this->getPluralLabel(),
         '@label' => $label,
       ]);
     }

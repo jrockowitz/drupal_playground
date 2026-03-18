@@ -99,10 +99,10 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
   ): void {
     if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
       FieldStorageConfig::create([
-        'field_name'  => $field_name,
+        'field_name' => $field_name,
         'entity_type' => $entity_type,
-        'type'        => 'custom',
-        'settings'    => [
+        'type' => 'custom',
+        'settings' => [
           'columns' => [
             ['name' => 'value', 'type' => 'string', 'max_length' => 255],
           ],
@@ -112,14 +112,14 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
     if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
       FieldConfig::create([
         'field_storage' => FieldStorageConfig::loadByName($entity_type, $field_name),
-        'bundle'        => $bundle,
-        'label'         => 'Custom test field',
-        'settings'      => [
+        'bundle' => $bundle,
+        'label' => 'Custom test field',
+        'settings' => [
           'field_settings' => [
             'value' => [
-              'label'       => 'Value column',
+              'label' => 'Value column',
               'description' => '',
-              'type'        => 'string',
+              'type' => 'string',
             ],
           ],
         ],

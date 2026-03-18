@@ -58,13 +58,13 @@ class EntityLabelsEntityExporter implements EntityLabelsEntityExporterInterface 
         }
 
         $rows[] = [
-          'langcode'    => $langcode,
+          'langcode' => $langcode,
           'entity_type' => $type_id,
-          'bundle'      => $bundle_id,
-          'label'       => (string) $bundle_entity->label(),
+          'bundle' => $bundle_id,
+          'label' => (string) $bundle_entity->label(),
           'description' => (string) ($bundle_entity->get('description') ?? ''),
-          'help'        => (string) ($bundle_entity->get('help') ?? ''),
-          'notes'       => '',
+          'help' => (string) ($bundle_entity->get('help') ?? ''),
+          'notes' => '',
         ];
       }
     }

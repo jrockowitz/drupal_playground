@@ -70,11 +70,11 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
           $a[$col['entity_type']] ?? '',
           $a[$col['bundle']] ?? '',
           $a[$col['field_name']] ?? '',
-        ] <=> [
+      ] <=> [
           $b[$col['entity_type']] ?? '',
           $b[$col['bundle']] ?? '',
           $b[$col['field_name']] ?? '',
-        ];
+      ];
     });
 
     $updated = 0;
@@ -84,13 +84,13 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
 
     foreach ($all_rows as $row) {
       $entity_type_id = $row[$col['entity_type']] ?? '';
-      $bundle_id      = $row[$col['bundle']] ?? '';
-      $field_name     = $row[$col['field_name']] ?? '';
-      $label          = $row[$col['label']] ?? '';
-      $description    = $row[$col['description']] ?? '';
-      $field_column   = isset($col['field_column'])
+      $bundle_id = $row[$col['bundle']] ?? '';
+      $field_name = $row[$col['field_name']] ?? '';
+      $label = $row[$col['label']] ?? '';
+      $description = $row[$col['description']] ?? '';
+      $field_column = isset($col['field_column'])
         ? ($row[$col['field_column']] ?? '') : '';
-      $field_type     = isset($col['field_type'])
+      $field_type = isset($col['field_type'])
         ? ($row[$col['field_type']] ?? '') : '';
 
       // field_group rows.
@@ -170,7 +170,7 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
           continue;
         }
 
-        $field_settings[$field_column]['label']       = $label;
+        $field_settings[$field_column]['label'] = $label;
         $field_settings[$field_column]['description'] = $description;
         $field_config->setSetting('field_settings', $field_settings);
         $field_config->save();
@@ -198,9 +198,9 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
     }
 
     return [
-      'updated'     => $updated,
-      'skipped'     => $skipped,
-      'errors'      => $errors,
+      'updated' => $updated,
+      'skipped' => $skipped,
+      'errors' => $errors,
       'null_fields' => $null_fields,
     ];
   }

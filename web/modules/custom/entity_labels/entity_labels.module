@@ -1,49 +1,20 @@
 <?php
 
+/**
+ * @file
+ * Report and CSV export/import for entity type, bundle, and field label metadata.
+ */
+
 declare(strict_types=1);
 
+use Drupal\Core\Hook\Attribute\LegacyHook;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\entity_labels\Hook\EntityLabelsHooks;
 
 /**
  * Implements hook_help().
  */
+#[LegacyHook]
 function entity_labels_help(string $route_name, RouteMatchInterface $route_match): string {
-  switch ($route_name) {
-    case 'entity_labels.entity':
-      return '<p>' . t('The <strong>Entities</strong> label page lists all entity types filterable by individual entity type.') . '</p>';
-
-    case 'entity_labels.entity.report':
-      return '<p>' . t('Displays entity and bundle labels for a specific entity type.') . '</p>';
-
-    case 'entity_labels.entity.export':
-      return '<p>' . t('Exports entity labels as a downloadable CSV file.') . '</p>';
-
-    case 'entity_labels.entity.import':
-      return '<p>' . t('Imports entity labels from an uploaded CSV file.') . '</p>';
-
-    case 'entity_labels.field':
-      return '<p>' . t('The <strong>Fields</strong> label page lists all field labels filterable by entity type and bundle.') . '</p>';
-
-    case 'entity_labels.field.report':
-      $output = '<p>' . t('Displays field labels for a specific entity type or bundle.') . '</p>';
-      if ($route_match->getParameter('bundle') !== NULL) {
-        $output .= '<p>' . t('Note: %allowed_values and %field_type cannot be updated via import.', [
-          '%allowed_values' => 'allowed_values',
-          '%field_type' => 'field_type',
-        ]) . '</p>';
-      }
-      return $output;
-
-    case 'entity_labels.field.export':
-      return '<p>' . t('Exports field labels as a downloadable CSV file.') . '</p>';
-
-    case 'entity_labels.field.import':
-      return '<p>' . t('Imports field labels from an uploaded CSV file.') . '</p>'
-        . '<p>' . t('Note: %allowed_values and %field_type columns are ignored during import.', [
-          '%allowed_values' => 'allowed_values',
-          '%field_type' => 'field_type',
-        ]) . '</p>';
-  }
-
-  return '';
+  return \Drupal::service(EntityLabelsHooks::class)->help($route_name, $route_match);
 }

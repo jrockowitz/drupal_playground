@@ -130,33 +130,33 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
     $rows = [];
 
     $rows[] = [
-      'langcode'       => $langcode,
-      'entity_type'    => $entity_type_id,
-      'bundle'         => $bundle_id,
-      'field_name'     => $field_name,
-      'field_column'   => '',
-      'field_type'     => $field_definition->getType(),
-      'label'          => (string) $field_definition->getLabel(),
-      'description'    => (string) $field_definition->getDescription(),
+      'langcode' => $langcode,
+      'entity_type' => $entity_type_id,
+      'bundle' => $bundle_id,
+      'field_name' => $field_name,
+      'field_column' => '',
+      'field_type' => $field_definition->getType(),
+      'label' => (string) $field_definition->getLabel(),
+      'description' => (string) $field_definition->getDescription(),
       'allowed_values' => $this->serializeAllowedValues(
         $field_definition->getSetting('allowed_values') ?? [],
       ),
-      'notes'          => $notes,
+      'notes' => $notes,
     ];
 
     if ($field_definition->getType() === 'custom' && $this->isCustomFieldInstalled()) {
       foreach ($field_definition->getSetting('field_settings') ?? [] as $column_name => $column_settings) {
         $rows[] = [
-          'langcode'       => $langcode,
-          'entity_type'    => $entity_type_id,
-          'bundle'         => $bundle_id,
-          'field_name'     => $field_name,
-          'field_column'   => $column_name,
-          'field_type'     => $field_definition->getType(),
-          'label'          => $column_settings['label'] ?? '',
-          'description'    => $column_settings['description'] ?? '',
+          'langcode' => $langcode,
+          'entity_type' => $entity_type_id,
+          'bundle' => $bundle_id,
+          'field_name' => $field_name,
+          'field_column' => $column_name,
+          'field_type' => $field_definition->getType(),
+          'label' => $column_settings['label'] ?? '',
+          'description' => $column_settings['description'] ?? '',
           'allowed_values' => '',
-          'notes'          => $notes,
+          'notes' => $notes,
         ];
       }
     }
@@ -236,16 +236,16 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
 
         foreach ($field_groups as $group_name => $group_settings) {
           $rows[] = [
-            'langcode'       => $langcode,
-            'entity_type'    => $entity_type_id,
-            'bundle'         => $bundle_id,
-            'field_name'     => $group_name,
-            'field_column'   => '',
-            'field_type'     => 'field_group',
-            'label'          => $group_settings['label'] ?? '',
-            'description'    => $group_settings['format_settings']['description'] ?? '',
+            'langcode' => $langcode,
+            'entity_type' => $entity_type_id,
+            'bundle' => $bundle_id,
+            'field_name' => $group_name,
+            'field_column' => '',
+            'field_type' => 'field_group',
+            'label' => $group_settings['label'] ?? '',
+            'description' => $group_settings['format_settings']['description'] ?? '',
             'allowed_values' => '',
-            'notes'          => 'Field group — default form mode',
+            'notes' => 'Field group — default form mode',
           ];
 
           $children_keys = array_combine($group_settings['children'], $group_settings['children']);
