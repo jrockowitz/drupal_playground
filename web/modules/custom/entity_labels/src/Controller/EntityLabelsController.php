@@ -120,6 +120,7 @@ class EntityLabelsController extends ControllerBase {
       '#type'   => 'table',
       '#header' => $header,
       '#rows'   => $table_rows,
+      '#sticky' => TRUE,
       '#empty'  => $this->t('No data found.'),
     ];
 

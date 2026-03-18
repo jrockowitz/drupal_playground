@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\entity_labels\Kernel;
 
-use Drupal\Core\Field\Entity\BaseFieldOverride;
 use Drupal\entity_labels\EntityLabelsFieldImporterInterface;
 use Drupal\entity_labels\Exception\EntityLabelsCsvParseException;
 use Drupal\field\Entity\FieldConfig;
@@ -104,21 +103,6 @@ class EntityLabelsFieldImporterTest extends KernelTestBase {
     $this->assertNotNull($field);
     $this->assertSame('Updated Label', $field->label());
     $this->assertSame('Updated description', $field->getDescription());
-
-    /* *** Falls back to BaseFieldOverride for base fields *** */
-    $definitions = \Drupal::service('entity_field.manager')
-      ->getFieldDefinitions('node', 'article');
-    $override = BaseFieldOverride::createFromBaseFieldDefinition(
-      $definitions['title'],
-      'article',
-    );
-    $override->setLabel('Original Title')->save();
-    $this->importer->import(
-      self::HEADER . "en,node,article,title,Overridden Title,Some help\n",
-    );
-    $reloaded = BaseFieldOverride::load('node.article.title');
-    $this->assertNotNull($reloaded);
-    $this->assertSame('Overridden Title', $reloaded->label());
 
     /* *** Non-existent field: skipped and identifier recorded in null_fields *** */
     $result = $this->importer->import(

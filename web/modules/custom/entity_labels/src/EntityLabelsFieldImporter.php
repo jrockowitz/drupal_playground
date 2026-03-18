@@ -179,12 +179,9 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
       }
 
       // Standard field row.
-      // Load FieldConfig; fall back to BaseFieldOverride.
+      // Load FieldConfig — only custom fields are supported.
       $id = $entity_type_id . '.' . $bundle_id . '.' . $field_name;
       $field_entity = $this->entityTypeManager->getStorage('field_config')->load($id);
-      if ($field_entity === NULL) {
-        $field_entity = $this->entityTypeManager->getStorage('base_field_override')->load($id);
-      }
 
       if ($field_entity === NULL) {
         $skipped++;

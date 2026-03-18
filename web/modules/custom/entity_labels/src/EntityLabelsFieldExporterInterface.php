@@ -16,8 +16,7 @@ interface EntityLabelsFieldExporterInterface extends EntityLabelsExporterInterfa
    *
    * Keys: langcode, entity_type, bundle, field_name,
    *       field_column (empty string unless custom_field 4.x is installed),
-   *       field_type, label, description, allowed_values,
-   *       is_base_field (bool), notes.
+   *       field_type, label, description, allowed_values, notes.
    * When field_group is installed, additional rows are appended with
    * field_type = 'field_group'. When custom_field 4.x is installed,
    * additional rows are appended per column with field_column set.

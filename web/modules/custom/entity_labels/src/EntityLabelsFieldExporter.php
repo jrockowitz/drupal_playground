@@ -9,10 +9,8 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Field\Entity\BaseFieldOverride;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Exports field label metadata across entity types and bundles.
@@ -58,8 +56,9 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
         $field_definitions = $this->fieldManager->getFieldDefinitions($type_id, $bundle_id);
 
         foreach ($field_definitions as $field_name => $field_definition) {
-          $is_base_field = $field_definition instanceof BaseFieldDefinition
-            && !($field_definition instanceof BaseFieldOverride);
+          if (!($field_definition instanceof FieldConfig)) {
+            continue;
+          }
 
           $rows[] = [
             'langcode'       => $langcode,
@@ -73,13 +72,11 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
             'allowed_values' => $this->serializeAllowedValues(
               $field_definition->getSetting('allowed_values') ?? [],
             ),
-            'is_base_field'  => $is_base_field,
             'notes'          => '',
           ];
 
           // custom_field 4.x column rows.
-          if ($is_bundle_view
-            && $field_definition->getType() === 'custom'
+          if ($field_definition->getType() === 'custom'
             && $this->isCustomFieldInstalled()
           ) {
             $field_settings = $field_definition->getSetting('field_settings') ?? [];
@@ -94,7 +91,6 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
                 'label'          => $column_settings['label'] ?? '',
                 'description'    => $column_settings['description'] ?? '',
                 'allowed_values' => '',
-                'is_base_field'  => FALSE,
                 'notes'          => '',
               ];
             }
@@ -116,7 +112,6 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
               'label'          => $group_settings['label'] ?? '',
               'description'    => $group_settings['format_settings']['description'] ?? '',
               'allowed_values' => '',
-              'is_base_field'  => FALSE,
               'notes'          => 'Field group — default form mode',
             ];
           }
@@ -139,10 +134,12 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
           $a['entity_type'],
           $a['bundle'],
           $a['field_name'],
+          $a['field_column'],
         ] <=> [
           $b['entity_type'],
           $b['bundle'],
           $b['field_name'],
+          $b['field_column'],
         ];
       });
     }
@@ -209,23 +206,10 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
   }
 
   /**
-   * Loads a FieldStorageConfig by ID (overridable for testing).
-   *
-   * @param string $id
-   *   The storage config ID (entity_type.field_name).
-   *
-   * @return \Drupal\field\Entity\FieldStorageConfig|null
-   *   The field storage config or NULL.
-   */
-  protected function loadFieldStorageConfig(string $id): ?FieldStorageConfig {
-    return FieldStorageConfig::load($id);
-  }
-
-  /**
-   * Serializes an allowed-values array to "key|Label;key2|Label2" format.
+   * Serializes an allowed-values array to "Label;Label2" format.
    *
    * @return string
-   *   Semicolon-delimited pairs, or an empty string when there are no values.
+   *   Semicolon-delimited labels, or an empty string when there are no values.
    */
   private function serializeAllowedValues(array $allowed_values): string {
     if (empty($allowed_values)) {
@@ -233,12 +217,12 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
     }
     $parts = [];
     $count = 0;
-    foreach ($allowed_values as $key => $label) {
+    foreach ($allowed_values as $label) {
       if ($count === 10) {
         $parts[] = '...';
         break;
       }
-      $parts[] = $key . '|' . $label;
+      $parts[] = (string) $label;
       $count++;
     }
     return implode(';', $parts);
