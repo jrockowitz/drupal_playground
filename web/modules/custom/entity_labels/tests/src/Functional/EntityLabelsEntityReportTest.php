@@ -100,4 +100,22 @@ class EntityLabelsEntityReportTest extends EntityLabelsTestBase {
     $this->assertSession()->linkByHrefExists('/admin/reports');
   }
 
+  /**
+   * Tests that reports are gated behind 'access site reports'.
+   */
+  public function testReportRequiresPermission(): void {
+    $this->drupalLogin($this->drupalCreateUser([]));
+    $this->drupalGet('admin/reports/entity-labels/entity');
+    $this->assertSession()->statusCodeEquals(403);
+  }
+
+  /**
+   * Tests that the import form is gated behind 'administer site configuration'.
+   */
+  public function testImportRequiresPermission(): void {
+    $this->drupalLogin($this->drupalCreateUser(['access site reports']));
+    $this->drupalGet('admin/reports/entity-labels/entity/import');
+    $this->assertSession()->statusCodeEquals(403);
+  }
+
 }

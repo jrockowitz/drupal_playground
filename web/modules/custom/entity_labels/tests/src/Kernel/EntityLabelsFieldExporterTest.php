@@ -23,7 +23,7 @@ class EntityLabelsFieldExporterTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['system', 'user', 'node', 'field', 'entity_labels'];
+  protected static $modules = ['system', 'user', 'node', 'field', 'options', 'entity_labels'];
 
   /**
    * The field exporter service under test.
@@ -112,6 +112,66 @@ class EntityLabelsFieldExporterTest extends KernelTestBase {
     $this->assertCount(2, $custom_rows);
     $this->assertSame('field_alpha', $custom_rows[0]['field_name']);
     $this->assertSame('field_beta', $custom_rows[1]['field_name']);
+  }
+
+  /**
+   * @covers ::getData
+   */
+  public function testSerializeAllowedValues(): void {
+    // Create a list_string field with 3 allowed values.
+    FieldStorageConfig::create([
+      'field_name' => 'field_list_few',
+      'entity_type' => 'node',
+      'type' => 'list_string',
+      'settings' => [
+        'allowed_values' => [
+          'a' => 'Alpha',
+          'b' => 'Beta',
+          'c' => 'Gamma',
+        ],
+      ],
+    ])->save();
+    FieldConfig::create([
+      'field_storage' => FieldStorageConfig::load('node.field_list_few'),
+      'bundle' => 'article',
+      'label' => 'Few Options',
+    ])->save();
+
+    /* *** Fewer than 10 values: semicolon-delimited, no ellipsis *** */
+    $rows = array_values(array_filter(
+      $this->exporter->getData('node', 'article'),
+      static fn(array $r) => $r['field_name'] === 'field_list_few',
+    ));
+    $this->assertNotEmpty($rows);
+    $this->assertSame('Alpha;Beta;Gamma', $rows[0]['allowed_values']);
+
+    // Create a list_string field with 11 allowed values.
+    $many_values = [];
+    for ($index = 1; $index <= 11; $index++) {
+      $many_values['v' . $index] = 'Value ' . $index;
+    }
+    FieldStorageConfig::create([
+      'field_name' => 'field_list_many',
+      'entity_type' => 'node',
+      'type' => 'list_string',
+      'settings' => ['allowed_values' => $many_values],
+    ])->save();
+    FieldConfig::create([
+      'field_storage' => FieldStorageConfig::load('node.field_list_many'),
+      'bundle' => 'article',
+      'label' => 'Many Options',
+    ])->save();
+
+    /* *** More than 10 values: truncated at 10 entries with trailing '...' *** */
+    $rows = array_values(array_filter(
+      $this->exporter->getData('node', 'article'),
+      static fn(array $r) => $r['field_name'] === 'field_list_many',
+    ));
+    $this->assertNotEmpty($rows);
+    $allowed = $rows[0]['allowed_values'];
+    $parts = explode(';', $allowed);
+    $this->assertCount(11, $parts);
+    $this->assertSame('...', $parts[10]);
   }
 
   /**

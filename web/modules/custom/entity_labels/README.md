@@ -9,13 +9,15 @@ description, allowed values) — with CSV export and CSV import for bulk updates
 - **Entities tab** — browse all entity types that support bundles; drill down by
   entity type; view label, description, and help text.
 - **Fields tab** — browse all fields across all bundles; drill down by entity type
-  and bundle; view label, description, field type, and allowed values. Cross-bundle
-  summary rows highlight shared fields and any per-bundle overrides.
+  and bundle; view label, description, field type, and allowed values. On the bundle
+  view, fields are ordered to match the default form display.
 - **CSV export** — scoped to the current view (all, entity type, or bundle). Every
   export includes a `notes` column and a `langcode` column to target translations.
 - **CSV import** — upload a modified CSV to bulk-update labels and descriptions.
   `allowed_values` and `field_type` are display-only and never imported.
-- Multilingual: uses Drupal's core translation detection; import targets the
+  Only FieldConfig-based (non-base) fields can be updated; base fields
+  such as `title` are skipped.
+- **Multilingual** — uses Drupal's core translation detection; import targets the
   language specified in the `langcode` column.
 
 ## Requirements
@@ -56,6 +58,3 @@ drush en entity_labels
 4. Click **⇩ Download CSV** to export the current view.
 5. Edit the CSV, then use the **Import** secondary tab to upload and apply changes.
 
-## Development
-
-See [AGENTS.md](AGENTS.md) for AI-assisted development guidelines.

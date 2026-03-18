@@ -22,8 +22,7 @@ interface EntityLabelsFieldExporterInterface extends EntityLabelsExporterInterfa
    * additional rows are appended per column with field_column set.
    *
    * @return array
-   *   Field report rows; each row is a map of column name to string, bool,
-   *   or null value.
+   *   Field report rows; each row is a map of column name to string value.
    */
   public function getData(?string $entity_type_id = NULL, ?string $bundle = NULL): array;
 

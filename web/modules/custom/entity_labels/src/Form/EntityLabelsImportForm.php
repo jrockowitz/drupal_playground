@@ -50,9 +50,6 @@ class EntityLabelsImportForm extends FormBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @return array
-   *   The form render array.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#attributes']['enctype'] = 'multipart/form-data';

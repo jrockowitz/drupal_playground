@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * Handles all entity-labels report, export routes for both types.
+ * Handles all entity-labels report and export routes for both types.
  */
 class EntityLabelsController extends ControllerBase {
 

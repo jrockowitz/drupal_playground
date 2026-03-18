@@ -118,6 +118,14 @@ class EntityLabelsFieldImporterTest extends KernelTestBase {
     );
     $this->assertSame(1, $result['skipped']);
     $this->assertNotEmpty($result['errors']);
+
+    /* *** field_group row when field_group not installed: skipped with error *** */
+    $result = $this->importer->import(
+      "langcode,entity_type,bundle,field_name,field_type,label,description\n"
+      . "en,node,article,group_one,field_group,Group Label,Group desc\n",
+    );
+    $this->assertSame(1, $result['skipped']);
+    $this->assertNotEmpty($result['errors']);
   }
 
 }

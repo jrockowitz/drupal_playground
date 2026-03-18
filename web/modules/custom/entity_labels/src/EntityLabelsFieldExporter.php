@@ -307,6 +307,9 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
   /**
    * Serializes an allowed-values array to "Label;Label2" format.
    *
+   * Truncated to the first 10 values; a trailing "..." is appended when
+   * more than 10 values exist.
+   *
    * @return string
    *   Semicolon-delimited labels, or an empty string when there are no values.
    */

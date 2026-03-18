@@ -17,12 +17,6 @@ interface EntityLabelsFieldImporterInterface extends EntityLabelsImporterInterfa
    * Optional: field_column (defaults to '' when absent), allowed_values,
    * field_type, notes.
    *
-   * Summary rows (bundle = '(default / all bundles)') are applied as the
-   * default label/description for per-bundle rows of the same entity_type +
-   * field_name that supply no values of their own. The entire CSV is
-   * re-sorted by entity_type, bundle, field_name before processing to ensure
-   * defaults are available before per-bundle rows.
-   *
    * Rows where neither FieldConfig nor BaseFieldOverride can be loaded (NULL)
    * are counted as skipped and their identifier
    * (entity_type.bundle.field_name) recorded in 'null_fields'.
