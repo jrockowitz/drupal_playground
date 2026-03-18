@@ -84,9 +84,6 @@ class EntityLabelsFieldGroupTest extends EntityLabelsTestBase {
     $display = \Drupal::entityTypeManager()
       ->getStorage('entity_form_display')
       ->load('node.article.default');
-    if ($display === NULL) {
-      return;
-    }
 
     $group = [
       'label' => $label,

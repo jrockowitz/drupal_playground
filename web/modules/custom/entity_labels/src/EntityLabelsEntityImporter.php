@@ -72,6 +72,7 @@ class EntityLabelsEntityImporter implements EntityLabelsEntityImporterInterface 
 
       $bundle_entity = NULL;
       if ($bundle_entity_type !== NULL) {
+        /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface|null $bundle_entity */
         $bundle_entity = $this->entityTypeManager
           ->getStorage($bundle_entity_type)
           ->load($bundle_id);

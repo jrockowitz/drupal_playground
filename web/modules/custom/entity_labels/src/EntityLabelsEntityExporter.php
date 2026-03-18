@@ -52,6 +52,7 @@ class EntityLabelsEntityExporter implements EntityLabelsEntityExporterInterface 
         ->getStorage($entity_type->getBundleEntityType());
 
       foreach (array_keys($this->bundleInfoManager->getBundleInfo($type_id)) as $bundle_id) {
+        /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface|null $bundle_entity */
         $bundle_entity = $storage->load($bundle_id);
         if ($bundle_entity === NULL) {
           continue;
