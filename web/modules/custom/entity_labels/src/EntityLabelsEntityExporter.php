@@ -25,6 +25,13 @@ class EntityLabelsEntityExporter implements EntityLabelsEntityExporterInterface 
   /**
    * {@inheritdoc}
    */
+  public function getHeader(): array {
+    return ['langcode', 'entity_type', 'bundle', 'label', 'description', 'help'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getData(
     ?string $entity_type_id = NULL,
     ?string $bundle = NULL,
@@ -68,13 +75,6 @@ class EntityLabelsEntityExporter implements EntityLabelsEntityExporterInterface 
     });
 
     return $rows;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getHeader(): array {
-    return ['langcode', 'entity_type', 'bundle', 'label', 'description', 'help'];
   }
 
   /**

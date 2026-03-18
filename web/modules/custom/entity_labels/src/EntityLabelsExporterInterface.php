@@ -10,6 +10,14 @@ namespace Drupal\entity_labels;
 interface EntityLabelsExporterInterface {
 
   /**
+   * Returns the ordered column names for display and CSV (excluding 'notes').
+   *
+   * @return string[]
+   *   Column machine names.
+   */
+  public function getHeader(): array;
+
+  /**
    * Returns report rows for the given scope.
    *
    * Row shape and sort order vary by implementation.
@@ -19,14 +27,6 @@ interface EntityLabelsExporterInterface {
    *   Rows of report data; each row is a map of column name to value.
    */
   public function getData(?string $entity_type_id = NULL, ?string $bundle = NULL): array;
-
-  /**
-   * Returns the ordered column names for display and CSV (excluding 'notes').
-   *
-   * @return string[]
-   *   Column machine names.
-   */
-  public function getHeader(): array;
 
   /**
    * Builds CSV rows (header first, notes column last) ready for fputcsv().

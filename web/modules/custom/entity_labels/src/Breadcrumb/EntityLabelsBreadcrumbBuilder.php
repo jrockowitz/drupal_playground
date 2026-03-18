@@ -91,7 +91,7 @@ class EntityLabelsBreadcrumbBuilder implements BreadcrumbBuilderInterface {
         // Entity type crumb links to the base report with entity_type only.
         $breadcrumb->addLink(
           Link::createFromRoute(
-            $this->t('@label', ['@label' => $entity_type_label]),
+            $entity_type_label,
             $this->getReportRoute(),
             ['entity_type' => $entity_type_id],
           ),
@@ -102,7 +102,7 @@ class EntityLabelsBreadcrumbBuilder implements BreadcrumbBuilderInterface {
         $bundle_label = $bundle_info[$bundle]['label'] ?? $bundle;
         $breadcrumb->addLink(
           Link::fromTextAndUrl(
-            $this->t('@label', ['@label' => $bundle_label]),
+            $bundle_label,
             Url::fromRoute('<none>'),
           ),
         );
@@ -111,7 +111,7 @@ class EntityLabelsBreadcrumbBuilder implements BreadcrumbBuilderInterface {
         // Entity type label is the unlinked active crumb.
         $breadcrumb->addLink(
           Link::fromTextAndUrl(
-            $this->t('@label', ['@label' => $entity_type_label]),
+            $entity_type_label,
             Url::fromRoute('<none>'),
           ),
         );

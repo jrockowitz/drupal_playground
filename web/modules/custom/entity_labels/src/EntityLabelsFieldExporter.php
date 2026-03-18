@@ -33,6 +33,18 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
   /**
    * {@inheritdoc}
    */
+  public function getHeader(): array {
+    $columns = ['langcode', 'entity_type', 'bundle', 'field_name'];
+    if ($this->isCustomFieldInstalled()) {
+      $columns[] = 'field_column';
+    }
+    array_push($columns, 'field_type', 'label', 'description', 'allowed_values');
+    return $columns;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getData(
     ?string $entity_type_id = NULL,
     ?string $bundle = NULL,
@@ -87,18 +99,6 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
     }
 
     return $rows;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getHeader(): array {
-    $columns = ['langcode', 'entity_type', 'bundle', 'field_name'];
-    if ($this->isCustomFieldInstalled()) {
-      $columns[] = 'field_column';
-    }
-    array_push($columns, 'field_type', 'label', 'description', 'allowed_values');
-    return $columns;
   }
 
   /**
