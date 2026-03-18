@@ -55,17 +55,10 @@ class EntityLabelsController extends ControllerBase {
 
     $table_rows = [];
     foreach ($rows as $row) {
-      $is_summary = (bool) ($row['is_summary_row'] ?? FALSE);
       $cells = [];
 
       foreach ($columns as $col) {
         $value = $row[$col] ?? '';
-
-        // Render NULL bundle (summary rows) as the canonical placeholder.
-        if ($col === 'bundle' && $row['bundle'] === NULL) {
-          $cells[] = '[default]';
-          continue;
-        }
 
         // entity_type cell: always linked to the type-filtered report.
         if ($col === 'entity_type' && (string) $value !== '') {
@@ -82,10 +75,9 @@ class EntityLabelsController extends ControllerBase {
           continue;
         }
 
-        // Bundle cell: linked only on the Fields tab, not for summary rows.
+        // Bundle cell: linked only on the Fields tab.
         if ($col === 'bundle'
           && $this->type === 'field'
-          && !$is_summary
           && (string) $value !== ''
         ) {
           $cells[] = [
@@ -119,11 +111,7 @@ class EntityLabelsController extends ControllerBase {
         $cells[] = (string) $value;
       }
 
-      $table_row = ['data' => $cells];
-      if ($is_summary) {
-        $table_row['class'] = ['entity-labels--summary'];
-      }
-      $table_rows[] = $table_row;
+      $table_rows[] = ['data' => $cells];
     }
 
     $build = [];

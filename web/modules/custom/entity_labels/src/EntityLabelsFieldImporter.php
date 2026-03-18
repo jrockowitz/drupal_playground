@@ -65,8 +65,6 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
     fclose($handle);
 
     // Re-sort by entity_type, bundle, field_name.
-    // '(default / all bundles)' starts with '(' (ASCII 40) which sorts before
-    // any alphanumeric bundle name, so summary rows are indexed first.
     usort($all_rows, function (array $a, array $b) use ($col): int {
       return [
         $a[$col['entity_type']] ?? '',
@@ -78,18 +76,6 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
         $b[$col['field_name']] ?? '',
       ];
     });
-
-    // Build defaults map from summary rows.
-    $defaults = [];
-    foreach ($all_rows as $row) {
-      if (($row[$col['bundle']] ?? '') === '(default / all bundles)') {
-        $key = ($row[$col['entity_type']] ?? '') . '.' . ($row[$col['field_name']] ?? '');
-        $defaults[$key] = [
-          'label'       => $row[$col['label']] ?? '',
-          'description' => $row[$col['description']] ?? '',
-        ];
-      }
-    }
 
     $updated = 0;
     $skipped = 0;
@@ -106,12 +92,6 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
         ? ($row[$col['field_column']] ?? '') : '';
       $field_type     = isset($col['field_type'])
         ? ($row[$col['field_type']] ?? '') : '';
-
-      // Summary rows seed the defaults map only; skip further processing.
-      if ($bundle_id === '(default / all bundles)') {
-        $skipped++;
-        continue;
-      }
 
       // field_group rows.
       if ($field_type === 'field_group') {
@@ -198,15 +178,7 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
         continue;
       }
 
-      // Standard field row — apply summary-row defaults for empty values.
-      $defaults_key = $entity_type_id . '.' . $field_name;
-      if ($label === '' && isset($defaults[$defaults_key]['label'])) {
-        $label = $defaults[$defaults_key]['label'];
-      }
-      if ($description === '' && isset($defaults[$defaults_key]['description'])) {
-        $description = $defaults[$defaults_key]['description'];
-      }
-
+      // Standard field row.
       // Load FieldConfig; fall back to BaseFieldOverride.
       $id = $entity_type_id . '.' . $bundle_id . '.' . $field_name;
       $field_entity = $this->entityTypeManager->getStorage('field_config')->load($id);

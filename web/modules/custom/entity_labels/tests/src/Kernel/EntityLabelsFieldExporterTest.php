@@ -82,7 +82,7 @@ class EntityLabelsFieldExporterTest extends KernelTestBase {
     $expected_keys = [
       'langcode', 'entity_type', 'bundle', 'field_name',
       'field_column', 'field_type', 'label', 'description',
-      'allowed_values', 'is_base_field', 'is_summary_row', 'notes',
+      'allowed_values', 'is_base_field', 'notes',
     ];
     foreach ($expected_keys as $key) {
       $this->assertArrayHasKey($key, $row);
@@ -94,12 +94,10 @@ class EntityLabelsFieldExporterTest extends KernelTestBase {
       $this->assertSame('node', $node_row['entity_type']);
     }
 
-    /* *** Filters to specified bundle; all non-null bundle rows match *** */
+    /* *** Filters to specified bundle; all rows match bundle *** */
     $article_rows = $this->exporter->getData('node', 'article');
     foreach ($article_rows as $article_row) {
-      if ($article_row['bundle'] !== NULL) {
-        $this->assertSame('article', $article_row['bundle']);
-      }
+      $this->assertSame('article', $article_row['bundle']);
     }
 
     /* *** Sorts field_alpha before field_beta within the same bundle *** */

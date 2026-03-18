@@ -47,10 +47,7 @@ class EntityLabelsFieldImporterTest extends KernelTestBase {
     $this->installConfig(['node']);
     $this->installSchema('node', 'node_access');
     NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
-    NodeType::create(['type' => 'page', 'name' => 'Page'])->save();
     $this->createField('article', 'field_test', 'Test Field');
-    $this->createField('article', 'field_shared', 'Shared Article');
-    $this->createField('page', 'field_shared', 'Shared Page');
     $this->importer = $this->container->get('entity_labels.field.importer');
   }
 
@@ -122,27 +119,6 @@ class EntityLabelsFieldImporterTest extends KernelTestBase {
     $reloaded = BaseFieldOverride::load('node.article.title');
     $this->assertNotNull($reloaded);
     $this->assertSame('Overridden Title', $reloaded->label());
-
-    /* *** Applies summary-row defaults to per-bundle rows with empty label *** */
-    $this->importer->import(
-      self::HEADER
-      . "en,node,(default / all bundles),field_shared,Default Label,\n"
-      . "en,node,article,field_shared,,\n"
-      . "en,node,page,field_shared,,\n",
-    );
-    $article_field = FieldConfig::load('node.article.field_shared');
-    $page_field = FieldConfig::load('node.page.field_shared');
-    $this->assertNotNull($article_field);
-    $this->assertNotNull($page_field);
-    $this->assertSame('Default Label', $article_field->label());
-    $this->assertSame('Default Label', $page_field->label());
-
-    /* *** Summary rows are counted as skipped, not updated *** */
-    $result = $this->importer->import(
-      self::HEADER . "en,node,(default / all bundles),field_test,Label,Desc\n",
-    );
-    $this->assertSame(1, $result['skipped']);
-    $this->assertSame(0, $result['updated']);
 
     /* *** Non-existent field: skipped and identifier recorded in null_fields *** */
     $result = $this->importer->import(

@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\Entity\BaseFieldOverride;
-use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 
@@ -55,41 +54,12 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
         ? [$bundle]
         : array_keys($this->bundleInfoManager->getBundleInfo($type_id));
 
-      // For bundle view: pre-build multi-bundle field set and sibling defs.
-      $multi_bundle_fields = [];
-      $sibling_field_definitions = [];
-      if ($is_bundle_view) {
-        foreach ($this->fieldManager->getFieldMap()[$type_id] ?? [] as $field_name => $info) {
-          if (count($info['bundles']) > 1) {
-            $multi_bundle_fields[$field_name] = $info;
-          }
-        }
-        // Pre-load sibling bundle field definitions (for summary row diffs).
-        foreach (array_keys($this->bundleInfoManager->getBundleInfo($type_id)) as $sibling) {
-          if ($sibling !== $bundle) {
-            $sibling_field_definitions[$sibling] = $this->fieldManager
-              ->getFieldDefinitions($type_id, $sibling);
-          }
-        }
-      }
-
       foreach ($bundles_to_process as $bundle_id) {
         $field_definitions = $this->fieldManager->getFieldDefinitions($type_id, $bundle_id);
 
         foreach ($field_definitions as $field_name => $field_definition) {
           $is_base_field = $field_definition instanceof BaseFieldDefinition
             && !($field_definition instanceof BaseFieldOverride);
-
-          // Summary row — bundle view only, multi-bundle fields only.
-          if ($is_bundle_view && isset($multi_bundle_fields[$field_name])) {
-            $rows[] = $this->buildSummaryRow(
-              $langcode,
-              $type_id,
-              $field_name,
-              $field_definition,
-              $sibling_field_definitions,
-            );
-          }
 
           $rows[] = [
             'langcode'       => $langcode,
@@ -104,7 +74,6 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
               $field_definition->getSetting('allowed_values') ?? [],
             ),
             'is_base_field'  => $is_base_field,
-            'is_summary_row' => FALSE,
             'notes'          => '',
           ];
 
@@ -126,7 +95,6 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
                 'description'    => $column_settings['description'] ?? '',
                 'allowed_values' => '',
                 'is_base_field'  => FALSE,
-                'is_summary_row' => FALSE,
                 'notes'          => '',
               ];
             }
@@ -149,7 +117,6 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
               'description'    => $group_settings['format_settings']['description'] ?? '',
               'allowed_values' => '',
               'is_base_field'  => FALSE,
-              'is_summary_row' => FALSE,
               'notes'          => 'Field group — default form mode',
             ];
           }
@@ -158,16 +125,10 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
     }
 
     if ($is_bundle_view) {
-      // Sort by field_name ASC; within a group: summary first, then
-      // per-bundle row, then custom_field columns (non-empty field_column).
       usort($rows, static function (array $a, array $b): int {
         $comparison = strcmp($a['field_name'], $b['field_name']);
         if ($comparison !== 0) {
           return $comparison;
-        }
-        $summary_cmp = (int) $b['is_summary_row'] - (int) $a['is_summary_row'];
-        if ($summary_cmp !== 0) {
-          return $summary_cmp;
         }
         return strcmp($a['field_column'], $b['field_column']);
       });
@@ -211,7 +172,7 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
     $rows = [[...$this->getHeader(), 'notes']];
 
     foreach ($this->getData($entity_type_id, $bundle) as $row) {
-      $csv_bundle = $row['bundle'] ?? '(default / all bundles)';
+      $csv_bundle = $row['bundle'];
 
       $csv_row = [
         $row['langcode'],
@@ -281,94 +242,6 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
       $count++;
     }
     return implode(';', $parts);
-  }
-
-  /**
-   * Builds a cross-bundle summary row for a multi-bundle field.
-   *
-   * @param string $langcode
-   *   Current language code.
-   * @param string $entity_type_id
-   *   Entity type machine name.
-   * @param string $field_name
-   *   Field machine name.
-   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
-   *   Field definition for the currently-viewed bundle.
-   * @param array $sibling_field_definitions
-   *   Map of bundle_id => field definitions for all sibling bundles.
-   *
-   * @return array
-   *   Summary row array.
-   */
-  private function buildSummaryRow(
-    string $langcode,
-    string $entity_type_id,
-    string $field_name,
-    FieldDefinitionInterface $field_definition,
-    array $sibling_field_definitions,
-  ): array {
-    // Resolve storage-level default label.
-    $is_base = $field_definition instanceof BaseFieldDefinition
-      && !($field_definition instanceof BaseFieldOverride);
-
-    if ($is_base) {
-      $base_field_definitions = $this->fieldManager->getBaseFieldDefinitions($entity_type_id);
-      $default_label = isset($base_field_definitions[$field_name])
-        ? (string) $base_field_definitions[$field_name]->getLabel()
-        : (string) $field_definition->getLabel();
-    }
-    else {
-      $storage = $this->loadFieldStorageConfig($entity_type_id . '.' . $field_name);
-      $default_label = $storage
-        ? (string) $storage->getLabel()
-        : (string) $field_definition->getLabel();
-    }
-
-    // Check each sibling bundle for label divergence.
-    $differs = [];
-    foreach ($sibling_field_definitions as $sibling_bundle => $sibling_bundle_defs) {
-      if (!isset($sibling_bundle_defs[$field_name])) {
-        continue;
-      }
-      $sibling_label = (string) $sibling_bundle_defs[$field_name]->getLabel();
-      if ($sibling_label !== $default_label) {
-        $differs[] = $sibling_bundle . ' → \'' . $sibling_label . '\'';
-      }
-    }
-
-    $notes = 'Default label and description for all instances of this field';
-    $label = '';
-    $description = '';
-
-    if (!empty($differs)) {
-      $label = $default_label;
-      if ($is_base) {
-        $base_field_definitions = $base_field_definitions ?? $this->fieldManager->getBaseFieldDefinitions($entity_type_id);
-        $description = isset($base_field_definitions[$field_name])
-          ? (string) $base_field_definitions[$field_name]->getDescription()
-          : '';
-      }
-      else {
-        $storage = $storage ?? $this->loadFieldStorageConfig($entity_type_id . '.' . $field_name);
-        $description = $storage ? (string) $storage->getDescription() : '';
-      }
-      $notes .= '. Differs: ' . implode(', ', $differs);
-    }
-
-    return [
-      'langcode'       => $langcode,
-      'entity_type'    => $entity_type_id,
-      'bundle'         => NULL,
-      'field_name'     => $field_name,
-      'field_column'   => '',
-      'field_type'     => $field_definition->getType(),
-      'label'          => $label,
-      'description'    => $description,
-      'allowed_values' => '',
-      'is_base_field'  => FALSE,
-      'is_summary_row' => TRUE,
-      'notes'          => $notes,
-    ];
   }
 
 }
