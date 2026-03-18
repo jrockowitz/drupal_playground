@@ -67,14 +67,14 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
     // Re-sort by entity_type, bundle, field_name.
     usort($all_rows, function (array $a, array $b) use ($col): int {
       return [
-        $a[$col['entity_type']] ?? '',
-        $a[$col['bundle']] ?? '',
-        $a[$col['field_name']] ?? '',
-      ] <=> [
-        $b[$col['entity_type']] ?? '',
-        $b[$col['bundle']] ?? '',
-        $b[$col['field_name']] ?? '',
-      ];
+          $a[$col['entity_type']] ?? '',
+          $a[$col['bundle']] ?? '',
+          $a[$col['field_name']] ?? '',
+        ] <=> [
+          $b[$col['entity_type']] ?? '',
+          $b[$col['bundle']] ?? '',
+          $b[$col['field_name']] ?? '',
+        ];
     });
 
     $updated = 0;

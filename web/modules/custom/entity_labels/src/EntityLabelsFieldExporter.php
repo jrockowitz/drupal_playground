@@ -50,54 +50,29 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
     ?string $bundle = NULL,
   ): array {
     $langcode = $this->languageManager->getCurrentLanguage()->getId();
-    $is_bundle_view = ($entity_type_id !== NULL && $bundle !== NULL);
+
+    // Bundle view: form-display-ordered rows for a single bundle.
+    if ($entity_type_id !== NULL && $bundle !== NULL) {
+      return $this->getBundleData($entity_type_id, $bundle, $langcode);
+    }
+
     $rows = [];
 
-    foreach ($this->entityTypeManager->getDefinitions() as $type_id => $entity_type) {
-      if ($entity_type->getBundleEntityType() === NULL) {
-        continue;
-      }
-      if ($entity_type_id !== NULL && $type_id !== $entity_type_id) {
-        continue;
-      }
-
-      $bundles_to_process = $is_bundle_view
-        ? [$bundle]
-        : array_keys($this->bundleInfoManager->getBundleInfo($type_id));
-
-      foreach ($bundles_to_process as $bundle_id) {
-        if ($is_bundle_view) {
-          // Form-display order handled inside getBundleData().
-          array_push($rows, ...$this->getBundleData($type_id, $bundle_id, $langcode));
+    if ($entity_type_id !== NULL) {
+      // Entity-type view: all bundles for one entity type.
+      $rows = $this->getEntityTypeData($entity_type_id, $langcode);
+    }
+    else {
+      // Global view: all entity types that have a dedicated bundle entity type.
+      foreach ($this->entityTypeManager->getDefinitions() as $type_id => $entity_type) {
+        if ($entity_type->getBundleEntityType() === NULL) {
+          continue;
         }
-        else {
-          $field_definitions = $this->fieldManager->getFieldDefinitions($type_id, $bundle_id);
-          foreach ($field_definitions as $field_name => $field_definition) {
-            if (!($field_definition instanceof FieldConfig)) {
-              continue;
-            }
-            array_push($rows, ...$this->buildFieldRows($field_definition, $type_id, $bundle_id, $langcode));
-          }
-        }
+        array_push($rows, ...$this->getEntityTypeData($type_id, $langcode));
       }
     }
 
-    if (!$is_bundle_view) {
-      usort($rows, static function (array $a, array $b): int {
-        return [
-          $a['entity_type'],
-          $a['bundle'],
-          $a['field_name'],
-          $a['field_column'],
-        ] <=> [
-          $b['entity_type'],
-          $b['bundle'],
-          $b['field_name'],
-          $b['field_column'],
-        ];
-      });
-    }
-
+    $this->sortData($rows);
     return $rows;
   }
 
@@ -137,14 +112,14 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
   }
 
   /**
-   * Builds one or more rows for a single FieldConfig.
+   * Returns one or more rows for a single FieldConfig.
    *
    * Returns the field row plus any custom_field sub-column rows.
    *
    * @return array[]
    *   One or more row arrays.
    */
-  private function buildFieldRows(
+  private function getFieldRows(
     FieldConfig $field_definition,
     string $entity_type_id,
     string $bundle_id,
@@ -187,6 +162,51 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
     }
 
     return $rows;
+  }
+
+  /**
+   * Builds field rows for all bundles of a single entity type.
+   *
+   * Rows are returned in arbitrary order; the caller is responsible
+   * for sorting.
+   *
+   * @return array[]
+   *   Row arrays ready for getData().
+   */
+  private function getEntityTypeData(string $entity_type_id, string $langcode): array {
+    $rows = [];
+    foreach (array_keys($this->bundleInfoManager->getBundleInfo($entity_type_id)) as $bundle_id) {
+      $field_definitions = $this->fieldManager->getFieldDefinitions($entity_type_id, $bundle_id);
+      foreach ($field_definitions as $field_definition) {
+        if (!($field_definition instanceof FieldConfig)) {
+          continue;
+        }
+        array_push($rows, ...$this->getFieldRows($field_definition, $entity_type_id, $bundle_id, $langcode));
+      }
+    }
+    return $rows;
+  }
+
+  /**
+   * Sorts field rows by entity_type → bundle → field_name → field_column.
+   *
+   * @param array[] $rows
+   *   The rows to sort in place.
+   */
+  private function sortData(array &$rows): void {
+    usort($rows, static function (array $a, array $b): int {
+      return [
+        $a['entity_type'],
+        $a['bundle'],
+        $a['field_name'],
+        $a['field_column'],
+      ] <=> [
+        $b['entity_type'],
+        $b['bundle'],
+        $b['field_name'],
+        $b['field_column'],
+      ];
+    });
   }
 
   /**
@@ -237,7 +257,7 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
             if (!($definition instanceof FieldConfig)) {
               continue;
             }
-            array_push($rows, ...$this->buildFieldRows($definition, $entity_type_id, $bundle_id, $langcode));
+            array_push($rows, ...$this->getFieldRows($definition, $entity_type_id, $bundle_id, $langcode));
             $processed[$field_name] = TRUE;
           }
         }
@@ -252,7 +272,7 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
       if (!($definition instanceof FieldConfig)) {
         continue;
       }
-      array_push($rows, ...$this->buildFieldRows($definition, $entity_type_id, $bundle_id, $langcode));
+      array_push($rows, ...$this->getFieldRows($definition, $entity_type_id, $bundle_id, $langcode));
       $processed[$field_name] = TRUE;
     }
 
@@ -261,7 +281,7 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
       if (!($definition instanceof FieldConfig) || isset($processed[$field_name])) {
         continue;
       }
-      array_push($rows, ...$this->buildFieldRows(
+      array_push($rows, ...$this->getFieldRows(
         $definition,
         $entity_type_id,
         $bundle_id,
