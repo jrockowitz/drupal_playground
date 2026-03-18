@@ -62,7 +62,7 @@ class EntityLabelsEntityImporter implements EntityLabelsEntityImporterInterface 
       $bundle_id = $row[$col['bundle']] ?? '';
       $label = $row[$col['label']] ?? '';
       $description = $row[$col['description']] ?? '';
-      $help = $row[$col['help']] ?? '';
+      $help = $row[$col['help'] ?? NULL] ?? '';
 
       $entity_type = $this->entityTypeManager->getDefinition(
         $entity_type_id,

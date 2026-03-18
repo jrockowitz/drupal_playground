@@ -25,7 +25,7 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['node', 'entity_labels'];
+  protected static $modules = ['node', 'entity_labels', 'field', 'custom_field'];
 
   /**
    * {@inheritdoc}
@@ -33,16 +33,8 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    if (!\Drupal::moduleHandler()->moduleExists('custom_field')) {
-      $this->markTestSkipped('custom_field module is not available.');
-    }
-
-    if (!class_exists('\Drupal\custom_field\Attribute\CustomFieldType')) {
-      $this->markTestSkipped('custom_field 4.x is required (attribute class not found).');
-    }
-
     $this->drupalLogin(
-      $this->drupalCreateUser(['access site reports'])
+      $this->drupalCreateUser(['access site reports', 'administer site configuration'])
     );
   }
 
@@ -104,7 +96,7 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
         'type' => 'custom',
         'settings' => [
           'columns' => [
-            ['name' => 'value', 'type' => 'string', 'max_length' => 255],
+            ['name' => 'value', 'type' => 'string', 'length' => 255],
           ],
         ],
       ])->save();
@@ -119,7 +111,6 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
             'value' => [
               'label' => 'Value column',
               'description' => '',
-              'type' => 'string',
             ],
           ],
         ],

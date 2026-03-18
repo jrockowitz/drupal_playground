@@ -23,7 +23,7 @@ class EntityLabelsFieldGroupTest extends EntityLabelsTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['node', 'entity_labels'];
+  protected static $modules = ['node', 'entity_labels', 'field_group'];
 
   /**
    * {@inheritdoc}
@@ -31,12 +31,8 @@ class EntityLabelsFieldGroupTest extends EntityLabelsTestBase {
   protected function setUp(): void {
     parent::setUp();
 
-    if (!\Drupal::moduleHandler()->moduleExists('field_group')) {
-      $this->markTestSkipped('field_group module is not available.');
-    }
-
     $this->drupalLogin(
-      $this->drupalCreateUser(['access site reports'])
+      $this->drupalCreateUser(['access site reports', 'administer site configuration'])
     );
   }
 

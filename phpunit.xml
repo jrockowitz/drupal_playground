@@ -16,7 +16,7 @@
          failOnPhpunitWarning="true"
          displayDetailsOnTestsThatTriggerErrors="true"
          displayDetailsOnTestsThatTriggerWarnings="true"
-         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerDeprecations="false"
          cacheResult="false"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
          cacheDirectory=".phpunit.cache">
@@ -43,7 +43,7 @@
       explicitly.
     -->
     <!-- To disable deprecation testing completely uncomment the next line. -->
-    <!-- <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/> -->
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
     <!-- Deprecation errors can be selectively ignored by specifying a file of
       regular expression patterns for exclusion.
       Uncomment the line below to specify a custom deprecations ignore file.
