@@ -37,27 +37,17 @@ class EntityLabelsFieldGroupTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests that field_group rows appear in the bundle-level field report.
-   *
-   * Creates a field group on the node/article default form display and
-   * verifies that the bundle-level report includes a row with field_type
-   * 'field_group'.
+   * Tests that field_group rows appear in the report and can be imported.
    */
-  public function testFieldGroupRowsAppearInBundleReport(): void {
+  public function testFieldGroup(): void {
+    // Check that field_group rows appear in the bundle-level field report.
     $this->addFieldGroupToArticle('group_test', 'Test Group');
 
     $this->drupalGet('admin/reports/entity-labels/field/node/article');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('field_group');
-  }
 
-  /**
-   * Tests that a field_group CSV row can be imported without errors.
-   *
-   * Exports the current CSV for node/article, modifies the field_group label,
-   * and re-imports it. Verifies a success status message is shown.
-   */
-  public function testFieldGroupCsvImportSucceeds(): void {
+    // Check that a field_group CSV row can be imported without errors.
     $this->addFieldGroupToArticle('group_import', 'Import Group');
 
     $csv_content = "langcode,entity_type,bundle,field_name,field_type,label,description\n"

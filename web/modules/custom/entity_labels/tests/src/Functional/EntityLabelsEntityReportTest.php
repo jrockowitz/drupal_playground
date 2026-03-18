@@ -36,83 +36,43 @@ class EntityLabelsEntityReportTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests that the entity report page is accessible and returns 200.
+   * Tests the entity report page and its drill-down and export routes.
    */
-  public function testEntityReportPageLoads(): void {
+  public function testEntityReport(): void {
+    // Check that the entity report page returns 200.
     $this->drupalGet('admin/reports/entity-labels/entity');
     $this->assertSession()->statusCodeEquals(200);
-  }
 
-  /**
-   * Tests that entity type rows contain a link to the drill-down report.
-   */
-  public function testEntityTypeColumnContainsLink(): void {
-    $this->drupalGet('admin/reports/entity-labels/entity');
-    $this->assertSession()->linkByHrefExists(
-      '/admin/reports/entity-labels/entity/node',
-    );
-  }
+    // Check that entity-type cells link to the drill-down report.
+    $this->assertSession()->linkByHrefExists('/admin/reports/entity-labels/entity/node');
 
-  /**
-   * Tests that drilling down to an entity type page shows bundles.
-   */
-  public function testEntityTypeDrillDownShowsBundle(): void {
+    // Check that the Download CSV button is present.
+    $this->assertSession()->linkExists('⇩ Download CSV');
+
+    // Check that the breadcrumb contains a Reports link.
+    $this->assertSession()->linkByHrefExists('/admin/reports');
+
+    // Check that the entity-type drill-down page returns 200 and shows bundles.
     $this->drupalGet('admin/reports/entity-labels/entity/node');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Article');
-  }
 
-  /**
-   * Tests that the Download CSV button is present on the report page.
-   */
-  public function testDownloadCsvButtonIsPresent(): void {
-    $this->drupalGet('admin/reports/entity-labels/entity');
-    $this->assertSession()->linkExists('⇩ Download CSV');
-  }
-
-  /**
-   * Tests that the export route streams a CSV file.
-   */
-  public function testEntityExportRouteStreamsResponse(): void {
+    // Check that the export route streams a CSV file.
     $this->drupalGet('admin/reports/entity-labels/entity/export');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->responseHeaderContains(
-      'Content-Type',
-      'text/csv',
-    );
+    $this->assertSession()->responseHeaderContains('Content-Type', 'text/csv');
   }
 
   /**
-   * Tests that both primary report routes are accessible (tabs present).
+   * Tests access control for the entity report and import routes.
    */
-  public function testPrimaryTabsArePresent(): void {
-    $this->drupalGet('admin/reports/entity-labels/entity');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->drupalGet('admin/reports/entity-labels/field');
-    $this->assertSession()->statusCodeEquals(200);
-  }
-
-  /**
-   * Tests that the breadcrumb contains 'Reports'.
-   */
-  public function testBreadcrumbContainsReports(): void {
-    $this->drupalGet('admin/reports/entity-labels/entity');
-    $this->assertSession()->linkByHrefExists('/admin/reports');
-  }
-
-  /**
-   * Tests that reports are gated behind 'access site reports'.
-   */
-  public function testReportRequiresPermission(): void {
+  public function testAccessControl(): void {
+    // Check that the entity report requires 'access site reports'.
     $this->drupalLogin($this->drupalCreateUser([]));
     $this->drupalGet('admin/reports/entity-labels/entity');
     $this->assertSession()->statusCodeEquals(403);
-  }
 
-  /**
-   * Tests that the import form is gated behind 'administer site configuration'.
-   */
-  public function testImportRequiresPermission(): void {
+    // Check that the import form requires 'administer site configuration'.
     $this->drupalLogin($this->drupalCreateUser(['access site reports']));
     $this->drupalGet('admin/reports/entity-labels/entity/import');
     $this->assertSession()->statusCodeEquals(403);

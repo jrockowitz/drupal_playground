@@ -35,57 +35,41 @@ class EntityLabelsEntityImportTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests that the import form loads successfully.
+   * Tests that the import form loads and handles empty submission gracefully.
    */
-  public function testImportFormLoads(): void {
+  public function testImportForm(): void {
+    // Check that the import form loads and shows the submit button.
     $this->drupalGet('admin/reports/entity-labels/entity/import');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->buttonExists('Import CSV');
-  }
 
-  /**
-   * Tests that submitting without a file shows no fatal errors.
-   *
-   * The form should submit cleanly (no uploaded file means nothing changes).
-   */
-  public function testImportWithoutFileIsHandledGracefully(): void {
-    $this->drupalGet('admin/reports/entity-labels/entity/import');
+    // Check that submitting without a file is handled gracefully.
     $this->submitForm([], 'Import CSV');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->statusMessageNotExists('error');
   }
 
   /**
-   * Tests that uploading a valid CSV updates the bundle label.
-   *
-   * Uploads a CSV row for node/article and verifies the success status
-   * message reports at least one updated row.
+   * Tests CSV upload behaviour for valid and malformed files.
    */
-  public function testValidCsvImportShowsSuccessMessage(): void {
+  public function testImportCsv(): void {
+    // Check that a valid CSV import shows a success status message.
     $csv_content = "langcode,entity_type,bundle,label,description,help\n"
       . "en,node,article,Updated Article,Updated description,\n";
 
-    $file_path = $this->writeTemporaryCsv($csv_content);
-
     $this->drupalGet('admin/reports/entity-labels/entity/import');
     $this->submitForm(
-      ['files[csv_upload]' => $file_path],
+      ['files[csv_upload]' => $this->writeTemporaryCsv($csv_content)],
       'Import CSV',
     );
     $this->assertSession()->statusMessageContains('updated', 'status');
-  }
 
-  /**
-   * Tests that a CSV with missing required headers shows an error message.
-   */
-  public function testMissingHeadersCsvShowsError(): void {
+    // Check that a CSV with missing required headers shows an error.
     $csv_content = "entity_type,bundle\nnode,article\n";
-
-    $file_path = $this->writeTemporaryCsv($csv_content);
 
     $this->drupalGet('admin/reports/entity-labels/entity/import');
     $this->submitForm(
-      ['files[csv_upload]' => $file_path],
+      ['files[csv_upload]' => $this->writeTemporaryCsv($csv_content)],
       'Import CSV',
     );
     $this->assertSession()->statusMessageExists('error');

@@ -39,24 +39,17 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests that custom_field column rows appear in the bundle-level report.
-   *
-   * Creates a custom_field field on node/article and verifies the bundle-
-   * level report page includes a column row (field_column not empty).
+   * Tests custom_field column rows in the bundle report and CSV import.
    */
-  public function testCustomFieldColumnRowsAppearInBundleReport(): void {
+  public function testCustomField(): void {
+    // Check that custom_field column rows appear in the bundle-level report.
     $this->createCustomField('node', 'article', 'field_custom_test');
 
     $this->drupalGet('admin/reports/entity-labels/field/node/article');
     $this->assertSession()->statusCodeEquals(200);
-    // The field_column header column should be visible.
     $this->assertSession()->pageTextContains('field_column');
-  }
 
-  /**
-   * Tests that a custom_field column CSV row can be imported without errors.
-   */
-  public function testCustomFieldColumnCsvImportSucceeds(): void {
+    // Check that a custom_field column CSV row can be imported without errors.
     $this->createCustomField('node', 'article', 'field_custom_import');
 
     $csv_content = "langcode,entity_type,bundle,field_name,field_column,"
@@ -70,7 +63,6 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
       'Import CSV',
     );
     $this->assertSession()->statusCodeEquals(200);
-    // Should update or skip without fatal error.
     $this->assertSession()->statusMessageNotExists('error');
   }
 

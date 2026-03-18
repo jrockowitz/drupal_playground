@@ -36,75 +36,38 @@ class EntityLabelsFieldReportTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests that the field report page returns 200.
+   * Tests the field report page and its drill-down, tab, and export routes.
    */
-  public function testFieldReportPageLoads(): void {
+  public function testFieldReport(): void {
+    // Check that the field report page returns 200.
     $this->drupalGet('admin/reports/entity-labels/field');
     $this->assertSession()->statusCodeEquals(200);
-  }
 
-  /**
-   * Tests that entity-type cells on the field report link to the drill-down.
-   */
-  public function testEntityTypeColumnContainsLink(): void {
-    $this->drupalGet('admin/reports/entity-labels/field');
-    $this->assertSession()->linkByHrefExists(
-      '/admin/reports/entity-labels/field/node',
-    );
-  }
-
-  /**
-   * Tests that the entity-type drill-down page shows bundle links.
-   *
-   * When entity_type is set and bundle is not, bundle cells should be
-   * linked to the bundle-level report.
-   */
-  public function testEntityTypeDrillDownShowsBundleLinks(): void {
-    $this->drupalGet('admin/reports/entity-labels/field/node');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->linkByHrefExists(
-      '/admin/reports/entity-labels/field/node/article',
-    );
-  }
-
-  /**
-   * Tests that the bundle-level report page returns 200 and shows fields.
-   */
-  public function testBundleLevelReportLoads(): void {
-    $this->drupalGet('admin/reports/entity-labels/field/node/article');
-    $this->assertSession()->statusCodeEquals(200);
-    // The title field is always present on nodes.
-    $this->assertSession()->pageTextContains('name');
-  }
-
-  /**
-   * Tests that the Download CSV button is present on the field report.
-   */
-  public function testDownloadCsvButtonIsPresent(): void {
-    $this->drupalGet('admin/reports/entity-labels/field');
-    $this->assertSession()->linkExists('⇩ Download CSV');
-  }
-
-  /**
-   * Tests that the field export route streams a CSV response.
-   */
-  public function testFieldExportRouteStreamsResponse(): void {
-    $this->drupalGet('admin/reports/entity-labels/field/export');
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->responseHeaderContains(
-      'Content-Type',
-      'text/csv',
-    );
-  }
-
-  /**
-   * Tests that both primary report routes are accessible (tabs present).
-   */
-  public function testPrimaryTabsArePresent(): void {
-    $this->drupalGet('admin/reports/entity-labels/field');
-    $this->assertSession()->statusCodeEquals(200);
+    // Check that the field report tab is accessible from the entity report.
     $this->drupalGet('admin/reports/entity-labels/entity');
     $this->assertSession()->statusCodeEquals(200);
+
+    // Check that entity-type cells link to the entity-type drill-down.
+    $this->drupalGet('admin/reports/entity-labels/field');
+    $this->assertSession()->linkByHrefExists('/admin/reports/entity-labels/field/node');
+
+    // Check that the Download CSV button is present.
+    $this->assertSession()->linkExists('⇩ Download CSV');
+
+    // Check that the entity-type drill-down returns 200 and shows bundle links.
+    $this->drupalGet('admin/reports/entity-labels/field/node');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkByHrefExists('/admin/reports/entity-labels/field/node/article');
+
+    // Check that the bundle-level report page returns 200 and shows field data.
+    $this->drupalGet('admin/reports/entity-labels/field/node/article');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('name');
+
+    // Check that the field export route streams a CSV file.
+    $this->drupalGet('admin/reports/entity-labels/field/export');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->responseHeaderContains('Content-Type', 'text/csv');
   }
 
 }

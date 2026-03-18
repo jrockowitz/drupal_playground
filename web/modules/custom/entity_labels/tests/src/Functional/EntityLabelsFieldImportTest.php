@@ -38,31 +38,25 @@ class EntityLabelsFieldImportTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests that the field import form loads successfully.
+   * Tests that the import form loads and handles empty submission gracefully.
    */
-  public function testFieldImportFormLoads(): void {
+  public function testImportForm(): void {
+    // Check that the field import form loads and shows the submit button.
     $this->drupalGet('admin/reports/entity-labels/field/import');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->buttonExists('Import CSV');
-  }
 
-  /**
-   * Tests that submitting without a file is handled gracefully.
-   */
-  public function testImportWithoutFileIsHandledGracefully(): void {
-    $this->drupalGet('admin/reports/entity-labels/field/import');
+    // Check that submitting without a file is handled gracefully.
     $this->submitForm([], 'Import CSV');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->statusMessageNotExists('error');
   }
 
   /**
-   * Tests that uploading a valid field CSV updates the field label.
-   *
-   * Creates a custom field on node/article, imports a CSV that changes its
-   * label, and verifies the success message reports at least one update.
+   * Tests CSV upload behaviour for valid, malformed, and missing field rows.
    */
-  public function testValidFieldCsvImportUpdatesLabel(): void {
+  public function testImportCsv(): void {
+    // Check that a valid CSV import updates the field label.
     $this->createTestField('node', 'article', 'field_test_label', 'Original Label');
 
     $csv_content = "langcode,entity_type,bundle,field_name,label,description\n"
@@ -77,12 +71,8 @@ class EntityLabelsFieldImportTest extends EntityLabelsTestBase {
 
     $field = FieldConfig::load('node.article.field_test_label');
     $this->assertSame('Imported Label', $field?->label());
-  }
 
-  /**
-   * Tests that a CSV with missing required headers shows an error message.
-   */
-  public function testMissingHeadersCsvShowsError(): void {
+    // Check that a CSV with missing required headers shows an error.
     $csv_content = "entity_type,bundle,field_name\nnode,article,title\n";
 
     $this->drupalGet('admin/reports/entity-labels/field/import');
@@ -91,12 +81,8 @@ class EntityLabelsFieldImportTest extends EntityLabelsTestBase {
       'Import CSV',
     );
     $this->assertSession()->statusMessageExists('error');
-  }
 
-  /**
-   * Tests that importing a row for a non-existent field is skipped gracefully.
-   */
-  public function testNonexistentFieldRowIsSkipped(): void {
+    // Check that a row for a non-existent field is skipped gracefully.
     $csv_content = "langcode,entity_type,bundle,field_name,label,description\n"
       . "en,node,article,field_does_not_exist,Label,Desc\n";
 
@@ -106,7 +92,6 @@ class EntityLabelsFieldImportTest extends EntityLabelsTestBase {
       'Import CSV',
     );
     $this->assertSession()->statusCodeEquals(200);
-    // 0 updated, 1 skipped — no fatal error.
     $this->assertSession()->statusMessageContains('skipped', 'status');
   }
 
