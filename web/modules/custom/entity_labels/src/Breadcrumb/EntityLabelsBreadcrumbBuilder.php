@@ -12,13 +12,20 @@ use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
+use Drupal\entity_labels\EntityLabelsTypeTrait;
 
 /**
- * Builds breadcrumbs for all six entity_labels routes.
+ * Builds breadcrumbs for all entity_labels routes.
  */
 class EntityLabelsBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 
   use StringTranslationTrait;
+  use EntityLabelsTypeTrait;
+
+  /**
+   * The current report type: 'entity' or 'field'.
+   */
+  protected string $type = 'entity';
 
   /**
    * Constructs an EntityLabelsBreadcrumbBuilder.
@@ -42,12 +49,7 @@ class EntityLabelsBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     $breadcrumb = new Breadcrumb();
     $breadcrumb->addCacheContexts(['route']);
 
-    $route_name = $route_match->getRouteName() ?? '';
-
-    // Determine tab type from route name prefix.
-    $type = str_starts_with($route_name, 'entity_labels.field.') ? 'field' : 'entity';
-    $tab_label = $type === 'field' ? $this->t('Fields') : $this->t('Entities');
-    $base_report_route = 'entity_labels.' . $type . '.report';
+    $this->type = $route_match->getRawParameter('type') === 'field' ? 'field' : 'entity';
 
     // Always-present trail: Home › Administration › Reports › Entity labels.
     $breadcrumb->addLink(
@@ -74,7 +76,7 @@ class EntityLabelsBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     if ($entity_type_id !== NULL) {
       // Entities/Fields crumb is linked when drilling deeper.
       $breadcrumb->addLink(
-        Link::createFromRoute($tab_label, $base_report_route),
+        Link::createFromRoute($this->getPluralLabel(), $this->getReportRoute()),
       );
 
       $definition = $this->entityTypeManager->getDefinition(
@@ -90,7 +92,7 @@ class EntityLabelsBreadcrumbBuilder implements BreadcrumbBuilderInterface {
         $breadcrumb->addLink(
           Link::createFromRoute(
             $this->t('@label', ['@label' => $entity_type_label]),
-            $base_report_route,
+            $this->getReportRoute(),
             ['entity_type' => $entity_type_id],
           ),
         );
@@ -118,7 +120,7 @@ class EntityLabelsBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     else {
       // No params: Entities/Fields is the unlinked active crumb.
       $breadcrumb->addLink(
-        Link::fromTextAndUrl($tab_label, Url::fromRoute('<none>')),
+        Link::fromTextAndUrl($this->getPluralLabel(), Url::fromRoute('<none>')),
       );
     }
 
