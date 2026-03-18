@@ -111,6 +111,18 @@ class EntityLabelsController extends ControllerBase {
         $cells[] = (string) $value;
       }
 
+      if (($row['field_type'] ?? '') === 'field_group') {
+        foreach ($cells as &$cell) {
+          if (is_string($cell)) {
+            $cell = ['data' => $cell, 'style' => 'background-color: #eee; font-weight: bold;'];
+          }
+          elseif (is_array($cell)) {
+            $cell['style'] = 'background-color: #eee; font-weight: bold;';
+          }
+        }
+        unset($cell);
+      }
+
       $table_rows[] = ['data' => $cells];
     }
 

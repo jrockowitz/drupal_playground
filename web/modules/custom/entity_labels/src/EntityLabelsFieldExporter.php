@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\entity_labels;
 
+use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
@@ -53,82 +54,23 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
         : array_keys($this->bundleInfoManager->getBundleInfo($type_id));
 
       foreach ($bundles_to_process as $bundle_id) {
-        $field_definitions = $this->fieldManager->getFieldDefinitions($type_id, $bundle_id);
-
-        foreach ($field_definitions as $field_name => $field_definition) {
-          if (!($field_definition instanceof FieldConfig)) {
-            continue;
-          }
-
-          $rows[] = [
-            'langcode'       => $langcode,
-            'entity_type'    => $type_id,
-            'bundle'         => $bundle_id,
-            'field_name'     => $field_name,
-            'field_column'   => '',
-            'field_type'     => $field_definition->getType(),
-            'label'          => (string) $field_definition->getLabel(),
-            'description'    => (string) $field_definition->getDescription(),
-            'allowed_values' => $this->serializeAllowedValues(
-              $field_definition->getSetting('allowed_values') ?? [],
-            ),
-            'notes'          => '',
-          ];
-
-          // custom_field 4.x column rows.
-          if ($field_definition->getType() === 'custom'
-            && $this->isCustomFieldInstalled()
-          ) {
-            $field_settings = $field_definition->getSetting('field_settings') ?? [];
-            foreach ($field_settings as $column_name => $column_settings) {
-              $rows[] = [
-                'langcode'       => $langcode,
-                'entity_type'    => $type_id,
-                'bundle'         => $bundle_id,
-                'field_name'     => $field_name,
-                'field_column'   => $column_name,
-                'field_type'     => $field_definition->getType(),
-                'label'          => $column_settings['label'] ?? '',
-                'description'    => $column_settings['description'] ?? '',
-                'allowed_values' => '',
-                'notes'          => '',
-              ];
-            }
-          }
+        if ($is_bundle_view) {
+          // Form-display order handled inside getBundleData().
+          array_push($rows, ...$this->getBundleData($type_id, $bundle_id, $langcode));
         }
-
-        // field_group rows — bundle view only.
-        if ($is_bundle_view && $this->moduleHandler->moduleExists('field_group')) {
-          $form_display = $this->entityDisplayRepository
-            ->getFormDisplay($type_id, $bundle_id, 'default');
-          foreach ($form_display->getThirdPartySettings('field_group') as $group_name => $group_settings) {
-            $rows[] = [
-              'langcode'       => $langcode,
-              'entity_type'    => $type_id,
-              'bundle'         => $bundle_id,
-              'field_name'     => $group_name,
-              'field_column'   => '',
-              'field_type'     => 'field_group',
-              'label'          => $group_settings['label'] ?? '',
-              'description'    => $group_settings['format_settings']['description'] ?? '',
-              'allowed_values' => '',
-              'notes'          => 'Field group — default form mode',
-            ];
+        else {
+          $field_definitions = $this->fieldManager->getFieldDefinitions($type_id, $bundle_id);
+          foreach ($field_definitions as $field_name => $field_definition) {
+            if (!($field_definition instanceof FieldConfig)) {
+              continue;
+            }
+            array_push($rows, ...$this->buildFieldRows($field_definition, $type_id, $bundle_id, $langcode));
           }
         }
       }
     }
 
-    if ($is_bundle_view) {
-      usort($rows, static function (array $a, array $b): int {
-        $comparison = strcmp($a['field_name'], $b['field_name']);
-        if ($comparison !== 0) {
-          return $comparison;
-        }
-        return strcmp($a['field_column'], $b['field_column']);
-      });
-    }
-    else {
+    if (!$is_bundle_view) {
       usort($rows, static function (array $a, array $b): int {
         return [
           $a['entity_type'],
@@ -189,6 +131,143 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
         $row['notes'],
       );
       $rows[] = $csv_row;
+    }
+
+    return $rows;
+  }
+
+  /**
+   * Builds one or more rows for a single FieldConfig.
+   *
+   * Returns the field row plus any custom_field sub-column rows.
+   *
+   * @return array[]
+   *   One or more row arrays.
+   */
+  private function buildFieldRows(
+    FieldConfig $field_definition,
+    string $entity_type_id,
+    string $bundle_id,
+    string $langcode,
+    string $notes = '',
+  ): array {
+    $field_name = $field_definition->getName();
+    $rows = [];
+
+    $rows[] = [
+      'langcode'       => $langcode,
+      'entity_type'    => $entity_type_id,
+      'bundle'         => $bundle_id,
+      'field_name'     => $field_name,
+      'field_column'   => '',
+      'field_type'     => $field_definition->getType(),
+      'label'          => (string) $field_definition->getLabel(),
+      'description'    => (string) $field_definition->getDescription(),
+      'allowed_values' => $this->serializeAllowedValues(
+        $field_definition->getSetting('allowed_values') ?? [],
+      ),
+      'notes'          => $notes,
+    ];
+
+    if ($field_definition->getType() === 'custom' && $this->isCustomFieldInstalled()) {
+      foreach ($field_definition->getSetting('field_settings') ?? [] as $column_name => $column_settings) {
+        $rows[] = [
+          'langcode'       => $langcode,
+          'entity_type'    => $entity_type_id,
+          'bundle'         => $bundle_id,
+          'field_name'     => $field_name,
+          'field_column'   => $column_name,
+          'field_type'     => $field_definition->getType(),
+          'label'          => $column_settings['label'] ?? '',
+          'description'    => $column_settings['description'] ?? '',
+          'allowed_values' => '',
+          'notes'          => $notes,
+        ];
+      }
+    }
+
+    return $rows;
+  }
+
+  /**
+   * Builds form-display-ordered rows for a single bundle.
+   *
+   * Order: field groups (by weight) → their children (by weight) →
+   * ungrouped components (by weight) → fields absent from the form display.
+   *
+   * @return array[]
+   *   Row arrays ready for getData().
+   */
+  private function getBundleData(
+    string $entity_type_id,
+    string $bundle_id,
+    string $langcode,
+  ): array {
+    $field_definitions = $this->fieldManager->getFieldDefinitions($entity_type_id, $bundle_id);
+    $form_display = $this->entityDisplayRepository->getFormDisplay($entity_type_id, $bundle_id, 'default');
+    $components = $form_display->getComponents();
+    $rows = [];
+    $processed = [];
+
+    if ($this->moduleHandler->moduleExists('field_group')) {
+      $field_groups = $form_display->getThirdPartySettings('field_group');
+      if ($field_groups) {
+        uasort($field_groups, [SortArray::class, 'sortByWeightElement']);
+
+        foreach ($field_groups as $group_name => $group_settings) {
+          $rows[] = [
+            'langcode'       => $langcode,
+            'entity_type'    => $entity_type_id,
+            'bundle'         => $bundle_id,
+            'field_name'     => $group_name,
+            'field_column'   => '',
+            'field_type'     => 'field_group',
+            'label'          => $group_settings['label'] ?? '',
+            'description'    => $group_settings['format_settings']['description'] ?? '',
+            'allowed_values' => '',
+            'notes'          => 'Field group — default form mode',
+          ];
+
+          $children_keys = array_combine($group_settings['children'], $group_settings['children']);
+          $children = array_intersect_key($components, $children_keys);
+          uasort($children, [SortArray::class, 'sortByWeightElement']);
+
+          foreach (array_keys($children) as $field_name) {
+            $definition = $field_definitions[$field_name] ?? NULL;
+            if (!($definition instanceof FieldConfig)) {
+              continue;
+            }
+            array_push($rows, ...$this->buildFieldRows($definition, $entity_type_id, $bundle_id, $langcode));
+            $processed[$field_name] = TRUE;
+          }
+        }
+      }
+    }
+
+    // Ungrouped components in the form display, sorted by weight.
+    $remaining = array_diff_key($components, $processed);
+    uasort($remaining, [SortArray::class, 'sortByWeightElement']);
+    foreach (array_keys($remaining) as $field_name) {
+      $definition = $field_definitions[$field_name] ?? NULL;
+      if (!($definition instanceof FieldConfig)) {
+        continue;
+      }
+      array_push($rows, ...$this->buildFieldRows($definition, $entity_type_id, $bundle_id, $langcode));
+      $processed[$field_name] = TRUE;
+    }
+
+    // Fields absent from the form display go last.
+    foreach ($field_definitions as $field_name => $definition) {
+      if (!($definition instanceof FieldConfig) || isset($processed[$field_name])) {
+        continue;
+      }
+      array_push($rows, ...$this->buildFieldRows(
+        $definition,
+        $entity_type_id,
+        $bundle_id,
+        $langcode,
+        'Not displayed in default form mode',
+      ));
     }
 
     return $rows;
