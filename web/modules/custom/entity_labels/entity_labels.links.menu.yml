@@ -1,0 +1,5 @@
+entity_labels.entity.report:
+  title: 'Entity labels'
+  route_name: entity_labels.entity.report
+  parent: system.admin_reports
+  description: 'Browse, export, and import entity type, bundle, and field label metadata.'

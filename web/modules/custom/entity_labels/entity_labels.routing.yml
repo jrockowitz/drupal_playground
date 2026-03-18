@@ -1,0 +1,74 @@
+entity_labels.entity:
+  path: '/admin/reports/entity-labels/entity'
+  defaults:
+    _controller: '\Drupal\entity_labels\Controller\EntityLabelsController::report'
+    _title_callback: '\Drupal\entity_labels\Controller\EntityLabelsController::title'
+    type: 'entity'
+  requirements:
+    _permission: 'access site reports'
+
+entity_labels.entity.report:
+  path: '/admin/reports/entity-labels/entity/{entity_type}'
+  defaults:
+    _controller: '\Drupal\entity_labels\Controller\EntityLabelsController::report'
+    _title_callback: '\Drupal\entity_labels\Controller\EntityLabelsController::title'
+    type: 'entity'
+    entity_type: ~
+  requirements:
+    _permission: 'access site reports'
+
+entity_labels.entity.export:
+  path: '/admin/reports/entity-labels/entity/export'
+  defaults:
+    _controller: '\Drupal\entity_labels\Controller\EntityLabelsController::export'
+    _title: 'Export entity labels'
+    type: 'entity'
+  requirements:
+    _permission: 'access site reports'
+
+entity_labels.entity.import:
+  path: '/admin/reports/entity-labels/entity/import'
+  defaults:
+    _form: '\Drupal\entity_labels\Form\EntityLabelsImportForm'
+    _title: 'Import entity labels'
+    type: 'entity'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity_labels.field:
+  path: '/admin/reports/entity-labels/field'
+  defaults:
+    _controller: '\Drupal\entity_labels\Controller\EntityLabelsController::report'
+    _title_callback: '\Drupal\entity_labels\Controller\EntityLabelsController::title'
+    type: 'field'
+  requirements:
+    _permission: 'access site reports'
+
+entity_labels.field.report:
+  path: '/admin/reports/entity-labels/field/{entity_type}/{bundle}'
+  defaults:
+    _controller: '\Drupal\entity_labels\Controller\EntityLabelsController::report'
+    _title_callback: '\Drupal\entity_labels\Controller\EntityLabelsController::title'
+    type: 'field'
+    entity_type: ~
+    bundle: ~
+  requirements:
+    _permission: 'access site reports'
+
+entity_labels.field.export:
+  path: '/admin/reports/entity-labels/field/export'
+  defaults:
+    _controller: '\Drupal\entity_labels\Controller\EntityLabelsController::export'
+    _title: 'Export field labels'
+    type: 'field'
+  requirements:
+    _permission: 'access site reports'
+
+entity_labels.field.import:
+  path: '/admin/reports/entity-labels/field/import'
+  defaults:
+    _form: '\Drupal\entity_labels\Form\EntityLabelsImportForm'
+    _title: 'Import field labels'
+    type: 'field'
+  requirements:
+    _permission: 'administer site configuration'
