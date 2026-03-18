@@ -8,4 +8,4 @@
 
 source .commands.sh
 
-./vendor/bin/phpunit -c $DDEV_DOCROOT/core $OPTIONS $PARAMETERS
+./vendor/bin/phpunit $OPTIONS $PARAMETERS
