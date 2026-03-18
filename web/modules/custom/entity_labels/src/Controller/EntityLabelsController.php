@@ -104,6 +104,18 @@ class EntityLabelsController extends ControllerBase {
           continue;
         }
 
+        // allowed_values: render semicolon-delimited string as a bullet list.
+        if ($col === 'allowed_values' && (string) $value !== '') {
+          $items = explode(';', (string) $value);
+          $cells[] = [
+            'data' => [
+              '#theme' => 'item_list',
+              '#items' => $items,
+            ],
+          ];
+          continue;
+        }
+
         $cells[] = (string) $value;
       }
 
@@ -122,21 +134,6 @@ class EntityLabelsController extends ControllerBase {
       '#rows'   => $table_rows,
       '#empty'  => $this->t('No data found.'),
     ];
-
-    // Note about non-importable columns — bundle detail view only.
-    if ($this->type === 'field' && $bundle !== NULL) {
-      $build['import_note'] = [
-        '#type'  => 'html_tag',
-        '#tag'   => 'p',
-        '#value' => $this->t(
-          'Note: %allowed_values and %field_type cannot be updated via import.',
-          [
-            '%allowed_values' => 'allowed_values',
-            '%field_type'     => 'field_type',
-          ],
-        ),
-      ];
-    }
 
     // Download CSV button.
     $build['export_link'] = [

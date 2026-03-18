@@ -13,7 +13,6 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\Entity\BaseFieldOverride;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Component\Utility\Unicode;
 use Drupal\field\Entity\FieldStorageConfig;
 
 /**
@@ -272,10 +271,16 @@ class EntityLabelsFieldExporter implements EntityLabelsFieldExporterInterface {
       return '';
     }
     $parts = [];
+    $count = 0;
     foreach ($allowed_values as $key => $label) {
+      if ($count === 10) {
+        $parts[] = '...';
+        break;
+      }
       $parts[] = $key . '|' . $label;
+      $count++;
     }
-    return Unicode::truncate(implode(';', $parts), 500, FALSE, TRUE);
+    return implode(';', $parts);
   }
 
   /**

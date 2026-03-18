@@ -3,3 +3,5 @@ type: module
 description: 'Report and CSV export/import for entity type, bundle, and field label metadata.'
 package: Reports
 core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:file

@@ -26,7 +26,7 @@ class EntityLabelsFieldImportTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['node', 'field', 'entity_labels'];
+  protected static $modules = ['node', 'field', 'file', 'entity_labels'];
 
   /**
    * {@inheritdoc}
