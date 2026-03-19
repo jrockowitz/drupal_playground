@@ -46,23 +46,23 @@ class EntityLabelsEntityImporter implements EntityLabelsEntityImporterInterface 
       ));
     }
 
-    $col = array_flip($headers);
     $updated = 0;
     $skipped = 0;
     $errors = [];
     $null_fields = [];
 
-    while (($row = fgetcsv($handle)) !== FALSE) {
+    $column_index = array_flip($headers);
+    while ($row = fgetcsv($handle)) {
       // Skip blank rows.
       if (count($row) === 1 && $row[0] === NULL) {
         continue;
       }
 
-      $entity_type_id = $row[$col['entity_type']] ?? '';
-      $bundle_id = $row[$col['bundle']] ?? '';
-      $label = $row[$col['label']] ?? '';
-      $description = $row[$col['description']] ?? '';
-      $help = $row[$col['help'] ?? NULL] ?? '';
+      $entity_type_id = $row[$column_index['entity_type']] ?? '';
+      $bundle_id = $row[$column_index['bundle']] ?? '';
+      $label = $row[$column_index['label']] ?? '';
+      $description = $row[$column_index['description']] ?? '';
+      $help = $row[$column_index['help'] ?? NULL] ?? '';
 
       $entity_type = $this->entityTypeManager->getDefinition(
         $entity_type_id,
@@ -78,7 +78,7 @@ class EntityLabelsEntityImporter implements EntityLabelsEntityImporterInterface 
           ->load($bundle_id);
       }
 
-      if ($bundle_entity === NULL) {
+      if (!$bundle_entity) {
         $skipped++;
         $null_fields[] = $entity_type_id . '.' . $bundle_id;
         continue;
@@ -92,7 +92,6 @@ class EntityLabelsEntityImporter implements EntityLabelsEntityImporterInterface 
       );
       $label_key = $bundle_entity_type_definition?->getKey('label') ?? 'label';
       $bundle_entity->set($label_key, $label);
-
       $bundle_entity->set('description', $description);
       $bundle_entity->set('help', $help);
 

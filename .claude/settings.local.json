@@ -25,7 +25,8 @@
       "Bash(chmod 777 /Users/rockowij/Sites/drupal_playground/web/sites/simpletest/browser_output)",
       "Read(//var/www/html/vendor/drupal/**)",
       "Read(//var/www/html/web/core/modules/**)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "mcp__ide__getDiagnostics"
     ]
   }
 }

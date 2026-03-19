@@ -113,20 +113,16 @@ class EntityLabelsFieldImportTest extends EntityLabelsTestBase {
     string $field_name,
     string $label,
   ): void {
-    if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
-      FieldStorageConfig::create([
-        'field_name' => $field_name,
-        'entity_type' => $entity_type,
-        'type' => 'string',
-      ])->save();
-    }
-    if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
-      FieldConfig::create([
-        'field_storage' => FieldStorageConfig::loadByName($entity_type, $field_name),
-        'bundle' => $bundle,
-        'label' => $label,
-      ])->save();
-    }
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'type' => 'string',
+    ])->save();
+    FieldConfig::create([
+      'field_storage' => FieldStorageConfig::loadByName($entity_type, $field_name),
+      'bundle' => $bundle,
+      'label' => $label,
+    ])->save();
   }
 
 }

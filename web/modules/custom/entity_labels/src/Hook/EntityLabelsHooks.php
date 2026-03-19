@@ -19,47 +19,42 @@ class EntityLabelsHooks {
    * Implements hook_help().
    */
   #[Hook('help')]
-  public function help(string $route_name, RouteMatchInterface $route_match): string {
+  public function help(string $route_name, RouteMatchInterface $route_match): ?string {
     switch ($route_name) {
       case 'entity_labels.entity':
-        return '<p>' . $this->t('The <strong>Entities</strong> label page lists all entity types filterable by individual entity type.') . '</p>';
-
       case 'entity_labels.entity.report':
-        return '<p>' . $this->t('Displays entity and bundle labels for a specific entity type.') . '</p>';
-
-      case 'entity_labels.entity.export':
-        return '<p>' . $this->t('Exports entity labels as a downloadable CSV file.') . '</p>';
+        return '<p>' . $this->t('The <strong>Entity labels</strong> export page lists all entity types filterable by individual entity type.') . '</p>';
 
       case 'entity_labels.entity.import':
-        return '<p>' . $this->t('Imports entity labels from an uploaded CSV file.') . '</p>';
+        return '<p>' . $this->t('The <strong>Entity labels</strong> import form updates entity labels from an uploaded CSV file.') . '</p>';
 
       case 'entity_labels.field':
-        return '<p>' . $this->t('The <strong>Fields</strong> label page lists all field labels filterable by entity type and bundle.') . '</p>';
-
       case 'entity_labels.field.report':
         $t_args = [
           '%allowed_values' => 'allowed_values',
           '%field_type' => 'field_type',
         ];
         return '<p>'
-          . $this->t('Displays field labels for a specific entity type or bundle.')
+          . $this->t('The <strong>Field labels</strong> export page lists all field labels filterable by entity type and bundle.')
+          . '</br><em>'
           . $this->t('Note: %allowed_values and %field_type cannot be updated via import.', $t_args)
-          . '</p>';
-
-      case 'entity_labels.field.export':
-        return '<p>' . $this->t('Exports field labels as a downloadable CSV file.') . '</p>';
+          . '</em></p>';
 
       case 'entity_labels.field.import':
         $t_args = [
-          '%allowed_values' => 'allowed_values',
-          '%field_type' => 'field_type',
+          '@allowed_values' => 'allowed_values',
+          '@field_type' => 'field_type',
         ];
-        return '<p>' . $this->t('Imports field labels from an uploaded CSV file.')
-          . $this->t('Note: %allowed_values and %field_type columns are ignored during import.', $t_args)
-          . '</p>';
+        return '<p>'
+          . $this->t('The <strong>Field labels</strong> import form updates field labels from an uploaded CSV file.')
+          . '</br><em>'
+          . $this->t('Note: @allowed_values and @field_type columns are ignored during import.', $t_args)
+          . '</em></p>';
+
+      default:
+        return NULL;
     }
 
-    return '';
   }
 
 }

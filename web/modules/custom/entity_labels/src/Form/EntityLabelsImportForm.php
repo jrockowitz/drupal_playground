@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\entity_labels\Form;
 
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -25,6 +27,8 @@ class EntityLabelsImportForm extends FormBase {
   public function __construct(
     private readonly string $type,
     private readonly FileSystemInterface $fileSystem,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly EntityTypeBundleInfoInterface $bundleInfo,
   ) {}
 
   /**
@@ -37,6 +41,8 @@ class EntityLabelsImportForm extends FormBase {
     return new static(
       $type,
       $container->get('file_system'),
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.bundle.info')
     );
   }
 
@@ -186,12 +192,26 @@ class EntityLabelsImportForm extends FormBase {
     // Remove numeric suffix from the file name.
     $name = preg_replace('/\s*\(\d+\)$/', '', $name);
 
-    // @todo Check that the entity type and bundle are valid.
+    // Split the name into entity type and bundle.
     $parts = explode('-', $name);
-    return array_filter([
-      'entity_type' => $parts[0],
-      'bundle' => $parts[1] ?? NULL,
-    ]);
+    $entity_type = $parts[0];
+    $bundle = $parts[1] ?? NULL;
+
+    // Check that the entity type exists.
+    if (!$this->entityTypeManager->hasDefinition($entity_type)) {
+      return [];
+    }
+
+    // Check that the bundle exists.
+    if (!$bundle
+      || empty($this->bundleInfo->getBundleInfo($entity_type)[$bundle])) {
+      return ['entity_type' => $entity_type];
+    }
+
+    return [
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+    ];
   }
 
 }

@@ -12,7 +12,7 @@ entity_labels.field:
 # Secondary tabs under Entities.
 entity_labels.entity.report:
   route_name: entity_labels.entity.report
-  title: 'Report'
+  title: 'Export'
   parent_id: entity_labels.entity
 
 entity_labels.entity.import:
@@ -23,7 +23,7 @@ entity_labels.entity.import:
 # Secondary tabs under Fields.
 entity_labels.field.report:
   route_name: entity_labels.field.report
-  title: 'Report'
+  title: 'Export'
   parent_id: entity_labels.field
 
 entity_labels.field.import:

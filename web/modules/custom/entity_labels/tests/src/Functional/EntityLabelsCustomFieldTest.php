@@ -81,33 +81,29 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
     string $bundle,
     string $field_name,
   ): void {
-    if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
-      FieldStorageConfig::create([
-        'field_name' => $field_name,
-        'entity_type' => $entity_type,
-        'type' => 'custom',
-        'settings' => [
-          'columns' => [
-            ['name' => 'value', 'type' => 'string', 'length' => 255],
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'type' => 'custom',
+      'settings' => [
+        'columns' => [
+          ['name' => 'value', 'type' => 'string', 'length' => 255],
+        ],
+      ],
+    ])->save();
+    FieldConfig::create([
+      'field_storage' => FieldStorageConfig::loadByName($entity_type, $field_name),
+      'bundle' => $bundle,
+      'label' => 'Custom test field',
+      'settings' => [
+        'field_settings' => [
+          'value' => [
+            'label' => 'Value column',
+            'description' => '',
           ],
         ],
-      ])->save();
-    }
-    if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
-      FieldConfig::create([
-        'field_storage' => FieldStorageConfig::loadByName($entity_type, $field_name),
-        'bundle' => $bundle,
-        'label' => 'Custom test field',
-        'settings' => [
-          'field_settings' => [
-            'value' => [
-              'label' => 'Value column',
-              'description' => '',
-            ],
-          ],
-        ],
-      ])->save();
-    }
+      ],
+    ])->save();
   }
 
 }

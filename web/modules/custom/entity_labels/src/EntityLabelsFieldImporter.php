@@ -19,8 +19,8 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
    */
   public function __construct(
     private readonly ModuleHandlerInterface $moduleHandler,
-    private readonly EntityDisplayRepositoryInterface $entityDisplayRepository,
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly EntityDisplayRepositoryInterface $entityDisplayRepository,
   ) {}
 
   /**
@@ -52,46 +52,30 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
       ));
     }
 
-    $col = array_flip($headers);
+    $column_lookup = array_flip($headers);
 
     // Read all rows before sorting.
-    $all_rows = [];
-    while (($row = fgetcsv($handle)) !== FALSE) {
-      if (count($row) === 1 && $row[0] === NULL) {
-        continue;
-      }
-      $all_rows[] = $row;
+    $rows = [];
+    while ($row = fgetcsv($handle)) {
+      $rows[] = $row;
     }
     fclose($handle);
-
-    // Re-sort by entity_type, bundle, field_name.
-    usort($all_rows, function (array $a, array $b) use ($col): int {
-      return [
-          $a[$col['entity_type']] ?? '',
-          $a[$col['bundle']] ?? '',
-          $a[$col['field_name']] ?? '',
-      ] <=> [
-          $b[$col['entity_type']] ?? '',
-          $b[$col['bundle']] ?? '',
-          $b[$col['field_name']] ?? '',
-      ];
-    });
 
     $updated = 0;
     $skipped = 0;
     $errors = [];
     $null_fields = [];
 
-    foreach ($all_rows as $row) {
-      $entity_type_id = $row[$col['entity_type']] ?? '';
-      $bundle_id = $row[$col['bundle']] ?? '';
-      $field_name = $row[$col['field_name']] ?? '';
-      $label = $row[$col['label']] ?? '';
-      $description = $row[$col['description']] ?? '';
-      $field_column = isset($col['field_column'])
-        ? ($row[$col['field_column']] ?? '') : '';
-      $field_type = isset($col['field_type'])
-        ? ($row[$col['field_type']] ?? '') : '';
+    foreach ($rows as $row) {
+      $entity_type_id = $row[$column_lookup['entity_type']] ?? '';
+      $bundle_id = $row[$column_lookup['bundle']] ?? '';
+      $field_name = $row[$column_lookup['field_name']] ?? '';
+      $label = $row[$column_lookup['label']] ?? '';
+      $description = $row[$column_lookup['description']] ?? '';
+      $field_column = isset($column_lookup['field_column'])
+        ? ($row[$column_lookup['field_column']] ?? '') : '';
+      $field_type = isset($column_lookup['field_type'])
+        ? ($row[$column_lookup['field_type']] ?? '') : '';
 
       // field_group rows.
       if ($field_type === 'field_group') {
@@ -129,34 +113,34 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
         continue;
       }
 
+      $field_config_id = "$entity_type_id.$bundle_id.$field_name";
+      $field_config = $this->entityTypeManager
+        ->getStorage('field_config')
+        ->load($field_config_id);
+
       // custom_field column rows.
       if ($field_column !== '') {
         if (!$this->moduleHandler->moduleExists('custom_field')) {
           $skipped++;
           $errors[] = sprintf(
-            'Skipped custom_field column %s on %s.%s.%s: '
-            . 'custom_field module not installed.',
-            $field_column, $entity_type_id, $bundle_id, $field_name,
+            'Skipped custom_field column %s on %s: custom_field module not installed.',
+            $field_column, $field_config_id,
           );
           continue;
         }
 
-        if (!$this->isCustomFieldVersion4()) {
+        if (!$this->isCustomFieldInstalled()) {
           $skipped++;
           $errors[] = sprintf(
-            'Skipped custom_field column %s on %s.%s.%s: '
-            . 'custom_field 4.x required.',
-            $field_column, $entity_type_id, $bundle_id, $field_name,
+            'Skipped custom_field column %s on %s: custom_field 4.x required.',
+            $field_column, $field_config_id,
           );
           continue;
         }
 
-        $field_config = $this->entityTypeManager->getStorage('field_config')->load(
-          $entity_type_id . '.' . $bundle_id . '.' . $field_name,
-        );
-        if ($field_config === NULL) {
+        if (!$field_config) {
           $skipped++;
-          $null_fields[] = $entity_type_id . '.' . $bundle_id . '.' . $field_name;
+          $null_fields[] = $field_config_id;
           continue;
         }
 
@@ -164,8 +148,8 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
         if (!isset($field_settings[$field_column])) {
           $skipped++;
           $errors[] = sprintf(
-            'Skipped custom_field column %s on %s.%s.%s: column not found.',
-            $field_column, $entity_type_id, $bundle_id, $field_name,
+            'Skipped custom_field column %s on %s: column not found.',
+            $field_column, $field_config_id,
           );
           continue;
         }
@@ -178,22 +162,17 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
         continue;
       }
 
-      // Standard field row — only FieldConfig-based (non-base) fields are
-      // supported.
-      $id = $entity_type_id . '.' . $bundle_id . '.' . $field_name;
-      $field_entity = $this->entityTypeManager->getStorage('field_config')->load($id);
-
-      if ($field_entity === NULL) {
+      if (!$field_config) {
         $skipped++;
-        $null_fields[] = $entity_type_id . '.' . $bundle_id . '.' . $field_name;
+        $null_fields[] = $field_config_id;
         continue;
       }
 
       // FieldConfig and BaseFieldOverride are config entities; label and
       // description are set directly (config translation is separate).
-      $field_entity->setLabel($label);
-      $field_entity->setDescription($description);
-      $field_entity->save();
+      $field_config->setLabel($label);
+      $field_config->setDescription($description);
+      $field_config->save();
       $updated++;
     }
 
@@ -206,12 +185,15 @@ class EntityLabelsFieldImporter implements EntityLabelsFieldImporterInterface {
   }
 
   /**
-   * Returns TRUE when custom_field 4.x is the installed major version.
+   * Checks whether the custom field module and its associated class are installed.
    *
-   * Detection uses the presence of the attribute class introduced in 4.x.
+   * @return bool
+   *   TRUE if the 'custom_field' module is installed and the required class
+   *   '\Drupal\custom_field\Attribute\CustomFieldType' exists; otherwise, FALSE.
    */
-  protected function isCustomFieldVersion4(): bool {
-    return class_exists('\Drupal\custom_field\Attribute\CustomFieldType');
+  protected function isCustomFieldInstalled(): bool {
+    return $this->moduleHandler->moduleExists('custom_field')
+      && class_exists('\Drupal\custom_field\Attribute\CustomFieldType');
   }
 
 }

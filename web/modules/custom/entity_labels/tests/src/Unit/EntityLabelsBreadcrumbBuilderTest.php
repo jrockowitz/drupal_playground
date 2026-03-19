@@ -136,6 +136,7 @@ class EntityLabelsBreadcrumbBuilderTest extends UnitTestCase {
     $entity_type_definition = $this->createMock(EntityTypeInterface::class);
     $entity_type_definition->method('getLabel')->willReturn('Content');
     $this->entityTypeManager
+      // @phpstan-ignore method.notFound
       ->method('getDefinition')
       ->with('node')
       ->willReturn($entity_type_definition);
@@ -160,6 +161,7 @@ class EntityLabelsBreadcrumbBuilderTest extends UnitTestCase {
 
     // --- Bundle drill-down (field report, node/article) ---
     $this->bundleInfoManager
+      // @phpstan-ignore method.notFound
       ->method('getBundleInfo')
       ->with('node')
       ->willReturn([

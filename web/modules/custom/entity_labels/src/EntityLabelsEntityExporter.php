@@ -32,29 +32,27 @@ class EntityLabelsEntityExporter implements EntityLabelsEntityExporterInterface 
   /**
    * {@inheritdoc}
    */
-  public function getData(
-    ?string $entity_type_id = NULL,
-    ?string $bundle = NULL,
-  ): array {
+  public function getData(?string $entity_type_id = NULL, ?string $bundle = NULL): array {
     $langcode = $this->languageManager->getCurrentLanguage()->getId();
+
     $rows = [];
-
     foreach ($this->entityTypeManager->getDefinitions() as $type_id => $entity_type) {
-      if ($entity_type->getBundleEntityType() === NULL) {
+      if (!$entity_type->getBundleEntityType()) {
         continue;
       }
 
-      if ($entity_type_id !== NULL && $type_id !== $entity_type_id) {
+      if ($entity_type_id && $type_id !== $entity_type_id) {
         continue;
       }
 
-      $storage = $this->entityTypeManager
+      $entity_storage = $this->entityTypeManager
         ->getStorage($entity_type->getBundleEntityType());
 
-      foreach (array_keys($this->bundleInfoManager->getBundleInfo($type_id)) as $bundle_id) {
+      $bundle_ids = array_keys($this->bundleInfoManager->getBundleInfo($type_id));
+      foreach ($bundle_ids as $bundle_id) {
         /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface|null $bundle_entity */
-        $bundle_entity = $storage->load($bundle_id);
-        if ($bundle_entity === NULL) {
+        $bundle_entity = $entity_storage->load($bundle_id);
+        if (!$bundle_entity) {
           continue;
         }
 
@@ -72,7 +70,8 @@ class EntityLabelsEntityExporter implements EntityLabelsEntityExporterInterface 
 
     usort($rows, static function (array $a, array $b): int {
       return [$a['entity_type'], $a['bundle']]
-        <=> [$b['entity_type'], $b['bundle']];
+        <=>
+        [$b['entity_type'], $b['bundle']];
     });
 
     return $rows;
@@ -81,19 +80,14 @@ class EntityLabelsEntityExporter implements EntityLabelsEntityExporterInterface 
   /**
    * {@inheritdoc}
    */
-  public function export(
-    ?string $entity_type_id = NULL,
-    ?string $bundle = NULL,
-  ): array {
+  public function export(?string $entity_type_id = NULL, ?string $bundle = NULL): array {
     $header = $this->getHeader();
-    $rows = [[...$header, 'notes']];
 
+    $rows = [];
+    $rows[] = [...$header, 'notes'];
     foreach ($this->getData($entity_type_id, $bundle) as $row) {
-      $values = array_map(fn(string $col) => (string) ($row[$col] ?? ''), $header);
-      $values[] = (string) ($row['notes'] ?? '');
-      $rows[] = $values;
+      $rows[] = array_values($row);
     }
-
     return $rows;
   }
 

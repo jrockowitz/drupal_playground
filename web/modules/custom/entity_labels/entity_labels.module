@@ -15,6 +15,6 @@ use Drupal\entity_labels\Hook\EntityLabelsHooks;
  * Implements hook_help().
  */
 #[LegacyHook]
-function entity_labels_help(string $route_name, RouteMatchInterface $route_match): string {
+function entity_labels_help(string $route_name, RouteMatchInterface $route_match): ?string {
   return \Drupal::service(EntityLabelsHooks::class)->help($route_name, $route_match);
 }

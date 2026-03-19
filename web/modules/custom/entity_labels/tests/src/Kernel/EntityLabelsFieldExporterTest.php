@@ -48,13 +48,11 @@ class EntityLabelsFieldExporterTest extends KernelTestBase {
    * Creates a string FieldStorageConfig + FieldConfig for the given bundle.
    */
   private function createField(string $bundle, string $field_name, string $label): void {
-    if (FieldStorageConfig::load('node.' . $field_name) === NULL) {
-      FieldStorageConfig::create([
-        'field_name' => $field_name,
-        'entity_type' => 'node',
-        'type' => 'string',
-      ])->save();
-    }
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'type' => 'string',
+    ])->save();
     FieldConfig::create([
       'field_storage' => FieldStorageConfig::load('node.' . $field_name),
       'bundle' => $bundle,
@@ -143,7 +141,7 @@ class EntityLabelsFieldExporterTest extends KernelTestBase {
       static fn(array $r) => $r['field_name'] === 'field_list_few',
     ));
     $this->assertNotEmpty($rows);
-    $this->assertSame('Alpha;Beta;Gamma', $rows[0]['allowed_values']);
+    $this->assertSame('Alpha; Beta; Gamma', $rows[0]['allowed_values']);
 
     // Create a list_string field with 11 allowed values.
     $many_values = [];
@@ -169,7 +167,7 @@ class EntityLabelsFieldExporterTest extends KernelTestBase {
     ));
     $this->assertNotEmpty($rows);
     $allowed = $rows[0]['allowed_values'];
-    $parts = explode(';', $allowed);
+    $parts = explode('; ', $allowed);
     $this->assertCount(11, $parts);
     $this->assertSame('...', $parts[10]);
   }

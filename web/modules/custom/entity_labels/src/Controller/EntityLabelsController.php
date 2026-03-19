@@ -93,16 +93,6 @@ class EntityLabelsController extends ControllerBase {
         ];
       }
 
-      // Convert allowed value to a list.
-      if (!empty($row['allowed_values'])) {
-        $row['allowed_values'] = [
-          'data' => [
-            '#theme' => 'item_list',
-            '#items' => explode(';', $row['allowed_values']),
-          ],
-        ];
-      }
-
       // Display field groups as bold text with a gray background.
       $field_type = $row['field_type'] ?? NULL;
       if ($field_type === 'field_group') {
@@ -154,7 +144,7 @@ class EntityLabelsController extends ControllerBase {
     $rows = $this->getExporter()->export($entity_type, $bundle);
     $filename = $this->getFilename($entity_type, $bundle);
 
-    $response = new StreamedResponse(static function () use ($rows): void {
+    $response = new StreamedResponse(function () use ($rows): void {
       $handle = fopen('php://output', 'w');
       if ($handle !== FALSE) {
         foreach ($rows as $row) {
