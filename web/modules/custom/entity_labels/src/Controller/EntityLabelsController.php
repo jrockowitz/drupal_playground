@@ -6,12 +6,12 @@ namespace Drupal\entity_labels\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\entity_labels\EntityLabelsTypeTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Handles all entity-labels report and export routes for both types.
@@ -24,7 +24,7 @@ class EntityLabelsController extends ControllerBase {
    * Constructs an EntityLabelsController.
    */
   public function __construct(
-    protected readonly string $type,
+    private readonly string $type,
     private readonly EntityTypeBundleInfoInterface $bundleInfo,
   ) {}
 
@@ -48,108 +48,81 @@ class EntityLabelsController extends ControllerBase {
     ?string $entity_type = NULL,
     ?string $bundle = NULL,
   ): array {
+    $header = $this->getExporter()->getHeader();
+    $header = array_combine($header, $header);
+
     $rows = $this->getExporter()->getData($entity_type, $bundle);
 
-    $columns = $this->getExporter()->getHeader();
-    $header = $columns;
+    // If there are no rows, assume there is the entity type or bundle is invalid.
+    if (empty($rows) && ($entity_type || $bundle)) {
+      throw new NotFoundHttpException();
+    }
 
-    $table_rows = [];
-    foreach ($rows as $row) {
-      $cells = [];
+    foreach ($rows as &$row) {
+      $row = array_intersect_key($row, $header);
 
-      foreach ($columns as $col) {
-        $value = $row[$col] ?? '';
+      // Track row entity type and bundle since we are overwriting their values.
+      $row_entity_type = $row['entity_type'] ?? NULL;
+      $row_bundle = $row['bundle'] ?? NULL;
 
-        // entity_type cell: always linked to the type-filtered report.
-        if ($col === 'entity_type' && (string) $value !== '') {
-          $cells[] = [
-            'data' => [
-              '#type' => 'link',
-              '#title' => $value,
-              '#url' => Url::fromRoute(
-                $this->getReportRoute(),
-                ['entity_type' => $value],
-              ),
-            ],
-          ];
-          continue;
-        }
-
-        // Bundle cell: linked only on the Fields tab.
-        if ($col === 'bundle'
-          && $this->type === 'field'
-          && (string) $value !== ''
-        ) {
-          $cells[] = [
-            'data' => [
-              '#type' => 'link',
-              '#title' => $value,
-              '#url' => Url::fromRoute(
-                $this->getReportRoute(),
-                [
-                  'entity_type' => $row['entity_type'],
-                  'bundle' => $value,
-                ],
-              ),
-            ],
-          ];
-          continue;
-        }
-
-        // allowed_values: render semicolon-delimited string as a bullet list.
-        if ($col === 'allowed_values' && (string) $value !== '') {
-          $items = explode(';', (string) $value);
-          $cells[] = [
-            'data' => [
-              '#theme' => 'item_list',
-              '#items' => $items,
-            ],
-          ];
-          continue;
-        }
-
-        $cells[] = (string) $value;
+      // Link the entity type.
+      if ($row['entity_type']) {
+        $row['entity_type'] = [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $row['entity_type'],
+            '#url' => Url::fromRoute(
+              $this->getReportRoute(),
+              ['entity_type' => $row['entity_type']],
+            ),
+          ],
+        ];
       }
 
-      if (($row['field_type'] ?? '') === 'field_group') {
-        foreach ($cells as &$cell) {
-          if (is_string($cell)) {
-            $cell = ['data' => $cell, 'style' => 'background-color: #eee; font-weight: bold;'];
-          }
-          elseif (is_array($cell)) {
-            $cell['style'] = 'background-color: #eee; font-weight: bold;';
-          }
-        }
-        unset($cell);
+      // Link the entity type and bundle for fields only.
+      if (!empty($row['bundle']) && $this->type === 'field') {
+        $row['bundle'] = [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $row['bundle'],
+            '#url' => Url::fromRoute(
+              $this->getReportRoute(),
+              ['entity_type' => $row_entity_type, 'bundle' => $row_bundle],
+            ),
+          ],
+        ];
       }
 
-      $table_rows[] = ['data' => $cells];
+      // Convert allowed value to a list.
+      if (!empty($row['allowed_values'])) {
+        $row['allowed_values'] = [
+          'data' => [
+            '#theme' => 'item_list',
+            '#items' => explode(';', $row['allowed_values']),
+          ],
+        ];
+      }
+
+      // Display field groups as bold text with a gray background.
+      $field_type = $row['field_type'] ?? NULL;
+      if ($field_type === 'field_group') {
+        $row = [
+          'data' => $row,
+          'style' => 'background-color: #eee; font-weight: bold;',
+        ];
+      }
     }
 
     $build = [];
 
+    // Table.
     $build['table'] = [
       '#type' => 'table',
       '#header' => $header,
-      '#rows' => $table_rows,
+      '#rows' => $rows,
       '#sticky' => TRUE,
-      '#empty' => $this->t('No data found.'),
+      '#empty' => $this->t('No @types found.', ['@types' => $this->getPluralLabel()]),
     ];
-
-    // Bundle-level field report: note about display-only columns and base fields.
-    if ($this->type === 'field' && $bundle !== NULL) {
-      $build['import_note'] = [
-        '#type' => 'container',
-        '#attributes' => ['class' => ['messages', 'messages--warning']],
-        'message' => [
-          '#markup' => $this->t(
-            'The <em>allowed_values</em> and <em>field_type</em> columns are'
-            . ' display-only. Base fields (such as <em>title</em>) cannot be'
-            . ' updated via import.',
-          ),
-        ],
-      ];
-    }
 
     // Download CSV button.
     $build['export_link'] = [
@@ -179,7 +152,7 @@ class EntityLabelsController extends ControllerBase {
     $bundle = $request->query->getString('bundle') ?: NULL;
 
     $rows = $this->getExporter()->export($entity_type, $bundle);
-    $filename = $this->buildFilename($entity_type, $bundle);
+    $filename = $this->getFilename($entity_type, $bundle);
 
     $response = new StreamedResponse(static function () use ($rows): void {
       $handle = fopen('php://output', 'w');
@@ -203,47 +176,35 @@ class EntityLabelsController extends ControllerBase {
   /**
    * Returns the page title reflecting the current drill-down level.
    */
-  public function title(
-    ?string $entity_type = NULL,
-    ?string $bundle = NULL,
-  ): TranslatableMarkup {
-    if ($entity_type !== NULL && $bundle !== NULL) {
-      $bundles = $this->bundleInfo->getBundleInfo($entity_type);
-      $label = $bundles[$bundle]['label'] ?? $bundle;
-      return $this->t('@type: @label', [
-        '@type' => $this->getPluralLabel(),
-        '@label' => $label,
-      ]);
+  public function title(?string $entity_type = NULL, ?string $bundle = NULL): string {
+    $title_parts = [
+      $this->t('@type labels', ['@type' => $this->getSingularLabel()]),
+    ];
+
+    if ($entity_type) {
+      $entity_type_definition = $this->entityTypeManager()->getDefinition($entity_type);
+      $title_parts[] = $entity_type_definition->getLabel();
+      if ($bundle) {
+        $bundle_label = $this->bundleInfo->getBundleLabels($entity_type)[$bundle];
+        if ($bundle_label) {
+          $title_parts[] = $bundle_label;
+        }
+      }
     }
 
-    if ($entity_type !== NULL) {
-      $definition = $this->entityTypeManager()
-        ->getDefinition($entity_type, FALSE);
-      $label = $definition ? (string) $definition->getLabel() : $entity_type;
-      return $this->t('@type: @label', [
-        '@type' => $this->getPluralLabel(),
-        '@label' => $label,
-      ]);
-    }
-
-    return $this->getPluralLabel();
+    return implode(': ', $title_parts);
   }
 
   /**
    * Builds the download filename for the current type and scope.
    */
-  private function buildFilename(
-    ?string $entity_type,
-    ?string $bundle,
-  ): string {
-    $name = $this->getPluralName();
-    $parts = ['entity-labels', $name];
-    if ($entity_type !== NULL) {
-      $parts[] = $entity_type;
-    }
-    if ($bundle !== NULL) {
-      $parts[] = $bundle;
-    }
+  private function getFilename(?string $entity_type, ?string $bundle): string {
+    $parts = array_filter([
+      'entity-labels',
+      $this->getPluralName(),
+      $entity_type,
+      $bundle,
+    ]);
     return implode('-', $parts) . '.csv';
   }
 

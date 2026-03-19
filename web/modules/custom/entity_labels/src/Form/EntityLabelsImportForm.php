@@ -7,7 +7,6 @@ namespace Drupal\entity_labels\Form;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\entity_labels\EntityLabelsTypeTrait;
 use Drupal\entity_labels\Exception\EntityLabelsCsvParseException;
 use Drupal\entity_labels\Exception\EntityLabelsImportException;
@@ -24,7 +23,7 @@ class EntityLabelsImportForm extends FormBase {
    * Constructs an EntityLabelsImportForm.
    */
   public function __construct(
-    protected string $type,
+    private readonly string $type,
     private readonly FileSystemInterface $fileSystem,
   ) {}
 
@@ -82,11 +81,7 @@ class EntityLabelsImportForm extends FormBase {
    * @param array $complete_form
    *   The complete form render array.
    */
-  public function validateFileUpload(
-    array &$element,
-    FormStateInterface $form_state,
-    array &$complete_form,
-  ): void {
+  public function validateFileUpload(array &$element, FormStateInterface $form_state, array &$complete_form): void {
     $upload_name = implode('_', $element['#parents']);
 
     $file = file_save_upload(
@@ -109,7 +104,7 @@ class EntityLabelsImportForm extends FormBase {
     $csv = $real_path !== FALSE ? file_get_contents($real_path) : FALSE;
     $file->delete();
 
-    if ($csv === FALSE || $csv === '') {
+    if (empty($csv)) {
       $form_state->setErrorByName(
         $element['#name'],
         $this->t('The uploaded file could not be read.'),
@@ -117,15 +112,15 @@ class EntityLabelsImportForm extends FormBase {
       return;
     }
 
-    $form_state->setValue('csvupload', $csv);
     $form_state->setValue('csv_filename', $file->getFilename());
+    $form_state->setValue('csv_content', $csv);
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $csv = $form_state->getValue('csvupload');
+    $csv = $form_state->getValue('csv_content');
     if (!$csv) {
       return;
     }
@@ -161,47 +156,42 @@ class EntityLabelsImportForm extends FormBase {
       ));
     }
 
-    $form_state->setRedirectUrl($this->buildRedirectUrl(
-      $form_state->getValue('csv_filename', ''),
-    ));
+    $filename = $form_state->getValue('csv_filename', '');
+    $route_parameters = $this->getRouteParametersFromFilename($filename);
+    $form_state->setRedirect($this->getReportRoute(), $route_parameters);
   }
 
   /**
-   * Builds the redirect URL based on the uploaded CSV filename.
-   *
-   * Parses the filename to extract entity_type and bundle (when present)
-   * and routes to the corresponding report page.
+   * Extracts route parameters from the provided filename.
    *
    * @param string $filename
-   *   The uploaded CSV filename.
+   *   The filename to extract parameters from.
    *
-   * @return \Drupal\Core\Url
-   *   The target report URL.
+   * @return array
+   *   An associative array containing the route parameters:
+   *   - entity_type: The type of the entity derived from the filename, or NULL if not found.
+   *   - bundle: The bundle name derived from the filename, or NULL if not found.
    */
-  private function buildRedirectUrl(string $filename): Url {
+  protected function getRouteParametersFromFilename(string $filename): array {
     $name = pathinfo($filename, PATHINFO_FILENAME);
-    $prefix = 'entity-labels-' . $this->getPluralName();
 
+    $prefix = 'entity-labels-' . $this->getPluralName() . '-';
     if (!str_starts_with($name, $prefix)) {
-      return Url::fromRoute($this->getReportRoute());
+      return [];
     }
 
-    // Remaining after prefix: '' | '-node' | '-node-article'.
-    $remaining = ltrim(substr($name, strlen($prefix)), '-');
+    // Remove prefix from the file name.
+    $name = preg_replace('/^' . $prefix . '/', '', $name);
 
-    if ($remaining === '') {
-      return Url::fromRoute($this->getReportRoute());
-    }
+    // Remove numeric suffix from the file name.
+    $name = preg_replace('/\s*\(\d+\)$/', '', $name);
 
-    // Machine names are [a-z0-9_]; dashes are always separators.
-    $parts = explode('-', $remaining, 2);
-    $entity_type = $parts[0] !== '' ? $parts[0] : NULL;
-    $bundle = ($this->type === 'field') ? ($parts[1] ?? NULL) : NULL;
-
-    return Url::fromRoute(
-      $this->getReportRoute(),
-      array_filter(['entity_type' => $entity_type, 'bundle' => $bundle]),
-    );
+    // @todo Check that the entity type and bundle are valid.
+    $parts = explode('-', $name);
+    return array_filter([
+      'entity_type' => $parts[0],
+      'bundle' => $parts[1] ?? NULL,
+    ]);
   }
 
 }

@@ -61,68 +61,48 @@ class EntityLabelsBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     $breadcrumb->addLink(
       Link::createFromRoute($this->t('Reports'), 'system.admin_reports'),
     );
-    // "Entity labels" always links to the entity report with no params.
     $breadcrumb->addLink(
-      Link::createFromRoute(
-        $this->t('Entity labels'),
-        'entity_labels.entity.report',
-      ),
+      Link::createFromRoute($this->t('Entity labels'), 'entity_labels.entity.report'),
     );
 
     // Read route path parameters (export/import routes have none).
     $entity_type_id = $route_match->getParameter('entity_type');
     $bundle = $route_match->getParameter('bundle');
 
-    if ($entity_type_id !== NULL) {
-      // Entities/Fields crumb is linked when drilling deeper.
-      $breadcrumb->addLink(
-        Link::createFromRoute($this->getPluralLabel(), $this->getReportRoute()),
-      );
-
-      $definition = $this->entityTypeManager->getDefinition(
-        $entity_type_id,
-        FALSE,
-      );
-      $entity_type_label = $definition
-        ? (string) $definition->getLabel()
-        : $entity_type_id;
-
-      if ($bundle !== NULL) {
-        // Entity type crumb links to the base report with entity_type only.
-        $breadcrumb->addLink(
-          Link::createFromRoute(
-            $entity_type_label,
-            $this->getReportRoute(),
-            ['entity_type' => $entity_type_id],
-          ),
-        );
-
-        // Bundle label is the unlinked active crumb.
-        $bundle_info = $this->bundleInfoManager->getBundleInfo($entity_type_id);
-        $bundle_label = $bundle_info[$bundle]['label'] ?? $bundle;
-        $breadcrumb->addLink(
-          Link::fromTextAndUrl(
-            $bundle_label,
-            Url::fromRoute('<none>'),
-          ),
-        );
-      }
-      else {
-        // Entity type label is the unlinked active crumb.
-        $breadcrumb->addLink(
-          Link::fromTextAndUrl(
-            $entity_type_label,
-            Url::fromRoute('<none>'),
-          ),
-        );
-      }
+    // Check the entity type id is defined.
+    if (!$entity_type_id) {
+      return $breadcrumb;
     }
-    else {
-      // No params: Entities/Fields is the unlinked active crumb.
-      $breadcrumb->addLink(
-        Link::fromTextAndUrl($this->getPluralLabel(), Url::fromRoute('<none>')),
-      );
+
+    // Entities/Fields crumb is linked when drilling deeper.
+    $breadcrumb->addLink(
+      Link::createFromRoute($this->getPluralLabel(), $this->getReportRoute()),
+    );
+
+    // Check the bundle is defined.
+    if (!$bundle) {
+      return $breadcrumb;
     }
+
+    // Entity type crumb links to the base report with entity_type only.
+    $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type_id);
+    $breadcrumb->addLink(
+      Link::createFromRoute(
+        $entity_type_definition->getLabel(),
+        $this->getReportRoute(),
+        ['entity_type' => $entity_type_id],
+      ),
+    );
+
+    // Bundle label is the unlinked active crumb.
+    $bundle_info = $this->bundleInfoManager->getBundleInfo($entity_type_id);
+    $bundle_label = $bundle_info[$bundle]['label'] ?? $bundle;
+    $breadcrumb->addLink(
+      Link::fromTextAndUrl(
+        $bundle_label,
+        Url::fromRoute('<none>'),
+      ),
+    );
 
     return $breadcrumb;
   }

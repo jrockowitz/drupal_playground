@@ -126,7 +126,6 @@ class EntityLabelsBreadcrumbBuilderTest extends UnitTestCase {
       ['Administration', 'system.admin'],
       ['Reports', 'system.admin_reports'],
       ['Entity labels', 'entity_labels.entity.report'],
-      ['Entities', '<none>'],
     ], $this->extractLinkData($breadcrumb->getLinks()));
 
     // Cache contexts and max-age.
@@ -138,7 +137,7 @@ class EntityLabelsBreadcrumbBuilderTest extends UnitTestCase {
     $entity_type_definition->method('getLabel')->willReturn('Content');
     $this->entityTypeManager
       ->method('getDefinition')
-      ->with('node', FALSE)
+      ->with('node')
       ->willReturn($entity_type_definition);
 
     $route_match = $this->createMock('Drupal\Core\Routing\RouteMatchInterface');
@@ -157,7 +156,6 @@ class EntityLabelsBreadcrumbBuilderTest extends UnitTestCase {
       ['Reports', 'system.admin_reports'],
       ['Entity labels', 'entity_labels.entity.report'],
       ['Entities', 'entity_labels.entity.report'],
-      ['Content', '<none>'],
     ], $this->extractLinkData($breadcrumb->getLinks()));
 
     // --- Bundle drill-down (field report, node/article) ---

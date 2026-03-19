@@ -37,24 +37,26 @@ class EntityLabelsHooks {
         return '<p>' . $this->t('The <strong>Fields</strong> label page lists all field labels filterable by entity type and bundle.') . '</p>';
 
       case 'entity_labels.field.report':
-        $output = '<p>' . $this->t('Displays field labels for a specific entity type or bundle.') . '</p>';
-        if ($route_match->getParameter('bundle') !== NULL) {
-          $output .= '<p>' . $this->t('Note: %allowed_values and %field_type cannot be updated via import.', [
-            '%allowed_values' => 'allowed_values',
-            '%field_type' => 'field_type',
-          ]) . '</p>';
-        }
-        return $output;
+        $t_args = [
+          '%allowed_values' => 'allowed_values',
+          '%field_type' => 'field_type',
+        ];
+        return '<p>'
+          . $this->t('Displays field labels for a specific entity type or bundle.')
+          . $this->t('Note: %allowed_values and %field_type cannot be updated via import.', $t_args)
+          . '</p>';
 
       case 'entity_labels.field.export':
         return '<p>' . $this->t('Exports field labels as a downloadable CSV file.') . '</p>';
 
       case 'entity_labels.field.import':
-        return '<p>' . $this->t('Imports field labels from an uploaded CSV file.') . '</p>'
-          . '<p>' . $this->t('Note: %allowed_values and %field_type columns are ignored during import.', [
-            '%allowed_values' => 'allowed_values',
-            '%field_type' => 'field_type',
-          ]) . '</p>';
+        $t_args = [
+          '%allowed_values' => 'allowed_values',
+          '%field_type' => 'field_type',
+        ];
+        return '<p>' . $this->t('Imports field labels from an uploaded CSV file.')
+          . $this->t('Note: %allowed_values and %field_type columns are ignored during import.', $t_args)
+          . '</p>';
     }
 
     return '';
