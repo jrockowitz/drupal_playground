@@ -20,28 +20,14 @@ description, allowed values) — with CSV export and CSV import for bulk updates
 - **Multilingual** — uses Drupal's core translation detection; import targets the
   language specified in the `langcode` column.
 
-## Requirements
-
-- Drupal core 10.x or 11.x
-- No additional contributed modules required
-
 ## Optional Module Support
 
 When the following contrib modules are installed, the Fields tab, export, and import are automatically extended:
 
-- **`field_group` (any version)** — Groups from the default form mode appear as rows
+- **[Field Group](https://www.drupal.org/project/field_group)** (`drupal/field_group`, any version) — Groups from the default form mode appear as rows
   with `field_type = field_group`; group label and description are exportable and importable.
-- **`custom_field` (4.x only)** — Each column within a `custom_field` field gets its own row
+- **[Custom Field](https://www.drupal.org/project/custom_field)** (`drupal/custom_field`, 4.x only) — Each column within a `custom_field` field gets its own row
   with a `field_column` identifier; column label and description are exportable and importable.
-
-## Installation
-
-Install as any Drupal module:
-
-```bash
-composer require drupal/entity_labels
-drush en entity_labels
-```
 
 ## Permissions
 
@@ -58,3 +44,15 @@ drush en entity_labels
 4. Click **⇩ Download CSV** to export the current view.
 5. Edit the CSV, then use the **Import** secondary tab to upload and apply changes.
 
+## TODO
+
+### Drush support
+
+- Export entity/field labels to CSV via Drush command.
+- Import a CSV file via Drush command (non-interactive bulk updates).
+
+### Multilingual
+
+- Config translation support: import targets the language in the `langcode` column, but config entity
+  translation (i.e. writing to config translation overrides rather than the base config) is not yet implemented.
+- UI language switcher for the report pages.
