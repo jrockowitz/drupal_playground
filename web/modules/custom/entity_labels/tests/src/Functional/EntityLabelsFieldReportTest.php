@@ -36,7 +36,7 @@ class EntityLabelsFieldReportTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests the field report page and its drill-down, tab, and export routes.
+   * Tests the field report page, its drill-down/export routes, and access control.
    */
   public function testFieldReport(): void {
     // Check that the field report page returns 200.
@@ -68,6 +68,16 @@ class EntityLabelsFieldReportTest extends EntityLabelsTestBase {
     $this->drupalGet('admin/reports/entity-labels/field/export');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseHeaderContains('Content-Type', 'text/csv');
+
+    // Check that the field report requires 'access site reports'.
+    $this->drupalLogin($this->drupalCreateUser([]));
+    $this->drupalGet('admin/reports/entity-labels/field');
+    $this->assertSession()->statusCodeEquals(403);
+
+    // Check that the field import form requires 'administer site configuration'.
+    $this->drupalLogin($this->drupalCreateUser(['access site reports']));
+    $this->drupalGet('admin/reports/entity-labels/field/import');
+    $this->assertSession()->statusCodeEquals(403);
   }
 
 }

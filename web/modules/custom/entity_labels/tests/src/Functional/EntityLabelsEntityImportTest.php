@@ -35,7 +35,7 @@ class EntityLabelsEntityImportTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests that the import form loads and handles empty submission gracefully.
+   * Tests the import form and CSV upload.
    */
   public function testImportForm(): void {
     // Check that the import form loads and shows the submit button.
@@ -47,12 +47,7 @@ class EntityLabelsEntityImportTest extends EntityLabelsTestBase {
     $this->submitForm([], 'Import CSV');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->statusMessageNotExists('error');
-  }
 
-  /**
-   * Tests CSV upload behaviour for valid and malformed files.
-   */
-  public function testImportCsv(): void {
     // Check that a valid CSV import shows a success status message.
     $csv_content = "langcode,entity_type,bundle,label,description,help\n"
       . "en,node,article,Updated Article,Updated description,\n";

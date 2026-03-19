@@ -36,7 +36,7 @@ class EntityLabelsEntityReportTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests the entity report page and its drill-down and export routes.
+   * Tests the entity report page, its drill-down, export, and 404 routes.
    */
   public function testEntityReport(): void {
     // Check that the entity report page returns 200.
@@ -52,21 +52,30 @@ class EntityLabelsEntityReportTest extends EntityLabelsTestBase {
     // Check that the breadcrumb contains a Reports link.
     $this->assertSession()->linkByHrefExists('/admin/reports');
 
+    // Check that the title callback renders the top-level title.
+    $this->assertSession()->pageTextContains('Entity labels');
+
     // Check that the entity-type drill-down page returns 200 and shows bundles.
     $this->drupalGet('admin/reports/entity-labels/entity/node');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Article');
 
+    // Check that the title callback appends the entity type label.
+    $this->assertSession()->pageTextContains('Entity labels: Content');
+
     // Check that the export route streams a CSV file.
     $this->drupalGet('admin/reports/entity-labels/entity/export');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->responseHeaderContains('Content-Type', 'text/csv');
-  }
 
-  /**
-   * Tests access control for the entity report and import routes.
-   */
-  public function testAccessControl(): void {
+    // Check that an invalid entity type path returns 404.
+    $this->drupalGet('admin/reports/entity-labels/entity/nonexistent_type');
+    $this->assertSession()->statusCodeEquals(404);
+
+    // Check that an invalid bundle on the field report also returns 404.
+    $this->drupalGet('admin/reports/entity-labels/field/node/nonexistent_bundle');
+    $this->assertSession()->statusCodeEquals(404);
+
     // Check that the entity report requires 'access site reports'.
     $this->drupalLogin($this->drupalCreateUser([]));
     $this->drupalGet('admin/reports/entity-labels/entity');

@@ -38,7 +38,7 @@ class EntityLabelsFieldImportTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests that the import form loads and handles empty submission gracefully.
+   * Tests the import form and CSV upload.
    */
   public function testImportForm(): void {
     // Check that the field import form loads and shows the submit button.
@@ -50,12 +50,7 @@ class EntityLabelsFieldImportTest extends EntityLabelsTestBase {
     $this->submitForm([], 'Import CSV');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->statusMessageNotExists('error');
-  }
 
-  /**
-   * Tests CSV upload behaviour for valid, malformed, and missing field rows.
-   */
-  public function testImportCsv(): void {
     // Check that a valid CSV import updates the field label.
     $this->createTestField('node', 'article', 'field_test_label', 'Original Label');
 
@@ -107,12 +102,7 @@ class EntityLabelsFieldImportTest extends EntityLabelsTestBase {
    * @param string $label
    *   Field label.
    */
-  private function createTestField(
-    string $entity_type,
-    string $bundle,
-    string $field_name,
-    string $label,
-  ): void {
+  private function createTestField(string $entity_type, string $bundle, string $field_name, string $label): void {
     FieldStorageConfig::create([
       'field_name' => $field_name,
       'entity_type' => $entity_type,

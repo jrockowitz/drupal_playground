@@ -39,17 +39,21 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
   }
 
   /**
-   * Tests custom_field column rows in the bundle report and CSV import.
+   * Tests that custom_field column rows appear in the bundle-level report.
    */
-  public function testCustomField(): void {
-    // Check that custom_field column rows appear in the bundle-level report.
+  public function testCustomFieldColumnRowsAppearInBundleReport(): void {
     $this->createCustomField('node', 'article', 'field_custom_test');
 
+    // Check that custom_field column rows appear in the bundle-level report.
     $this->drupalGet('admin/reports/entity-labels/field/node/article');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('field_column');
+  }
 
-    // Check that a custom_field column CSV row can be imported without errors.
+  /**
+   * Tests that a custom_field column CSV row can be imported without errors.
+   */
+  public function testCustomFieldColumnCsvImportSucceeds(): void {
     $this->createCustomField('node', 'article', 'field_custom_import');
 
     $csv_content = "langcode,entity_type,bundle,field_name,field_column,"
@@ -76,18 +80,14 @@ class EntityLabelsCustomFieldTest extends EntityLabelsTestBase {
    * @param string $field_name
    *   Field machine name.
    */
-  private function createCustomField(
-    string $entity_type,
-    string $bundle,
-    string $field_name,
-  ): void {
+  private function createCustomField(string $entity_type, string $bundle, string $field_name): void {
     FieldStorageConfig::create([
       'field_name' => $field_name,
       'entity_type' => $entity_type,
       'type' => 'custom',
       'settings' => [
         'columns' => [
-          ['name' => 'value', 'type' => 'string', 'length' => 255],
+          'value' => ['name' => 'value', 'type' => 'string', 'length' => 255],
         ],
       ],
     ])->save();
