@@ -44,6 +44,10 @@ When the following contrib modules are installed, the Fields tab, export, and im
 4. Click **⇩ Download CSV** to export the current view.
 5. Edit the CSV, then use the **Import** secondary tab to upload and apply changes.
 
+## About
+
+This module was created using AI and understood by humans. See [Never submit code you do not understand](https://dri.es/never-submit-code-you-do-not-understand).
+
 ## TODO
 
 ### Drush support
