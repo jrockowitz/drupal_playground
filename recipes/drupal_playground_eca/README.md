@@ -1,6 +1,6 @@
 ## Recipe: User login redirect to /admin/content
 
-ID: kw7qjd6lx4bp
+ID: drupal_playground_eca
 
 
 
@@ -8,13 +8,13 @@ ID: kw7qjd6lx4bp
 
 ```shell
 ## Import recipe
-composer require drupal/kw7qjd6lx4bp
+composer require drupal/drupal_playground_eca
 
 # Apply recipe with Drush (requires version 13 or later):
-drush recipe ../recipes/kw7qjd6lx4bp
+drush recipe ../recipes/drupal_playground_eca
 
 # Apply recipe without Drush:
-cd web && php core/scripts/drupal recipe ../recipes/kw7qjd6lx4bp
+cd web && php core/scripts/drupal recipe ../recipes/drupal_playground_eca
 
 # Rebuilding caches is optional, sometimes required:
 drush cr

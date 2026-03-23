@@ -1,5 +1,5 @@
 {
-    "name": "drupal/kw7qjd6lx4bp",
+    "name": "drupal/drupal_playground_eca",
     "type": "drupal-recipe",
     "description": "User login redirect to /admin/content",
     "license": "GPL-2.0-or-later",
