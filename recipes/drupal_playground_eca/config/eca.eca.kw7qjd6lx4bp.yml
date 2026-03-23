@@ -1,3 +1,4 @@
+uuid: b406357c-89c0-4067-bb2a-f5017f1b77b9
 langcode: en
 status: true
 dependencies:
@@ -7,7 +8,7 @@ dependencies:
 third_party_settings:
   modeler_api:
     modeler_id: workflow_modeler
-    data: 'hash:6f2a21657566716d693f25e65ca81e31'
+    data: 'hash:0c5eee47bdc1ed795e4d7960b88b721e'
     label: 'User login redirect to /admin/content'
     version: 1.0.0
 id: kw7qjd6lx4bp
@@ -26,7 +27,7 @@ conditions: {  }
 gateways: {  }
 actions:
   redirect_to_url_uz30kk2h:
-    label: 'Redirect to URL'
+    label: 'Redirect to /admin/content'
     plugin: action_goto_action
     configuration:
       url: /admin/content
