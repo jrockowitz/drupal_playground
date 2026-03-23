@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "99fa40197f9ac15c6c1117a75943088d",
+    "content-hash": "81efa76b34f1b88c334eb10ee2aa73e0",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3594,19 +3594,22 @@
         },
         {
             "name": "drupal/drupal_playground_eca",
-            "version": "1.0.0",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_eca",
-                "reference": "6b030ebd328cf2451df55a49122c55488183bd72"
+                "reference": "3c60efe32e794f970b1582d83da6df4062894fbd"
             },
             "require": {
-                "drupal/eca_starterkit": "^1.0"
+                "drupal/core": ">=11.2",
+                "drupal/eca": "*",
+                "drupal/modeler_api": "*"
             },
             "type": "drupal-recipe",
             "license": [
                 "GPL-2.0-or-later"
             ],
+            "description": "User login redirect to /admin/content",
             "transport-options": {
                 "relative": true
             }
@@ -3750,135 +3753,6 @@
             "support": {
                 "source": "https://drupal.org/project/eca",
                 "issues": "https://drupal.org/project/issues/eca"
-            }
-        },
-        {
-            "name": "drupal/eca_starterkit",
-            "version": "1.0.0-rc1",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/eca_starterkit.git",
-                "reference": "bf9a69e884241825034a36c8e059a0c9d68228a9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://git.drupalcode.org/api/v4/projects/project%2Feca_starterkit/repository/archive.zip?sha=bf9a69e884241825034a36c8e059a0c9d68228a9",
-                "reference": "bf9a69e884241825034a36c8e059a0c9d68228a9",
-                "shasum": ""
-            },
-            "require": {
-                "drupal/eca": "^3.1",
-                "drupal/eca_tamper": "^2.0",
-                "drupal/eca_tool": "^1.0",
-                "drupal/modeler": "^1.0",
-                "drupal/modeler_api": "^1.1"
-            },
-            "type": "drupal-recipe",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "description": "This recipe provides a quick-start setup for ECA with the recommended models being downloaded and installed.",
-            "support": {
-                "source": "https://git.drupalcode.org/project/eca_starterkit/-/tree/1.0.0-rc1"
-            },
-            "time": "2026-03-20T12:37:48+00:00"
-        },
-        {
-            "name": "drupal/eca_tamper",
-            "version": "2.0.9",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/eca_tamper.git",
-                "reference": "2.0.9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/eca_tamper-2.0.9.zip",
-                "reference": "2.0.9",
-                "shasum": "d52d73140c1313897e805bbc0de27f26b5760a34"
-            },
-            "require": {
-                "drupal/core": "^10.4 || ^11",
-                "drupal/eca": "^2.1||^3.0",
-                "drupal/tamper": "^1.0",
-                "php": ">=8.1"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.0.9",
-                    "datestamp": "1763824823",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "danielspeicher",
-                    "homepage": "https://www.drupal.org/user/3621778"
-                },
-                {
-                    "name": "jurgenhaas",
-                    "homepage": "https://www.drupal.org/user/168924"
-                }
-            ],
-            "description": "Integrate ECA with the tamper module and its plugins available as actions.",
-            "homepage": "https://www.drupal.org/project/eca_tamper",
-            "support": {
-                "source": "https://drupal.org/project/eca_tamper",
-                "issues": "https://drupal.org/project/issues/eca_tamper"
-            }
-        },
-        {
-            "name": "drupal/eca_tool",
-            "version": "dev-1.0.x",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/eca_tool.git",
-                "reference": "a8d41520938321d9ec2fdafddd03c9f251cb8667"
-            },
-            "require": {
-                "drupal/core": "^11.3",
-                "drupal/eca": "^3.0",
-                "drupal/tool": "^1.0",
-                "php": ">=8.1"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-1.0.x": "1.0.x-dev"
-                },
-                "drupal": {
-                    "version": "1.0.x-dev",
-                    "datestamp": "1772975860",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "jurgenhaas",
-                    "homepage": "https://www.drupal.org/user/168924"
-                }
-            ],
-            "description": "Integrate ECA with the Tool API module.",
-            "homepage": "https://www.drupal.org/project/eca_tool",
-            "support": {
-                "source": "https://drupal.org/project/eca_tool",
-                "issues": "https://drupal.org/project/issues/eca_tool"
             }
         },
         {
@@ -4624,61 +4498,6 @@
             }
         },
         {
-            "name": "drupal/modeler",
-            "version": "1.0.0-rc1",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/modeler.git",
-                "reference": "1.0.0-rc1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/modeler-1.0.0-rc1.zip",
-                "reference": "1.0.0-rc1",
-                "shasum": "e027cc346483afc840efb12bda960d379f11618a"
-            },
-            "require": {
-                "drupal/core": "^11.3 || ^12.0",
-                "drupal/modeler_api": "^1.1",
-                "php": ">=8.3"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-rc1",
-                    "datestamp": "1774031839",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "RC releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "boromino",
-                    "homepage": "https://www.drupal.org/user/859722"
-                },
-                {
-                    "name": "danielspeicher",
-                    "homepage": "https://www.drupal.org/user/3621778"
-                },
-                {
-                    "name": "jurgenhaas",
-                    "homepage": "https://www.drupal.org/user/168924"
-                }
-            ],
-            "description": "A modern, React Flow based modeler for Drupal that integrates into Modeler API and supports platforms like ECA, AI Agents, etc.",
-            "homepage": "https://www.drupal.org/project/modeler",
-            "support": {
-                "source": "https://drupal.org/project/modeler",
-                "issues": "https://drupal.org/project/issues/modeler"
-            }
-        },
-        {
             "name": "drupal/modeler_api",
             "version": "1.1.0",
             "source": {
@@ -5404,67 +5223,6 @@
             }
         },
         {
-            "name": "drupal/tamper",
-            "version": "1.0.0-beta2",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/tamper.git",
-                "reference": "8.x-1.0-beta2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/tamper-8.x-1.0-beta2.zip",
-                "reference": "8.x-1.0-beta2",
-                "shasum": "bcd42c323465d4a3c91a76726b486a7f33b35f77"
-            },
-            "require": {
-                "drupal/core": "^8.8 || ^9 || ^10 || ^11"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-1.0-beta2",
-                    "datestamp": "1763649430",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "ericgsmith",
-                    "homepage": "https://www.drupal.org/user/1649952"
-                },
-                {
-                    "name": "jamesdixon",
-                    "homepage": "https://www.drupal.org/user/762570"
-                },
-                {
-                    "name": "megachriz",
-                    "homepage": "https://www.drupal.org/user/654114"
-                },
-                {
-                    "name": "twistor",
-                    "homepage": "https://www.drupal.org/user/473738"
-                }
-            ],
-            "description": "Generic plugin to modify data.",
-            "homepage": "https://www.drupal.org/project/tamper",
-            "keywords": [
-                "Drupal",
-                "tamper"
-            ],
-            "support": {
-                "source": "http://cgit.drupalcode.org/tamper",
-                "issues": "http://drupal.org/project/issues/tamper"
-            }
-        },
-        {
             "name": "drupal/token",
             "version": "1.17.0",
             "source": {
@@ -5534,68 +5292,6 @@
             "homepage": "https://www.drupal.org/project/token",
             "support": {
                 "source": "https://git.drupalcode.org/project/token"
-            }
-        },
-        {
-            "name": "drupal/tool",
-            "version": "1.0.0-beta1",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/tool.git",
-                "reference": "1.0.0-beta1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/tool-1.0.0-beta1.zip",
-                "reference": "1.0.0-beta1",
-                "shasum": "e001e557cfee484357834a4346ee2fa0ed32b34b"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11",
-                "php": ">=8.2"
-            },
-            "require-dev": {
-                "drupal/ai": "^1.2",
-                "drupal/ai_agents": "^1.2"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-beta1",
-                    "datestamp": "1774040541",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "jurgenhaas",
-                    "homepage": "https://www.drupal.org/user/168924"
-                },
-                {
-                    "name": "marcus_johansson",
-                    "homepage": "https://www.drupal.org/user/385947"
-                },
-                {
-                    "name": "michaellander",
-                    "homepage": "https://www.drupal.org/user/636494"
-                },
-                {
-                    "name": "yautja_cetanu",
-                    "homepage": "https://www.drupal.org/user/626050"
-                }
-            ],
-            "description": "Provides a tool plugin for creating well defined actions.",
-            "homepage": "https://www.drupal.org/project/tool",
-            "support": {
-                "source": "https://drupal.org/project/tool",
-                "issues": "https://drupal.org/project/issues/tool"
             }
         },
         {
