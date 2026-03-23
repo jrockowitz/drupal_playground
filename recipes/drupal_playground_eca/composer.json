@@ -1,0 +1,11 @@
+{
+    "name": "drupal/kw7qjd6lx4bp",
+    "type": "drupal-recipe",
+    "description": "User login redirect to /admin/content",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "drupal/core": ">=11.2",
+        "drupal/eca": "*",
+        "drupal/modeler_api": "*"
+    }
+}

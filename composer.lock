@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "87bf06721fb22322006ff140c57be36b",
+    "content-hash": "99fa40197f9ac15c6c1117a75943088d",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1872,6 +1872,10 @@
                     "homepage": "https://www.drupal.org/user/655282"
                 },
                 {
+                    "name": "harivansh",
+                    "homepage": "https://www.drupal.org/user/3678656"
+                },
+                {
                     "name": "jurgenhaas",
                     "homepage": "https://www.drupal.org/user/168924"
                 },
@@ -3589,6 +3593,25 @@
             }
         },
         {
+            "name": "drupal/drupal_playground_eca",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_eca",
+                "reference": "6b030ebd328cf2451df55a49122c55488183bd72"
+            },
+            "require": {
+                "drupal/eca_starterkit": "^1.0"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "drupal/drupal_playground_schemadotorg",
             "version": "1.0.0",
             "dist": {
@@ -3671,17 +3694,17 @@
         },
         {
             "name": "drupal/eca",
-            "version": "3.1.0-rc1",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/eca.git",
-                "reference": "3.1.0-rc1"
+                "reference": "3.1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/eca-3.1.0-rc1.zip",
-                "reference": "3.1.0-rc1",
-                "shasum": "17fd38874bcd37311c28d5219fc8cf6eb9e9d595"
+                "url": "https://ftp.drupal.org/files/projects/eca-3.1.0.zip",
+                "reference": "3.1.0",
+                "shasum": "c75edf48499fca80854f0efc7b4287b4f613ccf8"
             },
             "require": {
                 "dragonmantank/cron-expression": "^3.1",
@@ -3696,11 +3719,11 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "3.1.0-rc1",
-                    "datestamp": "1774025120",
+                    "version": "3.1.0",
+                    "datestamp": "1774278887",
                     "security-coverage": {
-                        "status": "not-covered",
-                        "message": "RC releases are not covered by Drupal security advisories."
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
                     }
                 }
             },
@@ -3728,6 +3751,38 @@
                 "source": "https://drupal.org/project/eca",
                 "issues": "https://drupal.org/project/issues/eca"
             }
+        },
+        {
+            "name": "drupal/eca_starterkit",
+            "version": "1.0.0-rc1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/eca_starterkit.git",
+                "reference": "bf9a69e884241825034a36c8e059a0c9d68228a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://git.drupalcode.org/api/v4/projects/project%2Feca_starterkit/repository/archive.zip?sha=bf9a69e884241825034a36c8e059a0c9d68228a9",
+                "reference": "bf9a69e884241825034a36c8e059a0c9d68228a9",
+                "shasum": ""
+            },
+            "require": {
+                "drupal/eca": "^3.1",
+                "drupal/eca_tamper": "^2.0",
+                "drupal/eca_tool": "^1.0",
+                "drupal/modeler": "^1.0",
+                "drupal/modeler_api": "^1.1"
+            },
+            "type": "drupal-recipe",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "This recipe provides a quick-start setup for ECA with the recommended models being downloaded and installed.",
+            "support": {
+                "source": "https://git.drupalcode.org/project/eca_starterkit/-/tree/1.0.0-rc1"
+            },
+            "time": "2026-03-20T12:37:48+00:00"
         },
         {
             "name": "drupal/eca_tamper",
@@ -3824,8 +3879,7 @@
             "support": {
                 "source": "https://drupal.org/project/eca_tool",
                 "issues": "https://drupal.org/project/issues/eca_tool"
-            },
-            "time": "2026-03-08T13:17:08+00:00"
+            }
         },
         {
             "name": "drupal/epp",
@@ -8265,8 +8319,7 @@
                 "url": "git@git.drupal.org:project/entity_labels.git",
                 "reference": "1.0.x"
             },
-            "type": "drupal-module-sandbox",
-            "time": "2026-03-23T14:33:16+00:00"
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "sebastian/diff",

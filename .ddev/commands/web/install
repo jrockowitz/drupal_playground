@@ -34,23 +34,21 @@ for PRESET in "$@"; do
   if [ "$PRESET" = "ai" ]; then
     echo "Applying AI recipe..."
     drush recipe ../recipes/drupal_playground_ai
-    drush cr
   elif [ "$PRESET" = "schemadotorg" ]; then
     echo "Applying Schema.org Blueprints recipe..."
     drush recipe ../recipes/drupal_playground_schemadotorg
-    drush cr
   elif [ "$PRESET" = "eca" ]; then
     echo "Applying ECA Starterkit recipe..."
-    drush recipe ../recipes/eca_starterkit
-    drush cr
+    drush recipe ../recipes/drupal_playground_eca
   elif [ "$PRESET" = "translation" ]; then
     echo "Applying translation recipe..."
     drush recipe ../recipes/drupal_playground_translation
     drush locale-check
     drush locale-update
-    drush cr
   fi
 done
+
+drush cr
 
 echo ""
 echo "Installation complete. One-time login URL:"

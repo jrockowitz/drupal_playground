@@ -1,0 +1,5 @@
+langcode: en
+status: true
+dependencies: {  }
+id: eca_workflow_modeler_kw7qjd6lx4bp
+data: '{"id":"kw7qjd6lx4bp","version":"1.0.0","metadata":{"label":"User login redirect to /admin/content","documentation":"","executable":true,"tags":[],"changelog":"","id":"kw7qjd6lx4bp","version":"1.0.0","template":false,"storage":""},"nodes":[{"id":"login_of_a_user_5usc3tca","componentType":1,"plugin":"user:login","label":"Login of a user","position":{"x":400,"y":100},"configuration":{},"annotation":""},{"id":"redirect_to_url_uz30kk2h","componentType":4,"plugin":"action_goto_action","label":"Redirect to URL","position":{"x":400,"y":304},"configuration":{"url":"/admin/content"},"annotation":""}],"edges":[{"id":"login_of_a_user_5usc3tca_to_redirect_to_url_uz30kk2h_qtztgg3o","source":"login_of_a_user_5usc3tca","target":"redirect_to_url_uz30kk2h","sourceHandle":"output","targetHandle":"input","condition":"","conditionId":"","conditionLabel":"","conditionConfiguration":[],"annotation":"","controlOffset":{"x":0,"y":0}}]}'

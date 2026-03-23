@@ -7,7 +7,6 @@ type: 'Site'
 recipes:
   - drupal_playground_base
   - core/recipes/editorial_workflow
-
 install:
   # Core Drupal modules
   - block_content

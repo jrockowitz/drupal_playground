@@ -1,0 +1,7 @@
+name: 'Drupal Playground ECA'
+type: 'Site'
+description: 'Sets up ECA starterkit with some custom models.'
+recipes:
+  - eca_starterkit
+config:
+  strict: false

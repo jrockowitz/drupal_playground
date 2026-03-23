@@ -25,7 +25,9 @@
       "mcp__plugin_playwright_playwright__browser_click",
       "mcp__plugin_playwright_playwright__browser_fill_form",
       "mcp__plugin_playwright_playwright__browser_navigate",
-      "mcp__jetbrains__get_all_open_file_paths"
+      "mcp__jetbrains__get_all_open_file_paths",
+      "Bash(grep -r eca.eca /Users/rockowij/Sites/drupal_playground --include=*.yml)",
+      "Bash(find /Users/rockowij/Sites/drupal_playground -path */config/install/eca.eca*.yml -o -path */config/sync/eca.eca*.yml)"
     ],
     "deny": [
       "Bash(ddev delete *)",

@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - eca_user
+    - modeler_api
+third_party_settings:
+  modeler_api:
+    modeler_id: workflow_modeler
+    data: 'hash:6f2a21657566716d693f25e65ca81e31'
+    label: 'User login redirect to /admin/content'
+    version: 1.0.0
+id: kw7qjd6lx4bp
+weight: 0
+template: false
+events:
+  login_of_a_user_5usc3tca:
+    plugin: 'user:login'
+    label: 'Login of a user'
+    configuration: {  }
+    successors:
+      -
+        id: redirect_to_url_uz30kk2h
+        condition: ''
+conditions: {  }
+gateways: {  }
+actions:
+  redirect_to_url_uz30kk2h:
+    label: 'Redirect to URL'
+    plugin: action_goto_action
+    configuration:
+      url: /admin/content
+    successors: {  }
