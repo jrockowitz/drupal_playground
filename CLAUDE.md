@@ -10,15 +10,11 @@ Drupal 11 playground site managed with DDEV and Composer. The project is structu
 - **Docroot:** `web/`
 - **PHP:** 8.3, **DB:** MariaDB 10.11, **Webserver:** nginx-fpm
 
-## Common Commands
+## Commands
 
-All Drupal/Drush commands run inside the DDEV container.
+Custom DDEV commands for this project:
 
 ```bash
-# Start/stop environment
-ddev start
-ddev stop
-
 # Install Drupal (standard + all recipes)
 ddev install
 
@@ -28,99 +24,9 @@ ddev install ai
 # Open site and log in as admin (one-time login link)
 ddev uli
 
-# Drush shortcuts
-# e.g. ddev drush cr, ddev drush cex, ddev drush cim
-ddev drush <command>
-
-# Generate one-time login URL
-ddev drush uli
-
 # Apply a recipe manually
 ddev drupal recipe ../recipes/<recipe_name>
-
-# Composer (runs inside DDEV container)
-ddev composer require <package>
-ddev composer update
-
-# Launch admin pages
-ddev launch /admin
 ```
-
-### Configuration Management
-
-```bash
-# Export config to sync dir
-ddev drush config:export -y
-
-# Import config from sync dir
-ddev drush config:import -y
-
-# Preview pending config changes
-ddev drush config:export --diff
-
-# Inspect a specific config object
-ddev drush config:get <config.name>
-
-# Show config sync directory path
-ddev drush status --field=config-sync
-```
-
-### Development Commands
-
-```bash
-# List enabled modules
-ddev drush pm:list --status=enabled
-
-# Enable a module
-ddev drush en <module>
-
-# View recent log entries
-ddev drush watchdog:show --count=20
-
-# Clear all logs
-ddev drush watchdog:delete all
-
-# Run cron
-ddev drush cron
-
-# Execute PHP in Drupal context
-ddev drush php:eval "<php code>"
-
-# View fields for an entity bundle
-ddev drush field:info <entity> <bundle>
-
-# Run pending database updates
-ddev drush updatedb
-
-# Inspect database tables
-ddev drush sql:query "DESCRIBE <table_name>;"
-```
-
-### Code Quality
-
-```bash
-# Check style
-ddev exec vendor/bin/phpcs --standard=Drupal web/modules/custom/
-
-# Auto-fix style
-ddev exec vendor/bin/phpcbf --standard=Drupal web/modules/custom/
-
-# Static analysis
-ddev exec vendor/bin/phpstan analyse web/modules/custom/
-
-# Security advisories
-ddev composer audit
-```
-
-### Testing
-
-```bash
-ddev exec vendor/bin/phpunit --filter MyTest web/modules/custom/
-```
-
-Copy `web/core/phpunit.xml.dist` to `phpunit.xml` and configure:
-- `SIMPLETEST_DB=mysql://db:db@db/db`
-- `SIMPLETEST_BASE_URL=https://drupal-playground.ddev.site`
 
 ## Architecture
 
@@ -146,16 +52,15 @@ ddev composer patches-repatch
 ddev composer patches-doctor
 ```
 
-## Debugging
+## Testing
 
 ```bash
-# Follow web container logs (stdout/stderr)
-ddev logs -f web
-
-# Enable/disable Xdebug (no restart needed)
-ddev xdebug on
-ddev xdebug off
+ddev exec vendor/bin/phpunit --filter MyTest web/modules/custom/
 ```
+
+Copy `web/core/phpunit.xml.dist` to `phpunit.xml` and configure:
+- `SIMPLETEST_DB=mysql://db:db@db/db`
+- `SIMPLETEST_BASE_URL=https://drupal-playground.ddev.site`
 
 ## Code Style & Standards
 

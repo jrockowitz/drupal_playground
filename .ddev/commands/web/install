@@ -25,6 +25,9 @@ drush cr;
 # Uninstall the toolbar module, which can't be done via a recipe.
 drush pm:uninstall toolbar
 
+# Install custom and sandbox modules.
+drush en -y telephone_filter entity_labels
+
 for PRESET in "$@"; do
   if [ "$PRESET" = "ai" ]; then
     echo "Applying AI recipe..."
