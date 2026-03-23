@@ -1,4 +1,3 @@
-uuid: b406357c-89c0-4067-bb2a-f5017f1b77b9
 langcode: en
 status: true
 dependencies:
@@ -8,7 +7,7 @@ dependencies:
 third_party_settings:
   modeler_api:
     modeler_id: workflow_modeler
-    data: 'hash:0c5eee47bdc1ed795e4d7960b88b721e'
+    data: 'hash:aab3b97b7bf2e3d544d073afbf143f8c'
     label: 'User login redirect to /admin/content'
     version: 1.0.0
 id: kw7qjd6lx4bp
@@ -22,8 +21,14 @@ events:
     successors:
       -
         id: redirect_to_url_uz30kk2h
-        condition: ''
-conditions: {  }
+        condition: login_of_a_user_5usc3tca_to_redirect_to_url_uz30kk2h_qtztgg3o_condition
+conditions:
+  login_of_a_user_5usc3tca_to_redirect_to_url_uz30kk2h_qtztgg3o_condition:
+    plugin: eca_current_user_id
+    label: 'Current user ID'
+    configuration:
+      negate: false
+      user_id: '1'
 gateways: {  }
 actions:
   redirect_to_url_uz30kk2h:
