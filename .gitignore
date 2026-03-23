@@ -44,6 +44,8 @@ LICENSE.txt
 /web/update.php
 /web/web.config
 
+/web/modules/sandbox/
+
 # =============================================================================
 # Configuration files that may contain sensitive information
 # =============================================================================
@@ -115,3 +117,6 @@ yarn-error.log
 .claude/skills/drupal-contrib-mgmt
 .claude/skills/drupal-ddev
 .claude/skills/ivangrynenko-cursorrules-drupal
+.claude/skills/drupal-work-on-issue
+.claude/skills/drupalorg-cli
+.claude/skills/drupalorg-issue-summary-update
