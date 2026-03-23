@@ -64,6 +64,11 @@
         "drupal/drupal_playground_devel": "*",
         "drupal/drupal_playground_schemadotorg": "*",
         "drupal/drupal_playground_translation": "*",
+        "drupal/eca": "^3.1",
+        "drupal/eca_tamper": "^2.0",
+        "drupal/eca_tool": "^1.0",
+        "drupal/modeler": "^1.0",
+        "drupal/modeler_api": "^1.1",
         "drush/drush": "^13.7",
         "sandbox/entity_labels": "*"
     },

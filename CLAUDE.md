@@ -15,18 +15,14 @@ Drupal 11 playground site managed with DDEV and Composer. The project is structu
 Custom DDEV commands for this project:
 
 ```bash
-# Install Drupal (standard + all recipes)
-ddev install
-
-# Install Drupal with AI recipe included
-ddev install ai
-
 # Open site and log in as admin (one-time login link)
 ddev uli
 
 # Apply a recipe manually
 ddev drupal recipe ../recipes/<recipe_name>
 ```
+
+Use `/install [preset...]` to (re)install the site — see `.claude/skills/install/SKILL.md` for available presets.
 
 ## Architecture
 

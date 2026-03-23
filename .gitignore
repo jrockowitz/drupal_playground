@@ -44,8 +44,6 @@ LICENSE.txt
 /web/update.php
 /web/web.config
 
-/web/modules/sandbox/
-
 # =============================================================================
 # Configuration files that may contain sensitive information
 # =============================================================================
@@ -120,3 +118,15 @@ yarn-error.log
 .claude/skills/drupal-work-on-issue
 .claude/skills/drupalorg-cli
 .claude/skills/drupalorg-issue-summary-update
+
+# =============================================================================
+# Sandbox
+# =============================================================================
+
+/web/modules/sandbox/
+
+# =============================================================================
+# Recipes
+# =============================================================================
+
+/recipes/eca_starterkit

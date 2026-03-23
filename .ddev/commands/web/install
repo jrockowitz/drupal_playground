@@ -6,6 +6,8 @@
 ## Example: ddev install ai
 ## Example: ddev install schemadotorg
 ## Example: ddev install translation
+## Example: ddev install eca
+## Example: ddev install ai eca
 ## Example: ddev install ai schemadotorg
 ## ProjectTypes: drupal,drupal11
 
@@ -36,6 +38,10 @@ for PRESET in "$@"; do
   elif [ "$PRESET" = "schemadotorg" ]; then
     echo "Applying Schema.org Blueprints recipe..."
     drush recipe ../recipes/drupal_playground_schemadotorg
+    drush cr
+  elif [ "$PRESET" = "eca" ]; then
+    echo "Applying ECA Starterkit recipe..."
+    drush recipe ../recipes/eca_starterkit
     drush cr
   elif [ "$PRESET" = "translation" ]; then
     echo "Applying translation recipe..."
