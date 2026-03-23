@@ -10,6 +10,10 @@
     },
     "repositories": [
         {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        {
             "type": "path",
             "url": "recipes/drupal_playground_base"
         },
@@ -34,8 +38,17 @@
             "url": "recipes/drupal_playground_schemadotorg"
         },
         {
-            "type": "composer",
-            "url": "https://packages.drupal.org/8"
+            "type": "package",
+            "package": {
+                "name": "sandbox/entity_labels",
+                "type": "drupal-module-sandbox",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/entity_labels.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
         }
     ],
     "require": {
@@ -51,12 +64,13 @@
         "drupal/drupal_playground_devel": "*",
         "drupal/drupal_playground_schemadotorg": "*",
         "drupal/drupal_playground_translation": "*",
-        "drush/drush": "^13.7"
+        "drush/drush": "^13.7",
+        "sandbox/entity_labels": "*"
     },
     "conflict": {
         "drupal/drupal": "*"
     },
-    "minimum-stability": "alpha",
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
         "allow-plugins": {
@@ -106,6 +120,9 @@
             ],
             "web/themes/custom/{$name}": [
                 "type:drupal-custom-theme"
+            ],
+            "web/modules/sandbox/{$name}": [
+                "type:drupal-module-sandbox"
             ],
             "recipes/{$name}": [
                 "type:drupal-recipe"
