@@ -21,6 +21,11 @@
       "sourceType": "github",
       "computedHash": "65846250353be5f12b5eee6c1b0ef1182a7c8ffbe68260df8ac186591c4f61bf"
     },
+    "drupalorg-contribution-helper": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "4effff2c7775eafaef8bb90ce69732ca1b5c8f4211c9a0fdcee7f4f555c48b21"
+    },
     "ivangrynenko-cursorrules-drupal": {
       "source": "grasmash/drupal-claude-skills",
       "sourceType": "github",
