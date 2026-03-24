@@ -1,15 +1,22 @@
 #!/bin/bash
 
-## Description: Install Drupal, optionally with one or more presets (e.g. ai, schemadotorg, translation)
+## Description: Install Drupal, optionally with one or more presets or all presets
 ## Usage: install [preset...]
-## Example: ddev install
-## Example: ddev install ai
-## Example: ddev install schemadotorg
-## Example: ddev install translation
-## Example: ddev install eca
-## Example: ddev install ai eca
-## Example: ddev install ai schemadotorg
+## Example: ddev install\nddev install ai\nddev install eca\nddev install schemadotorg\nddev install translation\nddev install all
 ## ProjectTypes: drupal,drupal11
+
+if [ "$#" -gt 1 ]; then
+  for PRESET in "$@"; do
+    if [ "$PRESET" = "all" ]; then
+      echo "The all preset must be used by itself."
+      exit 1
+    fi
+  done
+fi
+
+if [ "$1" = "all" ]; then
+  set -- ai schemadotorg eca translation
+fi
 
 drush site:install core/recipes/standard \
   --db-url=mysql://db:db@db/db \

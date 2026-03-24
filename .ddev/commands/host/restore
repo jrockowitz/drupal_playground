@@ -1,0 +1,18 @@
+#!/bin/bash
+
+## Description: Import the database from db.sql in the project root
+## Usage: restore
+## Example: ddev restore
+
+set -eu
+
+project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+database_dump="${project_root}/db.sql"
+
+if [ ! -f "${database_dump}" ]; then
+  echo "Database dump not found at ${database_dump}" >&2
+  exit 1
+fi
+
+ddev import-db --file="${database_dump}"
+echo "Database restored from ${database_dump}"

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+## Description: Export the database to db.sql in the project root
+## Usage: backup
+## Example: ddev backup
+
+set -eu
+
+project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+database_dump="${project_root}/db.sql"
+
+ddev export-db --gzip=false --file="${database_dump}"
+echo "Database backup written to ${database_dump}"

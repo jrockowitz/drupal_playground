@@ -83,6 +83,8 @@ ddev snapshot restore                  # Restore most recent snapshot
 ddev snapshot restore --latest         # Restore latest (explicit)
 ddev snapshot list                     # List all snapshots
 
+ddev backup                            # Export DB to ./db.sql
+ddev restore                           # Import DB from ./db.sql
 ddev import-db --file=dump.sql.gz      # Import DB from file
 ddev export-db --file=dump.sql.gz      # Export DB to file
 

@@ -22,7 +22,7 @@ ddev uli
 ddev drupal recipe ../recipes/<recipe_name>
 ```
 
-Use `/install [preset...]` to (re)install the site — see `.claude/skills/install/SKILL.md` for available presets.
+Use `/install [preset...]` to (re)install the site — including `all` to apply every preset — see `.agents/skills/install/SKILL.md` for available presets.
 
 ## Architecture
 
