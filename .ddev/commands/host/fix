@@ -1,0 +1,14 @@
+#!/bin/bash
+
+## Description: Runs all fix utilities (phpcbf, eslint, stylelint)
+## Usage: fix [args]
+## Example: ddev fix\nddev fix web/modules/sandbox/entity_labels
+
+echo "Running phpcbf..."
+ddev phpcbf $@
+
+echo "Running eslint --fix..."
+ddev eslint --fix $@
+
+echo "Running stylelint --fix..."
+ddev stylelint --fix $@

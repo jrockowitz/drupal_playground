@@ -1,7 +1,3 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
 Drupal 11 playground site managed with DDEV and Composer. The project is structured around custom Drupal Recipes that compose modules and configuration into reusable installation presets.
@@ -12,17 +8,19 @@ Drupal 11 playground site managed with DDEV and Composer. The project is structu
 
 ## Commands
 
-Custom DDEV commands for this project:
-
 ```bash
 # Open site and log in as admin (one-time login link)
 ddev uli
 
-# Apply a recipe manually
-ddev drupal recipe ../recipes/<recipe_name>
-```
+# Runs PHPUnit
+ddev phpunit <file|directory>
 
-Use `/install [preset...]` to (re)install the site — including `all` to apply every preset — see `.agents/skills/install/SKILL.md` for available presets.
+# Runs all lint utilities (phpcs, phpstan, cspell, eslint, stylelint)
+ddev lint <file|directory>
+
+# Runs all fix utilities (phpcbf, eslint, stylelint)
+ddev fix <file|directory>
+```
 
 ## Architecture
 
@@ -32,31 +30,6 @@ Use `/install [preset...]` to (re)install the site — including `all` to apply 
 - `web/` — Drupal docroot (managed by Composer scaffolding)
 - `.ddev/` — DDEV configuration, custom commands, PHP/Nginx overrides
 - `docs/` — Project documentation (DDEV setup, PHPStorm config)
-
-### Patching
-
-The project uses `cweagans/composer-patches` v2. Patches are tracked in `patches.lock.json`.
-
-```bash
-# Re-discover patches and write patches.lock.json
-ddev composer patches-relock
-
-# Re-install patched deps and re-apply patches
-ddev composer patches-repatch
-
-# Diagnose common patching issues
-ddev composer patches-doctor
-```
-
-## Testing
-
-```bash
-ddev exec vendor/bin/phpunit --filter MyTest web/modules/custom/
-```
-
-Copy `web/core/phpunit.xml.dist` to `phpunit.xml` and configure:
-- `SIMPLETEST_DB=mysql://db:db@db/db`
-- `SIMPLETEST_BASE_URL=https://drupal-playground.ddev.site`
 
 ## Code Style & Standards
 

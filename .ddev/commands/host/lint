@@ -1,0 +1,20 @@
+#!/bin/bash
+
+## Description: Runs all lint utilities (phpcs, phpstan, eslint, stylelint)
+## Usage: lint [args]
+## Example: ddev lint\nddev lint web/modules/sandbox/entity_labels
+
+echo "Running phpcs..."
+ddev phpcs $@
+
+echo "Running phpstan..."
+ddev phpstan $@
+
+echo "Running cspell..."
+ddev cspell $@
+
+echo "Running eslint..."
+ddev eslint $@
+
+echo "Running stylelint..."
+ddev stylelint $@
