@@ -1,8 +1,8 @@
 #!/bin/bash
 
-## Description: Runs all lint utilities (phpcs, phpstan, eslint, stylelint)
-## Usage: lint [args]
-## Example: ddev lint\nddev lint web/modules/sandbox/entity_labels
+## Description: Runs all code review utilities (phpcs, phpstan, eslint, stylelint)
+## Usage: code-review [args]
+## Example: ddev code-review\nddev code-review web/modules/sandbox/entity_labels
 
 echo "Running phpcs..."
 ddev phpcs $@

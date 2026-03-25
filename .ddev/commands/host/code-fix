@@ -1,8 +1,8 @@
 #!/bin/bash
 
-## Description: Runs all fix utilities (phpcbf, eslint, stylelint)
-## Usage: fix [args]
-## Example: ddev fix\nddev fix web/modules/sandbox/entity_labels
+## Description: Runs all code fix utilities (phpcbf, eslint, stylelint)
+## Usage: code-fix [args]
+## Example: ddev code-fix\nddev code-fix web/modules/sandbox/entity_labels
 
 echo "Running phpcbf..."
 ddev phpcbf $@
