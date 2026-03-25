@@ -16,10 +16,10 @@ ddev uli
 ddev phpunit <file|directory>
 
 # Runs all lint utilities (phpcs, phpstan, cspell, eslint, stylelint)
-ddev lint <file|directory>
+ddev code-review <file|directory>
 
 # Runs all fix utilities (phpcbf, eslint, stylelint)
-ddev fix <file|directory>
+ddev code-fix <file|directory>
 ```
 
 ## Architecture
