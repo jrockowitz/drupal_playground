@@ -1,0 +1,52 @@
+<h2>About Entity Labels</h2>
+<div class="note-version">
+<h4>Entity Labels for Drupal 10 and 11</h4>
+<p>Entity Labels provides a <strong>Reports page</strong> that surfaces all entity type and field label metadata in one place — with CSV export and CSV import for bulk updates. It has no hard module dependencies beyond Drupal core. Optional integrations with <a href="https://www.drupal.org/project/field_group">Field Group</a> and <a href="https://www.drupal.org/project/custom_field">Custom Field</a> are activated automatically when those modules are present.</p>
+</div>
+
+<h2>Features</h2>
+<blockquote>Browse, export, and bulk-update every entity type and field label on your Drupal site — with multilingual support out of the box.</blockquote>
+<h3>Browse &amp; Explore</h3>
+<ul>
+<li><strong>Entities tab</strong> — browse all entity types that support bundles; drill down by entity type; view label, description, and help text.</li>
+<li><strong>Fields tab</strong> — browse all fields across all bundles; drill down by entity type and bundle; view label, description, field type, and allowed values. Fields are ordered to match the default form display on bundle views.</li>
+</ul>
+<h3>Export &amp; Import</h3>
+<ul>
+<li><strong>CSV export</strong> — scoped to the current view (all, entity type, or bundle). Every export includes a <code>notes</code> column and a <code>langcode</code> column to target translations.</li>
+<li><strong>CSV import</strong> — upload a modified CSV to bulk-update labels and descriptions. <code>allowed_values</code> and <code>field_type</code> are display-only and never imported.</li>
+<li><strong>Multilingual</strong> — import targets the language specified in the <code>langcode</code> column.</li>
+</ul>
+<h3>Optional Module Support</h3>
+<ul>
+<li><strong><a href="https://www.drupal.org/project/field_group">Field Group</a></strong> — groups from the default form mode appear as rows with <code>field_type = field_group</code>; group label and description are exportable and importable.</li>
+<li><strong><a href="https://www.drupal.org/project/custom_field">Custom Field</a> (4.x)</strong> — each column within a custom field gets its own row with a <code>field_column</code> identifier; column label and description are exportable and importable.</li>
+</ul>
+<h3>Drush Commands</h3>
+<ul>
+<li><code>entity-labels:entity-export</code> — export entity labels to CSV; supports <code>--entity-type</code> filter.</li>
+<li><code>entity-labels:field-export</code> — export field labels to CSV; supports <code>--entity-type</code> and <code>--bundle</code> filters.</li>
+<li><code>entity-labels:entity-import /path/to/file.csv</code> — import entity labels from CSV.</li>
+<li><code>entity-labels:field-import /path/to/file.csv</code> — import field labels from CSV.</li>
+</ul>
+
+<h2>Getting Started</h2>
+<ol>
+<li>Install the module: <div class="codeblock">composer require drupal/entity_labels</div></li>
+<li>Enable it: <div class="codeblock">drush en entity_labels</div></li>
+<li>Navigate to <strong>Administration → Reports → Entity/Field Labels</strong>.</li>
+<li>Use the <strong>Entities</strong> and <strong>Fields</strong> tabs to browse metadata.</li>
+<li>Click an entity type or bundle cell to filter the view.</li>
+<li>Click <strong>⇩ Download CSV</strong> to export, edit offline, then use the <strong>Import</strong> tab to apply changes.</li>
+</ol>
+<h3>Permissions</h3>
+<ul>
+<li><strong>access site reports</strong> — view the Reports page and download CSV exports.</li>
+<li><strong>administer site configuration</strong> — upload CSV imports to bulk-update labels.</li>
+</ul>
+
+<hr/>
+<div class="help">
+<h4>&#129302; A note on AI-assisted development</h4>
+<p>This module was created using AI and understood by humans. The maintainer reviewed, tested, and takes responsibility for every line of code — consistent with the philosophy described in <a href="https://dri.es/never-submit-code-you-do-not-understand">Never submit code you do not understand</a> by Dries Buytaert.</p>
+</div>
