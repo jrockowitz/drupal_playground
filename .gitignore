@@ -119,6 +119,7 @@ yarn-error.log
 .agents/skills/drupalorg-cli
 .agents/skills/drupalorg-issue-summary-update
 .agents/skills/drupalorg-contribution-helper
+.agents/skills/drupalorg-issue-helper
 
 # =============================================================================
 # Configuration
