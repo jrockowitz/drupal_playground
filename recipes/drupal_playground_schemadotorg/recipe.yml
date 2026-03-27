@@ -83,7 +83,8 @@ install:
   - schemadotorg_jsonld_embed
   - schemadotorg_jsonld_endpoint
   - schemadotorg_jsonld_preview
-
+  # Schema.org Blueprints recipes
+  - schemadotorg_recipe
 config:
   strict: false
   import:

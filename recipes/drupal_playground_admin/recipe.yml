@@ -7,8 +7,10 @@ install:
   - help
   - gin
   - gin_toolbar
+  - gin_type_tray
   - navigation
   - navigation_extra_tools
+  - type_tray
 config:
   strict: false
   import:

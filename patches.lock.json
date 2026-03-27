@@ -1,5 +1,5 @@
 {
-    "_hash": "1c234f2aa11e057b3375870222c1a904224908e039dad0ec17d45b7932cfbb22",
+    "_hash": "06e1a79ebb242985b20ad25530c025a7c8b50cf248771b7d55a0d77f4be1c05b",
     "patches": {
         "drupal/core": [
             {
@@ -27,6 +27,19 @@
                 }
             }
         ],
+        "drupal/type_tray": [
+            {
+                "package": "drupal/type_tray",
+                "description": "Add type tray icon to node edit and related tasks",
+                "url": "https://www.drupal.org/files/issues/2024-01-28/issue-3417679-mr-22.patch",
+                "sha256": "0c67cc70ee72dbb72eace828d547335922877fc9be324f0cb8739261b966d40b",
+                "depth": 1,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/type_tray/issues/3417679",
+                    "provenance": "dependency:drupal/type_tray"
+                }
+            }
+        ],
         "drupal/schemadotorg": [
             {
                 "package": "drupal/schemadotorg",
@@ -43,7 +56,7 @@
                 "package": "drupal/schemadotorg",
                 "description": "Support custom_field 4.x",
                 "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/272.diff",
-                "sha256": "e6d07e7458b3988e10b7f5edd6873590eddeddf1436555b68fca445c17d75f68",
+                "sha256": "69ad106ee57c13f6730fb4e8783f55c23c351ed4beaf6c17019771d6958444eb",
                 "depth": 1,
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3551008",

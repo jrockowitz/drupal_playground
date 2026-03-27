@@ -53,6 +53,19 @@
                     "reference": "1.0.x"
                 }
             }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "recipes/schemadotorg_recipes",
+                "type": "drupal-recipe",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:sandbox/jrockowitz-3479651.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
         }
     ],
     "require": {
@@ -71,7 +84,9 @@
         "drupal/drupal_playground_schemadotorg": "*",
         "drupal/drupal_playground_translation": "*",
         "drush/drush": "^13.7",
-        "sandbox/entity_labels": "*"
+        "recipes/schemadotorg_recipes": "*",
+        "sandbox/entity_labels": "*",
+        "wikimedia/composer-merge-plugin": "^2.1"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -89,7 +104,8 @@
             "php-http/discovery": true,
             "php-tuf/composer-integration": true,
             "phpstan/extension-installer": true,
-            "tbachert/spi": true
+            "tbachert/spi": true,
+            "wikimedia/composer-merge-plugin": true
         },
         "sort-packages": true
     },
@@ -154,6 +170,13 @@
                 "  * Remove the plugin that prints this message:",
                 "      composer remove drupal/core-project-message"
             ]
+        },
+        "merge-plugin": {
+            "include": [
+                "web/modules/contrib/schemadotorg/composer.libraries.json"
+            ],
+            "merge-extra": true,
+            "merge-extra-deep": true
         }
     },
     "require-dev": {

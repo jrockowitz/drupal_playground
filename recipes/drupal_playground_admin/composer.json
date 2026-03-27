@@ -1,36 +1,38 @@
 {
-  "name": "drupal/drupal_playground_admin",
-  "type": "drupal-recipe",
-  "license": "GPL-2.0-or-later",
-  "version": "1.0.0",
-  "require": {
-    "drupal/coffee": "^2",
-    "drupal/core": "^11.3",
-    "drupal/dashboard": "^2",
-    "drupal/gin": "^5",
-    "drupal/gin_toolbar": "^3",
-    "drupal/navigation_extra_tools": "^1"
-  },
-  "extra": {
-    "patches": {
-      "drupal/core": [
-        {
-          "description": "Persist is_syncing across container rebuilds",
-          "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
-          "extra": {
-            "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3572171"
-          }
+    "name": "drupal/drupal_playground_admin",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/coffee": "^2",
+        "drupal/core": "^11.3",
+        "drupal/dashboard": "^2",
+        "drupal/gin": "^5",
+        "drupal/gin_toolbar": "^3",
+        "drupal/gin_type_tray": "^1",
+        "drupal/navigation_extra_tools": "^1",
+        "drupal/type_tray": "^1"
+    },
+    "extra": {
+        "patches": {
+            "drupal/core": [
+                {
+                    "description": "Persist is_syncing across container rebuilds",
+                    "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
+                    "extra": {
+                        "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3572171"
+                    }
+                }
+            ],
+            "drupal/coffee": [
+                {
+                    "description": "Add Navigation TopBar integration for Gin toolbar",
+                    "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch",
+                    "extra": {
+                        "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874"
+                    }
+                }
+            ]
         }
-      ],
-      "drupal/coffee": [
-        {
-          "description": "Add Navigation TopBar integration for Gin toolbar",
-          "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch",
-          "extra": {
-            "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874"
-          }
-        }
-      ]
     }
-  }
 }
