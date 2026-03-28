@@ -1,0 +1,55 @@
+{
+    "repositories": [
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_base"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_devel"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_eca"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_translation"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_admin"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_schemadotorg"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "recipes/schemadotorg_recipes",
+                "type": "drupal-recipe",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:sandbox/jrockowitz-3479651.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
+        }
+    ],
+    "require": {
+        "drupal/drupal_playground_admin": "*",
+        "drupal/drupal_playground_ai": "*",
+        "drupal/drupal_playground_base": "*",
+        "drupal/drupal_playground_devel": "*",
+        "drupal/drupal_playground_eca": "*",
+        "drupal/drupal_playground_schemadotorg": "*",
+        "drupal/drupal_playground_translation": "*",
+        "recipes/schemadotorg_recipes": "*"
+    }
+}

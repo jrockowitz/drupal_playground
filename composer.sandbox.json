@@ -1,0 +1,34 @@
+{
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "drupal/entity_labels",
+                "type": "drupal-module-sandbox",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/entity_labels.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "drupal/webform",
+                "type": "drupal-module-sandbox",
+                "version": "6.3.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/webform.git",
+                    "type": "git",
+                    "reference": "6.3.x"
+                }
+            }
+        }
+    ],
+    "require": {
+        "drupal/webform": "*",
+        "drupal/entity_labels": "*"
+    }
+}
