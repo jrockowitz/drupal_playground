@@ -1,11 +1,15 @@
 ---
-name: drupalorg-composer-repository
-description: Clones any Drupal.org project (module, theme, recipe) as a git repository into composer.json or composer.sandbox.json for local contribution work. Fetches git instructions from Drupal.org to determine the correct branch, follows the local repo's Composer conventions, and swaps packaged releases to git-backed dev branches when needed.
+name: drupalorg-project-clone
+description: Clone a single Drupal.org project by machine name (module, theme, or recipe) as
+  a git repository into composer.json or composer.sandbox.json for local contribution work.
+  Use when you already know the project machine name. Fetches git instructions from Drupal.org
+  to determine the correct branch, follows the local repo's Composer conventions, and swaps
+  packaged releases to git-backed dev branches when needed.
 ---
 
-# Drupal.org Composer Repository Skill
+# Drupal.org Project Clone Skill
 
-Set up a Drupal.org project (module, theme, or recipe) as a Composer `type: package` repository sourced from git so local work uses a live Drupal.org branch instead of a packaged release.
+Set up a single Drupal.org project (module, theme, or recipe) as a Composer `type: package` repository sourced from git so local work uses a live Drupal.org branch instead of a packaged release.
 
 ## When to Use This Skill
 
@@ -14,6 +18,8 @@ Activate when the user:
 - Says "contribute to a module/theme/recipe"
 - Says "Clone {name} from Drupal.org"
 - Wants to swap a packaged release for a git checkout of a Drupal.org project
+
+**Do NOT use** when the user provides a Drupal.org username instead of a project name — use `drupalorg-projects-clone` to discover their maintained projects first.
 
 ## Workflow
 
