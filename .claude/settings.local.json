@@ -31,7 +31,8 @@
       "mcp__jetbrains__get_all_open_file_paths",
       "Bash(mkdir -p /Users/rockowij/Sites/drupal_playground/.claude/skills/drupalorg-project-page)",
       "Bash(mv /Users/rockowij/.agents/skills/drupalorg-project-page/SKILL.md /Users/rockowij/Sites/drupal_playground/.claude/skills/drupalorg-project-page/SKILL.md)",
-      "Bash(mv /Users/rockowij/Sites/osx/docs/bluecheese/project-page-template.html /Users/rockowij/Sites/drupal_playground/.claude/skills/drupalorg-project-page/project-page-template.html)"
+      "Bash(mv /Users/rockowij/Sites/osx/docs/bluecheese/project-page-template.html /Users/rockowij/Sites/drupal_playground/.claude/skills/drupalorg-project-page/project-page-template.html)",
+      "Read(//Users/rockowij/.claude/**)"
     ],
     "deny": [
       "Bash(ddev delete *)",

@@ -112,9 +112,10 @@ Repository rules:
 - If editing `composer.json` directly, place the package repository before `packages.drupal.org` so it wins resolution
 
 Require rules:
-- Require the explicit branch-derived dev version, not `*`
-- Use `"drupal/{project_name}": "{branch}-dev"`
+- Always use `"*"` as the version constraint in `require`, never a specific branch-derived version like `1.0.x-dev`. Using `"*"` makes it easier to change branches and prevents version conflicts.
+- Use `"drupal/{project_name}": "*"`
 - If the package is already in `require`, update the constraint instead of creating a duplicate
+- Keep all entries in `repositories` and `require` in alphabetical order by package name
 
 ### 7. Install or update through DDEV
 
@@ -122,7 +123,7 @@ Prefer DDEV Composer commands in this project:
 
 ```bash
 # New package
-ddev composer require drupal/{project_name}:{branch}-dev
+ddev composer require drupal/{project_name}:*
 
 # Existing package already present
 ddev composer update drupal/{project_name} --with-all-dependencies
@@ -173,7 +174,7 @@ Example `composer.sandbox.json`:
         }
     ],
     "require": {
-        "drupal/webform": "6.3.x-dev"
+        "drupal/webform": "*"
     }
 }
 ```
@@ -181,7 +182,7 @@ Example `composer.sandbox.json`:
 Install with:
 
 ```bash
-ddev composer require drupal/webform:6.3.x-dev
+ddev composer require drupal/webform:*
 ```
 
 Module installs at `web/modules/sandbox/webform/`.

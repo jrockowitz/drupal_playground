@@ -1,6 +1,88 @@
 {
-    "_hash": "06e1a79ebb242985b20ad25530c025a7c8b50cf248771b7d55a0d77f4be1c05b",
+    "_hash": "c5e233297bc3167152374f11e02e791885041da4891ecd5d23805e88fa364af1",
     "patches": {
+        "drupal/address": [
+            {
+                "package": "drupal/address",
+                "description": "Issue #2819251: generateSampleValue",
+                "url": "https://www.drupal.org/files/issues/2024-09-10/address-issue-2819251-comment-9.patch",
+                "sha256": "9b00869bf124d5177fa07213751c08c2683eccc7dc1400618c951549ae111736",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/cer": [
+            {
+                "package": "drupal/cer",
+                "description": "Issue #2998138: Could support Remove field name prefix module?",
+                "url": "https://www.drupal.org/files/issues/2018-09-17/support_fields_without_prefix-2998138-4-D8.patch",
+                "sha256": "92899716c7e8dbe1bbc5a427948fa75a3583a5594c92f05a970b1b2f0a69580c",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/entity_reference_revisions": [
+            {
+                "package": "drupal/entity_reference_revisions",
+                "description": "Issue #3265084: EntityReferenceRevisionsItem:generateSampleValue can break when all bundle types are allowed",
+                "url": "https://www.drupal.org/files/issues/2022-02-18/treat-no-selection-as-all-3265084-2.patch",
+                "sha256": "4260fcb209e9cb45816005f9662ed37773e75c09160c4e6ee475abe2c6d99955",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/entity_browser": [
+            {
+                "package": "drupal/entity_browser",
+                "description": "Issue #3012432: Broken views exposed form in modals",
+                "url": "https://www.drupal.org/files/issues/2020-04-29/3012432-4_remove_enctype_on_views_widget.patch",
+                "sha256": "bd58afd3ebb77aa5d95ba05ed60210ff4d3e12c2d4b46f1b5ce82e625ef287b4",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/entity_browser",
+                "description": "Issue #2946829: Make submit button on modal always visible",
+                "url": "https://www.drupal.org/files/issues/2020-10-19/2946829-submit-button-always-visible-on-modals-4.patch",
+                "sha256": "3ae831be410d4319b553211b6d98f7e9ec77336d73b3c344e798c4a1d5dc4067",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/jsonapi_extras": [
+            {
+                "package": "drupal/jsonapi_extras",
+                "description": "Issue #3524477: Breaking errors in D11.2 or D11.x",
+                "url": "https://www.drupal.org/files/issues/2020-02-08/3031524-8.patch",
+                "sha256": "44da45a29c0d022e6023eedc76173e10be90f817029c31fdae6fbdd25c448423",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/type_tray": [
+            {
+                "package": "drupal/type_tray",
+                "description": "Issue #3417679: Add type tray icon to node edit and related tasks",
+                "url": "https://www.drupal.org/files/issues/2024-01-28/issue-3417679-mr-22.patch",
+                "sha256": "0c67cc70ee72dbb72eace828d547335922877fc9be324f0cb8739261b966d40b",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
         "drupal/core": [
             {
                 "package": "drupal/core",
@@ -24,43 +106,6 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874",
                     "provenance": "dependency:drupal/coffee"
-                }
-            }
-        ],
-        "drupal/type_tray": [
-            {
-                "package": "drupal/type_tray",
-                "description": "Add type tray icon to node edit and related tasks",
-                "url": "https://www.drupal.org/files/issues/2024-01-28/issue-3417679-mr-22.patch",
-                "sha256": "0c67cc70ee72dbb72eace828d547335922877fc9be324f0cb8739261b966d40b",
-                "depth": 1,
-                "extra": {
-                    "issue-tracker-url": "https://www.drupal.org/project/type_tray/issues/3417679",
-                    "provenance": "dependency:drupal/type_tray"
-                }
-            }
-        ],
-        "drupal/schemadotorg": [
-            {
-                "package": "drupal/schemadotorg",
-                "description": "Disable Gin sticky actions for Schema.org mapping forms",
-                "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/291.diff",
-                "sha256": "74780ff4a2829764c90fda49b8f72e63748b60856a096129c1f58d1018f43613",
-                "depth": 1,
-                "extra": {
-                    "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3579621",
-                    "provenance": "dependency:drupal/schemadotorg"
-                }
-            },
-            {
-                "package": "drupal/schemadotorg",
-                "description": "Support custom_field 4.x",
-                "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/272.diff",
-                "sha256": "69ad106ee57c13f6730fb4e8783f55c23c351ed4beaf6c17019771d6958444eb",
-                "depth": 1,
-                "extra": {
-                    "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3551008",
-                    "provenance": "dependency:drupal/schemadotorg"
                 }
             }
         ]

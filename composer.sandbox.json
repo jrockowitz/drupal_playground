@@ -16,6 +16,32 @@
         {
             "type": "package",
             "package": {
+                "name": "drupal/schemadotorg",
+                "type": "drupal-module-sandbox",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/schemadotorg.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "drupal/schemadotorg_experimental",
+                "type": "drupal-module-sandbox",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/schemadotorg_experimental.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
                 "name": "drupal/webform",
                 "type": "drupal-module-sandbox",
                 "version": "6.3.x-dev",
@@ -28,7 +54,9 @@
         }
     ],
     "require": {
-        "drupal/webform": "*",
-        "drupal/entity_labels": "*"
+        "drupal/entity_labels": "*",
+        "drupal/schemadotorg": "*",
+        "drupal/schemadotorg_experimental": "*",
+        "drupal/webform": "*"
     }
 }

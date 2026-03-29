@@ -7,46 +7,6 @@
     "require": {
         "drupal/core": "^11.3",
         "drupal/schemadotorg": "^1.0@alpha",
-        "drupal/schemadotorg_experimental": "^1.0@alpha",
-        "drupal/address": "^2.0",
-        "drupal/content_model_documentation": "^1.0",
-        "drupal/allowed_formats": "^3.0",
-        "drupal/auto_entitylabel": "^3.4",
-        "drupal/cer": "^5.0@beta",
-        "drupal/custom_field": "^4.0",
-        "drupal/epp": "^1.7",
-        "drupal/existing_values_autocomplete_widget": "^2.0",
-        "drupal/field_group": "^4.0",
-        "drupal/field_validation": "^3.0@beta",
-        "drupal/focal_point": "^2.0",
-        "drupal/geolocation": "^4.0@beta",
-        "drupal/jsonapi_extras": "^3.28",
-        "drupal/metatag": "^2.2",
-        "drupal/office_hours": "^1.29",
-        "drupal/pathauto": "^1.0",
-        "drupal/physical": "^1.5",
-        "drupal/simple_sitemap": "^4.0",
-        "drupal/smart_date": "^4.0",
-        "drupal/type_tray": "^1.0"
-    },
-    "extra": {
-        "patches": {
-            "drupal/schemadotorg": [
-                {
-                    "description": "Disable Gin sticky actions for Schema.org mapping forms",
-                    "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/291.diff",
-                    "extra": {
-                        "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3579621"
-                    }
-                },
-                {
-                    "description": "Support custom_field 4.x",
-                    "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/272.diff",
-                    "extra": {
-                        "issue-tracker-url": "https://www.drupal.org/project/schemadotorg/issues/3551008"
-                    }
-                }
-            ]
-        }
+        "drupal/schemadotorg_experimental": "^1.0@alpha"
     }
 }
