@@ -18,7 +18,6 @@
 # =============================================================================
 .editorconfig
 .gitattributes
-LICENSE.txt
 /recipes/ai_*
 /recipes/drupal_cms_*
 /recipes/README.txt

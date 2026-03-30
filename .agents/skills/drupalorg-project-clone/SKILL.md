@@ -20,7 +20,7 @@ Activate when the user:
 - Wants to swap a packaged release for a git checkout of a Drupal.org project
 
 **Do NOT use** when the user provides a Drupal.org username instead of a project name. Use `drupalorg-projects-clone` to discover their maintained projects first.
-
+[SKILL.md](SKILL.md)
 ## Workflow
 
 ### 1. Gather project details

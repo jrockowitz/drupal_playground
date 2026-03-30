@@ -3965,6 +3965,16 @@
             }
         },
         {
+            "name": "drupal/eca_report",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupal.org:project/eca_report.git",
+                "reference": "1.0.x"
+            },
+            "type": "drupal-module-sandbox"
+        },
+        {
             "name": "drupal/embed",
             "version": "1.10.0",
             "source": {
@@ -4583,6 +4593,16 @@
                 "source": "http://cgit.drupalcode.org/existing_values_autocomplete_widget",
                 "issues": "https://www.drupal.org/project/issues/existing_values_autocomplete_widget"
             }
+        },
+        {
+            "name": "drupal/field_data",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupal.org:project/field_data.git",
+                "reference": "1.0.x"
+            },
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/field_group",
@@ -5599,6 +5619,26 @@
                 "source": "https://git.drupalcode.org/project/link_attributes",
                 "issues": "https://www.drupal.org/project/issues/link_attributes"
             }
+        },
+        {
+            "name": "drupal/local_tasks_more",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupal.org:project/local_tasks_more.git",
+                "reference": "1.0.x"
+            },
+            "type": "drupal-module-sandbox"
+        },
+        {
+            "name": "drupal/menu_export_csv",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupal.org:project/menu_export_csv.git",
+                "reference": "1.0.x"
+            },
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/mercury_editor",
@@ -7024,6 +7064,56 @@
                 "type": "git",
                 "url": "git@git.drupal.org:project/webform.git",
                 "reference": "6.3.x"
+            },
+            "type": "drupal-module-sandbox"
+        },
+        {
+            "name": "drupal/webform_confirmation_file",
+            "version": "1.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupal.org:project/webform_confirmation_file.git",
+                "reference": "8.x-1.x"
+            },
+            "type": "drupal-module-sandbox"
+        },
+        {
+            "name": "drupal/webform_javascript_setting",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupal.org:project/webform_javascript_setting.git",
+                "reference": "1.0.x"
+            },
+            "type": "drupal-module-sandbox"
+        },
+        {
+            "name": "drupal/webform_no_submissions",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupal.org:project/webform_no_submissions.git",
+                "reference": "1.0.x"
+            },
+            "type": "drupal-module-sandbox"
+        },
+        {
+            "name": "drupal/webform_payment_element",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupal.org:project/webform_payment_element.git",
+                "reference": "1.0.x"
+            },
+            "type": "drupal-module-sandbox"
+        },
+        {
+            "name": "drupal/webform_views",
+            "version": "5.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupal.org:project/webform_views.git",
+                "reference": "8.x-5.x"
             },
             "type": "drupal-module-sandbox"
         },
