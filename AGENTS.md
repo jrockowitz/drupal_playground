@@ -31,6 +31,10 @@ ddev code-fix <file|directory>
 - `.ddev/` — DDEV configuration, custom commands, PHP/Nginx overrides
 - `docs/` — Project documentation (DDEV setup, PHPStorm config)
 
+## HTML
+
+- Only add returns after block tags. (<p>, <div>, <ul>, <li>, <br/>, etc...)
+
 ## Git
 
 - Never commit or push code unless explicitly asked to do so.
