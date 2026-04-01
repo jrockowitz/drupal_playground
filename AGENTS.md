@@ -46,3 +46,4 @@ ddev code-fix <file|directory>
 ## Code Style & Standards
 
 - Never use abbreviations in names. Write the full word every time — `$definition` not `$def`, `$configuration` not `$config`, `$identifier` not `$id`, `$parameters` not `$params`, `$temporary` not `$tmp`. Exceptions for widely accepted conventions: `$io`, `src`, `href`, `url`, `id` (when it is literally an ID/primary key), `html`, `csv`, `api`, `sql`, `php`, language codes like `$langcode`.
+- In tests, assertion blocks should have comments that typically begin with `// Check that ...`. Look at existing tests in the module for the expected style.
