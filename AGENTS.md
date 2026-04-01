@@ -39,6 +39,10 @@ ddev code-fix <file|directory>
 
 - Never commit or push code unless explicitly asked to do so.
 
+## Python
+
+- Use `python3` instead of `python` when invoking Python.
+
 ## Code Style & Standards
 
 - Never use abbreviations in names. Write the full word every time — `$definition` not `$def`, `$configuration` not `$config`, `$identifier` not `$id`, `$parameters` not `$params`, `$temporary` not `$tmp`. Exceptions for widely accepted conventions: `$io`, `src`, `href`, `url`, `id` (when it is literally an ID/primary key), `html`, `csv`, `api`, `sql`, `php`, language codes like `$langcode`.
