@@ -38,6 +38,7 @@ ddev code-fix <file|directory>
 ## Git
 
 - Never commit or push code unless explicitly asked to do so.
+- All commits made by AI should end with a note that says: `AI-assisted by {code agent name}`.
 
 ## Python
 
