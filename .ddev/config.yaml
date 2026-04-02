@@ -1,4 +1,4 @@
-name: drupal-playground
+# name: drupal-playground
 type: drupal
 docroot: web
 php_version: "8.3"
