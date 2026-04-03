@@ -67,12 +67,17 @@ ln -s ../.agents/skills .claude/skills
 # List the files and directories.
 ls -al AGENTS.md .agents CLAUDE.md .claude
 
+# PHPStorm - Junie AI Guidelines
+mkdir -p .junie
+ln -sf AGENTS.md .junie/guidelines.md
+
 # Exclude all AI directories from Git (local clone only — never committed)
 cat >> .git/info/exclude << 'EOF'
-AGENTS.md
-.agents/
-CLAUDE.md
-.claude/
+/AGENTS.md
+/.agents
+/CLAUDE.md
+/.claude
+/.junie
 EOF
 ```
 
@@ -98,16 +103,30 @@ ln -sf ../drupal_playground/CLAUDE.md CLAUDE.md
 ln -sf ../drupal_playground/.claude .claude
 
 # List the files and directories.
- ls -al AGENTS.md .agents CLAUDE.md .claude
+ls -al AGENTS.md .agents CLAUDE.md .claude
+
+# PHPStorm - Junie AI Guidelines
+mkdir -p .junie
+ln -sf ../drupal_playground/AGENTS.md .junie/guidelines.md
+ls -al .junie/guidelines.md
 
 # Exclude all syminks
 cat >> .git/info/exclude << 'EOF'
-AGENTS.md
-.agents
-CLAUDE.md
-.claude
+/AGENTS.md
+/.agents
+/CLAUDE.md
+/.claude
+/.junie
 EOF
 ```
+
+---
+
+## PHPStorm - Junie AI Guidelines
+
+AGENTS.md is not picked up automatically by Junie. To enable it, you must set the path in settings:
+
+Reference: [JUNIE-618: Support AGENTS.md](https://youtrack.jetbrains.com/issue/JUNIE-618/Support-AGENTS.md)
 
 ---
 
