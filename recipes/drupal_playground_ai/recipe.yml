@@ -12,13 +12,14 @@ recipes:
 install:
   - ai
   - ai_agents
-  - ai_provider_anthropic
-  - ai_provider_openai
-  - ai_dashboard
+  - ai_agents_explorer
+  - ai_api_explorer
+  - ai_chatbot
   - ai_ckeditor
   - ai_content_suggestions
-  - ai_image_alt_text
-  - ai_chatbot
+  - ai_dashboard
+  - ai_provider_anthropic
+  - ai_provider_openai
 config:
   strict: false
   import:

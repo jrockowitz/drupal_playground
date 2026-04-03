@@ -1991,75 +1991,6 @@
             }
         },
         {
-            "name": "drupal/ai_image_alt_text",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/ai_image_alt_text.git",
-                "reference": "1.0.2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ai_image_alt_text-1.0.2.zip",
-                "reference": "1.0.2",
-                "shasum": "57aede710c493b84270740a773fb3de96e465322"
-            },
-            "require": {
-                "drupal/ai": "^1.0.0",
-                "drupal/core": "^10.2 || ^11"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.2",
-                    "datestamp": "1764942107",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "DXPR",
-                    "homepage": "https://dxpr.com",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "anybody",
-                    "homepage": "https://www.drupal.org/user/291091"
-                },
-                {
-                    "name": "grevil",
-                    "homepage": "https://www.drupal.org/user/3668491"
-                },
-                {
-                    "name": "jurriaanroelofs",
-                    "homepage": "https://www.drupal.org/user/52638"
-                },
-                {
-                    "name": "marcus_johansson",
-                    "homepage": "https://www.drupal.org/user/385947"
-                },
-                {
-                    "name": "yautja_cetanu",
-                    "homepage": "https://www.drupal.org/user/626050"
-                }
-            ],
-            "description": "Allows the possibility to set an alt text using AI.",
-            "homepage": "https://www.drupal.org/project/ai_image_alt_text",
-            "keywords": [
-                "Drupal"
-            ],
-            "support": {
-                "source": "https://git.drupalcode.org/project/ai_image_alt_text"
-            }
-        },
-        {
             "name": "drupal/ai_provider_anthropic",
             "version": "1.2.2",
             "source": {
@@ -3783,13 +3714,12 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai",
-                "reference": "37445f45252beb966dd948cf8d3ca54542e8475c"
+                "reference": "3541336a5a131373bb18942e93b3763aaccdcf6b"
             },
             "require": {
                 "drupal/ai": "^1",
                 "drupal/ai_agents": "^1",
                 "drupal/ai_dashboard": "^1",
-                "drupal/ai_image_alt_text": "^1",
                 "drupal/ai_provider_anthropic": "^1",
                 "drupal/ai_provider_openai": "^1",
                 "drupal/core": "^11.3",
@@ -3800,6 +3730,26 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Installs and configures the Drupal AI module suite: OpenAI + Anthropic providers, site-building agents, DeepChat chatbot, CKEditor integration, content suggestions, and image alt text.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "drupal/drupal_playground_ai_field_widget_actions",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_ai_field_widget_actions",
+                "reference": "9a5a78199498da178074b98786fc6dba41faa9a8"
+            },
+            "require": {
+                "drupal/core": "^11.3"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Installs field widget actions for the Drupal Playground AI recipe.",
             "transport-options": {
                 "relative": true
             }
@@ -7123,16 +7073,16 @@
         },
         {
             "name": "drush/drush",
-            "version": "13.7.1",
+            "version": "13.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "4049dd4332bfc47d19ce849cb50380bd0498e4cc"
+                "reference": "670c5f81b3f525b3f08263f038c7f07558f2580d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drush-ops/drush/zipball/4049dd4332bfc47d19ce849cb50380bd0498e4cc",
-                "reference": "4049dd4332bfc47d19ce849cb50380bd0498e4cc",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/670c5f81b3f525b3f08263f038c7f07558f2580d",
+                "reference": "670c5f81b3f525b3f08263f038c7f07558f2580d",
                 "shasum": ""
             },
             "require": {
@@ -7260,7 +7210,7 @@
                 "issues": "https://github.com/drush-ops/drush/issues",
                 "security": "https://github.com/drush-ops/drush/security/advisories",
                 "slack": "https://drupal.slack.com/messages/C62H9CWQM",
-                "source": "https://github.com/drush-ops/drush/tree/13.7.1"
+                "source": "https://github.com/drush-ops/drush/tree/13.7.2"
             },
             "funding": [
                 {
@@ -7268,7 +7218,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-28T22:21:17+00:00"
+            "time": "2026-03-20T19:18:11+00:00"
         },
         {
             "name": "e0ipso/shaper",

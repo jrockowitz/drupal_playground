@@ -1,0 +1,37 @@
+name: 'Drupal Playground AI Field Widget Actions'
+description: >
+  Adds field widget actions for the Drupal Playground AI recipe.
+type: 'Site'
+recipes:
+  - drupal_playground_ai
+install:
+  - ai_automators
+  - field_widget_actions
+config:
+  import:
+    ai_automators: '*'
+  strict: false
+  actions:
+    core.entity_form_display.node.article.default:
+      setComponentThirdPartySetting:
+        - component: field_tags
+          provider: field_widget_actions
+          settings:
+            938415c3-dd86-4d94-a52c-ff799e744837:
+              plugin_id: automator_autocomplete_tags_on_taxonomy
+              enabled: true
+              button_label: 'Automator Taxonomy'
+              weight: 0
+              settings:
+                automator_id: node.article.field_tags.default
+        - component: field_image
+          provider: field_widget_actions
+          settings:
+            838b3ff2-d05c-467f-b37e-2221a7591943:
+              plugin_id: automator_alt_text
+              enabled: true
+              button_label: 'Automator Alt Text'
+              weight: 0
+              settings:
+                automator_id: node.article.field_image.default
+              remove: 'Remove Action'

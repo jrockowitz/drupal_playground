@@ -1,0 +1,37 @@
+uuid: e7e41a5c-381c-47bd-849b-b9fa7ab128c1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.article.field_image
+id: node.article.field_image.default
+label: 'Image Default'
+rule: llm_image_alt_text
+input_mode: base
+weight: 100
+worker_type: direct
+entity_type: node
+bundle: article
+field_name: field_image
+edit_mode: false
+base_field: title
+prompt: 'Look at the image and make good alt text out of it.'
+token: ''
+plugin_config:
+  automator_enabled: 1
+  automator_rule: llm_image_alt_text
+  automator_mode: base
+  automator_base_field: title
+  automator_prompt: 'Look at the image and make good alt text out of it.'
+  automator_token: ''
+  automator_edit_mode: 0
+  automator_label: 'Image Default'
+  automator_weight: '100'
+  automator_worker_type: direct
+  automator_ai_provider: openai
+  automator_ai_model: gpt-3.5-turbo
+  automator_configuration_max_tokens: '4096'
+  automator_configuration_temperature: ''
+  automator_configuration_frequency_penalty: '0'
+  automator_configuration_presence_penalty: '0'
+  automator_configuration_top_p: '1'

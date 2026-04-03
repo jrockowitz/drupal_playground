@@ -26,6 +26,10 @@
         },
         {
             "type": "path",
+            "url": "recipes/drupal_playground_ai_field_widget_actions"
+        },
+        {
+            "type": "path",
             "url": "recipes/drupal_playground_schemadotorg"
         },
         {
@@ -45,6 +49,7 @@
     "require": {
         "drupal/drupal_playground_admin": "*",
         "drupal/drupal_playground_ai": "*",
+        "drupal/drupal_playground_ai_field_widget_actions": "*",
         "drupal/drupal_playground_base": "*",
         "drupal/drupal_playground_devel": "*",
         "drupal/drupal_playground_eca": "*",

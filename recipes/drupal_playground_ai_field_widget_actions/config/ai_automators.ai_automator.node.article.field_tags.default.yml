@@ -1,0 +1,41 @@
+uuid: 2e564118-1bf5-4ada-b477-d6aead71199d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.article.field_tags
+id: node.article.field_tags.default
+label: 'Tags Default'
+rule: llm_taxonomy
+input_mode: base
+weight: 100
+worker_type: direct
+entity_type: node
+bundle: article
+field_name: field_tags
+edit_mode: false
+base_field: body
+prompt: ' Please provide a comma separated list of 3 keywords that best encapsulate {{ context }}.'
+token: ''
+plugin_config:
+  automator_enabled: 1
+  automator_rule: llm_taxonomy
+  automator_mode: base
+  automator_base_field: body
+  automator_prompt: ' Please provide a comma separated list of 3 keywords that best encapsulate {{ context }}.'
+  automator_token: ''
+  automator_edit_mode: 0
+  automator_label: 'Tags Default'
+  automator_weight: '100'
+  automator_worker_type: direct
+  automator_ai_provider: openai
+  automator_ai_model: gpt-4o
+  automator_configuration_max_tokens: '4096'
+  automator_configuration_temperature: '1'
+  automator_configuration_frequency_penalty: '0'
+  automator_configuration_presence_penalty: '0'
+  automator_configuration_top_p: '1'
+  automator_configuration_image_field: ''
+  automator_configuration_image_style: ''
+  automator_clean_up: ''
+  automator_search_similar_tags: 0
