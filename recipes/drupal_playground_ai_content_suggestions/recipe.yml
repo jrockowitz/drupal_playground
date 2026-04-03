@@ -1,0 +1,13 @@
+name: 'Drupal Playground AI Content Suggestions'
+description: >
+  Adds AI content suggestions to the Drupal Playground AI recipe.
+type: 'Site'
+recipes:
+  - drupal_playground_ai
+
+install:
+  - ai_content_suggestions
+config:
+  strict: false
+  import:
+    ai_content_suggestions: '*'

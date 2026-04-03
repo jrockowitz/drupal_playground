@@ -2239,6 +2239,88 @@
             }
         },
         {
+            "name": "drupal/ai_content_suggestions",
+            "version": "1.2.3",
+            "require": {
+                "drupal/ai": "*",
+                "drupal/core": "^10.4 || ^11"
+            },
+            "type": "metapackage",
+            "extra": {
+                "drupal": {
+                    "version": "1.2.3",
+                    "datestamp": "1762955697",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "a.dmitriiev",
+                    "homepage": "https://www.drupal.org/user/3235287"
+                },
+                {
+                    "name": "abhisekmazumdar",
+                    "homepage": "https://www.drupal.org/user/3557964"
+                },
+                {
+                    "name": "andrewbelcher",
+                    "homepage": "https://www.drupal.org/user/655282"
+                },
+                {
+                    "name": "gxleano",
+                    "homepage": "https://www.drupal.org/user/3591999"
+                },
+                {
+                    "name": "kevinquillen",
+                    "homepage": "https://www.drupal.org/user/317279"
+                },
+                {
+                    "name": "kristen pol",
+                    "homepage": "https://www.drupal.org/user/8389"
+                },
+                {
+                    "name": "marcus_johansson",
+                    "homepage": "https://www.drupal.org/user/385947"
+                },
+                {
+                    "name": "murz",
+                    "homepage": "https://www.drupal.org/user/157092"
+                },
+                {
+                    "name": "scott_euser",
+                    "homepage": "https://www.drupal.org/user/3267594"
+                },
+                {
+                    "name": "seogow",
+                    "homepage": "https://www.drupal.org/user/3065779"
+                },
+                {
+                    "name": "valthebald",
+                    "homepage": "https://www.drupal.org/user/239562"
+                },
+                {
+                    "name": "wouters_f",
+                    "homepage": "https://www.drupal.org/user/721548"
+                },
+                {
+                    "name": "yautja_cetanu",
+                    "homepage": "https://www.drupal.org/user/626050"
+                }
+            ],
+            "description": "Allows a configured AI to be passed content to suggest alterations",
+            "homepage": "https://www.drupal.org/project/ai",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ai"
+            }
+        },
+        {
             "name": "drupal/ai_dashboard",
             "version": "1.0.3",
             "source": {
@@ -4021,7 +4103,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai",
-                "reference": "087fe8d5c2571be32df6027301eefe4325919b57"
+                "reference": "26a00a005e81cb328d8f4edbace156f38756c535"
             },
             "require": {
                 "drupal/ai": "^1",
@@ -4036,7 +4118,7 @@
             "license": [
                 "GPL-2.0-or-later"
             ],
-            "description": "Installs and configures the Drupal AI module suite: OpenAI + Anthropic providers, site-building agents, content suggestions, and dashboard configuration.",
+            "description": "Installs and configures the Drupal AI module suite: OpenAI + Anthropic providers, site-building agents, and dashboard configuration.",
             "transport-options": {
                 "relative": true
             }
@@ -4079,6 +4161,27 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Adds AI CKEditor integration to the Drupal Playground AI recipe.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "drupal/drupal_playground_ai_content_suggestions",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_ai_content_suggestions",
+                "reference": "276ee38efde4fa943201d247c18d36377a9fdffd"
+            },
+            "require": {
+                "drupal/ai_content_suggestions": "^1",
+                "drupal/core": "^11.3"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Adds AI content suggestions to the Drupal Playground AI recipe.",
             "transport-options": {
                 "relative": true
             }

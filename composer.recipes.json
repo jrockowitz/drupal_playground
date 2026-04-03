@@ -34,6 +34,10 @@
         },
         {
             "type": "path",
+            "url": "recipes/drupal_playground_ai_content_suggestions"
+        },
+        {
+            "type": "path",
             "url": "recipes/drupal_playground_ai_field_widget_actions"
         },
         {
@@ -59,6 +63,7 @@
         "drupal/drupal_playground_ai": "*",
         "drupal/drupal_playground_ai_chat": "*",
         "drupal/drupal_playground_ai_ckeditor": "*",
+        "drupal/drupal_playground_ai_content_suggestions": "*",
         "drupal/drupal_playground_ai_field_widget_actions": "*",
         "drupal/drupal_playground_base": "*",
         "drupal/drupal_playground_devel": "*",

@@ -6,6 +6,7 @@
   "version": "1.0.0",
   "require": {
     "drupal/core": "^11.3",
+    "drupal/ai_agents": "^1",
     "drupal/ai_chatbot": "^1"
   }
 }

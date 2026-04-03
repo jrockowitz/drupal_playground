@@ -1,0 +1,11 @@
+{
+  "name": "drupal/drupal_playground_ai_content_suggestions",
+  "description": "Adds AI content suggestions to the Drupal Playground AI recipe.",
+  "type": "drupal-recipe",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "require": {
+    "drupal/core": "^11.3",
+    "drupal/ai_content_suggestions": "^1"
+  }
+}

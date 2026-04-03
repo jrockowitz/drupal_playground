@@ -7,6 +7,8 @@ recipes:
   - drupal_playground_ai
 
 install:
+  - ai_agents
+  - ai_assistant_api
   - ai_chatbot
 config:
   strict: false

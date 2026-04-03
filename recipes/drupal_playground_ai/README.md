@@ -1,7 +1,7 @@
 # Drupal Playground AI Recipe
 
 Installs and configures the Drupal AI module suite: OpenAI + Anthropic providers,
-site-building agents, content suggestions, and dashboard configuration.
+site-building agents, and dashboard configuration.
 
 ## Prerequisites
 

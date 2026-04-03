@@ -1,7 +1,7 @@
 name: 'Drupal Playground AI'
 description: >
   Installs and configures the AI module suite: providers (OpenAI + Anthropic),
-  site building agents, content suggestions, and dashboard configuration.
+  site building agents, and dashboard configuration.
   Prerequisites: keys/openai.key and keys/anthropic.key must exist before applying.
 type: 'Site'
 recipes:
@@ -10,18 +10,14 @@ recipes:
 
 install:
   - ai
-  - ai_agents
-  - ai_agents_explorer
-  - ai_api_explorer
-  - ai_content_suggestions
   - ai_dashboard
   - ai_provider_anthropic
   - ai_provider_openai
+  - key
 config:
   strict: false
   import:
     ai: '*'
-    ai_content_suggestions: '*'
     ai_dashboard: '*'
     key: '*'
     dashboard: '*'
