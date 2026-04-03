@@ -28,7 +28,6 @@ config:
     ai_agents: '*'
     ai_content_suggestions: '*'
     ai_dashboard: '*'
-    ai_image_alt_text: '*'
     key: '*'
     block: '*'
     dashboard: '*'
