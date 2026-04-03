@@ -1,6 +1,6 @@
 {
   "name": "drupal/drupal_playground_ai",
-  "description": "Installs and configures the Drupal AI module suite: OpenAI + Anthropic providers, site-building agents, DeepChat chatbot, CKEditor integration, content suggestions, and image alt text.",
+  "description": "Installs and configures the Drupal AI module suite: OpenAI + Anthropic providers, site-building agents, content suggestions, and dashboard configuration.",
   "type": "drupal-recipe",
   "license": "GPL-2.0-or-later",
   "version": "1.0.0",

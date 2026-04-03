@@ -41,6 +41,8 @@ for PRESET in "$@"; do
   if [ "$PRESET" = "ai" ]; then
     echo "Applying AI recipe..."
     drush recipe ../recipes/drupal_playground_ai
+    drush recipe ../recipes/drupal_playground_ai_chat
+    drush recipe ../recipes/drupal_playground_ai_ckeditor
     drush recipe ../recipes/drupal_playground_ai_field_widget_actions
   elif [ "$PRESET" = "schemadotorg" ]; then
     echo "Applying Schema.org Blueprints recipe..."

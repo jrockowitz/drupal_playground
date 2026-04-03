@@ -1,0 +1,16 @@
+name: 'Drupal Playground AI Chat'
+description: >
+  Adds the Drupal site-building helper assistant and DeepChat chatbot to the
+  Drupal Playground AI recipe.
+type: 'Site'
+recipes:
+  - drupal_playground_ai
+
+install:
+  - ai_chatbot
+config:
+  strict: false
+  import:
+    ai_agents: '*'
+    ai_assistant_api: '*'
+    block: '*'
