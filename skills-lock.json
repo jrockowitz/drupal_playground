@@ -1,6 +1,36 @@
 {
   "version": 1,
   "skills": {
+    "accessibility-checker": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "a572c93fdc8d3bb7e9734e401c5533e2dfb0f4079a3e4e14ca832ba2a8454aa5"
+    },
+    "browser-validator": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "9028c2d4a73b39000ef9b2a80e6e1fef38bc81845a5564888eeff4b5824ed4d7"
+    },
+    "code-standards-checker": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "68af12f70ccca14310be12d7bbb6a85ad326b9e6077c0aa72caa6f7b2f9a59bd"
+    },
+    "commit-message-generator": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "7c48ae97e38fa30a439714f8856175c66c8e64fe75c3bbd8d4308438a58d28df"
+    },
+    "coverage-analyzer": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "fa7256ad30fd8bd2fdd8d579679783e1b6fe1a42889f925f0408be6f285e831e"
+    },
+    "documentation-generator": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "ecce19812d371b413b1bc8b72bccfd0267bb420fe6301d9f85d85c6b4600266a"
+    },
     "drupal-at-your-fingertips": {
       "source": "grasmash/drupal-claude-skills",
       "sourceType": "github",
@@ -31,10 +61,40 @@
       "sourceType": "github",
       "computedHash": "e853f016ab789efaa0cd195ed4910dec05772fe63c354a03437b805d17762e31"
     },
-    "ivangrynenko-cursorrules-drupal": {
-      "source": "grasmash/drupal-claude-skills",
+    "performance-analyzer": {
+      "source": "kanopi/cms-cultivator",
       "sourceType": "github",
-      "computedHash": "428215cda56a811ae58d6f986846d22272418e50c476113467640af7f999f82d"
+      "computedHash": "a8e623e035a1e962339a16957418a783831b2120043b87cde35b490aa782af9b"
+    },
+    "security-scanner": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "686edbc8468b3eb31060b7e7e1e63e4db13dcb938717a7354db04d2bd4215bba"
+    },
+    "teamwork-exporter": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "bb30f25b8271b1b9ec4c780b2db3dcba3e2ae30a1b97c773bab6811556d19ae9"
+    },
+    "teamwork-integrator": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "8c139749a1884cde99c91271ec30eee9f63acce34f9b179c453ea063c79664c6"
+    },
+    "teamwork-task-creator": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "a3a416481c8b6cb50ecfefa3f7cc6df3da906cd1387158892c96de6f2acb3ddf"
+    },
+    "test-plan-generator": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "aa33c7bcc65fb207f86ce0c718833dc5bf60f265439336baf59d1bfdda9471f1"
+    },
+    "test-scaffolding": {
+      "source": "kanopi/cms-cultivator",
+      "sourceType": "github",
+      "computedHash": "3dd678922926216edd0de5e4f13533245da6164c5d755002d204e93fc1cabd97"
     }
   }
 }
