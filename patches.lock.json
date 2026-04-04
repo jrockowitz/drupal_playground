@@ -1,24 +1,46 @@
 {
-    "_hash": "c5e233297bc3167152374f11e02e791885041da4891ecd5d23805e88fa364af1",
+    "_hash": "561a23498cc90f2aab4ffb7c85f124eb91f9e4e6db4d79bdc9d79f0bce204d1a",
     "patches": {
+        "drupal/core": [
+            {
+                "package": "drupal/core",
+                "description": "Issue #3345064: Media library field_widget_id is not unique enough",
+                "url": "https://www.drupal.org/files/issues/2023-02-28/3345064.patch",
+                "sha256": "9b2749b9478d994cda95e3095e7ad86ea5469be8e28be4e6ae06050d7c04dd87",
+                "depth": 2,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/core",
+                "description": "Persist is_syncing across container rebuilds",
+                "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
+                "sha256": "635c3ece0a99bc50ce3656ea671850160aabebf7f6e3d30e8af91a18da095a82",
+                "depth": 2,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3572171",
+                    "provenance": "dependency:drupal/core"
+                }
+            },
+            {
+                "package": "drupal/core",
+                "description": "Page scrolls away on modifying fields in text formats and editor form.",
+                "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/11425.diff",
+                "sha256": "a24b4c0d7ae7f53906e2555474c57b81bf44dd9843b3a873d86fea89356314d7",
+                "depth": 2,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776",
+                    "provenance": "dependency:drupal/core"
+                }
+            }
+        ],
         "drupal/address": [
             {
                 "package": "drupal/address",
                 "description": "Issue #2819251: generateSampleValue",
                 "url": "https://www.drupal.org/files/issues/2024-09-10/address-issue-2819251-comment-9.patch",
                 "sha256": "9b00869bf124d5177fa07213751c08c2683eccc7dc1400618c951549ae111736",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/cer": [
-            {
-                "package": "drupal/cer",
-                "description": "Issue #2998138: Could support Remove field name prefix module?",
-                "url": "https://www.drupal.org/files/issues/2018-09-17/support_fields_without_prefix-2998138-4-D8.patch",
-                "sha256": "92899716c7e8dbe1bbc5a427948fa75a3583a5594c92f05a970b1b2f0a69580c",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
@@ -37,40 +59,6 @@
                 }
             }
         ],
-        "drupal/entity_browser": [
-            {
-                "package": "drupal/entity_browser",
-                "description": "Issue #3012432: Broken views exposed form in modals",
-                "url": "https://www.drupal.org/files/issues/2020-04-29/3012432-4_remove_enctype_on_views_widget.patch",
-                "sha256": "bd58afd3ebb77aa5d95ba05ed60210ff4d3e12c2d4b46f1b5ce82e625ef287b4",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/entity_browser",
-                "description": "Issue #2946829: Make submit button on modal always visible",
-                "url": "https://www.drupal.org/files/issues/2020-10-19/2946829-submit-button-always-visible-on-modals-4.patch",
-                "sha256": "3ae831be410d4319b553211b6d98f7e9ec77336d73b3c344e798c4a1d5dc4067",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/jsonapi_extras": [
-            {
-                "package": "drupal/jsonapi_extras",
-                "description": "Issue #3524477: Breaking errors in D11.2 or D11.x",
-                "url": "https://www.drupal.org/files/issues/2020-02-08/3031524-8.patch",
-                "sha256": "44da45a29c0d022e6023eedc76173e10be90f817029c31fdae6fbdd25c448423",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
         "drupal/type_tray": [
             {
                 "package": "drupal/type_tray",
@@ -80,19 +68,6 @@
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
-                }
-            }
-        ],
-        "drupal/core": [
-            {
-                "package": "drupal/core",
-                "description": "Persist is_syncing across container rebuilds",
-                "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
-                "sha256": "635c3ece0a99bc50ce3656ea671850160aabebf7f6e3d30e8af91a18da095a82",
-                "depth": 2,
-                "extra": {
-                    "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3572171",
-                    "provenance": "dependency:drupal/core"
                 }
             }
         ],

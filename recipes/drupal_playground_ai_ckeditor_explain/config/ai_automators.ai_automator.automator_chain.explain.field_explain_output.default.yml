@@ -1,0 +1,41 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.automator_chain.explain.field_explain_output
+id: automator_chain.explain.field_explain_output.default
+label: 'Explain Output Default'
+rule: llm_text_long
+input_mode: base
+weight: 100
+worker_type: direct
+entity_type: automator_chain
+bundle: explain
+field_name: field_explain_output
+edit_mode: false
+base_field: field_explain_input
+prompt: |-
+  Explain this to me as if I were a 5-year-old child.
+
+  Context:
+  {{ context }}
+token: ''
+plugin_config:
+  automator_enabled: 1
+  automator_rule: llm_text_long
+  automator_mode: base
+  automator_base_field: field_explain_input
+  automator_prompt: |-
+    Explain this to me as if I were a 5-year-old child.
+
+    Context:
+    {{ context }}
+  automator_token: ''
+  automator_edit_mode: 0
+  automator_label: 'Explain Output Default'
+  automator_weight: '100'
+  automator_worker_type: direct
+  automator_ai_provider: default_json
+  automator_joiner: ''
+  automator_joiner_other: ''
+  automator_use_text_format: ''

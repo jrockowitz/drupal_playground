@@ -9,3 +9,14 @@ install:
   - ai_api_explorer
   - ai_assistant_api
   - ai_logging
+
+config:
+  import:
+    ai_logging: '*'
+  strict: false
+  actions:
+    ai_logging.settings:
+      simpleConfigUpdate:
+        prompt_logging: true
+        prompt_logging_output: 1
+

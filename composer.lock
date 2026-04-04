@@ -1932,6 +1932,108 @@
             }
         },
         {
+            "name": "drupal/ai_api_explorer",
+            "version": "1.3.2",
+            "require": {
+                "drupal/ai": "*",
+                "drupal/core": "^10.4 || ^11"
+            },
+            "type": "metapackage",
+            "extra": {
+                "drupal": {
+                    "version": "1.3.2",
+                    "datestamp": "1775054214",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "a.dmitriiev",
+                    "homepage": "https://www.drupal.org/user/3235287"
+                },
+                {
+                    "name": "abhisekmazumdar",
+                    "homepage": "https://www.drupal.org/user/3557964"
+                },
+                {
+                    "name": "andrewbelcher",
+                    "homepage": "https://www.drupal.org/user/655282"
+                },
+                {
+                    "name": "anjaliprasannan",
+                    "homepage": "https://www.drupal.org/user/3637917"
+                },
+                {
+                    "name": "b_sharpe",
+                    "homepage": "https://www.drupal.org/user/2512258"
+                },
+                {
+                    "name": "fago",
+                    "homepage": "https://www.drupal.org/user/16747"
+                },
+                {
+                    "name": "gxleano",
+                    "homepage": "https://www.drupal.org/user/3591999"
+                },
+                {
+                    "name": "kevinquillen",
+                    "homepage": "https://www.drupal.org/user/317279"
+                },
+                {
+                    "name": "kristen pol",
+                    "homepage": "https://www.drupal.org/user/8389"
+                },
+                {
+                    "name": "marcus_johansson",
+                    "homepage": "https://www.drupal.org/user/385947"
+                },
+                {
+                    "name": "michaellander",
+                    "homepage": "https://www.drupal.org/user/636494"
+                },
+                {
+                    "name": "murz",
+                    "homepage": "https://www.drupal.org/user/157092"
+                },
+                {
+                    "name": "robloach",
+                    "homepage": "https://www.drupal.org/user/61114"
+                },
+                {
+                    "name": "scott_euser",
+                    "homepage": "https://www.drupal.org/user/3267594"
+                },
+                {
+                    "name": "seogow",
+                    "homepage": "https://www.drupal.org/user/3065779"
+                },
+                {
+                    "name": "valthebald",
+                    "homepage": "https://www.drupal.org/user/239562"
+                },
+                {
+                    "name": "wouters_f",
+                    "homepage": "https://www.drupal.org/user/721548"
+                },
+                {
+                    "name": "yautja_cetanu",
+                    "homepage": "https://www.drupal.org/user/626050"
+                }
+            ],
+            "description": "Adds multiple developers explorers where you can test different settings.",
+            "homepage": "https://www.drupal.org/project/ai",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ai"
+            }
+        },
+        {
             "name": "drupal/ai_assistant_api",
             "version": "1.3.2",
             "require": {
@@ -2377,6 +2479,108 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/ai_dashboard",
                 "issues": "http://drupal.org/project/issues/ai_dashboard"
+            }
+        },
+        {
+            "name": "drupal/ai_logging",
+            "version": "1.3.2",
+            "require": {
+                "drupal/ai": "*",
+                "drupal/core": "^10.4 || ^11"
+            },
+            "type": "metapackage",
+            "extra": {
+                "drupal": {
+                    "version": "1.3.2",
+                    "datestamp": "1775054214",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "a.dmitriiev",
+                    "homepage": "https://www.drupal.org/user/3235287"
+                },
+                {
+                    "name": "abhisekmazumdar",
+                    "homepage": "https://www.drupal.org/user/3557964"
+                },
+                {
+                    "name": "andrewbelcher",
+                    "homepage": "https://www.drupal.org/user/655282"
+                },
+                {
+                    "name": "anjaliprasannan",
+                    "homepage": "https://www.drupal.org/user/3637917"
+                },
+                {
+                    "name": "b_sharpe",
+                    "homepage": "https://www.drupal.org/user/2512258"
+                },
+                {
+                    "name": "fago",
+                    "homepage": "https://www.drupal.org/user/16747"
+                },
+                {
+                    "name": "gxleano",
+                    "homepage": "https://www.drupal.org/user/3591999"
+                },
+                {
+                    "name": "kevinquillen",
+                    "homepage": "https://www.drupal.org/user/317279"
+                },
+                {
+                    "name": "kristen pol",
+                    "homepage": "https://www.drupal.org/user/8389"
+                },
+                {
+                    "name": "marcus_johansson",
+                    "homepage": "https://www.drupal.org/user/385947"
+                },
+                {
+                    "name": "michaellander",
+                    "homepage": "https://www.drupal.org/user/636494"
+                },
+                {
+                    "name": "murz",
+                    "homepage": "https://www.drupal.org/user/157092"
+                },
+                {
+                    "name": "robloach",
+                    "homepage": "https://www.drupal.org/user/61114"
+                },
+                {
+                    "name": "scott_euser",
+                    "homepage": "https://www.drupal.org/user/3267594"
+                },
+                {
+                    "name": "seogow",
+                    "homepage": "https://www.drupal.org/user/3065779"
+                },
+                {
+                    "name": "valthebald",
+                    "homepage": "https://www.drupal.org/user/239562"
+                },
+                {
+                    "name": "wouters_f",
+                    "homepage": "https://www.drupal.org/user/721548"
+                },
+                {
+                    "name": "yautja_cetanu",
+                    "homepage": "https://www.drupal.org/user/626050"
+                }
+            ],
+            "description": "This enables you to log any AI request and response as well as additional contextual information.",
+            "homepage": "https://www.drupal.org/project/ai",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ai"
             }
         },
         {
@@ -4055,7 +4259,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_admin",
-                "reference": "1f8e63efc82a83cdda93958e1781e1656986bb4d"
+                "reference": "d039941933ca941682f334de29fa2b52a2eb37a8"
             },
             "require": {
                 "drupal/coffee": "^2",
@@ -4076,6 +4280,13 @@
                             "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
                             "extra": {
                                 "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3572171"
+                            }
+                        },
+                        {
+                            "description": "Page scrolls away on modifying fields in text formats and editor form.",
+                            "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/11425.diff",
+                            "extra": {
+                                "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776"
                             }
                         }
                     ],
@@ -4103,11 +4314,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai",
-                "reference": "26a00a005e81cb328d8f4edbace156f38756c535"
+                "reference": "865cf6b951375046210077e0bc2f8f8eed10749e"
             },
             "require": {
                 "drupal/ai": "^1",
-                "drupal/ai_agents": "^1",
                 "drupal/ai_dashboard": "^1",
                 "drupal/ai_provider_anthropic": "^1",
                 "drupal/ai_provider_openai": "^1",
@@ -4124,14 +4334,35 @@
             }
         },
         {
+            "name": "drupal/drupal_playground_ai_automators",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_ai_automators",
+                "reference": "c0e543de97b8e8c263f7c5cc03072f4668996de0"
+            },
+            "require": {
+                "drupal/core": "^11.3"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Installs AI automators for the Drupal Playground AI recipe.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "drupal/drupal_playground_ai_chat",
             "version": "1.0.0",
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_chat",
-                "reference": "1c3ddeba5ad2d8f028d5b1d89f4f7eee46c3c504"
+                "reference": "8cfa088ffa647c30a9d7258df5abe26e18b2d2db"
             },
             "require": {
+                "drupal/ai_agents": "^1",
                 "drupal/ai_chatbot": "^1",
                 "drupal/core": "^11.3"
             },
@@ -4166,6 +4397,26 @@
             }
         },
         {
+            "name": "drupal/drupal_playground_ai_ckeditor_explain",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_ai_ckeditor_explain",
+                "reference": "03fbd6de2dc00425b3a6ba57bfd7f632d1951535"
+            },
+            "require": {
+                "drupal/core": "^11.3"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Adds the CKEditor explain workflow to the Drupal Playground AI recipe.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "drupal/drupal_playground_ai_content_suggestions",
             "version": "1.0.0",
             "dist": {
@@ -4192,7 +4443,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_devel",
-                "reference": null
+                "reference": "54176b47b20ac6ff2b84b52a42a7b7573ed43e0e"
             },
             "require": {
                 "drupal/ai_api_explorer": "^1",
@@ -4205,26 +4456,6 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Adds AI development tooling to the Drupal Playground AI recipe.",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "drupal/drupal_playground_ai_automators",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "recipes/drupal_playground_ai_automators",
-                "reference": "9a5a78199498da178074b98786fc6dba41faa9a8"
-            },
-            "require": {
-                "drupal/core": "^11.3"
-            },
-            "type": "drupal-recipe",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "description": "Installs AI automators for the Drupal Playground AI recipe.",
             "transport-options": {
                 "relative": true
             }

@@ -1,0 +1,26 @@
+name: 'Drupal Playground AI CKEditor Explain'
+description: >
+  Adds the explain automator chain and CKEditor explain workflow to the Drupal
+  Playground AI recipe.
+type: 'Site'
+recipes:
+  - drupal_playground_ai
+  - drupal_playground_ai_ckeditor
+  - drupal_playground_ai_automators
+
+config:
+  strict: false
+  actions:
+    editor.editor.basic_html:
+      setProperties:
+        settings.plugins.ai_ckeditor_ai.plugins.ai_automators_ckeditor:
+          enabled: true
+          workflows:
+            explain:
+              enabled: true
+              inputs:
+                field_explain_input: field_explain_input
+              selected_input: field_explain_input
+              require_selection: true
+              write_mode: replace
+              output: field_explain_output

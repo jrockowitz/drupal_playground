@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - ai_automators.automator_chain_type.explain
+    - field.storage.automator_chain.field_explain_output
+  module:
+    - text
+id: automator_chain.explain.field_explain_output
+field_name: field_explain_output
+entity_type: automator_chain
+bundle: explain
+label: 'Explain Output'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

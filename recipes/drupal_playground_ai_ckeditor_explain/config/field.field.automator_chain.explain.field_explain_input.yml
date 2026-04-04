@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - ai_automators.automator_chain_type.explain
+    - field.storage.automator_chain.field_explain_input
+id: automator_chain.explain.field_explain_input
+field_name: field_explain_input
+entity_type: automator_chain
+bundle: explain
+label: 'Explain Input'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
