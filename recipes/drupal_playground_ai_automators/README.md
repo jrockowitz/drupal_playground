@@ -27,12 +27,6 @@ Videos
 
 - [Meet the AI Automators that power everything in Drupal CMS - CKEditor, AI Agents, no code required!](https://www.youtube.com/watch?v=5xVm0wmJlTo)
 
-Issues
-
-- [Automator Chain not working with ai_ckeditor](https://www.drupal.org/project/ai/issues/3506570)
-  _Unable to set up a simple chain CKEditor automator._
-  - https://www.youtube.com/live/C8jMb0Ie6x0?si=qDP01mYdozXNTTLL&t=1877
-
 
 ## Field Widget Actions
 

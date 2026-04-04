@@ -8,8 +8,8 @@ id: automator_chain.explain.field_explain_input
 field_name: field_explain_input
 entity_type: automator_chain
 bundle: explain
-label: 'Explain Input'
-description: ''
+label: 'Enter text that will be explained to 5-year-old child'
+description: 'Prompt: "Explain this content to me as if I were a 5-year-old child."'
 required: true
 translatable: false
 default_value: {  }

@@ -2,4 +2,4 @@ langcode: en
 status: true
 dependencies: {  }
 id: explain
-label: Explain
+label: 'Explain to 5-year-old child'

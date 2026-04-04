@@ -1,8 +1,8 @@
 #!/bin/bash
 
-## Description: Export configuration  and commit it to local Git repository
-## Usage: config-export
-## Example: ddev config-export
+## Description: Export Drupal configuration and commit it to local Git repository
+## Usage: config:export
+## Example: ddev config:export
 ## ProjectTypes: drupal,drupal11
 
 
