@@ -15,9 +15,9 @@ field_name: field_explain_output
 edit_mode: false
 base_field: field_explain_input
 prompt: |-
-  Explain this to me as if I were a 5-year-old child.
+  Explain this content to me as if I were a 5-year-old child.
 
-  Context:
+  Content:
   {{ context }}
 token: ''
 plugin_config:
@@ -26,9 +26,9 @@ plugin_config:
   automator_mode: base
   automator_base_field: field_explain_input
   automator_prompt: |-
-    Explain this to me as if I were a 5-year-old child.
+    Explain this content to me as if I were a 5-year-old child.
 
-    Context:
+    Content:
     {{ context }}
   automator_token: ''
   automator_edit_mode: 0
