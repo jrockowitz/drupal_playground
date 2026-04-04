@@ -4187,11 +4187,11 @@
             }
         },
         {
-            "name": "drupal/drupal_playground_ai_field_widget_actions",
+            "name": "drupal/drupal_playground_ai_automators",
             "version": "1.0.0",
             "dist": {
                 "type": "path",
-                "url": "recipes/drupal_playground_ai_field_widget_actions",
+                "url": "recipes/drupal_playground_ai_automators",
                 "reference": "9a5a78199498da178074b98786fc6dba41faa9a8"
             },
             "require": {
@@ -4201,7 +4201,7 @@
             "license": [
                 "GPL-2.0-or-later"
             ],
-            "description": "Installs field widget actions for the Drupal Playground AI recipe.",
+            "description": "Installs AI automators for the Drupal Playground AI recipe.",
             "transport-options": {
                 "relative": true
             }

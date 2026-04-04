@@ -26,9 +26,9 @@ plugin_config:
   automator_edit_mode: 0
   automator_label: 'Tags Default'
   automator_weight: '100'
-  automator_worker_type: direct
+  automator_worker_type: field_widget_actions
   automator_ai_provider: openai
-  automator_ai_model: gpt-4o
+  automator_ai_model: gpt-4o-mini
   automator_configuration_max_tokens: '4096'
   automator_configuration_temperature: '1'
   automator_configuration_frequency_penalty: '0'
@@ -37,4 +37,4 @@ plugin_config:
   automator_configuration_image_field: ''
   automator_configuration_image_style: ''
   automator_clean_up: ''
-  automator_search_similar_tags: 0
+  automator_search_similar_tags: 1
