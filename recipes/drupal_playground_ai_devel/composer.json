@@ -1,0 +1,13 @@
+{
+  "name": "drupal/drupal_playground_ai_devel",
+  "description": "Adds AI development tooling to the Drupal Playground AI recipe.",
+  "type": "drupal-recipe",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "require": {
+    "drupal/core": "^11.3",
+    "drupal/ai_api_explorer": "^1",
+    "drupal/ai_assistant_api": "^1",
+    "drupal/ai_logging": "^1"
+  }
+}

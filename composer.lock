@@ -4187,6 +4187,29 @@
             }
         },
         {
+            "name": "drupal/drupal_playground_ai_devel",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_ai_devel",
+                "reference": null
+            },
+            "require": {
+                "drupal/ai_api_explorer": "^1",
+                "drupal/ai_assistant_api": "^1",
+                "drupal/ai_logging": "^1",
+                "drupal/core": "^11.3"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Adds AI development tooling to the Drupal Playground AI recipe.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "drupal/drupal_playground_ai_automators",
             "version": "1.0.0",
             "dist": {

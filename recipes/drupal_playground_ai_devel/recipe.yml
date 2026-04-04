@@ -1,0 +1,11 @@
+name: 'Drupal Playground AI Devel'
+description: >
+  Adds AI development tooling to the Drupal Playground AI recipe.
+type: 'Site'
+recipes:
+  - drupal_playground_ai
+
+install:
+  - ai_api_explorer
+  - ai_assistant_api
+  - ai_logging

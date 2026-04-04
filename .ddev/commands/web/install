@@ -44,6 +44,7 @@ for PRESET in "$@"; do
     drush recipe ../recipes/drupal_playground_ai_chat
     drush recipe ../recipes/drupal_playground_ai_ckeditor
     drush recipe ../recipes/drupal_playground_ai_content_suggestions
+    drush recipe ../recipes/drupal_playground_ai_devel
     drush recipe ../recipes/drupal_playground_ai_automators
   elif [ "$PRESET" = "schemadotorg" ]; then
     echo "Applying Schema.org Blueprints recipe..."
@@ -60,6 +61,15 @@ for PRESET in "$@"; do
 done
 
 drush cr
+
+echo "Creating a config snapshot via GIT"
+if [ ! -d "config/sync" ]; then
+  mkdir -p config/sync
+  git -C config/sync init
+fi
+drush config:export -qy
+git -C config/sync add .
+git -C config/sync commit -m "Updating config snapshot"
 
 echo ""
 echo "Installation complete. One-time login URL:"
