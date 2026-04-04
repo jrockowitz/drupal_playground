@@ -78,6 +78,7 @@ cat >> .git/info/exclude << 'EOF'
 /CLAUDE.md
 /.claude
 /.junie
+/skills-lock.json
 EOF
 ```
 
