@@ -35,3 +35,15 @@ config:
               settings:
                 automator_id: node.article.field_image.default
               remove: 'Remove Action'
+        - component: body
+          provider: field_widget_actions
+          settings:
+            d241b863-b46d-4604-a673-c65dbe5862c7:
+              plugin_id: summary_textarea_with_summary
+              enabled: true
+              button_label: 'Generate Summary (Textarea with Summary)'
+              weight: 0
+              settings:
+                automator_id: node.article.body.default
+
+
