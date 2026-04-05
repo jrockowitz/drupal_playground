@@ -1,0 +1,8 @@
+#!/bin/bash
+
+## Description: Import Drupal configuration and commit it to local Git repository
+## Usage: config:import
+## Example: ddev config:import
+## ProjectTypes: drupal,drupal11
+
+drush config:import -y

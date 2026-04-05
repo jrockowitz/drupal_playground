@@ -10,9 +10,10 @@ recipes:
 
 install:
   - ai
-  - ai_dashboard
+#  - ai_dashboard
   - ai_provider_anthropic
   - ai_provider_openai
+  - ai_external_moderation
   - key
 config:
   strict: false

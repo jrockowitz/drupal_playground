@@ -22,6 +22,7 @@
         "drupal/core-project-message": "^11.0",
         "drupal/core-recipe-unpack": "^11.0",
         "drupal/core-recommended": "^11.0",
+        "drupal/json_field": "^1.7",
         "drupal/webform": "*",
         "drush/drush": "^13.7",
         "wikimedia/composer-merge-plugin": "^2.1"
@@ -112,6 +113,7 @@
         },
         "merge-plugin": {
             "include": [
+                "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
                 "web/modules/sandbox/schemadotorg/composer.libraries.json",

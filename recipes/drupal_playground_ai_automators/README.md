@@ -2,11 +2,6 @@
 
 Installs field widget actions for the Drupal Playground AI recipe.
 
-## Todo
-
-- [ ] Figure out how to get the content suggestions dialog with X options to work.
-- [ ] Learn how to write custom field widget actions.
-
 ## AI Automators
 
 Documentation
@@ -16,10 +11,12 @@ Documentation
 
 Videos
 
+- **[Meet the AI Automators that power everything in Drupal CMS - CKEditor, AI Agents, no code required!](https://www.youtube.com/watch?v=5xVm0wmJlTo)**
 - [AI Automators as tools for AI](https://www.youtube.com/watch?v=PXfmh3QXjN0)
 - [Using AI Automators (Drupal AI) in Drupal CMS](https://www.youtube.com/watch?v=C8jMb0Ie6x0)
 - [Summary: Using AI Automators (Drupal AI) in Drupal CMS](https://www.youtube.com/watch?v=28mqRsmm8yI)
 - [Talking Drupal #529 - MCP, Automators, and Agents](https://talkingdrupal.com/529)
+
 
 ## CKEditor
 
