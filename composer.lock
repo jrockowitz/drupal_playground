@@ -4339,10 +4339,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_automators",
-                "reference": "c0e543de97b8e8c263f7c5cc03072f4668996de0"
+                "reference": "a0c081e22c790b6e3d4b69990f39210fd3e7198e"
             },
             "require": {
-                "drupal/core": "^11.3"
+                "drupal/core": "^11.3",
+                "drupal/field_widget_actions": "^1"
             },
             "type": "drupal-recipe",
             "license": [
@@ -5396,6 +5397,65 @@
             }
         },
         {
+            "name": "drupal/field_widget_actions",
+            "version": "1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/field_widget_actions.git",
+                "reference": "1.3.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/field_widget_actions-1.3.0.zip",
+                "reference": "1.3.0",
+                "shasum": "26f81f868d219732fc9774ac666c3c48cd39e3d3"
+            },
+            "require": {
+                "drupal/core": "^10.3 || ^11.1"
+            },
+            "require-dev": {
+                "drupal/ai": "^1.2"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.3.0",
+                    "datestamp": "1769159569",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "a.dmitriiev",
+                    "homepage": "https://www.drupal.org/user/3235287"
+                },
+                {
+                    "name": "breidert",
+                    "homepage": "https://www.drupal.org/user/135619"
+                },
+                {
+                    "name": "marcus_johansson",
+                    "homepage": "https://www.drupal.org/user/385947"
+                },
+                {
+                    "name": "scott_euser",
+                    "homepage": "https://www.drupal.org/user/3267594"
+                }
+            ],
+            "description": "Provides easy way to attach actions to field widgets, for example for content suggestions.",
+            "homepage": "https://www.drupal.org/project/field_widget_actions",
+            "support": {
+                "source": "https://git.drupalcode.org/project/field_widget_actions"
+            }
+        },
+        {
             "name": "drupal/focal_point",
             "version": "2.1.2",
             "source": {
@@ -6368,17 +6428,17 @@
         },
         {
             "name": "drupal/mermaid_diagram_field",
-            "version": "1.0.8",
+            "version": "1.0.9",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/mermaid_diagram_field.git",
-                "reference": "1.0.8"
+                "reference": "1.0.9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/mermaid_diagram_field-1.0.8.zip",
-                "reference": "1.0.8",
-                "shasum": "9e58bb3030c9a543d76f40e855190f4d945d10ed"
+                "url": "https://ftp.drupal.org/files/projects/mermaid_diagram_field-1.0.9.zip",
+                "reference": "1.0.9",
+                "shasum": "2483f3da15eabfbfbd043bf4c2e81ce67a525443"
             },
             "require": {
                 "drupal/core": "^9 || ^10 || ^11"
@@ -6386,8 +6446,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.0.8",
-                    "datestamp": "1767839513",
+                    "version": "1.0.9",
+                    "datestamp": "1775317800",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"

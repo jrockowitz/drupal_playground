@@ -1,10 +1,11 @@
 {
-  "name": "drupal/drupal_playground_ai_automators",
-  "description": "Installs AI automators for the Drupal Playground AI recipe.",
-  "type": "drupal-recipe",
-  "license": "GPL-2.0-or-later",
-  "version": "1.0.0",
-  "require": {
-    "drupal/core": "^11.3"
-  }
+    "name": "drupal/drupal_playground_ai_automators",
+    "description": "Installs AI automators for the Drupal Playground AI recipe.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/core": "^11.3",
+        "drupal/field_widget_actions": "^1"
+    }
 }
