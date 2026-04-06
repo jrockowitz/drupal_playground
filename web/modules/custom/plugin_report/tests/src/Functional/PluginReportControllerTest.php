@@ -49,6 +49,8 @@ class PluginReportControllerTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Class');
     $this->assertSession()->pageTextContains('Provider');
     $this->assertSession()->pageTextContains('Discovery');
+    // Check that the filter input is rendered on the managers page.
+    $this->assertSession()->elementExists('css', 'input.plugin-report-filter-text');
 
     // Check that plugin.manager.block appears and links to its detail page.
     $this->assertSession()->pageTextContains('plugin.manager.block');
@@ -61,6 +63,10 @@ class PluginReportControllerTest extends BrowserTestBase {
     $this->assertSession()->elementExists('css', 'table');
     // Check that block definitions expose an 'id' column.
     $this->assertSession()->pageTextContains('id');
+    // Check that the filter input is rendered on the plugins page.
+    $this->assertSession()->elementExists('css', 'input.plugin-report-filter-text');
+    // Check that the title callback renders the manager ID in the page heading.
+    $this->assertSession()->pageTextContains('Plugin Report: plugin.manager.block');
 
     // Check that an unknown manager returns 404 rather than a PHP exception.
     $this->drupalGet('/admin/reports/plugins/plugin.manager.does_not_exist_xyz');

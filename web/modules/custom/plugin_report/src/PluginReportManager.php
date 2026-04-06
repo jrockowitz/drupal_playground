@@ -14,8 +14,12 @@ class PluginReportManager implements PluginReportManagerInterface {
 
   /**
    * Inverted map of container aliases: actual service ID => alias.
+   *
+   * Populated lazily by resolveServiceId(). NULL until first call.
+   *
+   * @var array<string, string>|null
    */
-  protected array $aliases;
+  private ?array $aliasMap = NULL;
 
   /**
    * Constructs a PluginReportManager.
@@ -43,7 +47,7 @@ class PluginReportManager implements PluginReportManagerInterface {
       }
 
       $class = $service::class;
-      $id = $this->getPluginManagerServiceId($serviceId);
+      $id = $this->resolveServiceId($serviceId);
 
       $managers[$id] = [
         'id' => $id,
@@ -68,11 +72,19 @@ class PluginReportManager implements PluginReportManagerInterface {
   public function getPlugins(string $pluginManagerId): array {
     if (!$this->container->has($pluginManagerId)) {
       throw new \InvalidArgumentException(
+        sprintf('"%s" is not a known service.', $pluginManagerId)
+      );
+    }
+
+    /** @var object $service */
+    $service = $this->container->get($pluginManagerId);
+    if (!$service instanceof DefaultPluginManager) {
+      throw new \InvalidArgumentException(
         sprintf('"%s" is not a known DefaultPluginManager service.', $pluginManagerId)
       );
     }
 
-    $plugins = $this->container->get($pluginManagerId)->getDefinitions();
+    $plugins = $service->getDefinitions();
     foreach ($plugins as $pluginId => $definition) {
       $definition = (array) $definition;
       $definition['id'] = $pluginId;
@@ -94,19 +106,19 @@ class PluginReportManager implements PluginReportManagerInterface {
    * @return string
    *   The alias if found, otherwise the original service ID.
    */
-  protected function getPluginManagerServiceId(string $serviceId): string {
-    if (!isset($this->aliases)) {
-      $this->aliases = [];
+  private function resolveServiceId(string $serviceId): string {
+    if (!isset($this->aliasMap)) {
+      $this->aliasMap = [];
       $refection = new \ReflectionProperty(get_class($this->container), 'aliases');
       $aliases = (array) $refection->getValue($this->container);
-      $this->aliases = array_flip($aliases);
+      $this->aliasMap = array_flip($aliases);
     }
 
     if (!str_contains($serviceId, '\\')) {
       return $serviceId;
     }
 
-    return $this->aliases[$serviceId] ?? $serviceId;
+    return $this->aliasMap[$serviceId] ?? $serviceId;
   }
 
   /**

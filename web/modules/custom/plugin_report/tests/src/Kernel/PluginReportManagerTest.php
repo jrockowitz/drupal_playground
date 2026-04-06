@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\plugin_report\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\plugin_report\PluginReportManagerInterface;
 
 /**
  * Tests PluginReportManager.
@@ -21,10 +22,8 @@ class PluginReportManagerTest extends KernelTestBase {
 
   /**
    * The plugin report manager under test.
-   *
-   * @var \Drupal\plugin_report\PluginReportManager
    */
-  protected $pluginReportManager;
+  protected PluginReportManagerInterface $pluginReportManager;
 
   /**
    * {@inheritdoc}
@@ -73,12 +72,10 @@ class PluginReportManagerTest extends KernelTestBase {
   public function testProviderIsExtractedFromClass(): void {
     $this->enableModules(['block']);
     $managers = $this->pluginReportManager->getPluginManagers();
-    $index = array_search('plugin.manager.block', array_column($managers, 'id'), TRUE);
     // Check that the block manager's provider is extracted from its class name
     // (Drupal\Core\Block\BlockManager → second segment is 'core').
-    if ($index !== FALSE) {
-      self::assertSame('core', $managers['plugin.manager.block']['provider']);
-    }
+    self::assertArrayHasKey('plugin.manager.block', $managers);
+    self::assertSame('core', $managers['plugin.manager.block']['provider']);
   }
 
   /**
@@ -98,6 +95,30 @@ class PluginReportManagerTest extends KernelTestBase {
     // Check that an InvalidArgumentException is thrown for unknown service IDs.
     $this->expectException(\InvalidArgumentException::class);
     $this->pluginReportManager->getPlugins('plugin.manager.does_not_exist_xyz');
+  }
+
+  /**
+   * @covers ::getPluginManagers
+   */
+  public function testGetPluginManagersKeysMatchIdValues(): void {
+    $managers = $this->pluginReportManager->getPluginManagers();
+    foreach ($managers as $key => $manager) {
+      // Check that each manager's array key matches its 'id' value.
+      self::assertSame($key, $manager['id']);
+    }
+  }
+
+  /**
+   * @covers ::getPlugins
+   */
+  public function testGetPluginsInjectsIdKey(): void {
+    $this->enableModules(['block']);
+    $plugins = $this->pluginReportManager->getPlugins('plugin.manager.block');
+    $pluginId = array_key_first($plugins);
+    $first = $plugins[$pluginId];
+    // Check that plugin definitions have an 'id' key injected from the array key.
+    self::assertArrayHasKey('id', $first);
+    self::assertSame($pluginId, $first['id']);
   }
 
 }

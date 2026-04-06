@@ -1,11 +1,19 @@
+/**
+ * @file
+ * Plugin report styles.
+ */
+
+.plugin-report-table tr.is-hidden {
+  display: none;
+}
+
 .plugin-report-table td {
   min-width: 300px;
-  word-wrap: break-word;
-  word-break: break-word;
+  word-break: break-all;
 }
 
 .plugin-report-table pre {
-  font-size: .8em;
-  max-height: 200px;
   overflow-y: auto;
+  max-height: 200px;
+  font-size: 0.8em;
 }

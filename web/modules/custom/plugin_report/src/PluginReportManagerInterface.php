@@ -25,7 +25,7 @@ interface PluginReportManagerInterface {
    * @param string $pluginManagerId
    *   The service ID.
    *
-   * @return array
+   * @return array<string, array<string, mixed>>
    *   Plugin definitions keyed by plugin ID.
    *
    * @throws \InvalidArgumentException

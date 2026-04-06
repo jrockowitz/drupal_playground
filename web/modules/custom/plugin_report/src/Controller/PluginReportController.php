@@ -137,7 +137,7 @@ final class PluginReportController extends ControllerBase {
    *   The page title.
    */
   public function title(string $plugin_manager): string {
-    return 'Plugin Report: ' . $plugin_manager;
+    return (string) $this->t('Plugin Report: @id', ['@id' => $plugin_manager]);
   }
 
   /**

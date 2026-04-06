@@ -45,6 +45,14 @@
         },
         "sort-packages": true
     },
+    "scripts": {
+        "post-install-cmd": [
+            "cd web/core; corepack enable; yarn install"
+        ],
+        "post-update-cmd": [
+            "cd web/core; corepack enable; yarn install"
+        ]
+    },
     "extra": {
         "drupal-scaffold": {
             "locations": {

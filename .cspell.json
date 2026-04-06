@@ -1,0 +1,70 @@
+{
+  "version": "0.2",
+  "language": "en-US",
+  "allowCompoundWords": false,
+  "globRoot": ".",
+  "ignorePaths": [
+    "**/.*.json",
+    ".*ignore",
+    "**/composer.lock",
+    "**/schemadotorg.names.yml",
+    "**/schemaorg-current-https-properties.csv",
+    "**/schemaorg-current-https-types.csv",
+    "**/schemaorg.translations.properties.inc",
+    "**/schemaorg.translations.types.inc",
+    "**/schemadotorg_demo_headless.postman_collection.json",
+    "**/content/node/**",
+    "**/content/media/**",
+    "**/content/file/**",
+    "**/content/path_alias/**",
+    "**/content/me_template/**",
+    "**/config/snapshot/**"
+  ],
+  "ignoreRegExpList": [
+    "^msgstr .*",
+    "!!binary .*",
+    "%[0-9][0-9A-F]",
+    "\\Wi18n",
+    "\\x{[0-9A-F]{4,5}}",
+    "'youtube_id' => '[-_a-zA-Z0-9]{11}'",
+    "-block[a-z]+[- ]",
+    "default_config_hash: [-_a-zA-Z0-9]+",
+    "phpcs:disable [a-zA-Z0-9.]+",
+    "@aliases [a-z]+"
+  ],
+  "dictionaryDefinitions": [
+    {
+      "name": "drupal",
+      "path": "web/core/misc/cspell/drupal-dictionary.txt"
+    },
+    {
+      "name": "dictionary",
+      "path": "web/core/misc/cspell/dictionary.txt"
+    },
+    {
+      "name": "schemadotorg-words",
+      "path": ".cspell-project-words.txt"
+    },
+  ],
+  "dictionaries": [
+    "drupal",
+    "schemadotorg-words",
+    "schemadotorg-misc",
+    "companies",
+    "fonts",
+    "html",
+    "php",
+    "softwareTerms"
+  ],
+  "flagWords": [],
+  "overrides": [
+    {
+      "filename": "**/{*.engine,*.inc,*.install,*.module,*.profile,*.theme}",
+      "languageId": "php"
+    },
+    {
+      "filename": "**/scripts/{*.php.txt, *.sh}",
+      "languageId": "php"
+    }
+  ]
+}

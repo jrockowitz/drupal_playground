@@ -1,4 +1,7 @@
 /**
+ * @param Drupal
+ * @param debounce
+ * @param once
  * @file
  * Plugin report behaviors.
  */
@@ -18,7 +21,7 @@
    *   Attaches the behavior for the plugin report filtering.
    */
   Drupal.behaviors.pluginReportFilterByText = {
-    attach(context, settings) {
+    attach(context) {
       once(
         'plugin-report-filter-text',
         'input.plugin-report-filter-text',
@@ -37,7 +40,7 @@
          */
         function showAllRows() {
           filterRows.forEach((row) => {
-            row.style.display = '';
+            row.classList.remove('is-hidden');
           });
         }
 
@@ -54,9 +57,11 @@
           if (query.length >= 2) {
             filterRows.forEach((row) => {
               const textMatch = row.textContent.toLowerCase().includes(query);
-              row.style.display = textMatch ? '' : 'none';
+              row.classList.toggle('is-hidden', !textMatch);
             });
-            const visibleCount = table.querySelectorAll('tbody tr:not([style*="display: none"])').length;
+            const visibleCount = table.querySelectorAll(
+              'tbody tr:not(.is-hidden)',
+            ).length;
             Drupal.announce(
               Drupal.formatPlural(
                 visibleCount,
@@ -64,8 +69,7 @@
                 '@count items are available in the modified list.',
               ),
             );
-          }
-          else {
+          } else {
             showAllRows();
           }
         }
