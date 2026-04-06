@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Discovers DefaultPluginManager services and their plugin definitions.
  */
-class PluginReportManager {
+class PluginReportManager implements PluginReportManagerInterface {
 
   /**
    * Inverted map of container aliases: actual service ID => alias.
@@ -28,15 +28,7 @@ class PluginReportManager {
   ) {}
 
   /**
-   * Returns metadata about all DefaultPluginManager services.
-   *
-   * Iterates every service ID in the container, instantiates it, and keeps
-   * those that are instances of DefaultPluginManager. Protected properties are
-   * read via Reflection to avoid calling getDefinitions() prematurely.
-   *
-   * @return array
-   *   Indexed array of metadata arrays sorted by service ID. Each entry has
-   *   keys: id, class, provider, subdir, discovery, interface, alter_hook.
+   * {@inheritdoc}
    */
   public function getPluginManagers(): array {
     $managers = [];
@@ -71,17 +63,7 @@ class PluginReportManager {
   }
 
   /**
-   * Returns all plugin definitions for the given plugin manager service ID.
-   *
-   * @param string $pluginManagerId
-   *   The service ID.
-   *
-   * @return array
-   *   Plugin definitions keyed by plugin ID, exactly as returned by
-   *   getDefinitions(). Non-scalar values are not pre-processed.
-   *
-   * @throws \InvalidArgumentException
-   *   If the service ID is not a known DefaultPluginManager.
+   * {@inheritdoc}
    */
   public function getPlugins(string $pluginManagerId): array {
     if (!$this->container->has($pluginManagerId)) {

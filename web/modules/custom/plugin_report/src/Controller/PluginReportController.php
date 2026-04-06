@@ -9,7 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\Core\Utility\TableSort;
-use Drupal\plugin_report\PluginReportManager;
+use Drupal\plugin_report\PluginReportManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -22,7 +22,7 @@ final class PluginReportController extends ControllerBase {
   /**
    * The plugin report manager.
    */
-  protected PluginReportManager $pluginReportManager;
+  protected PluginReportManagerInterface $pluginReportManager;
 
   /**
    * The request stack.
@@ -32,12 +32,12 @@ final class PluginReportController extends ControllerBase {
   /**
    * Constructs a PluginReportController.
    *
-   * @param \Drupal\plugin_report\PluginReportManager $pluginReportManager
+   * @param \Drupal\plugin_report\PluginReportManagerInterface $pluginReportManager
    *   The plugin report manager.
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.
    */
-  public function __construct(PluginReportManager $pluginReportManager, RequestStack $requestStack) {
+  public function __construct(PluginReportManagerInterface $pluginReportManager, RequestStack $requestStack) {
     $this->pluginReportManager = $pluginReportManager;
     $this->requestStack = $requestStack;
   }

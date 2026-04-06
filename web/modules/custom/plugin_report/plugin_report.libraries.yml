@@ -5,7 +5,6 @@ plugin_report:
     component:
       css/plugin-report.css: {}
   dependencies:
-    - core/jquery
     - core/drupal
     - core/drupal.debounce
     - core/once

@@ -4,3 +4,5 @@ services:
 
   plugin_report.manager:
     class: Drupal\plugin_report\PluginReportManager
+
+  Drupal\plugin_report\PluginReportManagerInterface: '@plugin_report.manager'
