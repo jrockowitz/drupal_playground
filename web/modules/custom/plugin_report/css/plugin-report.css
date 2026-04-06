@@ -1,0 +1,9 @@
+.plugin-report-table td {
+  min-width: 300px;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.plugin-report-table pre {
+  font-size: .8em;
+}

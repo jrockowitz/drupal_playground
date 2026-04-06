@@ -10,7 +10,7 @@ plugin_report.plugins:
   path: '/admin/reports/plugins/{plugin_manager}'
   defaults:
     _controller: '\Drupal\plugin_report\Controller\PluginReportController::plugins'
-    _title: 'Plugin Report'
+    _title_callback: '\Drupal\plugin_report\Controller\PluginReportController::title'
   requirements:
     _permission: 'access site reports'
     plugin_manager: .+

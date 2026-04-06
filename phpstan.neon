@@ -9,3 +9,5 @@ parameters:
       path: web/modules/custom/plugin_report/src/PluginReportManager.php
     - identifier: deadCode.unreachable
       path: web/modules/custom/plugin_report/src/PluginReportManager.php
+    - identifier: method.unused
+      path: web/modules/custom/plugin_report/src/PluginReportManager.php

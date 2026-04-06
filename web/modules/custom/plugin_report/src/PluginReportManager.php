@@ -18,6 +18,15 @@ final class PluginReportManager {
   protected ContainerInterface $container;
 
   /**
+   * Inverted map of container aliases: actual service ID => alias.
+   *
+   * Populated lazily by resolveServiceId().
+   *
+   * @var array<string, string>|null
+   */
+  private ?array $aliasMap = NULL;
+
+  /**
    * Constructs a PluginReportManager.
    *
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
@@ -48,7 +57,7 @@ final class PluginReportManager {
         }
         $class = $service::class;
         $managers[] = [
-          'id' => $serviceId,
+          'id' => $this->resolveServiceId($serviceId),
           'class' => $class,
           'provider' => $this->extractProvider($class),
           'subdir' => $this->readProtected($service, 'subdir'),
@@ -86,7 +95,49 @@ final class PluginReportManager {
         sprintf('"%s" is not a known DefaultPluginManager service.', $pluginManagerId)
       );
     }
-    return $this->container->get($pluginManagerId)->getDefinitions();
+    $plugins = $this->container->get($pluginManagerId)->getDefinitions();
+    foreach ($plugins as $pluginId => $definition) {
+      if (is_object($definition)) {
+        $definition = (array) $definition;
+      }
+      $definition['id'] = $pluginId;
+      $plugins[$pluginId] = $definition;
+    }
+    return $plugins;
+  }
+
+  /**
+   * Resolves a service ID to its alias if one exists.
+   *
+   * Some modules register plugin managers under their FQCN as the primary
+   * service ID and define a conventional alias name. This method inverts the
+   * container's alias map to surface the preferred name.
+   *
+   * @param string $serviceId
+   *   The raw service ID from getServiceIds().
+   *
+   * @return string
+   *   The alias if found, otherwise the original service ID.
+   */
+  private function resolveServiceId(string $serviceId): string {
+    if (!isset($this->aliasMap)) {
+      $this->aliasMap = [];
+      try {
+        $ref = new \ReflectionProperty(get_class($this->container), 'aliases');
+        /** @var array<string, string> $aliases */
+        $aliases = $ref->getValue($this->container);
+        foreach ($aliases as $alias => $target) {
+          $this->aliasMap[$target] = $alias;
+        }
+      }
+      catch (\ReflectionException) {
+        // Leave aliasMap empty; fall back to raw service IDs.
+      }
+    }
+    if (!str_contains($serviceId, '\\')) {
+      return $serviceId;
+    }
+    return $this->aliasMap[$serviceId] ?? $serviceId;
   }
 
   /**
@@ -99,8 +150,8 @@ final class PluginReportManager {
    *   All service IDs registered in the container.
    */
   private function getContainerServiceIds(): array {
-    // getServiceIds() is declared on Drupal\Component\DependencyInjection\ContainerInterface,
-    // which extends the Symfony ContainerInterface used for the type hint here.
+    // getServiceIds() is declared on Drupal's ContainerInterface, which
+    // extends the Symfony ContainerInterface used for the type hint here.
     // @phpstan-ignore method.notFound
     return $this->container->getServiceIds();
   }

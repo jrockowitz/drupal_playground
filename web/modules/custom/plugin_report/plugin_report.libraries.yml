@@ -1,0 +1,4 @@
+plugin_report:
+  css:
+    component:
+      css/plugin-report.css: {}
