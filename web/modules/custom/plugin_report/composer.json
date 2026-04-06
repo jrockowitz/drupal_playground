@@ -1,0 +1,10 @@
+{
+    "name": "drupal/plugin_report",
+    "description": "Lists all plugin managers and their plugins on the Drupal Reports page.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": "^8.3",
+        "drupal/core": "^10 || ^11"
+    }
+}

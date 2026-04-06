@@ -1,0 +1,5 @@
+plugin_report.managers:
+  title: 'Plugins'
+  description: 'List all plugin managers and their registered plugins.'
+  route_name: plugin_report.managers
+  parent: system.admin_reports

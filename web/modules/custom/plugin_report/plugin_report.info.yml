@@ -1,0 +1,5 @@
+name: Plugin Report
+type: module
+description: 'Lists all plugin managers and their plugins on the Drupal Reports page.'
+package: Development
+core_version_requirement: ^10 || ^11

@@ -33,7 +33,9 @@
       "Bash(mv *)",
       "Read(//Users/rockowij/.claude/**)",
       "Bash(for project:*)",
-      "Bash(do echo:*)"
+      "Bash(do echo:*)",
+      "Bash(ls -la /Users/rockowij/Sites/msk_modernize/docroot/modules/custom/msk/src/*.php)",
+      "Bash(xargs ls:*)"
     ],
     "deny": [
       "Bash(ddev delete *)",

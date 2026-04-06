@@ -1,0 +1,6 @@
+services:
+  _defaults:
+    autowire: true
+
+  plugin_report.manager:
+    class: Drupal\plugin_report\PluginReportManager

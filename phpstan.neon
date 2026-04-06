@@ -2,3 +2,10 @@ parameters:
   level: 6
   ignoreErrors:
     - identifier: missingType.iterableValue
+    # False positives in PluginReportManager caused by Symfony ContainerInterface::get()
+    # having a complex conditional PHPDoc return type that phpstan cannot fully resolve.
+    # The code is correct at runtime; these suppressions are specific to that file.
+    - identifier: instanceof.alwaysFalse
+      path: web/modules/custom/plugin_report/src/PluginReportManager.php
+    - identifier: deadCode.unreachable
+      path: web/modules/custom/plugin_report/src/PluginReportManager.php

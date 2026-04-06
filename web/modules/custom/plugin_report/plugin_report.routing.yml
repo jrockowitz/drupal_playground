@@ -1,0 +1,16 @@
+plugin_report.managers:
+  path: '/admin/reports/plugins'
+  defaults:
+    _controller: '\Drupal\plugin_report\Controller\PluginReportController::managers'
+    _title: 'Plugin Report'
+  requirements:
+    _permission: 'access site reports'
+
+plugin_report.plugins:
+  path: '/admin/reports/plugins/{plugin_manager}'
+  defaults:
+    _controller: '\Drupal\plugin_report\Controller\PluginReportController::plugins'
+    _title: 'Plugin Report'
+  requirements:
+    _permission: 'access site reports'
+    plugin_manager: .+
