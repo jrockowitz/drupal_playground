@@ -10,21 +10,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Discovers DefaultPluginManager services and their plugin definitions.
  */
-final class PluginReportManager {
-
-  /**
-   * The service container.
-   */
-  protected ContainerInterface $container;
+class PluginReportManager {
 
   /**
    * Inverted map of container aliases: actual service ID => alias.
-   *
-   * Populated lazily by resolveServiceId().
-   *
-   * @var array<string, string>|null
    */
-  private ?array $aliasMap = NULL;
+  protected array $aliases;
 
   /**
    * Constructs a PluginReportManager.
@@ -32,9 +23,9 @@ final class PluginReportManager {
    * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
    *   The service container.
    */
-  public function __construct(ContainerInterface $container) {
-    $this->container = $container;
-  }
+  public function __construct(
+    protected ContainerInterface $container,
+  ) {}
 
   /**
    * Returns metadata about all DefaultPluginManager services.
@@ -43,35 +34,39 @@ final class PluginReportManager {
    * those that are instances of DefaultPluginManager. Protected properties are
    * read via Reflection to avoid calling getDefinitions() prematurely.
    *
-   * @return array<int, array<string, mixed>>
+   * @return array
    *   Indexed array of metadata arrays sorted by service ID. Each entry has
    *   keys: id, class, provider, subdir, discovery, interface, alter_hook.
    */
   public function getPluginManagers(): array {
     $managers = [];
-    foreach ($this->getContainerServiceIds() as $serviceId) {
-      try {
-        $service = $this->container->get($serviceId);
-        if (!$service instanceof DefaultPluginManager) {
-          continue;
-        }
-        $class = $service::class;
-        $managers[] = [
-          'id' => $this->resolveServiceId($serviceId),
-          'class' => $class,
-          'provider' => $this->extractProvider($class),
-          'subdir' => $this->readProtected($service, 'subdir'),
-          'discovery' => $this->readProtected($service, 'pluginDefinitionAttributeName')
-            ?: $this->readProtected($service, 'pluginDefinitionAnnotationName'),
-          'interface' => $this->readProtected($service, 'pluginInterface'),
-          'alter_hook' => $this->readProtected($service, 'alterHook'),
-        ];
-      }
-      catch (\Throwable) {
+    // @phpstan-ignore-next-line method.notFound
+    $serviceIds = $this->container->getServiceIds();
+
+    foreach ($serviceIds as $serviceId) {
+      /** @var \Drupal\Core\Plugin\DefaultPluginManager|null $service */
+      $service = $this->container->get($serviceId);
+      if (!$service instanceof DefaultPluginManager) {
         continue;
       }
+
+      $class = $service::class;
+      $id = $this->getPluginManagerServiceId($serviceId);
+
+      $managers[$id] = [
+        'id' => $id,
+        'class' => $class,
+        'provider' => $this->extractProvider($class),
+        'subdir' => $this->readProtected($service, 'subdir'),
+        'discovery' => $this->readProtected($service, 'pluginDefinitionAttributeName')
+          ?: $this->readProtected($service, 'pluginDefinitionAnnotationName'),
+        'interface' => $this->readProtected($service, 'pluginInterface'),
+        'alter_hook' => $this->readProtected($service, 'alterHook'),
+      ];
     }
-    usort($managers, static fn(array $a, array $b): int => strcmp((string) $a['id'], (string) $b['id']));
+
+    ksort($managers);
+
     return $managers;
   }
 
@@ -89,17 +84,15 @@ final class PluginReportManager {
    *   If the service ID is not a known DefaultPluginManager.
    */
   public function getPlugins(string $pluginManagerId): array {
-    $ids = array_column($this->getPluginManagers(), 'id');
-    if (!in_array($pluginManagerId, $ids, TRUE)) {
+    if (!$this->container->has($pluginManagerId)) {
       throw new \InvalidArgumentException(
         sprintf('"%s" is not a known DefaultPluginManager service.', $pluginManagerId)
       );
     }
+
     $plugins = $this->container->get($pluginManagerId)->getDefinitions();
     foreach ($plugins as $pluginId => $definition) {
-      if (is_object($definition)) {
-        $definition = (array) $definition;
-      }
+      $definition = (array) $definition;
       $definition['id'] = $pluginId;
       $plugins[$pluginId] = $definition;
     }
@@ -119,41 +112,19 @@ final class PluginReportManager {
    * @return string
    *   The alias if found, otherwise the original service ID.
    */
-  private function resolveServiceId(string $serviceId): string {
-    if (!isset($this->aliasMap)) {
-      $this->aliasMap = [];
-      try {
-        $ref = new \ReflectionProperty(get_class($this->container), 'aliases');
-        /** @var array<string, string> $aliases */
-        $aliases = $ref->getValue($this->container);
-        foreach ($aliases as $alias => $target) {
-          $this->aliasMap[$target] = $alias;
-        }
-      }
-      catch (\ReflectionException) {
-        // Leave aliasMap empty; fall back to raw service IDs.
-      }
+  protected function getPluginManagerServiceId(string $serviceId): string {
+    if (!isset($this->aliases)) {
+      $this->aliases = [];
+      $refection = new \ReflectionProperty(get_class($this->container), 'aliases');
+      $aliases = (array) $refection->getValue($this->container);
+      $this->aliases = array_flip($aliases);
     }
+
     if (!str_contains($serviceId, '\\')) {
       return $serviceId;
     }
-    return $this->aliasMap[$serviceId] ?? $serviceId;
-  }
 
-  /**
-   * Returns all service IDs from the container.
-   *
-   * Wraps the Drupal-specific getServiceIds() method, which is not declared on
-   * the Symfony ContainerInterface but is available on all Drupal containers.
-   *
-   * @return list<string>
-   *   All service IDs registered in the container.
-   */
-  private function getContainerServiceIds(): array {
-    // getServiceIds() is declared on Drupal's ContainerInterface, which
-    // extends the Symfony ContainerInterface used for the type hint here.
-    // @phpstan-ignore method.notFound
-    return $this->container->getServiceIds();
+    return $this->aliases[$serviceId] ?? $serviceId;
   }
 
   /**
@@ -193,7 +164,7 @@ final class PluginReportManager {
       $ref = new \ReflectionProperty(DefaultPluginManager::class, $property);
       return $ref->getValue($manager);
     }
-    catch (\ReflectionException) {
+    catch (\Exception) {
       return NULL;
     }
   }

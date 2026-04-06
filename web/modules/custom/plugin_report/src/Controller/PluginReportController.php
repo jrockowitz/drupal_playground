@@ -91,11 +91,11 @@ final class PluginReportController extends ControllerBase {
             ]),
           ],
         ],
-        'alter_hook' => (string) ($info['alter_hook'] ?? ''),
-        'subdir' => (string) ($info['subdir'] ?? ''),
+        'alter_hook' => $info['alter_hook'],
+        'subdir' => $info['subdir'],
         'provider' => $info['provider'],
-        'discovery' => (string) ($info['discovery'] ?? ''),
-        'interface' => (string) ($info['interface'] ?? ''),
+        'discovery' => $info['discovery'],
+        'interface' => $info['interface'],
         'class' => $info['class'],
       ];
     }
