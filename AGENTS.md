@@ -44,6 +44,24 @@ ddev code-fix <file|directory>
 
 - Use `python3` instead of `python` when invoking Python.
 
+## PHP
+
+- Don't try to align array keys and values.
+
+```php
+$array = [
+  'key' => 'value'
+  'key1' => 'value1',
+];
+```
+
+### Tests
+- Assertion blocks should have comments that typically begin with `// Check that ...`.
+  - Do not use `/* *** {comments} *** */` comments.
+  - Look at existing tests in the module for the expected style.
+- For BrowserTest (aka functional)
+  - Try to use one test method with assertion blocks to improve the test performance.
+
 ## Code Style & Standards
 
 - Never use abbreviations in names.
@@ -55,6 +73,3 @@ ddev code-fix <file|directory>
   - Exceptions for widely accepted conventions:
     - `$io`, `src`, `href`, `url`, `id`, `$config`
     - `html`, `csv`, `api`, `sql`, `php`, language codes like `$langcode`.
-- In tests, assertion blocks should have comments that typically begin with `// Check that ...`.
-  - Do not use `/* *** {comments} *** */` comments.
-  - Look at existing tests in the module for the expected style.
