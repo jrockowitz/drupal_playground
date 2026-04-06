@@ -123,7 +123,7 @@ class PluginReportManager implements PluginReportManagerInterface {
    */
   protected function extractProvider(string $class): string {
     $parts = explode('\\', $class);
-    return $parts[1] ?? '';
+    return strtolower($parts[1] ?? '');
   }
 
   /**

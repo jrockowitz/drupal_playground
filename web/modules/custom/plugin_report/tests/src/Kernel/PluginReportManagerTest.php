@@ -75,9 +75,9 @@ class PluginReportManagerTest extends KernelTestBase {
     $managers = $this->pluginReportManager->getPluginManagers();
     $index = array_search('plugin.manager.block', array_column($managers, 'id'), TRUE);
     // Check that the block manager's provider is extracted from its class name
-    // (Drupal\Core\Block\BlockManager → second segment is 'Core').
+    // (Drupal\Core\Block\BlockManager → second segment is 'core').
     if ($index !== FALSE) {
-      self::assertSame('Core', $managers['plugin.manager.block']['provider']);
+      self::assertSame('core', $managers['plugin.manager.block']['provider']);
     }
   }
 
