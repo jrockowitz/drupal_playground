@@ -101,13 +101,29 @@ final class PluginReportController extends ControllerBase {
     }
 
     return [
-      '#type' => 'table',
-      '#header' => $headers,
-      '#rows' => $rows,
-      '#sticky' => TRUE,
-      '#empty' => $this->t('No plugin managers found.'),
-      '#attributes' => ['class' => ['plugin-report-table']],
-      '#attached' => ['library' => ['plugin_report/plugin_report']],
+      'filter' => [
+        '#type' => 'search',
+        '#title' => $this->t('Filter'),
+        '#title_display' => 'invisible',
+        '#size' => 30,
+        '#placeholder' => $this->t('Filter by text'),
+        '#attributes' => [
+          'class' => ['plugin-report-filter-text'],
+          'data-element' => '#plugin-report-managers',
+        ],
+      ],
+      'table' => [
+        '#type' => 'table',
+        '#header' => $headers,
+        '#rows' => $rows,
+        '#sticky' => TRUE,
+        '#empty' => $this->t('No plugin managers found.'),
+        '#attributes' => [
+          'class' => ['plugin-report-table'],
+          'id' => 'plugin-report-managers',
+        ],
+        '#attached' => ['library' => ['plugin_report/plugin_report']],
+      ],
     ];
   }
 
@@ -192,13 +208,29 @@ final class PluginReportController extends ControllerBase {
     }
 
     return [
-      '#type' => 'table',
-      '#header' => $headers,
-      '#rows' => $rows,
-      '#sticky' => TRUE,
-      '#empty' => $this->t('No plugins found.'),
-      '#attributes' => ['class' => ['plugin-report-table']],
-      '#attached' => ['library' => ['plugin_report/plugin_report']],
+      'filter' => [
+        '#type' => 'search',
+        '#title' => $this->t('Filter'),
+        '#title_display' => 'invisible',
+        '#size' => 30,
+        '#placeholder' => $this->t('Filter by text'),
+        '#attributes' => [
+          'class' => ['plugin-report-filter-text'],
+          'data-element' => '#plugin-report-plugins',
+        ],
+      ],
+      'table' => [
+        '#type' => 'table',
+        '#header' => $headers,
+        '#rows' => $rows,
+        '#sticky' => TRUE,
+        '#empty' => $this->t('No plugins found.'),
+        '#attributes' => [
+          'class' => ['plugin-report-table'],
+          'id' => 'plugin-report-plugins',
+        ],
+        '#attached' => ['library' => ['plugin_report/plugin_report']],
+      ],
     ];
   }
 

@@ -6,4 +6,6 @@
 
 .plugin-report-table pre {
   font-size: .8em;
+  max-height: 200px;
+  overflow-y: auto;
 }
