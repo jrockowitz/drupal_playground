@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\plugin_report;
 
+use Drupal\Component\Plugin\ConfigurableInterface;
+use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\Core\Render\Element\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -91,6 +94,54 @@ class PluginReportManager implements PluginReportManagerInterface {
       $plugins[$pluginId] = $definition;
     }
     return $plugins;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPlugin(string $pluginManagerId, string $pluginId): array {
+    $service = $this->container->has($pluginManagerId)
+      ? $this->container->get($pluginManagerId)
+      : NULL;
+    if (!$service instanceof DefaultPluginManager) {
+      throw new \InvalidArgumentException(
+        sprintf('"%s" is not a known DefaultPluginManager service.', $pluginManagerId)
+      );
+    }
+
+    $definitions = $service->getDefinitions();
+    if (!array_key_exists($pluginId, $definitions)) {
+      throw new \InvalidArgumentException(
+        sprintf('"%s" is not a known plugin of "%s".', $pluginId, $pluginManagerId)
+      );
+    }
+
+    $definition = (array) $definitions[$pluginId];
+    $definition['id'] = $pluginId;
+    $result = ['definition' => $definition];
+
+    try {
+      $instance = $service->createInstance($pluginId);
+      if ($instance instanceof ConfigurableInterface) {
+        $result['defaultConfiguration'] = $instance->defaultConfiguration();
+      }
+      if ($instance instanceof ElementInterface) {
+        $result['getInfo'] = $instance->getInfo();
+      }
+      if ($instance instanceof PluginInspectionInterface) {
+        $result['getPluginDefinition'] = (array) $instance->getPluginDefinition();
+      }
+    }
+    catch (\Exception) {
+      // Plugin could not be instantiated without required context — skip runtime data.
+    }
+
+    $class = isset($instance) ? get_class($instance) : ($definition['class'] ?? NULL);
+    $interfaces = $class ? array_values((array) class_implements($class)) : [];
+    sort($interfaces);
+    $result['interfaces'] = $interfaces;
+
+    return $result;
   }
 
   /**

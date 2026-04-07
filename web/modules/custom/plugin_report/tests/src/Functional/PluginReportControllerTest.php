@@ -68,6 +68,19 @@ class PluginReportControllerTest extends BrowserTestBase {
     // Check that the title callback renders the manager ID in the page heading.
     $this->assertSession()->pageTextContains('Plugin Report: plugin.manager.block');
 
+    // Check that the plugin list links each plugin to its detail page.
+    $this->assertSession()->linkByHrefExists('/admin/reports/plugins/plugin.manager.block/system_menu_block');
+
+    // Check that the plugin detail page renders correctly.
+    $this->drupalGet('/admin/reports/plugins/plugin.manager.block/system_menu_block');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Plugin Report: plugin.manager.block / system_menu_block');
+    $this->assertSession()->pageTextContains('definition');
+
+    // Check that an unknown plugin ID returns 404.
+    $this->drupalGet('/admin/reports/plugins/plugin.manager.block/does_not_exist_xyz');
+    $this->assertSession()->statusCodeEquals(404);
+
     // Check that an unknown manager returns 404 rather than a PHP exception.
     $this->drupalGet('/admin/reports/plugins/plugin.manager.does_not_exist_xyz');
     $this->assertSession()->statusCodeEquals(404);

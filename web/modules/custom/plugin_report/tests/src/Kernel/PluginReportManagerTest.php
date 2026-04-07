@@ -98,6 +98,27 @@ class PluginReportManagerTest extends KernelTestBase {
   }
 
   /**
+   * @covers ::getPlugin
+   */
+  public function testGetPluginReturnsDefinition(): void {
+    $this->enableModules(['block']);
+    $data = $this->pluginReportManager->getPlugin('plugin.manager.block', 'system_menu_block');
+    // Check that getPlugin returns a 'definition' key with the plugin's definition.
+    self::assertArrayHasKey('definition', $data);
+    self::assertSame('system_menu_block', $data['definition']['id']);
+  }
+
+  /**
+   * @covers ::getPlugin
+   */
+  public function testGetPluginThrowsOnUnknownPlugin(): void {
+    $this->enableModules(['block']);
+    // Check that an InvalidArgumentException is thrown for unknown plugin IDs.
+    $this->expectException(\InvalidArgumentException::class);
+    $this->pluginReportManager->getPlugin('plugin.manager.block', 'does_not_exist_xyz');
+  }
+
+  /**
    * @covers ::getPluginManagers
    */
   public function testGetPluginManagersKeysMatchIdValues(): void {

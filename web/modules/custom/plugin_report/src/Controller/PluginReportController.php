@@ -202,7 +202,21 @@ final class PluginReportController extends ControllerBase {
     foreach ($plugins as $plugin) {
       $row = [];
       foreach ($orderedKeys as $key) {
-        $row[] = $this->formatValue($plugin[$key] ?? '');
+        if ($key === 'id') {
+          $row[] = [
+            'data' => [
+              '#type' => 'link',
+              '#title' => $plugin['id'],
+              '#url' => Url::fromRoute('plugin_report.plugin', [
+                'plugin_manager' => $plugin_manager,
+                'plugin_id' => $plugin['id'],
+              ]),
+            ],
+          ];
+        }
+        else {
+          $row[] = $this->formatValue($plugin[$key] ?? '');
+        }
       }
       $rows[] = $row;
     }
@@ -232,6 +246,66 @@ final class PluginReportController extends ControllerBase {
         '#attached' => ['library' => ['plugin_report/plugin_report']],
       ],
     ];
+  }
+
+  /**
+   * Returns the page title for the single-plugin detail page.
+   *
+   * @param string $plugin_manager
+   *   The plugin manager service ID from the route parameter.
+   * @param string $plugin_id
+   *   The plugin ID from the route parameter.
+   *
+   * @return string
+   *   The page title.
+   */
+  public function pluginTitle(string $plugin_manager, string $plugin_id): string {
+    return (string) $this->t('Plugin Report: @manager / @plugin', [
+      '@manager' => $plugin_manager,
+      '@plugin' => $plugin_id,
+    ]);
+  }
+
+  /**
+   * Renders the detail page for a single plugin.
+   *
+   * Each key returned by getPlugin() is rendered as a collapsible details
+   * element. The 'definition' section is open by default; all others start
+   * collapsed.
+   *
+   * @param string $plugin_manager
+   *   The plugin manager service ID from the route parameter.
+   * @param string $plugin_id
+   *   The plugin ID from the route parameter.
+   *
+   * @return array
+   *   A render array.
+   *
+   * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+   *   If the manager or plugin ID is not known.
+   */
+  public function plugin(string $plugin_manager, string $plugin_id): array {
+    try {
+      $data = $this->pluginReportManager->getPlugin($plugin_manager, $plugin_id);
+    }
+    catch (\InvalidArgumentException) {
+      throw new NotFoundHttpException();
+    }
+
+    $build = ['#attached' => ['library' => ['plugin_report/plugin_report']]];
+    foreach ($data as $section => $value) {
+      $build[$section] = [
+        '#type' => 'details',
+        '#title' => $section,
+        '#open' => $section === 'definition',
+        'content' => [
+          '#type' => 'html_tag',
+          '#tag' => 'pre',
+          '#value' => Yaml::encode($this->convertTranslatableMarkup($value)),
+        ],
+      ];
+    }
+    return $build;
   }
 
   /**

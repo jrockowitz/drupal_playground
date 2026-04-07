@@ -33,4 +33,26 @@ interface PluginReportManagerInterface {
    */
   public function getPlugins(string $pluginManagerId): array;
 
+  /**
+   * Returns definition and runtime data for a single plugin.
+   *
+   * Attempts to instantiate the plugin and collect data from known interfaces:
+   * ConfigurableInterface, ElementInterface, PluginInspectionInterface.
+   * Instantiation failures are silently ignored — only successfully retrieved
+   * data is included in the result.
+   *
+   * @param string $pluginManagerId
+   *   The plugin manager service ID.
+   * @param string $pluginId
+   *   The plugin ID.
+   *
+   * @return array<string, mixed>
+   *   Associative array. Always contains 'definition'. May also contain
+   *   'defaultConfiguration', 'getInfo', and/or 'getPluginDefinition'.
+   *
+   * @throws \InvalidArgumentException
+   *   If the manager or plugin ID is not known.
+   */
+  public function getPlugin(string $pluginManagerId, string $pluginId): array;
+
 }

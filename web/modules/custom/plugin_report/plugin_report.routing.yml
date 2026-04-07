@@ -14,3 +14,13 @@ plugin_report.plugins:
   requirements:
     _permission: 'access site reports'
     plugin_manager: .+
+F
+plugin_report.plugin:
+  path: '/admin/reports/plugins/{plugin_manager}/{plugin_id}'
+  defaults:
+    _controller: '\Drupal\plugin_report\Controller\PluginReportController::plugin'
+    _title_callback: '\Drupal\plugin_report\Controller\PluginReportController::pluginTitle'
+  requirements:
+    _permission: 'access site reports'
+    plugin_manager: .+
+    plugin_id: '[^/]+'
