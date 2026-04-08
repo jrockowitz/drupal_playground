@@ -20,7 +20,8 @@
       "Bash(vendor/bin/phpcbf *)",
       "Bash(vendor/bin/phpstan *)",
       "Bash(xargs *)",
-      "Bash(for project:*)", "Bash(do echo:*)",
+      "Bash(for project:*)",
+      "Bash(do echo:*)",
       "WebFetch(domain:docs.cweagans.net)",
       "WebFetch(domain:git.drupalcode.org)",
       "WebFetch(domain:github.com)",
@@ -33,7 +34,9 @@
       "mcp__plugin_playwright_playwright__browser_click",
       "mcp__plugin_playwright_playwright__browser_fill_form",
       "mcp__plugin_playwright_playwright__browser_navigate",
-      "mcp__jetbrains__get_all_open_file_paths"
+      "mcp__jetbrains__get_all_open_file_paths",
+      "Bash(grep -r \"#\\\\[CLI\"\" /Users/rockowij/Sites/drupal_playground/web/modules/contrib --include=\"*.php \")",
+      "Bash(sort -t: -k1,1 -k2,2n)"
     ],
     "deny": [
       "Bash(ddev delete *)",

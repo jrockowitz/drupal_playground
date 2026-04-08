@@ -46,6 +46,7 @@ ddev code-fix <file|directory>
 
 ## PHP
 
+- In PHPDoc, use plain `array` instead of shaped array annotations like `array<...>`, `int[]`, or `string[]`.
 - Don't try to align array keys and values.
 
 ```php

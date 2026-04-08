@@ -211,6 +211,11 @@ final class PluginReportController extends ControllerBase {
                 'plugin_manager' => $plugin_manager,
                 'plugin_id' => $plugin['id'],
               ]),
+              '#attributes' => [
+                'class' => ['use-ajax'],
+                'data-dialog-type' => 'modal',
+                'data-dialog-options' => '{"width":"800"}',
+              ],
             ],
           ];
         }
@@ -243,7 +248,7 @@ final class PluginReportController extends ControllerBase {
           'class' => ['plugin-report-table'],
           'id' => 'plugin-report-plugins',
         ],
-        '#attached' => ['library' => ['plugin_report/plugin_report']],
+        '#attached' => ['library' => ['plugin_report/plugin_report', 'core/drupal.ajax']],
       ],
     ];
   }
@@ -260,18 +265,14 @@ final class PluginReportController extends ControllerBase {
    *   The page title.
    */
   public function pluginTitle(string $plugin_manager, string $plugin_id): string {
-    return (string) $this->t('Plugin Report: @manager / @plugin', [
-      '@manager' => $plugin_manager,
-      '@plugin' => $plugin_id,
-    ]);
+    return $plugin_manager . ':' . $plugin_id;
   }
 
   /**
    * Renders the detail page for a single plugin.
    *
    * Each key returned by getPlugin() is rendered as a collapsible details
-   * element. The 'definition' section is open by default; all others start
-   * collapsed.
+   * element, open by default.
    *
    * @param string $plugin_manager
    *   The plugin manager service ID from the route parameter.
@@ -296,8 +297,8 @@ final class PluginReportController extends ControllerBase {
     foreach ($data as $section => $value) {
       $build[$section] = [
         '#type' => 'details',
-        '#title' => $section,
-        '#open' => $section === 'definition',
+        '#title' => ucfirst(strtolower(preg_replace('/([A-Z])/', ' $1', $section))),
+        '#open' => TRUE,
         'content' => [
           '#type' => 'html_tag',
           '#tag' => 'pre',

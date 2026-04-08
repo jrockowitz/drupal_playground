@@ -37,7 +37,7 @@ interface PluginReportManagerInterface {
    * Returns definition and runtime data for a single plugin.
    *
    * Attempts to instantiate the plugin and collect data from known interfaces:
-   * ConfigurableInterface, ElementInterface, PluginInspectionInterface.
+   * ConfigurableInterface, ElementInterface.
    * Instantiation failures are silently ignored — only successfully retrieved
    * data is included in the result.
    *
@@ -48,7 +48,7 @@ interface PluginReportManagerInterface {
    *
    * @return array<string, mixed>
    *   Associative array. Always contains 'definition'. May also contain
-   *   'defaultConfiguration', 'getInfo', and/or 'getPluginDefinition'.
+   *   'defaultConfiguration' and/or 'getInfo'.
    *
    * @throws \InvalidArgumentException
    *   If the manager or plugin ID is not known.

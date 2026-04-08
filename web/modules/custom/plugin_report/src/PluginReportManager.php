@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\plugin_report;
 
 use Drupal\Component\Plugin\ConfigurableInterface;
-use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Render\Element\ElementInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -100,6 +99,7 @@ class PluginReportManager implements PluginReportManagerInterface {
    * {@inheritdoc}
    */
   public function getPlugin(string $pluginManagerId, string $pluginId): array {
+    /** @var \Drupal\Core\Plugin\DefaultPluginManager|null $service */
     $service = $this->container->has($pluginManagerId)
       ? $this->container->get($pluginManagerId)
       : NULL;
@@ -127,9 +127,6 @@ class PluginReportManager implements PluginReportManagerInterface {
       }
       if ($instance instanceof ElementInterface) {
         $result['getInfo'] = $instance->getInfo();
-      }
-      if ($instance instanceof PluginInspectionInterface) {
-        $result['getPluginDefinition'] = (array) $instance->getPluginDefinition();
       }
     }
     catch (\Exception) {

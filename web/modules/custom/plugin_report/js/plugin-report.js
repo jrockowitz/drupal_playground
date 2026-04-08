@@ -1,12 +1,19 @@
 /**
- * @param Drupal
- * @param debounce
- * @param once
  * @file
  * Plugin report behaviors.
  */
 
-(function (Drupal, debounce, once) {
+/**
+ * Initializes plugin report behaviors.
+ *
+ * @param {object} Drupal
+ *   The Drupal object.
+ * @param {Function} debounce
+ *   The Drupal debounce helper.
+ * @param {Function} once
+ *   The Drupal once helper.
+ */
+(function pluginReportBehavior(Drupal, debounce, once) {
   /**
    * Filters the plugin report table by a text input search string.
    *
@@ -14,11 +21,6 @@
    *
    * The target element to do searching in will be in the selector
    * `input.plugin-report-filter-text[data-element]`
-   *
-   * @type {Drupal~behavior}
-   *
-   * @prop {Drupal~behaviorAttach} attach
-   *   Attaches the behavior for the plugin report filtering.
    */
   Drupal.behaviors.pluginReportFilterByText = {
     attach(context) {
@@ -74,6 +76,15 @@
           }
         }
 
+        /**
+         * Restores rows after the search input clear button is used.
+         */
+        function handleInputClear() {
+          if (!input.value) {
+            showAllRows();
+          }
+        }
+
         input.addEventListener('keyup', debounce(filterPluginList, 200));
 
         // Detect when the search clear button is clicked. The clear button does
@@ -82,11 +93,7 @@
         // @see https://adamyonk.com/posts/2025-01-03-html-search-input/
         input.addEventListener('click', ({ target }) => {
           if (target.value) {
-            setTimeout(() => {
-              if (!target.value) {
-                showAllRows();
-              }
-            }, 0);
+            setTimeout(handleInputClear, 0);
           }
         });
       });
