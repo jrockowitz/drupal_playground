@@ -62,10 +62,10 @@ final class PluginReportController extends ControllerBase {
     $managers = $this->pluginReportManager->getPluginManagers();
 
     $headers = [
-      'id' => ['data' => $this->t('Service ID'), 'field' => 'id', 'sort' => 'asc'],
+      'provider' => ['data' => $this->t('Provider'), 'field' => 'provider', 'sort' => 'asc'],
+      'id' => ['data' => $this->t('Service ID'), 'field' => 'id'],
       'alter_hook' => ['data' => $this->t('Alter Hook'), 'field' => 'alter_hook'],
       'subdir' => ['data' => $this->t('Subdirectory'), 'field' => 'subdir'],
-      'provider' => ['data' => $this->t('Provider'), 'field' => 'provider'],
       'discovery' => ['data' => $this->t('Discovery'), 'field' => 'discovery'],
       'interface' => ['data' => $this->t('Plugin Interface'), 'field' => 'interface'],
       'class' => ['data' => $this->t('Class'), 'field' => 'class'],
@@ -82,6 +82,7 @@ final class PluginReportController extends ControllerBase {
     $rows = [];
     foreach ($managers as $info) {
       $rows[] = [
+        'provider' => $info['provider'],
         'id' => [
           'data' => [
             '#type' => 'link',
@@ -93,7 +94,6 @@ final class PluginReportController extends ControllerBase {
         ],
         'alter_hook' => $info['alter_hook'],
         'subdir' => $info['subdir'],
-        'provider' => $info['provider'],
         'discovery' => $info['discovery'],
         'interface' => $info['interface'],
         'class' => $info['class'],

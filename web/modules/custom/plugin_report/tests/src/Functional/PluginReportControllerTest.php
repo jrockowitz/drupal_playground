@@ -49,6 +49,8 @@ class PluginReportControllerTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Class');
     $this->assertSession()->pageTextContains('Provider');
     $this->assertSession()->pageTextContains('Discovery');
+    // Check that Provider is the first column on the managers page.
+    $this->assertSession()->elementTextContains('css', 'table thead th:first-child', 'Provider');
     // Check that the filter input is rendered on the managers page.
     $this->assertSession()->elementExists('css', 'input.plugin-report-filter-text');
 
