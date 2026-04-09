@@ -68,6 +68,19 @@
         {
             "type": "package",
             "package": {
+                "name": "drupal/plugin_report",
+                "type": "drupal-module-sandbox",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupalcode.org:project/plugin_report.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
                 "name": "drupal/schemadotorg",
                 "type": "drupal-module-sandbox",
                 "version": "1.0.x-dev",
