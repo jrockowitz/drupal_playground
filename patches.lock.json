@@ -14,17 +14,6 @@
             },
             {
                 "package": "drupal/core",
-                "description": "Persist is_syncing across container rebuilds",
-                "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
-                "sha256": "635c3ece0a99bc50ce3656ea671850160aabebf7f6e3d30e8af91a18da095a82",
-                "depth": 2,
-                "extra": {
-                    "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3572171",
-                    "provenance": "dependency:drupal/core"
-                }
-            },
-            {
-                "package": "drupal/core",
                 "description": "Page scrolls away on modifying fields in text formats and editor form.",
                 "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/11425.diff",
                 "sha256": "a24b4c0d7ae7f53906e2555474c57b81bf44dd9843b3a873d86fea89356314d7",
