@@ -11,6 +11,9 @@ The `/init` command analyzes your codebase and generates a starter CLAUDE.md. It
 ```bash
 # Inside a Claude Code session
 /init
+
+# Add notes to CLAUDE.md,
+# Keep comments short and concise.
 ```
 
 ### What /init Does
