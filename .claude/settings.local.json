@@ -44,7 +44,8 @@
       "Bash(sudo *)",
       "Read(*.credentials*)",
       "Read(*.key)",
-      "Read(.env*)"
+      "Read(.env*)",
+      "Read(/keys/*)"
     ]
   }
 }
