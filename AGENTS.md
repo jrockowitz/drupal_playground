@@ -1,12 +1,13 @@
-## Project Overview
+# Environment
 
-Drupal 11 playground site managed with DDEV and Composer. The project is structured around custom Drupal Recipes that compose modules and configuration into reusable installation presets.
+- PHP: 8.3
+- DDEV project name: `drupal-playground`
+- DDEV URL: https://drupal-playground.ddev.site
+- Docroot: `web/`
 
-- **DDEV project name:** `drupal-playground` → site at `https://drupal-playground.ddev.site`
-- **Docroot:** `web/`
-- **PHP:** 8.3, **DB:** MariaDB 10.11, **Webserver:** nginx-fpm
+# Commands
 
-## Commands
+## DDEV
 
 ```bash
 # Open site and log in as admin (one-time login link)
@@ -22,27 +23,39 @@ ddev code-review <file|directory>
 ddev code-fix <file|directory>
 ```
 
-## Architecture
+# Architecture
 
-### Directory Structure
+## Directories
 
 - `recipes/` — Custom Drupal Recipes (each has `recipe.yml` + `composer.json`)
 - `web/` — Drupal docroot (managed by Composer scaffolding)
 - `.ddev/` — DDEV configuration, custom commands, PHP/Nginx overrides
 - `docs/` — Project documentation (DDEV setup, PHPStorm config)
 
-## HTML
+# Drupal
 
-- Only add returns after block tags. (<p>, <div>, <ul>, <li>, <br/>, etc...)
+- For config settings form
+  - Use `#config_target` from `ConfigFormBase`
+  - @see https://www.drupal.org/node/3373502
+
+# Programming
+
+## General
+
+- Never use abbreviations in names
+  - Write the full word every time
+  - Examples include use:
+    - `$definition` not `$def`
+    - `$parameters` not `$params`
+    - `$temporary` not `$tmp`
+  - Exceptions for widely accepted conventions:
+    - `$io`, `src`, `href`, `url`, `id`, `$config`
+    - `html`, `csv`, `api`, `sql`, `php`, language codes like `$langcode`.
 
 ## Git
 
 - Never commit or push code unless explicitly asked to do so.
 - All commits made by AI should end with a note that says: `AI-assisted by {code agent name}`.
-
-## Python
-
-- Use `python3` instead of `python` when invoking Python.
 
 ## PHP
 
@@ -56,21 +69,18 @@ $array = [
 ];
 ```
 
-### Tests
-- Assertion blocks should have comments that typically begin with `// Check that ...`.
-  - Do not use `/* *** {comments} *** */` comments.
-  - Look at existing tests in the module for the expected style.
-- For BrowserTest (aka functional)
-  - Try to use one test method with assertion blocks to improve the test performance.
+- Tests
+  - Assertion blocks should have comments that typically begin with `// Check that ...`.
+    - Do not use `/* * {comments} * */` comments.
+    - Look at existing tests in the module for the expected style.
+  - For BrowserTest (aka functional)
+    - Try to use one test method with assertion blocks to improve the test performance.
 
-## Code Style & Standards
+## HTML
 
-- Never use abbreviations in names.
-  - Write the full word every time
-  - Example include:
-    - `$definition` not `$def`
-    - `$parameters` not `$params`
-    - `$temporary` not `$tmp`
-  - Exceptions for widely accepted conventions:
-    - `$io`, `src`, `href`, `url`, `id`, `$config`
-    - `html`, `csv`, `api`, `sql`, `php`, language codes like `$langcode`.
+- Only add returns after block tags. (<p>, <div>, <ul>, <li>, <br/>, etc...)
+
+## Python
+
+- Use `python3` instead of `python` when invoking Python.
+

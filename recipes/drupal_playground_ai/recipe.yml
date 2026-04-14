@@ -19,7 +19,7 @@ config:
   strict: false
   import:
     ai: '*'
-    ai_dashboard: '*'
+#    ai_dashboard: '*'
     key: '*'
     dashboard: '*'
   actions:

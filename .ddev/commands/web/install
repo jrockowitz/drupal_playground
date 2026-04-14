@@ -15,7 +15,7 @@ if [ "$#" -gt 1 ]; then
 fi
 
 if [ "$1" = "all" ]; then
-  set -- ai schemadotorg eca translation
+  set -- ai schemadotorg eca translation modules
 fi
 
 drush site:install core/recipes/standard \
@@ -33,9 +33,6 @@ drush cr;
 
 # Uninstall the toolbar module, which can't be done via a recipe.
 drush pm:uninstall toolbar
-
-# Install custom and sandbox modules.
-drush en -y telephone_filter entity_labels
 
 for PRESET in "$@"; do
   if [ "$PRESET" = "ai" ]; then
@@ -58,6 +55,8 @@ for PRESET in "$@"; do
     drush recipe ../recipes/drupal_playground_translation
     drush locale-check
     drush locale-update
+  elif [ "$PRESET" = "modules" ]; then
+    drush en -y telephone_filter entity_labels
   fi
 done
 
