@@ -6,7 +6,6 @@ description: >
 type: 'Site'
 recipes:
   - drupal_playground_base
-  - drupal_playground_translation
 
 install:
   - ai

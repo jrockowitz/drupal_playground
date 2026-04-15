@@ -34,9 +34,16 @@ ddev code-fix <file|directory>
 
 # Drupal
 
-- For config settings form
-  - Use `#config_target` from `ConfigFormBase`
-  - @see https://www.drupal.org/node/3373502
+- Simple Config
+  - Use `#config_target` when extending `ConfigFormBase`. @see https://www.drupal.org/node/3373502
+- Services
+  - Always use `autowire`
+  - Always create an interface
+  - Only use public methods when absolutely necessary
+- Hooks
+  - Use OOP hooks instead of procedural hooks with legacy support. @see https://www.drupal.org/node/3442349
+- Drush
+  - Always use `autowire`
 
 # Programming
 

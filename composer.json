@@ -23,6 +23,7 @@
         "drupal/core-recipe-unpack": "^11.0",
         "drupal/core-recommended": "^11.0",
         "drupal/json_field": "^1.7",
+        "drupal/token_entity_render": "^2.0",
         "drupal/webform": "*",
         "drush/drush": "^13.7",
         "wikimedia/composer-merge-plugin": "^2.1"
