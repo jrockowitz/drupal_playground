@@ -23,6 +23,7 @@
 | `ai_schemadotorg_jsonld.token.inc` | Thin procedural wrappers for token hooks |
 | `composer.json` | Module package metadata |
 | `config/install/ai_schemadotorg_jsonld.settings.yml` | Default config |
+| `config/schema/ai_schemadotorg_jsonld.schema.yml` | Config schema for settings |
 | `src/AiSchemaDotOrgJsonLdBuilderInterface.php` | Builder contract |
 | `src/AiSchemaDotOrgJsonLdBuilder.php` | Field + automator + display creation |
 | `src/AiSchemaDotOrgJsonLdBreadcrumbListInterface.php` | Breadcrumb contract |
@@ -39,6 +40,9 @@
 | `tests/src/Functional/AiSchemaDotOrgJsonLdSettingsFormTest.php` | Admin form interactions |
 | `tests/src/Functional/AiSchemaDotOrgJsonLdTokenResolverTest.php` | Token render + post-processing |
 | `tests/src/Functional/AiSchemaDotOrgJsonLdPageAttachmentsTest.php` | Page header JSON-LD injection |
+| `docs/DRUPAL-AI-SCHEMADOTORG-JSON-FIELD.md` | Original design notes (copied from project root) |
+| `docs/superpowers/specs/2026-04-17-ai-schemadotorg-jsonld-design.md` | Design spec (copied) |
+| `docs/superpowers/plans/2026-04-17-ai-schemadotorg-jsonld.md` | This implementation plan (copied) |
 
 ---
 
@@ -275,7 +279,57 @@ AI-assisted by Claude Sonnet 4.6"
 
 ---
 
-## Task 2: Builder Service
+## Task 2: Config Schema
+
+**Files:**
+- Create: `web/modules/sandbox/ai_schemadotorg_jsonld/config/schema/ai_schemadotorg_jsonld.schema.yml`
+
+- [ ] **Step 1: Create the schema file**
+
+```yaml
+# web/modules/sandbox/ai_schemadotorg_jsonld/config/schema/ai_schemadotorg_jsonld.schema.yml
+ai_schemadotorg_jsonld.settings:
+  type: config_object
+  label: 'AI Schema.org JSON-LD settings'
+  mapping:
+    prompt:
+      type: text
+      label: 'Default prompt'
+    default_jsonld:
+      type: text
+      label: 'Default JSON-LD'
+    breadcrumb_jsonld:
+      type: boolean
+      label: 'Include breadcrumb JSON-LD'
+    bundles:
+      type: sequence
+      label: 'Enabled bundles'
+      sequence:
+        type: string
+        label: 'Bundle'
+```
+
+- [ ] **Step 2: Verify the schema is valid**
+
+```bash
+ddev drush cr
+ddev drush ev "\Drupal::service('config.typed')->get('ai_schemadotorg_jsonld.settings');"
+```
+
+Expected: No schema validation errors.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add web/modules/sandbox/ai_schemadotorg_jsonld/config/schema/
+git commit -m "feat: add config schema for ai_schemadotorg_jsonld settings
+
+AI-assisted by Claude Sonnet 4.6"
+```
+
+---
+
+## Task 3: Builder Service
 
 **Files:**
 - Create: `web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBuilderInterface.php`
@@ -461,7 +515,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 /**
  * Creates and manages the Schema.org JSON-LD field on entity bundles.
  */
-final class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterface {
+class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterface {
 
   /**
    * Constructs an AiSchemaDotOrgJsonLdBuilder object.
@@ -499,7 +553,7 @@ final class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderIn
   /**
    * Creates or updates the field storage config.
    */
-  private function createFieldStorage(string $entity_type_id): void {
+  protected function createFieldStorage(string $entity_type_id): void {
     $storage_id = $entity_type_id . '.' . self::FIELD_NAME;
     $field_storage = $this->entityTypeManager
       ->getStorage('field_storage_config')
@@ -524,7 +578,7 @@ final class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderIn
    * @return bool
    *   TRUE if the field was created, FALSE if it already existed.
    */
-  private function createField(string $entity_type_id, string $bundle): bool {
+  protected function createField(string $entity_type_id, string $bundle): bool {
     $field_id = $entity_type_id . '.' . $bundle . '.' . self::FIELD_NAME;
     $existing = $this->entityTypeManager
       ->getStorage('field_config')
@@ -549,7 +603,7 @@ final class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderIn
   /**
    * Creates the AI automator config entity.
    */
-  private function createAutomator(string $entity_type_id, string $bundle): void {
+  protected function createAutomator(string $entity_type_id, string $bundle): void {
     $automator_id = $entity_type_id . '.' . $bundle . '.' . self::FIELD_NAME . '.default';
     $existing = $this->entityTypeManager
       ->getStorage('ai_automator')
@@ -577,17 +631,11 @@ final class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderIn
       'base_field' => 'revision_log',
       'prompt' => '',
       'token' => $prompt,
+      // plugin_config mirrors top-level properties read by the automator
+      // plugin. Only store properties that differ from defaults or cannot
+      // be derived from the top-level fields at runtime.
       'plugin_config' => [
         'automator_enabled' => 1,
-        'automator_rule' => 'llm_json_native_field',
-        'automator_mode' => 'token',
-        'automator_base_field' => 'revision_log',
-        'automator_prompt' => '',
-        'automator_token' => $prompt,
-        'automator_edit_mode' => 0,
-        'automator_label' => 'Schema.org JSON-LD Default',
-        'automator_weight' => '100',
-        'automator_worker_type' => 'field_widget_actions',
         'automator_ai_provider' => 'default_json',
       ],
     ])->save();
@@ -596,7 +644,7 @@ final class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderIn
   /**
    * Adds the field to the default form display.
    */
-  private function addFormDisplayComponent(string $entity_type_id, string $bundle): void {
+  protected function addFormDisplayComponent(string $entity_type_id, string $bundle): void {
     $display = $this->entityTypeManager
       ->getStorage('entity_form_display')
       ->load($entity_type_id . '.' . $bundle . '.default');
@@ -634,7 +682,7 @@ final class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderIn
   /**
    * Adds the field to the default view display.
    */
-  private function addViewDisplayComponent(string $entity_type_id, string $bundle): void {
+  protected function addViewDisplayComponent(string $entity_type_id, string $bundle): void {
     $display = $this->entityTypeManager
       ->getStorage('entity_view_display')
       ->load($entity_type_id . '.' . $bundle . '.default');
@@ -677,7 +725,7 @@ AI-assisted by Claude Sonnet 4.6"
 
 ---
 
-## Task 3: Event Subscriber
+## Task 4: Event Subscriber
 
 **Files:**
 - Create: `web/modules/sandbox/ai_schemadotorg_jsonld/src/EventSubscriber/AiSchemaDotOrgJsonLdEventSubscriber.php`
@@ -747,7 +795,7 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
   /**
    * Builds a ValuesChangeEvent for the JSON-LD field.
    */
-  private function buildEvent(string $raw_value): ValuesChangeEvent {
+  protected function buildEvent(string $raw_value): ValuesChangeEvent {
     $field_definition = $this->createMock(FieldDefinitionInterface::class);
     $field_definition->method('getName')
       ->willReturn(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
@@ -877,7 +925,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Extracts and validates JSON from AI automator responses for the JSON-LD field.
  */
-final class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
+class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
 
   use StringTranslationTrait;
 
@@ -930,7 +978,7 @@ final class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterf
    * @return string
    *   The extracted JSON string, or empty string on failure.
    */
-  private function extractJson(string $raw): string {
+  protected function extractJson(string $raw): string {
     if ($raw === '') {
       return '';
     }
@@ -985,166 +1033,6 @@ Expected: All 6 tests PASS.
 git add web/modules/sandbox/ai_schemadotorg_jsonld/src/EventSubscriber/ \
         web/modules/sandbox/ai_schemadotorg_jsonld/tests/src/Unit/
 git commit -m "feat: add AiSchemaDotOrgJsonLdEventSubscriber with unit tests
-
-AI-assisted by Claude Sonnet 4.6"
-```
-
----
-
-## Task 4: Breadcrumb Service
-
-**Files:**
-- Create: `web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbListInterface.php`
-- Create: `web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbList.php`
-
-- [ ] **Step 1: Create the interface**
-
-```php
-<?php
-// web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbListInterface.php
-
-declare(strict_types=1);
-
-namespace Drupal\ai_schemadotorg_jsonld;
-
-use Drupal\Core\Render\BubbleableMetadata;
-use Drupal\Core\Routing\RouteMatchInterface;
-
-/**
- * Interface for the AI Schema.org JSON-LD breadcrumb list service.
- */
-interface AiSchemaDotOrgJsonLdBreadcrumbListInterface {
-
-  /**
-   * Builds a BreadcrumbList JSON-LD array for the current page.
-   *
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *   The current route match.
-   * @param \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata
-   *   Metadata for cache bubbling.
-   *
-   * @return array|null
-   *   A BreadcrumbList JSON-LD array, or NULL if no breadcrumb applies.
-   */
-  public function build(RouteMatchInterface $route_match, BubbleableMetadata $bubbleable_metadata): ?array;
-
-}
-```
-
-- [ ] **Step 2: Create the implementation**
-
-```php
-<?php
-// web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbList.php
-
-declare(strict_types=1);
-
-namespace Drupal\ai_schemadotorg_jsonld;
-
-use Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface;
-use Drupal\Core\Render\BubbleableMetadata;
-use Drupal\Core\Render\RendererInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Url;
-
-// Note: RouteMatchInterface is used only as a parameter type in build(), not injected.
-
-/**
- * Builds a BreadcrumbList JSON-LD array for the current page.
- *
- * Modelled on SchemaDotOrgJsonLdBreadcrumbManager but without any dependency
- * on the schemadotorg module. Named BreadcrumbList (not BreadcrumbBuilder) to
- * signal it produces data, not a Drupal breadcrumb object.
- */
-final class AiSchemaDotOrgJsonLdBreadcrumbList implements AiSchemaDotOrgJsonLdBreadcrumbListInterface {
-
-  /**
-   * Constructs an AiSchemaDotOrgJsonLdBreadcrumbList object.
-   *
-   * @param \Drupal\Core\Render\RendererInterface $renderer
-   *   The renderer service.
-   * @param \Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface $breadcrumb
-   *   The chain breadcrumb builder.
-   */
-  public function __construct(
-    private readonly RendererInterface $renderer,
-    private readonly ChainBreadcrumbBuilderInterface $breadcrumb,
-  ) {}
-
-  /**
-   * {@inheritdoc}
-   */
-  public function build(RouteMatchInterface $route_match, BubbleableMetadata $bubbleable_metadata): ?array {
-    if (!$this->breadcrumb->applies($route_match)) {
-      return NULL;
-    }
-
-    $breadcrumb = $this->breadcrumb->build($route_match);
-    $links = $breadcrumb->getLinks();
-    if (empty($links)) {
-      return NULL;
-    }
-
-    $bubbleable_metadata->addCacheableDependency($breadcrumb);
-
-    $items = [];
-    $position = 1;
-    foreach ($links as $link) {
-      $id = $link->getUrl()->setAbsolute()->toString();
-      $text = $link->getText();
-      if (is_array($text)) {
-        $text = $this->renderer->renderInIsolation($text);
-      }
-
-      $items[] = [
-        '@type' => 'ListItem',
-        'position' => $position,
-        'item' => [
-          '@id' => $id,
-          'name' => (string) $text,
-        ],
-      ];
-      $position++;
-    }
-
-    // Append the current route's node as the final list item.
-    $node = $route_match->getParameter('node');
-    if ($node) {
-      $items[] = [
-        '@type' => 'ListItem',
-        'position' => $position,
-        'item' => [
-          '@id' => Url::fromRouteMatch($route_match)->setAbsolute()->toString(),
-          'name' => $node->label(),
-        ],
-      ];
-    }
-
-    return [
-      '@context' => 'https://schema.org',
-      '@type' => 'BreadcrumbList',
-      'itemListElement' => $items,
-    ];
-  }
-
-}
-```
-
-- [ ] **Step 3: Clear caches and verify service resolves**
-
-```bash
-ddev drush cr
-ddev drush ev "print_r(\Drupal::service('ai_schemadotorg_jsonld.breadcrumb_list'));"
-```
-
-Expected: Service object printed without errors.
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbListInterface.php \
-        web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbList.php
-git commit -m "feat: add AiSchemaDotOrgJsonLdBreadcrumbList service
 
 AI-assisted by Claude Sonnet 4.6"
 ```
@@ -1281,6 +1169,8 @@ interface AiSchemaDotOrgJsonLdTokenResolverInterface {
 
 - [ ] **Step 4: Create the token resolver implementation**
 
+> **Required:** The `try/finally` block in `resolve()` is mandatory — it guarantees that the anonymous account and default theme are always restored even if rendering throws an exception. Do not remove it or restructure the method in a way that bypasses the `finally` block.
+
 ```php
 <?php
 // web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdTokenResolver.php
@@ -1302,7 +1192,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Renders a node as the anonymous user for use in AI prompts.
  */
-final class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTokenResolverInterface {
+class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTokenResolverInterface {
 
   /**
    * Constructs an AiSchemaDotOrgJsonLdTokenResolver object.
@@ -1372,20 +1262,27 @@ final class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTok
    * @return string
    *   The post-processed HTML.
    */
-  private function postProcess(string $html): string {
+  protected function postProcess(string $html): string {
     $html = $this->stripOuterWrappingDivs($html);
     $html = $this->absolutizeUrls($html);
     return $html;
   }
 
   /**
-   * Removes outer <div><div>...</div></div> pairs with a single direct child.
+   * Recursively removes outer <div><div>...</div></div> wrapper pairs.
+   *
+   * Each pass removes one level of outer <div> whose only direct child is
+   * another <div>. Repeats until no more single-child wrappers remain at
+   * the outermost level. Deeper nesting (multiple children) is preserved.
    */
-  private function stripOuterWrappingDivs(string $html): string {
+  protected function stripOuterWrappingDivs(string $html): string {
     $trimmed = trim($html);
-    // Match an outer <div> whose only direct child is another <div>.
-    if (preg_match('/^<div[^>]*>\s*(<div[\s\S]*<\/div>)\s*<\/div>$/s', $trimmed, $matches)) {
-      return trim($matches[1]);
+    while (preg_match('/^<div[^>]*>\s*(<div[\s\S]*<\/div>)\s*<\/div>$/s', $trimmed, $matches)) {
+      $inner = trim($matches[1]);
+      if ($inner === $trimmed) {
+        break;
+      }
+      $trimmed = $inner;
     }
     return $trimmed;
   }
@@ -1393,7 +1290,7 @@ final class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTok
   /**
    * Converts root-relative href and src attributes to absolute URLs.
    */
-  private function absolutizeUrls(string $html): string {
+  protected function absolutizeUrls(string $html): string {
     $request = $this->requestStack->getCurrentRequest();
     if (!$request) {
       return $html;
@@ -1589,6 +1486,14 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     // Check that Operations column shows Edit and Delete links for page.
     $this->assertSession()->linkExists('Edit');
     $this->assertSession()->linkExists('Delete');
+
+    // Check that default_jsonld uses textarea widget when json_field_widget
+    // is absent from $modules (the base case in this test class).
+    $this->assertSession()->elementExists('css', 'textarea[name="default_jsonld"]');
+
+    // Note: to test the json_editor branch, create a separate test class
+    // that adds 'json_field_widget' to $modules and asserts that
+    // #type resolves to 'json_editor' instead of 'textarea'.
   }
 
 }
@@ -1625,7 +1530,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Configure AI Schema.org JSON-LD settings.
  */
-final class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
+class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
 
   use RedundantEditableConfigNamesTrait;
 
@@ -1670,7 +1575,7 @@ final class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     $configured_bundles = $config->get('bundles') ?? [];
 
     // --- Content types fieldset ---
-    $form['bundles_fieldset'] = [
+    $form['node'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Content types'),
     ];
@@ -1689,7 +1594,7 @@ final class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         ->getStorage('field_config')
         ->load('node.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
 
-      $operations = '';
+      $operations_cell = [];
       if ($has_field) {
         $edit_url = Url::fromRoute('entity.field_config.node_field_edit_form', [
           'node_type' => $bundle,
@@ -1700,10 +1605,19 @@ final class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
           'field_config' => 'node.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
         ], ['query' => ['destination' => '/admin/config/ai/schemadotorg-jsonld']]);
 
-        $operations = $this->t('<a href=":edit">Edit</a> | <a href=":delete">Delete</a>', [
-          ':edit' => $edit_url->toString(),
-          ':delete' => $delete_url->toString(),
-        ]);
+        $operations_cell = [
+          'edit' => [
+            '#type' => 'link',
+            '#title' => $this->t('Edit'),
+            '#url' => $edit_url,
+            '#suffix' => ' | ',
+          ],
+          'delete' => [
+            '#type' => 'link',
+            '#title' => $this->t('Delete'),
+            '#url' => $delete_url,
+          ],
+        ];
 
         $disabled_bundles[] = $bundle;
       }
@@ -1711,19 +1625,25 @@ final class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       $options[$bundle] = [
         'label' => $label,
         'machine_name' => $bundle,
-        'operations' => ['data' => ['#markup' => $operations]],
+        'operations' => ['data' => $operations_cell],
       ];
+
+      // Disable the checkbox directly so already-configured bundles cannot
+      // be unchecked. Tableselect::preRenderTableselect reads #disabled on
+      // each option row.
+      if ($has_field) {
+        $options[$bundle]['#disabled'] = TRUE;
+      }
     }
 
-    $form['bundles_fieldset']['bundles'] = [
+    $form['node']['bundles'] = [
       '#type' => 'tableselect',
       '#header' => $header,
       '#options' => $options,
       '#default_value' => array_fill_keys(array_unique(array_merge($configured_bundles, $disabled_bundles)), TRUE),
-      '#after_build' => [[$this, 'disableExistingBundleCheckboxes']],
     ];
 
-    // Store disabled bundles in form state for use in after_build and submit.
+    // Store disabled bundles in form state for use in submit.
     $form_state->set('disabled_bundles', $disabled_bundles);
 
     // --- Additional settings ---
@@ -1765,19 +1685,6 @@ final class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     ];
 
     return parent::buildForm($form, $form_state);
-  }
-
-  /**
-   * After-build callback: disables checkboxes for already-configured bundles.
-   */
-  public function disableExistingBundleCheckboxes(array $element, FormStateInterface $form_state): array {
-    $disabled_bundles = $form_state->get('disabled_bundles') ?? [];
-    foreach ($disabled_bundles as $bundle) {
-      if (isset($element[$bundle])) {
-        $element[$bundle]['#disabled'] = TRUE;
-      }
-    }
-    return $element;
   }
 
   /**
@@ -1829,7 +1736,7 @@ final class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
    * @return string[]
    *   Node type labels keyed by machine name.
    */
-  private function getNodeTypeOptions(): array {
+  protected function getNodeTypeOptions(): array {
     $options = [];
     foreach ($this->entityTypeManager->getStorage('node_type')->loadMultiple() as $type) {
       $options[$type->id()] = $type->label();
@@ -1864,9 +1771,144 @@ AI-assisted by Claude Sonnet 4.6"
 ## Task 7: Hooks
 
 **Files:**
+- Create: `web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbListInterface.php`
+- Create: `web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbList.php`
 - Create: `web/modules/sandbox/ai_schemadotorg_jsonld/src/Hook/AiSchemaDotOrgJsonLdHooks.php`
 
-- [ ] **Step 1: Create the hooks class**
+- [ ] **Step 1: Create the breadcrumb list interface**
+
+```php
+<?php
+// web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbListInterface.php
+
+declare(strict_types=1);
+
+namespace Drupal\ai_schemadotorg_jsonld;
+
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Interface for the AI Schema.org JSON-LD breadcrumb list service.
+ */
+interface AiSchemaDotOrgJsonLdBreadcrumbListInterface {
+
+  /**
+   * Builds a BreadcrumbList JSON-LD array for the current page.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The current route match.
+   * @param \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata
+   *   Metadata for cache bubbling.
+   *
+   * @return array|null
+   *   A BreadcrumbList JSON-LD array, or NULL if no breadcrumb applies.
+   */
+  public function build(RouteMatchInterface $route_match, BubbleableMetadata $bubbleable_metadata): ?array;
+
+}
+```
+
+- [ ] **Step 2: Create the breadcrumb list implementation**
+
+```php
+<?php
+// web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbList.php
+
+declare(strict_types=1);
+
+namespace Drupal\ai_schemadotorg_jsonld;
+
+use Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+
+// Note: RouteMatchInterface is used only as a parameter type in build(), not injected.
+
+/**
+ * Builds a BreadcrumbList JSON-LD array for the current page.
+ *
+ * Modelled on SchemaDotOrgJsonLdBreadcrumbManager but without any dependency
+ * on the schemadotorg module. Named BreadcrumbList (not BreadcrumbBuilder) to
+ * signal it produces data, not a Drupal breadcrumb object.
+ */
+class AiSchemaDotOrgJsonLdBreadcrumbList implements AiSchemaDotOrgJsonLdBreadcrumbListInterface {
+
+  /**
+   * Constructs an AiSchemaDotOrgJsonLdBreadcrumbList object.
+   *
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer service.
+   * @param \Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface $breadcrumb
+   *   The chain breadcrumb builder.
+   */
+  public function __construct(
+    private readonly RendererInterface $renderer,
+    private readonly ChainBreadcrumbBuilderInterface $breadcrumb,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function build(RouteMatchInterface $route_match, BubbleableMetadata $bubbleable_metadata): ?array {
+    if (!$this->breadcrumb->applies($route_match)) {
+      return NULL;
+    }
+
+    $breadcrumb = $this->breadcrumb->build($route_match);
+    $links = $breadcrumb->getLinks();
+    if (empty($links)) {
+      return NULL;
+    }
+
+    $bubbleable_metadata->addCacheableDependency($breadcrumb);
+
+    $items = [];
+    $position = 1;
+    foreach ($links as $link) {
+      $id = $link->getUrl()->setAbsolute()->toString();
+      $text = $link->getText();
+      if (is_array($text)) {
+        $text = $this->renderer->renderInIsolation($text);
+      }
+
+      $items[] = [
+        '@type' => 'ListItem',
+        'position' => $position,
+        'item' => [
+          '@id' => $id,
+          'name' => (string) $text,
+        ],
+      ];
+      $position++;
+    }
+
+    // Append the current route's node as the final list item.
+    $node = $route_match->getParameter('node');
+    if ($node) {
+      $items[] = [
+        '@type' => 'ListItem',
+        'position' => $position,
+        'item' => [
+          '@id' => Url::fromRouteMatch($route_match)->setAbsolute()->toString(),
+          'name' => $node->label(),
+        ],
+      ];
+    }
+
+    return [
+      '@context' => 'https://schema.org',
+      '@type' => 'BreadcrumbList',
+      'itemListElement' => $items,
+    ];
+  }
+
+}
+```
+
+- [ ] **Step 3: Create the hooks class**
 
 ```php
 <?php
@@ -1879,6 +1921,7 @@ namespace Drupal\ai_schemadotorg_jsonld\Hook;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -1890,12 +1933,11 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBreadcrumbListInterface;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
-use Drupal\node\NodeInterface;
 
 /**
  * Hook implementations for the ai_schemadotorg_jsonld module.
  */
-final class AiSchemaDotOrgJsonLdHooks {
+class AiSchemaDotOrgJsonLdHooks {
 
   /**
    * Constructs an AiSchemaDotOrgJsonLdHooks object.
@@ -1927,7 +1969,7 @@ final class AiSchemaDotOrgJsonLdHooks {
     if (!isset($definitions['automator_json'])) {
       return;
     }
-    if (!in_array('json_editor', $definitions['automator_json']['widget_types'], TRUE)) {
+    if (!in_array('json_editor', $definitions['automator_json']['widget_types'])) {
       $definitions['automator_json']['widget_types'][] = 'json_editor';
     }
   }
@@ -1971,15 +2013,15 @@ final class AiSchemaDotOrgJsonLdHooks {
       }
     }
 
-    // Attach node field JSON-LD on canonical node routes.
-    $node = $this->routeMatch->getParameter('node');
-    if (!$node instanceof NodeInterface) {
+    // Attach entity field JSON-LD on canonical entity routes.
+    $entity = $this->getCurrentEntity();
+    if (!$entity instanceof ContentEntityInterface) {
       return;
     }
-    if (!$node->hasField(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)) {
+    if (!$entity->hasField(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)) {
       return;
     }
-    $field_value = $node->get(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->value;
+    $field_value = $entity->get(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->value;
     if (empty($field_value)) {
       return;
     }
@@ -1991,8 +2033,24 @@ final class AiSchemaDotOrgJsonLdHooks {
         '#value' => $field_value,
         '#attributes' => ['type' => 'application/ld+json'],
       ],
-      'ai_schemadotorg_jsonld_node_' . $node->id(),
+      'ai_schemadotorg_jsonld_' . $entity->getEntityTypeId() . '_' . $entity->id(),
     ];
+  }
+
+  /**
+   * Returns the current page's canonical content entity, or NULL.
+   *
+   * Canonical routes follow the pattern: entity.{entity_type_id}.canonical
+   */
+  protected function getCurrentEntity(): ?ContentEntityInterface {
+    $route_name = $this->routeMatch->getRouteName();
+
+    if (preg_match('/^entity\.(\w+)\.canonical$/', $route_name, $matches)) {
+      $entity_type_id = $matches[1];
+      return $this->routeMatch->getParameter($entity_type_id);
+    }
+
+    return NULL;
   }
 
   /**
@@ -2012,7 +2070,7 @@ final class AiSchemaDotOrgJsonLdHooks {
       $allowed_widgets[] = 'json_editor';
     }
 
-    if (!in_array($widget_id, $allowed_widgets, TRUE)) {
+    if (!in_array($widget_id, $allowed_widgets)) {
       return;
     }
 
@@ -2070,7 +2128,7 @@ final class AiSchemaDotOrgJsonLdHooks {
 }
 ```
 
-- [ ] **Step 2: Clear caches and verify hooks register**
+- [ ] **Step 4: Clear caches and verify hooks register**
 
 ```bash
 ddev drush cr
@@ -2079,11 +2137,13 @@ ddev drush ev "\Drupal::moduleHandler()->invokeAll('page_attachments', [&\$a]);"
 
 Expected: No errors.
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add web/modules/sandbox/ai_schemadotorg_jsonld/src/Hook/
-git commit -m "feat: add AiSchemaDotOrgJsonLdHooks with page_attachments, field_access, and widget hooks
+git add web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbListInterface.php \
+        web/modules/sandbox/ai_schemadotorg_jsonld/src/AiSchemaDotOrgJsonLdBreadcrumbList.php \
+        web/modules/sandbox/ai_schemadotorg_jsonld/src/Hook/
+git commit -m "feat: add AiSchemaDotOrgJsonLdBreadcrumbList service and hooks
 
 AI-assisted by Claude Sonnet 4.6"
 ```
@@ -2311,7 +2371,7 @@ class AiSchemaDotOrgJsonLdPageAttachmentsTest extends BrowserTestBase {
       '<script type="application/ld+json">' . $node_jsonld . '</script>'
     );
 
-    // Visit a non-node page and check that node-specific tag is absent.
+    // Visit a non-canonical page and check that entity-specific tag is absent.
     $this->drupalGet('/');
     $this->assertSession()->responseNotContains(
       'ai_schemadotorg_jsonld_node_' . $node->id()
@@ -2353,10 +2413,13 @@ AI-assisted by Claude Sonnet 4.6"
 
 ---
 
-## Task 10: Code Quality and README
+## Task 10: Code Quality, README, and Docs
 
 **Files:**
 - Create: `web/modules/sandbox/ai_schemadotorg_jsonld/README.md`
+- Create: `web/modules/sandbox/ai_schemadotorg_jsonld/docs/DRUPAL-AI-SCHEMADOTORG-JSON-FIELD.md` (copy)
+- Create: `web/modules/sandbox/ai_schemadotorg_jsonld/docs/superpowers/specs/2026-04-17-ai-schemadotorg-jsonld-design.md` (copy)
+- Create: `web/modules/sandbox/ai_schemadotorg_jsonld/docs/superpowers/plans/2026-04-17-ai-schemadotorg-jsonld.md` (copy)
 
 - [ ] **Step 1: Run code-fix across the module**
 
@@ -2385,7 +2448,12 @@ Expected: All tests PASS.
 ```markdown
 # AI Schema.org JSON-LD
 
-Adds a `field_schemadotorg_jsonld` (`json_native`) field to selected content types, generates Schema.org JSON-LD via AI Automators, and injects the output into page headers as `<script type="application/ld+json">` tags.
+A glue module that leverages [AI Automators](https://project.pages.drupalcode.org/ai/1.3.x/modules/ai_automators/),
+[Field Widget Actions](https://www.drupal.org/project/field_widget_actions), and
+[JSON Field](https://www.drupal.org/project/json_field) to add a `field_schemadotorg_jsonld`
+(`json_native`) field to selected content types. The field is populated by an LLM via a
+configurable token-based prompt. The generated JSON-LD is injected into canonical entity pages as
+`<script type="application/ld+json">` tags in the page header.
 
 ## Requirements
 
@@ -2393,43 +2461,104 @@ Adds a `field_schemadotorg_jsonld` (`json_native`) field to selected content typ
 - [AI](https://www.drupal.org/project/ai) ^1.3 (with `ai_automators` submodule)
 - [Field Widget Actions](https://www.drupal.org/project/field_widget_actions) ^1.3
 - [JSON Field](https://www.drupal.org/project/json_field) ^1.7
-- **Optional:** `json_field:json_field_widget` — enables the `json_editor` widget
+- **Optional:** `json_field:json_field_widget` — enables the `json_editor` widget for the
+  `field_schemadotorg_jsonld` field and the Default JSON-LD admin field.
 
 ## Installation
 
 1. Enable the module: `drush en ai_schemadotorg_jsonld -y`
 2. Configure an AI provider at `/admin/config/ai/settings`.
 3. Go to `/admin/config/ai/schemadotorg-jsonld`, select content types, and save.
+   The module creates `field_schemadotorg_jsonld`, an AI automator, and display components for each
+   selected bundle.
+4. Open a node of a configured type, click **Generate Schema.org JSON-LD**, review the output, and
+   save.
 
 ## Configuration
 
+Navigate to `/admin/config/ai/schemadotorg-jsonld`.
+
+### Content types
+
+A tableselect lists all node bundles. Checking a bundle and saving creates the `field_schemadotorg_jsonld`
+field, AI automator, and display configuration for that bundle. Once a bundle is configured its
+checkbox is disabled; use the **Delete** link in the Operations column to remove the field.
+
+### Additional settings
+
 | Setting | Description |
 |---|---|
-| Content types | Selects which node bundles get the `field_schemadotorg_jsonld` field. |
-| Prompt | The token-based prompt sent to the LLM. Includes `[node:ai_schemadotorg_jsonld:content]` by default. |
-| Default JSON-LD | Site-wide JSON-LD injected on every page (e.g. `Organization` or `WebSite` schema). |
+| Default prompt | Token-based prompt sent to the LLM. Includes `[node:ai_schemadotorg_jsonld:content]` by default to give the model the full rendered page. |
+| Default JSON-LD | Static JSON-LD injected as a `<script type="application/ld+json">` tag on every page (e.g. `Organization` or `WebSite` schema). Leave blank to disable. |
 | Include breadcrumb JSON-LD | Attaches a `BreadcrumbList` JSON-LD block to each page. |
 
 ## Tokens
 
 | Token | Description |
 |---|---|
-| `[node:ai_schemadotorg_jsonld:content]` | Renders the node as the anonymous user in the site default theme. Used in the AI prompt to give the LLM the full page content. |
+| `[node:ai_schemadotorg_jsonld:content]` | Renders the node as the anonymous user in the site default theme, converts root-relative URLs to absolute, and strips outer wrapper `<div>` pairs. Use in the AI prompt to give the LLM full page content without admin chrome. |
+
+## Page header output
+
+Three independently keyed `<script type="application/ld+json">` tags may appear in the page
+`<head>`. Other modules can target them via `hook_page_attachments_alter()`.
+
+| Key | Content |
+|---|---|
+| `ai_schemadotorg_jsonld_default` | Site-wide Default JSON-LD from settings. |
+| `ai_schemadotorg_jsonld_breadcrumb` | `BreadcrumbList` built from the current page breadcrumb. |
+| `ai_schemadotorg_jsonld_{entity_type}_{id}` | Entity's `field_schemadotorg_jsonld` value on canonical entity routes. |
 
 ## Architecture
 
-- **`AiSchemaDotOrgJsonLdBuilder`** — Creates field storage, field instance, AI automator config, and form/view display components for a given entity type and bundle.
-- **`AiSchemaDotOrgJsonLdBreadcrumbList`** — Builds a `BreadcrumbList` JSON-LD array from the current page's breadcrumb.
-- **`AiSchemaDotOrgJsonLdTokenResolver`** — Renders a node as the anonymous user and post-processes the HTML (absolutize URLs, strip wrapper divs) for LLM consumption.
-- **`AiSchemaDotOrgJsonLdEventSubscriber`** — Extracts and validates JSON from AI responses before the value is saved to the field.
-- **`AiSchemaDotOrgJsonLdHooks`** — `hook_page_attachments` for JSON-LD header injection; `hook_entity_field_access` for access control; `hook_field_widget_complete_form_alter` for the Copy JSON-LD button.
+| Class | Responsibility |
+|---|---|
+| `AiSchemaDotOrgJsonLdBuilder` | Creates field storage, field instance, AI automator, and display components for a bundle. Idempotent — safe to call multiple times. |
+| `AiSchemaDotOrgJsonLdBreadcrumbList` | Builds a `BreadcrumbList` JSON-LD array from the current page breadcrumb. |
+| `AiSchemaDotOrgJsonLdTokenResolver` | Renders an entity as the anonymous user in the default theme; post-processes HTML for LLM consumption (absolutize URLs, recursively strip wrapper divs). |
+| `AiSchemaDotOrgJsonLdEventSubscriber` | Subscribes to `ValuesChangeEvent`; extracts JSON from AI responses (strips markdown fences, surrounding text) and validates before saving. |
+| `AiSchemaDotOrgJsonLdSettingsForm` | Admin settings UI at `/admin/config/ai/schemadotorg-jsonld`. |
+| `AiSchemaDotOrgJsonLdHooks` | `hook_page_attachments` — attaches JSON-LD to page head using `getCurrentEntity()` for any canonical entity route. `hook_entity_field_access` — blocks edit on unsaved entities; limits view to users with update access. `hook_field_widget_complete_form_alter` — adds Copy JSON-LD button. |
+
+## Extending
+
+- **Custom entity types:** `AiSchemaDotOrgJsonLdBuilder::addFieldToEntity()` accepts any
+  `$entity_type_id` / `$bundle` pair. The `getCurrentEntity()` helper in `AiSchemaDotOrgJsonLdHooks`
+  already supports any canonical entity route pattern.
+- **Custom prompts per bundle:** Override `ai_schemadotorg_jsonld.settings:prompt` via
+  `hook_config_schema_info_alter()` or use configuration overrides.
+- **Altering attached JSON-LD:** Implement `hook_page_attachments_alter()` and target the keys
+  listed in the "Page header output" table above.
+
+## Development docs
+
+- `docs/DRUPAL-AI-SCHEMADOTORG-JSON-FIELD.md` — original design notes and manual setup steps.
+- `docs/superpowers/specs/2026-04-17-ai-schemadotorg-jsonld-design.md` — full design spec.
+- `docs/superpowers/plans/2026-04-17-ai-schemadotorg-jsonld.md` — implementation plan.
 ```
 
-- [ ] **Step 4: Final commit**
+- [ ] **Step 4: Copy project docs into the module**
 
 ```bash
-git add web/modules/sandbox/ai_schemadotorg_jsonld/README.md
-git commit -m "docs: add README for ai_schemadotorg_jsonld module
+mkdir -p web/modules/sandbox/ai_schemadotorg_jsonld/docs/superpowers/specs
+mkdir -p web/modules/sandbox/ai_schemadotorg_jsonld/docs/superpowers/plans
+
+cp docs/DRUPAL-AI-SCHEMADOTORG-JSON-FIELD.md \
+   web/modules/sandbox/ai_schemadotorg_jsonld/docs/DRUPAL-AI-SCHEMADOTORG-JSON-FIELD.md
+
+cp docs/superpowers/specs/2026-04-17-ai-schemadotorg-jsonld-design.md \
+   web/modules/sandbox/ai_schemadotorg_jsonld/docs/superpowers/specs/2026-04-17-ai-schemadotorg-jsonld-design.md
+
+cp docs/superpowers/plans/2026-04-17-ai-schemadotorg-jsonld.md \
+   web/modules/sandbox/ai_schemadotorg_jsonld/docs/superpowers/plans/2026-04-17-ai-schemadotorg-jsonld.md
+```
+
+- [ ] **Step 5: Final commit**
+
+```bash
+git add web/modules/sandbox/ai_schemadotorg_jsonld/README.md \
+        web/modules/sandbox/ai_schemadotorg_jsonld/docs/
+git commit -m "docs: add comprehensive README and copy project docs into module
 
 AI-assisted by Claude Sonnet 4.6"
 ```
