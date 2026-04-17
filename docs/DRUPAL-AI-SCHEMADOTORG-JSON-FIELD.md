@@ -50,7 +50,7 @@ The majority of the module's code configures the Schema.org JSON-LD field for ea
 * module name: ai\_schemadotorg\_jsonld
 * namespaces:
   * ai\_schemadotorg\_jsonld
-  * AISchemaDotOrgJsonLd
+  * AiSchemaDotOrgJsonLd
 * Initially, the module will only work with nodes, but the APIs should support multiple entity types
 
 # Architectures
@@ -60,7 +60,7 @@ The majority of the module's code configures the Schema.org JSON-LD field for ea
   * `ai_automators` and `json_field` are dependenciies
   * `json_field_widget` support should be optional
 * services
-  * ai\_schemadotorg\_jsonld.builder \- AISchemaDotOrgJsonLdBuilder.php
+  * ai\_schemadotorg\_jsonld.builder \- AiSchemaDotOrgJsonLdBuilder.php
     * const FIELD\_NAME \= 'field\_schemadotog\_jsonld'
     * public ::addFieldToEntity($entity\_type\_id, $bundle)
     * protected ::createFieldStorage($entity\_type\_id)
@@ -76,7 +76,7 @@ The majority of the module's code configures the Schema.org JSON-LD field for ea
       * @config/sync/entity\_view\_display.node.article.default.yml
       * weight: 99 // Before links
       * Do not include component in other displays
-  * AISchemaDotOrgJsonLdBuilderKernelTest
+  * AiSchemaDotOrgJsonLdBuilderKernelTest
     * ::testAddField
 * ai\_schemadotorg\_jsonld.settings
   * node
@@ -116,7 +116,7 @@ The majority of the module's code configures the Schema.org JSON-LD field for ea
   * Operations should open in a modal dialog. (@see /admin/structure/types/manage/article/fields)
   * Content types (aka bundle) with a field\_schemadotorg\_json are checked off and disabled.
 * Use \#config\_target must ensure content types with field\_schemadotorg\_json are always set.
-* On save for new node bundles calls AISchemaDotOrgJsonLdBuilder::addFieldToEntity
+* On save for new node bundles calls AiSchemaDotOrgJsonLdBuilder::addFieldToEntity
   * Creates field storage
   * Creates field instance
   * Creates AI automator
@@ -128,7 +128,7 @@ The majority of the module's code configures the Schema.org JSON-LD field for ea
 * Manually set up an example of the configuration for Article
 * `ddev drush export:config -y;`
 * Run a git diff on `cd config/sync; git diff;`  and examine the changes.
-* Automate these changes via `AISchemaDotOrgJsonLdBuilder` service
+* Automate these changes via `AiSchemaDotOrgJsonLdBuilder` service
 * Create settings page
 
 # Manual Setup
