@@ -44,6 +44,9 @@ ddev code-fix <file|directory>
   - Use OOP hooks instead of procedural hooks with legacy support. @see https://www.drupal.org/node/3442349
 - Drush
   - Always use `autowire`
+- PHPUnit
+  - `::setUp` and `::test` methods should come before protected helper methods.
+  - For Functional and Kernel tests, try to have a single test method per class.
 
 # Programming
 

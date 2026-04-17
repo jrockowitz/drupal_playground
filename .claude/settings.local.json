@@ -33,7 +33,13 @@
       "WebSearch",
       "mcp__ide__getDiagnostics",
       "mcp__playwright",
-      "mcp__jetbrains"
+      "mcp__jetbrains",
+      "Bash(cat /Users/rockowij/Sites/msk_migrate/docroot/modules/custom/msk_direct/src/PathProcessor/*.php)",
+      "Bash(mkdir -p /Users/rockowij/Sites/msk_migrate/docroot/modules/custom/msk_gerstner/src/PathProcessor)",
+      "Bash(mkdir -p /Users/rockowij/Sites/msk_migrate/docroot/modules/custom/msk_gerstner/src/EventSubscriber)",
+      "Bash(mkdir -p /Users/rockowij/Sites/msk_migrate/docroot/modules/custom/msk_gerstner/tests/src/Unit)",
+      "Bash(mkdir -p /Users/rockowij/Sites/msk_migrate/docroot/modules/custom/msk_gerstner/tests/src/Kernel)",
+      "mcp__plugin_playwright_playwright__browser_navigate"
     ],
     "deny": [
       "Bash(ddev delete *)",

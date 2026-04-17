@@ -17,6 +17,7 @@
     "require": {
         "composer/installers": "^2.3",
         "cweagans/composer-patches": "^2",
+        "drupal/ai_jsonld_schema_generator": "^1.0",
         "drupal/bluecheese": "^2.0",
         "drupal/core-composer-scaffold": "^11.0",
         "drupal/core-project-message": "^11.0",
