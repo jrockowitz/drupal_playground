@@ -40,6 +40,8 @@ ddev code-fix <file|directory>
   - Always use `autowire`
   - Always create an interface
   - Only use public methods when absolutely necessary
+  - For injected service order them from general to specific services.
+    (i.e. `ConfigFactoryInterface` before `EntityTypeManagerInterface` before `EntityRepositoryInterface)
 - Hooks
   - Use OOP hooks instead of procedural hooks with legacy support. @see https://www.drupal.org/node/3442349
 - Drush

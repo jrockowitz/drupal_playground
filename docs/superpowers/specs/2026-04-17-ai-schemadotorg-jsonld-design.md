@@ -47,24 +47,26 @@ web/modules/sandbox/ai_schemadotorg_jsonld/
 ├── css/
 │   └── ai_schemadotorg_jsonld.copy.css
 └── src/
-    ├── Hook/
-    │   └── AiSchemaDotOrgJsonLdHooks.php
-    ├── Form/
-    │   └── AiSchemaDotOrgJsonLdSettingsForm.php
-    ├── Builder/
-    │   ├── AiSchemaDotOrgJsonLdBuilderInterface.php
-    │   └── AiSchemaDotOrgJsonLdBuilder.php
+    ├── AiSchemaDotOrgJsonLdBuilderInterface.php
+    ├── AiSchemaDotOrgJsonLdBuilder.php
+    ├── AiSchemaDotOrgJsonLdBreadcrumbListInterface.php
+    ├── AiSchemaDotOrgJsonLdBreadcrumbList.php
+    ├── AiSchemaDotOrgJsonLdTokenResolverInterface.php
+    ├── AiSchemaDotOrgJsonLdTokenResolver.php
     ├── EventSubscriber/
     │   └── AiSchemaDotOrgJsonLdEventSubscriber.php
-    └── Token/
-        └── AiSchemaDotOrgJsonLdTokenResolver.php
+    ├── Form/
+    │   └── AiSchemaDotOrgJsonLdSettingsForm.php
+    └── Hook/
+        └── AiSchemaDotOrgJsonLdHooks.php
 └── tests/
     └── src/
         ├── Kernel/
         │   └── AiSchemaDotOrgJsonLdBuilderTest.php
         ├── Functional/
         │   ├── AiSchemaDotOrgJsonLdSettingsFormTest.php
-        │   └── AiSchemaDotOrgJsonLdTokenResolverTest.php
+        │   ├── AiSchemaDotOrgJsonLdTokenResolverTest.php
+        │   └── AiSchemaDotOrgJsonLdPageAttachmentsTest.php
         └── Unit/
             └── AiSchemaDotOrgJsonLdEventSubscriberTest.php
 ```
@@ -168,19 +170,23 @@ A `tableselect` with columns: Content type label, Machine name, Operations.
 
 **2. Additional settings** (`<details>`, collapsed by default)
 
-| Element | Type | Config target |
-|---|---|---|
-| Prompt | `textarea` | `ai_schemadotorg_jsonld.settings:prompt` |
-| Default JSON-LD | `json_editor` widget or `textarea` fallback | `ai_schemadotorg_jsonld.settings:default_jsonld` |
-| Include breadcrumb JSON-LD | `checkbox` | `ai_schemadotorg_jsonld.settings:breadcrumb_jsonld` |
+All elements use `#config_target` pointing to `ai_schemadotorg_jsonld.settings`.
 
-The Default JSON-LD element uses the `json_editor` widget and attaches the `json_field_widget/json_editor.widget` library only when `json_field_widget` is installed (checked via injected `ModuleHandlerInterface`). Falls back to a plain `textarea` otherwise.
+| Element | Type | Config target key |
+|---|---|---|
+| Prompt | `textarea` | `prompt` |
+| Default JSON-LD | `json_editor` or `textarea` fallback | `default_jsonld` |
+| Include breadcrumb JSON-LD | `checkbox` | `breadcrumb_jsonld` |
+
+The Default JSON-LD element:
+- Uses the `json_editor` widget and attaches the `json_field_widget/json_editor.widget` library only when `json_field_widget` is installed (checked via injected `ModuleHandlerInterface`). Falls back to a plain `textarea` otherwise.
+- Has `#element_validate` callback that runs `json_decode()` on the submitted value and sets a form error if the JSON is invalid. Empty value is allowed.
 
 ---
 
 ## Builder Service (`AiSchemaDotOrgJsonLdBuilder`)
 
-Implements `AiSchemaDotOrgJsonLdBuilderInterface`. Autowired.
+Implements `AiSchemaDotOrgJsonLdBuilderInterface`. Autowired. Both `AiSchemaDotOrgJsonLdBuilder` and `AiSchemaDotOrgJsonLdBuilderInterface` live directly in `src/` (no subdirectory).
 
 ```
 const FIELD_NAME = 'field_schemadotorg_jsonld'
@@ -188,15 +194,15 @@ const FIELD_NAME = 'field_schemadotorg_jsonld'
 
 ### `public function addFieldToEntity(string $entity_type_id, string $bundle): void`
 
-Orchestrates the five private methods below in order.
+Orchestrates the five private methods below in order. Step 1 always runs. Steps 3–5 are skipped if the field instance already existed before step 2 (i.e. `createField` detected a pre-existing `FieldConfig`).
 
 ### `private function createFieldStorage(string $entity_type_id): void`
 
-Loads or creates the `FieldStorageConfig` for `{entity_type_id}.field_schemadotorg_jsonld`. Always saves to keep storage config current. Type: `json_native`, cardinality: 1, translatable: true.
+Checks whether `FieldStorageConfig` for `{entity_type_id}.field_schemadotorg_jsonld` already exists. Creates it if not; loads it if so. Always saves to keep storage config current. Type: `json_native`, cardinality: 1, translatable: true.
 
 ### `private function createField(string $entity_type_id, string $bundle): void`
 
-Creates a `FieldConfig` for `{entity_type_id}.{bundle}.field_schemadotorg_jsonld` if it does not already exist. Label: "Schema.org JSON-LD", not required, not translatable.
+Returns early (no-op) if `FieldConfig` for `{entity_type_id}.{bundle}.field_schemadotorg_jsonld` already exists — signals to `addFieldToEntity` to skip steps 3–5. Otherwise creates it. Label: "Schema.org JSON-LD", not required, translatable: true.
 
 ### `private function createAutomator(string $entity_type_id, string $bundle): void`
 
@@ -228,6 +234,35 @@ All services (logger, messenger) injected via constructor.
 
 ---
 
+## Breadcrumb Service (`AiSchemaDotOrgJsonLdBreadcrumbList`)
+
+Implements `AiSchemaDotOrgJsonLdBreadcrumbListInterface`. Generates a `BreadcrumbList` JSON-LD array for the current page. Called by `hook_page_attachments` when `breadcrumb_jsonld` is enabled. Modelled on `SchemaDotOrgJsonLdBreadcrumbManager` but with no dependency on the `schemadotorg` module. Named `BreadcrumbList` (not `BreadcrumbBuilder`) to signal it produces data, not a Drupal breadcrumb object.
+
+### `public function build(RouteMatchInterface $route_match, BubbleableMetadata $bubbleable_metadata): ?array`
+
+1. Check whether `ChainBreadcrumbBuilderInterface::applies()` returns true for the current route. Return `NULL` if not.
+2. Build the breadcrumb via `ChainBreadcrumbBuilderInterface::build()`. Return `NULL` if the result has no links.
+3. Add the breadcrumb's cache metadata to `$bubbleable_metadata`.
+4. Iterate over breadcrumb links, building `ListItem` entries (position, `@id` as absolute URL, `name` as rendered text). Render array text via `RendererInterface::renderInIsolation()`.
+5. Append the current route's node as a final `ListItem` using the node label and its canonical URL (resolved from `RouteMatchInterface`).
+6. Return the completed `BreadcrumbList` array:
+
+```php
+[
+  '@context' => 'https://schema.org',
+  '@type' => 'BreadcrumbList',
+  'itemListElement' => $items,
+]
+```
+
+### Injected services (general → specific)
+
+1. `RendererInterface`
+2. `RouteMatchInterface` (current_route_match)
+3. `ChainBreadcrumbBuilderInterface`
+
+---
+
 ## Hooks (`AiSchemaDotOrgJsonLdHooks`)
 
 All methods in `src/Hook/AiSchemaDotOrgJsonLdHooks.php` use `#[Hook]` attributes. All services injected via constructor (autowired).
@@ -241,12 +276,12 @@ Adds `json_editor` to the `widget_types` array for the `automator_json` `FieldWi
 Each JSON-LD block is attached as a separately keyed item in `$attachments['#attached']['html_head']` so other modules can target them via `hook_page_attachments_alter()`:
 
 - `ai_schemadotorg_jsonld_default` — site-wide default JSON-LD from settings (if non-empty).
-- `ai_schemadotorg_jsonld_breadcrumb` — breadcrumb JSON-LD (if `breadcrumb_jsonld` setting is true).
+- `ai_schemadotorg_jsonld_breadcrumb` — breadcrumb JSON-LD built by `AiSchemaDotOrgJsonLdBreadcrumbList::build()` (if `breadcrumb_jsonld` setting is true and `build()` returns non-null).
 - `ai_schemadotorg_jsonld_node_{nid}` — node's `field_schemadotorg_jsonld` value (only on node canonical routes, only when the field is non-empty).
 
-### `hook_field_widget_complete_json_textarea_form_alter()` and `hook_field_widget_complete_json_editor_form_alter()`
+### `hook_field_widget_complete_form_alter()`
 
-Two separate `#[Hook]` implementations, one per widget type. When the field name matches `FIELD_NAME`, each adds a "Copy JSON-LD" button element below the field widget and attaches the `ai_schemadotorg_jsonld/copy` library. The `json_editor` implementation only registers when `json_field_widget` is installed.
+A single `#[Hook]` implementation. Guards on widget type being `json_textarea` or `json_editor` (the latter only when `json_field_widget` is installed), and on the field name matching `FIELD_NAME`. Adds a "Copy JSON-LD" button element below the field widget and attaches the `ai_schemadotorg_jsonld/copy` library.
 
 ### `hook_entity_field_access()`
 
@@ -257,7 +292,7 @@ Two separate `#[Hook]` implementations, one per widget type. When the field name
 
 ## Token (`AiSchemaDotOrgJsonLdTokenResolver`)
 
-`ai_schemadotorg_jsonld.token.inc` provides `hook_token_info()` and `hook_token()` as thin wrappers that delegate to `AiSchemaDotOrgJsonLdTokenResolver`.
+Implements `AiSchemaDotOrgJsonLdTokenResolverInterface`. `ai_schemadotorg_jsonld.token.inc` provides `hook_token_info()` and `hook_token()` as thin wrappers that delegate to this service.
 
 ### Token
 
@@ -275,15 +310,15 @@ Two separate `#[Hook]` implementations, one per widget type. When the field name
    - **Preserve semantic markup:** retain `<p>`, `<h1>`–`<h6>`, `<ul>`, `<ol>`, `<li>`, `<blockquote>`, `<figure>`, etc.
 6. Return the processed HTML string.
 
-### Injected services
+### Injected services (general → specific)
 
-1. `EntityTypeManagerInterface`
+1. `ConfigFactoryInterface`
 2. `RendererInterface`
 3. `RequestStack`
 4. `AccountSwitcherInterface`
-5. `ConfigFactoryInterface`
-6. `ThemeManagerInterface`
-7. `ThemeInitializationInterface`
+5. `ThemeManagerInterface`
+6. `ThemeInitializationInterface`
+7. `EntityTypeManagerInterface`
 
 ---
 
@@ -315,11 +350,13 @@ copy:
 - Install required modules, create `page` node type.
 - Call `addFieldToEntity('node', 'page')`.
 - Check that `FieldStorageConfig` for `node.field_schemadotorg_jsonld` exists.
-- Check that `FieldConfig` for `node.page.field_schemadotorg_jsonld` exists.
+- Check that `FieldConfig` for `node.page.field_schemadotorg_jsonld` exists and is translatable.
 - Check that the `ai_automator` config entity `node.page.field_schemadotorg_jsonld.default` exists.
 - Check that the default form display for `node.page` includes `field_schemadotorg_jsonld` at weight 99.
 - Check that the default view display for `node.page` includes `field_schemadotorg_jsonld` at weight 99.
 - Check that calling `addFieldToEntity` a second time does not throw (idempotency).
+- Delete the `FieldConfig` for `node.page.field_schemadotorg_jsonld`.
+- Check that the `ai_automator` config entity `node.page.field_schemadotorg_jsonld.default` no longer exists. (This verifies correct cascade delete behaviour — or flags a bug in `ai_automators` if the automator persists as an orphan.)
 
 ### `AiSchemaDotOrgJsonLdSettingsFormTest` (BrowserTest)
 
@@ -340,6 +377,18 @@ copy:
 - Check that root-relative URLs have been converted to absolute URLs.
 - Check that bare wrapping `<div><div>` patterns are absent.
 - Check that rendering was performed as the anonymous user (no admin markup, no contextual links).
+
+### `AiSchemaDotOrgJsonLdPageAttachmentsTest` (BrowserTest)
+
+`::testPageAttachments()`:
+- Configure `default_jsonld` with a valid JSON-LD string.
+- Enable `breadcrumb_jsonld`.
+- Configure `page` bundle and create a `page` node with a `field_schemadotorg_jsonld` value.
+- Visit the node's canonical URL.
+- Check that the page `<head>` contains a `<script type="application/ld+json">` tag with the default JSON-LD (`ai_schemadotorg_jsonld_default`).
+- Check that the page `<head>` contains a `<script type="application/ld+json">` tag with breadcrumb JSON-LD (`ai_schemadotorg_jsonld_breadcrumb`).
+- Check that the page `<head>` contains a `<script type="application/ld+json">` tag with the node's field value (`ai_schemadotorg_jsonld_node_{nid}`).
+- Visit a non-node page and check that the node-specific tag is absent.
 
 ### `AiSchemaDotOrgJsonLdEventSubscriberTest` (UnitTest)
 
