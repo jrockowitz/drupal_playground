@@ -51,7 +51,12 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     /** @var \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager */
     $manager = $this->container->get(AiSchemaDotOrgJsonLdManagerInterface::class);
 
-    $manager->addEntityTypes(['taxonomy_term', 'block_content']);
+    $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
+
+    // Check that only node is seeded during installation.
+    $this->assertSame(['node'], array_keys($entity_type_settings));
+
+    $manager->addEntityTypes(['taxonomy_term', 'block_content', 'media']);
 
     $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
 
@@ -60,6 +65,9 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
 
     // Check that block content settings were added.
     $this->assertArrayHasKey('block_content', $entity_type_settings);
+
+    // Check that media settings were added.
+    $this->assertArrayHasKey('media', $entity_type_settings);
 
     // Check that entity type settings are sorted by key.
     $this->assertSame(['block_content', 'media', 'node', 'taxonomy_term'], array_keys($entity_type_settings));
@@ -71,9 +79,13 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     // Check that block content uses the expected token namespace.
     $this->assertStringContainsString('[block_content:url]', $entity_type_settings['block_content']['prompt']);
 
+    // Check that media uses the expected token namespace.
+    $this->assertStringContainsString('[media:url]', $entity_type_settings['media']['prompt']);
+
     // Check that newly added entity types default to empty JSON-LD.
     $this->assertSame('', $entity_type_settings['taxonomy_term']['default_jsonld']);
     $this->assertSame('', $entity_type_settings['block_content']['default_jsonld']);
+    $this->assertSame('', $entity_type_settings['media']['default_jsonld']);
 
     // Check that unsupported canonical entity types are excluded.
     $supported_entity_types = $manager->getSupportedEntityTypes();

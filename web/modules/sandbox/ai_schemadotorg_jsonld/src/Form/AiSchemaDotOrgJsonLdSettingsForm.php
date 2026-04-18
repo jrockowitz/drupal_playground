@@ -124,7 +124,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       $form['entity_types'][$entity_type_id]['default_jsonld'] = [
         '#type' => $default_jsonld_type,
         '#title' => $this->t('Default JSON-LD'),
-        '#description' => $this->t('Default JSON-LD injected for canonical @entity_type pages. Leave blank to disable.', ['@entity_type' => $entity_type_definition->getLabel()]),
+        '#description' => $this->t('Default JSON-LD injected for canonical @entity_type pages whose bundle already has the Schema.org JSON-LD field. Leave blank to disable.', ['@entity_type' => $entity_type_definition->getLabel()]),
         '#default_value' => $entity_type_settings[$entity_type_id]['default_jsonld'] ?? '',
         '#element_validate' => [[$this, 'validateJson']],
       ];
@@ -139,7 +139,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Enabled entity types'),
       '#open' => FALSE,
       '#tree' => TRUE,
-      // Non-bundleable canonical content entities like user are a future
+      // Canonical content entities without bundles, such as user, are a future
       // follow-up once the field builder supports them.
     ];
     $form['enabled_entity_types']['entity_types'] = [

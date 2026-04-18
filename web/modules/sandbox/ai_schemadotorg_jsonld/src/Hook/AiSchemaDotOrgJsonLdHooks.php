@@ -6,6 +6,7 @@ namespace Drupal\ai_schemadotorg_jsonld\Hook;
 
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBreadcrumbListInterface;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
+use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgJsonLdCurrentEntityTrait;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -25,6 +26,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  */
 class AiSchemaDotOrgJsonLdHooks {
 
+  use AiSchemaDotOrgJsonLdCurrentEntityTrait;
   use StringTranslationTrait;
 
   /**
@@ -88,7 +90,7 @@ class AiSchemaDotOrgJsonLdHooks {
     }
 
     // Attach entity field JSON-LD on canonical entity routes.
-    $entity = $this->getCurrentEntity();
+    $entity = $this->getCurrentEntity($this->routeMatch);
     if (!$entity instanceof ContentEntityInterface) {
       return;
     }
@@ -124,26 +126,6 @@ class AiSchemaDotOrgJsonLdHooks {
         'ai_schemadotorg_jsonld_' . $entity->getEntityTypeId() . '_' . $entity->id(),
       ];
     }
-  }
-
-  /**
-   * Returns the current page's canonical content entity, or NULL.
-   *
-   * Canonical routes follow the pattern: entity.{entity_type_id}.canonical.
-   */
-  protected function getCurrentEntity(): ?ContentEntityInterface {
-    $route_name = $this->routeMatch->getRouteName();
-
-    if ($route_name === NULL) {
-      return NULL;
-    }
-
-    if (preg_match('/^entity\.(\w+)\.canonical$/', $route_name, $matches)) {
-      $entity_type_id = $matches[1];
-      return $this->routeMatch->getParameter($entity_type_id);
-    }
-
-    return NULL;
   }
 
   /**

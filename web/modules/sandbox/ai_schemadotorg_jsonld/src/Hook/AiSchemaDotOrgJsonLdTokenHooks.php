@@ -65,7 +65,7 @@ class AiSchemaDotOrgJsonLdTokenHooks {
     $entity_type_id = $this->tokenEntityMapper->getEntityTypeForTokenType($type);
     $entity_type_settings = $this->configFactory->get('ai_schemadotorg_jsonld.settings')->get('entity_types') ?? [];
 
-    if ($entity_type_id === FALSE || !isset($entity_type_settings[$entity_type_id]) || empty($data[$type])) {
+    if (!isset($entity_type_settings[$entity_type_id]) || empty($data[$type])) {
       return $replacements;
     }
 

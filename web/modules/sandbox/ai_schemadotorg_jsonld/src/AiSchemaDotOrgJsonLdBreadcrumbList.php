@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\ai_schemadotorg_jsonld;
 
+use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgJsonLdCurrentEntityTrait;
 use Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Url;
 
 /**
  * Builds a BreadcrumbList JSON-LD array for the current page.
@@ -18,6 +19,8 @@ use Drupal\Core\Url;
  * signal it produces data, not a Drupal breadcrumb object.
  */
 class AiSchemaDotOrgJsonLdBreadcrumbList implements AiSchemaDotOrgJsonLdBreadcrumbListInterface {
+
+  use AiSchemaDotOrgJsonLdCurrentEntityTrait;
 
   /**
    * Constructs an AiSchemaDotOrgJsonLdBreadcrumbList object.
@@ -68,15 +71,15 @@ class AiSchemaDotOrgJsonLdBreadcrumbList implements AiSchemaDotOrgJsonLdBreadcru
       $position++;
     }
 
-    // Append the current route's node as the final list item.
-    $node = $route_match->getParameter('node');
-    if ($node) {
+    // Append the current canonical entity as the final list item.
+    $entity = $this->getCurrentEntity($route_match);
+    if ($entity instanceof ContentEntityInterface) {
       $items[] = [
         '@type' => 'ListItem',
         'position' => $position,
         'item' => [
-          '@id' => Url::fromRouteMatch($route_match)->setAbsolute()->toString(),
-          'name' => $node->label(),
+          '@id' => $entity->toUrl('canonical')->setAbsolute()->toString(),
+          'name' => $entity->label(),
         ],
       ];
     }

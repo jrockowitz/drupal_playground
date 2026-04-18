@@ -71,6 +71,7 @@ ddev code-fix <file|directory>
 
 ## PHP
 
+- For ternary operator always use parentheses around the condition.
 - Don't use `private` with methods, use `protected` so that a method can be overridden.
 - Don't use `final` with classes and allow a class to be extended.
 - Don't use $strict with in_array() calls.

@@ -59,6 +59,8 @@ class AiSchemaDotOrgJsonLdTokenResolverTest extends BrowserTestBase {
       'name' => 'Tags',
     ])->save();
     $this->config('ai_schemadotorg_jsonld.settings')
+      ->set('entity_types.media.prompt', 'Prompt')
+      ->set('entity_types.media.default_jsonld', '')
       ->set('entity_types.taxonomy_term.prompt', 'Prompt')
       ->set('entity_types.taxonomy_term.default_jsonld', '')
       ->save();

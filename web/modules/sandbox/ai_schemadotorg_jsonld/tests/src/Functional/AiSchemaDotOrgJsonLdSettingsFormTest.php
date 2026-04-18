@@ -76,29 +76,35 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld');
     $this->assertSession()->statusCodeEquals(200);
 
-    // Check that node and media sections render nested settings fields.
+    // Check that node renders nested settings fields by default.
     $this->assertSession()->elementExists('css', 'input[name="entity_types[node][bundles][page]"]');
-    $this->assertSession()->elementExists('css', 'input[name="entity_types[media][bundles][document]"]');
     $this->assertSession()->fieldExists('entity_types[node][prompt]');
     $this->assertSession()->fieldExists('entity_types[node][default_jsonld]');
-    $this->assertSession()->fieldExists('entity_types[media][prompt]');
-    $this->assertSession()->fieldExists('entity_types[media][default_jsonld]');
+    $this->assertSession()->fieldNotExists('entity_types[media][prompt]');
+    $this->assertSession()->fieldNotExists('entity_types[media][default_jsonld]');
     $this->assertSession()->fieldExists('breadcrumb_jsonld');
     $this->assertSession()->elementExists('css', 'details#edit-enabled-entity-types');
     $this->assertSession()->elementNotExists('css', 'details#edit-enabled-entity-types[open]');
+    $this->assertSession()->elementExists('css', 'input[name="enabled_entity_types[entity_types][media]"]');
     $this->assertSession()->elementExists('css', 'input[name="enabled_entity_types[entity_types][taxonomy_term]"]');
     $this->assertSession()->elementExists('css', 'input[name="enabled_entity_types[entity_types][block_content]"]');
     $this->assertSession()->elementNotExists('css', 'input[name="enabled_entity_types[entity_types][shortcut]"]');
     $this->assertSession()->linkByHrefExists('/admin/structure/types/manage/page');
-    $this->assertSession()->linkByHrefExists('/admin/structure/media/manage/document');
     $this->assertSession()->elementNotExists('css', 'a.use-ajax[href="/admin/structure/types/manage/page"]');
-    $this->assertSession()->elementNotExists('css', 'a.use-ajax[href="/admin/structure/media/manage/document"]');
 
-    // Enable taxonomy terms and check the new entity type section appears.
+    // Enable media and taxonomy terms and check the new sections appear.
     $this->submitForm([
+      'enabled_entity_types[entity_types][media]' => 'media',
       'enabled_entity_types[entity_types][taxonomy_term]' => 'taxonomy_term',
     ], 'Save configuration');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('entity_types[media][prompt]');
+    $this->assertSession()->fieldExists('entity_types[media][default_jsonld]');
+    $this->assertSession()->elementExists('css', 'input[name="entity_types[media][bundles][document]"]');
+    $this->assertSession()->linkByHrefExists('/admin/structure/media/manage/document');
+    $this->assertSession()->elementNotExists('css', 'a.use-ajax[href="/admin/structure/media/manage/document"]');
+
+    // Check that the taxonomy term section appears after enabling it.
     $this->assertSession()->fieldExists('entity_types[taxonomy_term][prompt]');
     $this->assertSession()->fieldExists('entity_types[taxonomy_term][default_jsonld]');
     $this->assertSession()->elementExists('css', 'input[name="entity_types[taxonomy_term][bundles][tags]"]');

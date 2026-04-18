@@ -44,10 +44,7 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    */
   public function addFieldToEntity(string $entity_type_id, string $bundle): void {
     $this->createFieldStorage($entity_type_id);
-    $created = $this->createField($entity_type_id, $bundle);
-    if (!$created) {
-      return;
-    }
+    $this->createField($entity_type_id, $bundle);
     $this->createAutomator($entity_type_id, $bundle);
     $this->addFormDisplayComponent($entity_type_id, $bundle);
     $this->addViewDisplayComponent($entity_type_id, $bundle);

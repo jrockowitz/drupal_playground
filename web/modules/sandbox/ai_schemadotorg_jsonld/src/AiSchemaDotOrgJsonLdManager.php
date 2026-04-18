@@ -145,8 +145,7 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
    * Returns the label token name for an entity type.
    */
   protected function getLabelTokenName(ContentEntityTypeInterface $entity_type): ?string {
-    $label_key = $entity_type->getKey('label');
-    return $label_key !== FALSE && $label_key !== NULL ? $label_key : NULL;
+    return $entity_type->getKey('label') ?: NULL;
   }
 
   /**

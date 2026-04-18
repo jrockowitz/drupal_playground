@@ -14,12 +14,13 @@ Supported entity types must be:
 
 - content entities
 - fieldable
-- bundleable
+- have bundles
 - canonical
 
 Examples include `node`, `media`, `taxonomy_term`, and `block_content`.
+Only `node` is configured out of the box. Other supported entity types can be enabled after installation.
 
-Canonical non-bundleable content entities such as `user` are not supported yet.
+Canonical content entities without bundles such as `user` are not supported yet.
 
 ## Requirements
 
@@ -52,12 +53,13 @@ Navigate to `/admin/config/ai/schemadotorg-jsonld`.
 ### Entity type sections
 
 Each enabled entity type gets its own open details section under `entity_types`.
+By default, only `node` is enabled.
 
 Each section includes:
 
 - a bundle selector
 - a default prompt for that entity type
-- a `default_jsonld` value injected on canonical pages for that entity type
+- a `default_jsonld` value injected on canonical pages for configured bundles of that entity type
 
 Once a bundle is configured, its checkbox is disabled. Use the `Edit field` and `Delete field`
 operations to manage the generated field configuration.
@@ -78,7 +80,7 @@ The `Enabled entity types` details element lists supported entity types that can
   - Use `[@entity_type:ai_schemadotorg_jsonld:content]` to include the rendered entity content in
     the prompt.
 - `default_jsonld`
-  - Static JSON-LD injected on canonical pages for that entity type.
+  - Static JSON-LD injected on canonical pages for bundles of that entity type that already have the generated field.
   - Leave blank to disable entity-type-specific default JSON-LD output.
 - `breadcrumb_jsonld`
   - Attaches a `BreadcrumbList` JSON-LD block when breadcrumb data is available.
@@ -105,7 +107,7 @@ The module can attach up to three JSON-LD script tags on canonical entity routes
   - Breadcrumb JSON-LD when `breadcrumb_jsonld` is enabled and breadcrumb data is available.
 - `ai_schemadotorg_jsonld_default_{entity_type_id}`
   - The configured `entity_types.{entity_type_id}.default_jsonld` value for the current entity
-    type.
+    type when the current entity bundle has the generated field.
 - `ai_schemadotorg_jsonld_{entity_type_id}_{id}`
   - The saved `field_schemadotorg_jsonld` value from the current entity.
 
@@ -120,7 +122,7 @@ Other modules can alter these attachments with `hook_page_attachments_alter()`.
   - Tracks supported entity types and seeds default `entity_types` settings for newly enabled
     entity types.
 - `AiSchemaDotOrgJsonLdBreadcrumbList`
-  - Builds `BreadcrumbList` JSON-LD data from the current route breadcrumb.
+  - Builds `BreadcrumbList` JSON-LD data from the current route breadcrumb and canonical route entity.
 - `AiSchemaDotOrgJsonLdTokenResolver`
   - Renders content entities for token output used in AI prompts.
 - `AiSchemaDotOrgJsonLdEventSubscriber`

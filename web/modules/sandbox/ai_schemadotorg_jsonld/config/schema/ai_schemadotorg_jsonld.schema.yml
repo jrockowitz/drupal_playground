@@ -1,14 +1,3 @@
-ai_schemadotorg_jsonld.entity_type_settings:
-  type: mapping
-  label: 'Entity type settings'
-  mapping:
-    prompt:
-      type: text
-      label: 'Prompt'
-    default_jsonld:
-      type: text
-      label: 'Default JSON-LD'
-
 ai_schemadotorg_jsonld.settings:
   type: config_object
   label: 'AI Schema.org JSON-LD settings'
@@ -17,7 +6,15 @@ ai_schemadotorg_jsonld.settings:
       type: sequence
       label: 'Entity type settings'
       sequence:
-        type: ai_schemadotorg_jsonld.entity_type_settings
+        type: mapping
+        label: 'Entity type settings'
+        mapping:
+          prompt:
+            type: text
+            label: 'Prompt'
+          default_jsonld:
+            type: text
+            label: 'Default JSON-LD'
     breadcrumb_jsonld:
       type: boolean
       label: 'Include breadcrumb JSON-LD'

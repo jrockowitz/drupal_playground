@@ -2,6 +2,6 @@ ai_schemadotorg_jsonld.settings:
   path: '/admin/config/ai/schemadotorg-jsonld'
   defaults:
     _form: '\Drupal\ai_schemadotorg_jsonld\Form\AiSchemaDotOrgJsonLdSettingsForm'
-    _title: 'AI Schema.org JSON-LD'
+    _title: 'AI Schema.org JSON-LD settings'
   requirements:
     _permission: 'administer site configuration'

@@ -108,9 +108,30 @@ class AiSchemaDotOrgJsonLdBuilderTest extends KernelTestBase {
     $this->assertNotNull($component, 'View display component exists.');
     $this->assertSame(99, $component['weight'], 'View display weight is 99.');
 
-    // Check idempotency — calling again must not throw.
+    // Delete downstream config to confirm repeated calls repair partial state.
+    $automator->delete();
+    $form_display->removeComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->save();
+    $view_display->removeComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->save();
+
+    $this->container->get('entity_type.manager')->getStorage('ai_automator')->resetCache();
+
+    // Check idempotency and repair support — calling again must recreate missing config.
     $builder->addFieldToEntity('node', 'page');
-    $this->addToAssertionCount(1);
+
+    $repaired_automator = $this->container->get('entity_type.manager')
+      ->getStorage('ai_automator')
+      ->load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME . '.default');
+    $this->assertNotNull($repaired_automator, 'AiAutomator is recreated when missing.');
+
+    $repaired_form_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_form_display')
+      ->load('node.page.default');
+    $this->assertNotNull($repaired_form_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME), 'Form display component is recreated when missing.');
+
+    $repaired_view_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_view_display')
+      ->load('node.page.default');
+    $this->assertNotNull($repaired_view_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME), 'View display component is recreated when missing.');
 
     // Check cascade delete — deleting FieldConfig should remove the automator.
     FieldConfig::load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->delete();

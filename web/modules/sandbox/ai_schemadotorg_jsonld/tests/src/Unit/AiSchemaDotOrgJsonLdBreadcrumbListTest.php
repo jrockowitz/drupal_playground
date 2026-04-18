@@ -1,0 +1,131 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\ai_schemadotorg_jsonld\Unit;
+
+use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBreadcrumbList;
+use Drupal\Core\Breadcrumb\Breadcrumb;
+use Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\Tests\UnitTestCase;
+
+/**
+ * Tests AiSchemaDotOrgJsonLdBreadcrumbList.
+ *
+ * @group ai_schemadotorg_jsonld
+ */
+class AiSchemaDotOrgJsonLdBreadcrumbListTest extends UnitTestCase {
+
+  /**
+   * Tests that non-applicable routes return no breadcrumb JSON-LD.
+   */
+  public function testBuildReturnsNullWhenBreadcrumbDoesNotApply(): void {
+    $renderer = $this->createMock(RendererInterface::class);
+    $breadcrumb_builder = $this->createMock(ChainBreadcrumbBuilderInterface::class);
+    $route_match = $this->createMock(RouteMatchInterface::class);
+    $bubbleable_metadata = new BubbleableMetadata();
+
+    $breadcrumb_builder->expects($this->once())
+      ->method('applies')
+      ->with($route_match)
+      ->willReturn(FALSE);
+
+    $breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $breadcrumb_builder);
+
+    $this->assertNull($breadcrumb_list->build($route_match, $bubbleable_metadata));
+  }
+
+  /**
+   * Tests that empty breadcrumbs return no breadcrumb JSON-LD.
+   */
+  public function testBuildReturnsNullWhenBreadcrumbIsEmpty(): void {
+    $renderer = $this->createMock(RendererInterface::class);
+    $breadcrumb_builder = $this->createMock(ChainBreadcrumbBuilderInterface::class);
+    $route_match = $this->createMock(RouteMatchInterface::class);
+    $bubbleable_metadata = new BubbleableMetadata();
+    $breadcrumb = new Breadcrumb();
+
+    $breadcrumb_builder->method('applies')->willReturn(TRUE);
+    $breadcrumb_builder->expects($this->once())
+      ->method('build')
+      ->with($route_match)
+      ->willReturn($breadcrumb);
+
+    $breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $breadcrumb_builder);
+
+    $this->assertNull($breadcrumb_list->build($route_match, $bubbleable_metadata));
+  }
+
+  /**
+   * Tests that the current canonical entity is appended to the breadcrumb.
+   */
+  public function testBuildAppendsCurrentCanonicalEntity(): void {
+    $renderer = $this->createMock(RendererInterface::class);
+    $breadcrumb_builder = $this->createMock(ChainBreadcrumbBuilderInterface::class);
+    $route_match = $this->createMock(RouteMatchInterface::class);
+    $bubbleable_metadata = new BubbleableMetadata();
+    $entity = $this->createMock(ContentEntityInterface::class);
+    $home_url = $this->createMock(Url::class);
+    $section_url = $this->createMock(Url::class);
+    $canonical_url = $this->createMock(Url::class);
+
+    $home_url->method('setAbsolute')->willReturnSelf();
+    $home_url->method('toString')->willReturn('https://example.com/');
+
+    $section_url->method('setAbsolute')->willReturnSelf();
+    $section_url->method('toString')->willReturn('https://example.com/section');
+
+    $canonical_url->method('setAbsolute')->willReturnSelf();
+    $canonical_url->method('toString')->willReturn('https://example.com/current-page');
+
+    $breadcrumb = (new Breadcrumb())->setLinks([
+      Link::fromTextAndUrl('Home', $home_url),
+      Link::fromTextAndUrl(
+        ['#markup' => Markup::create('Section')],
+        $section_url
+      ),
+    ]);
+
+    $breadcrumb_builder->method('applies')->willReturn(TRUE);
+    $breadcrumb_builder->expects($this->once())
+      ->method('build')
+      ->with($route_match)
+      ->willReturn($breadcrumb);
+
+    $renderer->expects($this->once())
+      ->method('renderInIsolation')
+      ->willReturn('Section');
+
+    $route_match->method('getRouteName')
+      ->willReturn('entity.node.canonical');
+    $route_match->method('getParameter')
+      ->willReturnMap([
+        ['node', $entity],
+      ]);
+
+    $entity->expects($this->once())
+      ->method('label')
+      ->willReturn('Current page');
+    $entity->method('toUrl')
+      ->with('canonical')
+      ->willReturn($canonical_url);
+
+    $breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $breadcrumb_builder);
+    $result = $breadcrumb_list->build($route_match, $bubbleable_metadata);
+
+    $this->assertSame('BreadcrumbList', $result['@type']);
+    $this->assertCount(3, $result['itemListElement']);
+    $this->assertSame('Home', $result['itemListElement'][0]['item']['name']);
+    $this->assertSame('Section', $result['itemListElement'][1]['item']['name']);
+    $this->assertSame('Current page', $result['itemListElement'][2]['item']['name']);
+    $this->assertSame('https://example.com/current-page', $result['itemListElement'][2]['item']['@id']);
+  }
+
+}
