@@ -69,11 +69,9 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('ai_schemadotorg_jsonld.settings');
     $entity_type_settings = $config->get('entity_types') ?? [];
-    $enabled_entity_type_ids = array_keys($entity_type_settings);
-    if (isset($entity_type_settings['node'])) {
-      $enabled_entity_type_ids = ['node'];
-      $enabled_entity_type_ids = array_merge($enabled_entity_type_ids, array_keys(array_diff_key($entity_type_settings, ['node' => TRUE])));
-    }
+    $enabled_entity_type_ids = (isset($entity_type_settings['node']))
+      ? array_merge(['node'], array_keys(array_diff_key($entity_type_settings, ['node' => TRUE])))
+      : array_keys($entity_type_settings);
     $enabled_entity_type_options = $this->getEnabledEntityTypeOptions($enabled_entity_type_ids);
 
     $form['entity_types'] = [

@@ -97,6 +97,9 @@ class AiSchemaDotOrgJsonLdBreadcrumbListTest extends UnitTestCase {
         ['node', $entity],
       ]);
 
+    $entity->method('getCacheContexts')->willReturn([]);
+    $entity->method('getCacheTags')->willReturn([]);
+    $entity->method('getCacheMaxAge')->willReturn(-1);
     $entity->expects($this->once())
       ->method('label')
       ->willReturn('Current page');

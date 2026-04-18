@@ -81,7 +81,14 @@ class AiSchemaDotOrgJsonLdFieldHooks {
   }
 
   /**
-   * Implements hook_field_widget_complete_form_alter().
+   * Implements hook_field_widget_complete_json_textarea_form_alter().
+   *
+   * @param array $field_widget_complete_form
+   *   The complete field widget form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   * @param array $context
+   *   The widget context.
    */
   #[Hook('field_widget_complete_json_textarea_form_alter')]
   #[Hook('field_widget_complete_json_editor_form_alter')]
@@ -95,7 +102,7 @@ class AiSchemaDotOrgJsonLdFieldHooks {
 
     if ($entity->isNew()) {
       $t_args = [
-        '@entity' =>  $entity->getEntityType()->getSingularLabel(),
+        '@entity' => $entity->getEntityType()->getSingularLabel(),
       ];
       $field_widget_complete_form = $this->buildMessages(
         $this->t('Schema.org JSON-LD can be generated after the @entity is saved.', $t_args),
@@ -106,7 +113,14 @@ class AiSchemaDotOrgJsonLdFieldHooks {
   }
 
   /**
-   * Implements hook_field_widget_single_element_form_alter().
+   * Implements hook_field_widget_single_element_json_textarea_form_alter().
+   *
+   * @param array $element
+   *   The field widget form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   * @param array $context
+   *   The widget context.
    */
   #[Hook('field_widget_single_element_json_textarea_form_alter')]
   #[Hook('field_widget_single_element_json_editor_form_alter')]
@@ -124,16 +138,15 @@ class AiSchemaDotOrgJsonLdFieldHooks {
     $element['copy_jsonld'] = $this->buildCopyJsonLd($field_name);
   }
 
-
   /**
    * Builds a theme-native inline message render array.
    *
-   * @param array|string|\Drupal\Component\Render\MarkupInterface $messages
+   * @param string|array|\Drupal\Component\Render\MarkupInterface $messages
    *   The message text, markup, or list of messages.
    * @param string $type
    *   The message type.
    */
-  protected function buildMessages(array|string|MarkupInterface $messages, string $type): array {
+  protected function buildMessages(string|array|MarkupInterface $messages, string $type): array {
     if ($messages instanceof MarkupInterface) {
       $messages = (string) $messages;
     }
@@ -161,7 +174,7 @@ class AiSchemaDotOrgJsonLdFieldHooks {
    *   The field machine name.
    */
   protected function buildCopyJsonLd(string $field_name): array {
-    $description = new TranslatableMarkup('<p>Please copy-n-paste the above Schema.org JSON-LD into the <a href=":schema_href">Schema Markup Validator</a> or <a href=":google_href">Google\'s Rich Results Test</a>.</p>', [
+    $description = new TranslatableMarkup('<p>Please copy and paste the above Schema.org JSON-LD into the <a href=":schema_href">Schema Markup Validator</a> or <a href=":google_href">Google\'s Rich Results Test</a>.</p>', [
       ':schema_href' => 'https://validator.schema.org/',
       ':google_href' => 'https://search.google.com/test/rich-results',
     ]);

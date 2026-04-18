@@ -75,7 +75,7 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
 
     $this->drupalGet('/node/add/page');
 
-    // Check that the JSON-LD field is hidden on unsaved entities.
+    // Check that the JSON-LD field is replaced with a status message on unsaved entities.
     $this->assertSession()->fieldNotExists($field_name . '[0][value]');
     $this->assertSession()->pageTextContains('Schema.org JSON-LD can be generated after the content item is saved.');
     $this->assertSession()->pageTextNotContains('Generate Schema.org JSON-LD');

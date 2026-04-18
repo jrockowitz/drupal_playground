@@ -52,8 +52,7 @@ class AiSchemaDotOrgJsonLdBreadcrumbList implements AiSchemaDotOrgJsonLdBreadcru
     $bubbleable_metadata->addCacheableDependency($breadcrumb);
 
     $items = [];
-    $position = 1;
-    foreach ($links as $link) {
+    foreach (array_values($links) as $index => $link) {
       $id = $link->getUrl()->setAbsolute()->toString();
       $text = $link->getText();
       if (is_array($text)) {
@@ -62,21 +61,21 @@ class AiSchemaDotOrgJsonLdBreadcrumbList implements AiSchemaDotOrgJsonLdBreadcru
 
       $items[] = [
         '@type' => 'ListItem',
-        'position' => $position,
+        'position' => $index + 1,
         'item' => [
           '@id' => $id,
           'name' => (string) $text,
         ],
       ];
-      $position++;
     }
 
     // Append the current canonical entity as the final list item.
     $entity = $this->getCurrentEntity($route_match);
     if ($entity instanceof ContentEntityInterface) {
+      $bubbleable_metadata->addCacheableDependency($entity);
       $items[] = [
         '@type' => 'ListItem',
-        'position' => $position,
+        'position' => count($items) + 1,
         'item' => [
           '@id' => $entity->toUrl('canonical')->setAbsolute()->toString(),
           'name' => $entity->label(),

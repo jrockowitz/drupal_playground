@@ -127,6 +127,9 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
    *   The content entity type ID.
    * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type
    *   The content entity type definition.
+   *
+   * @return string
+   *   The default AI prompt for the entity type.
    */
   protected function buildDefaultPrompt(string $entity_type_id, ContentEntityTypeInterface $entity_type): string {
     $token_name = $this->getTokenName($entity_type_id);

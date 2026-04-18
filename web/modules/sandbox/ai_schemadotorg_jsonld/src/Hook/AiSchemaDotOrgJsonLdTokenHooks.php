@@ -46,10 +46,10 @@ class AiSchemaDotOrgJsonLdTokenHooks {
     foreach (array_keys($entity_type_settings) as $entity_type_id) {
       $token_type = $this->tokenEntityMapper->getTokenTypeForEntityType($entity_type_id, TRUE);
       $tokens[$token_type] = [
-          'ai_schemadotorg_jsonld:content' => [
-            'name' => $this->t('AI Schema.org JSON-LD: Full content'),
-            'description' => $this->t('Renders the entity as the anonymous user in the site default theme for use in AI prompts.'),
-          ],
+        'ai_schemadotorg_jsonld:content' => [
+          'name' => $this->t('AI Schema.org JSON-LD: Full content'),
+          'description' => $this->t('Renders the entity as the anonymous user in the site default theme for use in AI prompts.'),
+        ],
       ];
     }
 

@@ -84,8 +84,11 @@ class AiSchemaDotOrgJsonLdCommands extends DrushCommands {
     $entity_type_id = $entity_type_definition->id();
     $bundle_entity_type_id = $entity_type_definition->getBundleEntityType();
 
-    if (!$bundle_entity_type_id || $bundle !== $entity_type_id) {
-      throw new \InvalidArgumentException('The non-bundle entity type ' . $entity_type_id . ' requires the synthetic bundle ' . $entity_type_id . '.');
+    if (!$bundle_entity_type_id) {
+      if ($bundle !== $entity_type_id) {
+        throw new \InvalidArgumentException('The non-bundle entity type ' . $entity_type_id . ' requires the synthetic bundle ' . $entity_type_id . '.');
+      }
+      return;
     }
 
     $bundle_entity = $this->entityTypeManager

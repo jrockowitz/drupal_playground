@@ -145,10 +145,9 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
   }
 
   /**
-   * Tests onPostGenerateResponse().
+   * Tests that onPostGenerateResponse() ignores unrelated AI requests.
    */
-  public function testOnPostGenerateResponse(): void {
-    // Check that unrelated AI responses are ignored.
+  public function testOnPostGenerateResponseIgnoresUnrelatedRequests(): void {
     $unrelated_output = new ChatOutput(
       new ChatMessage('assistant', '{"@type":"WebPage"}'),
       ['raw' => 'response'],
@@ -165,10 +164,15 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
       ['ai_automator'],
     );
 
-    $this->logger->expects($this->once())->method('notice');
+    // Check that unrelated AI responses do not produce a log notice.
+    $this->logger->expects($this->never())->method('notice');
     $this->subscriber->onPostGenerateResponse($unrelated_event);
+  }
 
-    // Check that JSON-LD automator responses are logged.
+  /**
+   * Tests that onPostGenerateResponse() logs JSON-LD automator responses.
+   */
+  public function testOnPostGenerateResponseLogsJsonLdRequests(): void {
     $output = new ChatOutput(
       new ChatMessage('assistant', '{"@type":"WebPage"}'),
       ['raw' => 'response'],
@@ -188,6 +192,12 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
       ],
     );
 
+    // Check that JSON-LD automator responses are logged with the request ID.
+    $this->logger->expects($this->once())->method('notice')
+      ->with(
+        $this->stringContains('@request_id'),
+        $this->arrayHasKey('@request_id'),
+      );
     $this->subscriber->onPostGenerateResponse($event);
   }
 
