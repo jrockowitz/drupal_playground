@@ -6,6 +6,7 @@ namespace Drupal\Tests\ai_schemadotorg_jsonld\Functional;
 
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\block_content\Entity\BlockContentType;
+use Drupal\node\Entity\NodeType;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\Tests\BrowserTestBase;
 
@@ -45,15 +46,24 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
+    $this->drupalCreateContentType([
+      'type' => 'page',
+      'name' => 'Basic page',
+    ]);
+    $page_node_type = NodeType::load('page');
+    $this->assertNotNull($page_node_type, 'The page node type exists.');
+    $page_node_type->set('description', 'Basic page description');
+    $page_node_type->save();
     Vocabulary::create([
       'vid' => 'tags',
       'name' => 'Tags',
+      'description' => 'Tags description',
     ])->save();
     if (!BlockContentType::load('basic')) {
       BlockContentType::create([
         'id' => 'basic',
         'label' => 'Basic block',
+        'description' => 'Basic block description',
       ])->save();
     }
     $this->container->get('entity_type.manager')
@@ -61,6 +71,7 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
       ->create([
         'id' => 'document',
         'label' => 'Document',
+        'description' => 'Document description',
         'source' => 'file',
       ])
       ->save();
@@ -77,6 +88,12 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
 
     // Check that node renders nested settings fields by default.
+    $this->assertSession()->pageTextContains('Select the bundles that should get the Schema.org JSON-LD field. Then review the default prompt and optional default JSON-LD used for this entity type.');
+    $this->assertSession()->pageTextContains('Note: you can customize the prompt for an individual bundle by clicking Edit field, going to AI Automator Settings, and editing the automator prompt.');
+    $this->assertSession()->pageTextContains('Enable the supported entity types you want to manage with this module. After saving, each enabled entity type will appear above with bundle, prompt, and default JSON-LD settings.');
+    $this->assertSession()->responseContains('<th>Name</th>');
+    $this->assertSession()->responseContains('<th class="priority-medium">Description</th>');
+    $this->assertSession()->responseContains('<th>Operations</th>');
     $this->assertSession()->elementExists('css', 'input[name="entity_types[node][bundles][page]"]');
     $this->assertSession()->fieldExists('entity_types[node][prompt]');
     $this->assertSession()->fieldExists('entity_types[node][default_jsonld]');
@@ -103,6 +120,7 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     $this->assertSession()->fieldExists('entity_types[media][prompt]');
     $this->assertSession()->fieldExists('entity_types[media][default_jsonld]');
     $this->assertSession()->elementExists('css', 'input[name="entity_types[media][bundles][document]"]');
+    $this->assertSession()->pageTextContains('Document description');
     $this->assertSession()->linkByHrefExists('/admin/structure/media/manage/document');
     $this->assertSession()->elementNotExists('css', 'a.use-ajax[href="/admin/structure/media/manage/document"]');
 
@@ -110,6 +128,7 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     $this->assertSession()->fieldExists('entity_types[taxonomy_term][prompt]');
     $this->assertSession()->fieldExists('entity_types[taxonomy_term][default_jsonld]');
     $this->assertSession()->elementExists('css', 'input[name="entity_types[taxonomy_term][bundles][tags]"]');
+    $this->assertSession()->pageTextContains('Tags description');
 
     // Select page bundle and save.
     $this->submitForm(['entity_types[node][bundles][page]' => 'page'], 'Save configuration');

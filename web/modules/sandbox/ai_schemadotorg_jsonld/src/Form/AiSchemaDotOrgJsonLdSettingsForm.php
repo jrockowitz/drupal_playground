@@ -70,6 +70,10 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     $config = $this->config('ai_schemadotorg_jsonld.settings');
     $entity_type_settings = $config->get('entity_types') ?? [];
     $enabled_entity_type_ids = array_keys($entity_type_settings);
+    if (isset($entity_type_settings['node'])) {
+      $enabled_entity_type_ids = ['node'];
+      $enabled_entity_type_ids = array_merge($enabled_entity_type_ids, array_keys(array_diff_key($entity_type_settings, ['node' => TRUE])));
+    }
     $enabled_entity_type_options = $this->getEnabledEntityTypeOptions($enabled_entity_type_ids);
 
     $form['entity_types'] = [
@@ -84,8 +88,11 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       }
 
       $header = [
-        'label' => $this->t('Bundle'),
-        'machine_name' => $this->t('Machine name'),
+        'label' => $this->t('Name'),
+        'description' => [
+          'data' => $this->t('Description'),
+          'class' => [RESPONSIVE_PRIORITY_MEDIUM],
+        ],
         'operations' => $this->t('Operations'),
       ];
       $disabled_bundles = [];
@@ -99,6 +106,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       $form['entity_types'][$entity_type_id] = [
         '#type' => 'details',
         '#title' => $entity_type_definition->getLabel(),
+        '#description' => $this->t('Select the bundles that should get the Schema.org JSON-LD field. Then review the default prompt and optional default JSON-LD used for this entity type. Note: you can customize the prompt for an individual bundle by clicking Edit field, going to AI Automator Settings, and editing the automator prompt.'),
         '#open' => TRUE,
       ];
 
@@ -137,6 +145,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     $form['enabled_entity_types'] = [
       '#type' => 'details',
       '#title' => $this->t('Enabled entity types'),
+      '#description' => $this->t('Enable the supported entity types you want to manage with this module. After saving, each enabled entity type will appear above with bundle, prompt, and default JSON-LD settings.'),
       '#open' => FALSE,
       '#tree' => TRUE,
       // Canonical content entities without bundles, such as user, are a future
@@ -243,6 +252,13 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     foreach ($bundle_types as $type) {
       $bundle = $type->id();
       $label = $type->label();
+      $description = '';
+      if (method_exists($type, 'get')) {
+        $description = (string) ($type->get('description')->value ?? '');
+      }
+      if ($description === '' && method_exists($type, 'getDescription')) {
+        $description = (string) $type->getDescription();
+      }
       $field_config = $this->entityTypeManager
         ->getStorage('field_config')
         ->load($entity_type_id . '.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
@@ -292,7 +308,10 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         'label' => [
           'data' => $label_cell,
         ],
-        'machine_name' => $bundle,
+        'description' => [
+          'data' => ['#markup' => $description],
+          'class' => [RESPONSIVE_PRIORITY_MEDIUM],
+        ],
         'operations' => [
           'data' => [
             '#type' => 'operations',
@@ -331,7 +350,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       ];
 
       if (
-        in_array($entity_type_id, $enabled_entity_type_ids, TRUE)
+        in_array($entity_type_id, $enabled_entity_type_ids)
         && $this->hasFieldStorage($entity_type_id)
       ) {
         $options[$entity_type_id]['#disabled'] = TRUE;

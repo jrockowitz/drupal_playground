@@ -85,11 +85,13 @@ $array = [
 ];
 ```
 
-- Tests
-  - Assertion blocks should have comments that typically begin with `// Check that ...`.
-    - Do not use `/* * {comments} * */` comments.
-    - Look at existing tests in the module for the expected style.
-  - For Browser and Kernel test, try to use one test method with assertion blocks to improve the test performance.
+### PHPUnit
+
+- For Browser and Kernel test, try to use one test method with assertion blocks to improve the test performance.
+- Assertion blocks should have comments that typically begin with `// Check that ...`.
+  - Do not use `/* * {comments} * */` comments.
+  - Look at existing tests in the module for the expected style.
+- Avoid using Nullsafe Operator '?->' in tests and allow the test to fail if the property/method is not set.
 
 ## HTML
 

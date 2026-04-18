@@ -40,57 +40,6 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
   /**
    * {@inheritdoc}
    */
-  public function addEntityTypes(array $entity_type_ids): void {
-    $config = $this->configFactory->getEditable('ai_schemadotorg_jsonld.settings');
-    $entity_type_settings = $config->get('entity_types') ?? [];
-    $supported_entity_types = $this->getSupportedEntityTypes();
-
-    foreach (array_unique($entity_type_ids) as $entity_type_id) {
-      if (isset($entity_type_settings[$entity_type_id])) {
-        continue;
-      }
-
-      $entity_type = $supported_entity_types[$entity_type_id] ?? NULL;
-      if (!$entity_type instanceof ContentEntityTypeInterface) {
-        continue;
-      }
-
-      $entity_type_settings[$entity_type_id] = [
-        'prompt' => $this->buildDefaultPrompt($entity_type_id, $entity_type),
-        'default_jsonld' => '',
-      ];
-    }
-
-    ksort($entity_type_settings);
-    $config->set('entity_types', $entity_type_settings)->save();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function syncEntityTypes(array $entity_type_ids): void {
-    $config = $this->configFactory->getEditable('ai_schemadotorg_jsonld.settings');
-    $entity_type_settings = $config->get('entity_types') ?? [];
-    $enabled_entity_type_ids = array_unique($entity_type_ids);
-
-    foreach (array_keys($entity_type_settings) as $entity_type_id) {
-      if (in_array($entity_type_id, $enabled_entity_type_ids, TRUE)) {
-        continue;
-      }
-      if ($this->hasFieldStorage($entity_type_id)) {
-        continue;
-      }
-
-      unset($entity_type_settings[$entity_type_id]);
-    }
-
-    ksort($entity_type_settings);
-    $config->set('entity_types', $entity_type_settings)->save();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getSupportedEntityTypes(): array {
     $supported_entity_types = [];
 
@@ -116,6 +65,57 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
 
     uasort($supported_entity_types, static fn (ContentEntityTypeInterface $a, ContentEntityTypeInterface $b): int => strnatcasecmp((string) $a->getLabel(), (string) $b->getLabel()));
     return $supported_entity_types;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function syncEntityTypes(array $entity_type_ids): void {
+    $config = $this->configFactory->getEditable('ai_schemadotorg_jsonld.settings');
+    $entity_type_settings = $config->get('entity_types') ?? [];
+    $enabled_entity_type_ids = array_unique($entity_type_ids);
+
+    foreach (array_keys($entity_type_settings) as $entity_type_id) {
+      if (in_array($entity_type_id, $enabled_entity_type_ids)) {
+        continue;
+      }
+      if ($this->hasFieldStorage($entity_type_id)) {
+        continue;
+      }
+
+      unset($entity_type_settings[$entity_type_id]);
+    }
+
+    ksort($entity_type_settings);
+    $config->set('entity_types', $entity_type_settings)->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addEntityTypes(array $entity_type_ids): void {
+    $config = $this->configFactory->getEditable('ai_schemadotorg_jsonld.settings');
+    $entity_type_settings = $config->get('entity_types') ?? [];
+    $supported_entity_types = $this->getSupportedEntityTypes();
+
+    foreach (array_unique($entity_type_ids) as $entity_type_id) {
+      if (isset($entity_type_settings[$entity_type_id])) {
+        continue;
+      }
+
+      $entity_type = $supported_entity_types[$entity_type_id] ?? NULL;
+      if (!$entity_type instanceof ContentEntityTypeInterface) {
+        continue;
+      }
+
+      $entity_type_settings[$entity_type_id] = [
+        'prompt' => $this->buildDefaultPrompt($entity_type_id, $entity_type),
+        'default_jsonld' => '',
+      ];
+    }
+
+    ksort($entity_type_settings);
+    $config->set('entity_types', $entity_type_settings)->save();
   }
 
   /**

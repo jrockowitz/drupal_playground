@@ -48,16 +48,63 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
   }
 
   /**
-   * Tests addEntityTypes adds sorted default settings for new entity types.
+   * Tests entity type management behavior.
    */
-  public function testAddEntityTypes(): void {
+  public function testEntityTypeManagement(): void {
     /** @var \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager */
     $manager = $this->container->get(AiSchemaDotOrgJsonLdManagerInterface::class);
 
+    // Check that unsupported canonical entity types are excluded.
+    $supported_entity_types = $manager->getSupportedEntityTypes();
+    $this->assertArrayNotHasKey('shortcut', $supported_entity_types);
+
+    // Check that unchecked entity types without field storage are removed.
+    $manager->addEntityTypes(['media', 'taxonomy_term']);
+    $manager->syncEntityTypes(['node']);
+
     $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
 
-    // Check that only node is seeded during installation.
     $this->assertSame(['node'], array_keys($entity_type_settings));
+
+    // Check that unchecked entity types with field storage are retained.
+    $manager->addEntityTypes(['media', 'taxonomy_term']);
+
+    FieldStorageConfig::create([
+      'field_name' => AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
+      'entity_type' => 'media',
+      'type' => 'json_native',
+      'cardinality' => 1,
+      'translatable' => TRUE,
+    ])->save();
+
+    $manager->syncEntityTypes(['node']);
+
+    $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
+
+    $this->assertSame(['media', 'node'], array_keys($entity_type_settings));
+    $this->assertArrayNotHasKey('taxonomy_term', $entity_type_settings);
+
+    // Check that node stays first and remaining synced entity types are sorted.
+    $manager->addEntityTypes(['block_content', 'taxonomy_term']);
+    $manager->syncEntityTypes(['node', 'taxonomy_term', 'block_content', 'media']);
+
+    $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
+
+    $this->assertSame(['block_content', 'media', 'node', 'taxonomy_term'], array_keys($entity_type_settings));
+
+    // Check that only node is seeded during installation after a config reset.
+    $this->container->get('config.storage')->delete('ai_schemadotorg_jsonld.settings');
+    $this->installConfig(['ai_schemadotorg_jsonld']);
+
+    $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
+
+    $this->assertSame(['node'], array_keys($entity_type_settings));
+
+    // Check that existing settings are preserved when addEntityTypes runs.
+    $this->config('ai_schemadotorg_jsonld.settings')
+      ->set('entity_types.node.prompt', 'Custom node prompt')
+      ->set('entity_types.node.default_jsonld', '{"@type":"WebPage"}')
+      ->save();
 
     $manager->addEntityTypes(['taxonomy_term', 'block_content', 'media']);
 
@@ -90,23 +137,6 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     $this->assertSame('', $entity_type_settings['block_content']['default_jsonld']);
     $this->assertSame('', $entity_type_settings['media']['default_jsonld']);
 
-    // Check that unsupported canonical entity types are excluded.
-    $supported_entity_types = $manager->getSupportedEntityTypes();
-    $this->assertArrayNotHasKey('shortcut', $supported_entity_types);
-  }
-
-  /**
-   * Tests addEntityTypes preserves existing settings.
-   */
-  public function testAddEntityTypesPreservesExistingSettings(): void {
-    /** @var \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager */
-    $manager = $this->container->get(AiSchemaDotOrgJsonLdManagerInterface::class);
-
-    $this->config('ai_schemadotorg_jsonld.settings')
-      ->set('entity_types.node.prompt', 'Custom node prompt')
-      ->set('entity_types.node.default_jsonld', '{"@type":"WebPage"}')
-      ->save();
-
     $manager->addEntityTypes(['node', 'media']);
 
     $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
@@ -114,46 +144,6 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     $this->assertSame('Custom node prompt', $entity_type_settings['node']['prompt']);
     $this->assertSame('{"@type":"WebPage"}', $entity_type_settings['node']['default_jsonld']);
     $this->assertArrayHasKey('media', $entity_type_settings);
-  }
-
-  /**
-   * Tests syncEntityTypes removes unchecked entity types without field storage.
-   */
-  public function testSyncEntityTypesRemovesUncheckedEntityTypesWithoutFieldStorage(): void {
-    /** @var \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager */
-    $manager = $this->container->get(AiSchemaDotOrgJsonLdManagerInterface::class);
-
-    $manager->addEntityTypes(['media', 'taxonomy_term']);
-    $manager->syncEntityTypes(['node']);
-
-    $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
-
-    $this->assertSame(['node'], array_keys($entity_type_settings));
-  }
-
-  /**
-   * Tests syncEntityTypes retains unchecked entity types with field storage.
-   */
-  public function testSyncEntityTypesRetainsUncheckedEntityTypesWithFieldStorage(): void {
-    /** @var \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager */
-    $manager = $this->container->get(AiSchemaDotOrgJsonLdManagerInterface::class);
-
-    $manager->addEntityTypes(['media', 'taxonomy_term']);
-
-    FieldStorageConfig::create([
-      'field_name' => AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
-      'entity_type' => 'media',
-      'type' => 'json_native',
-      'cardinality' => 1,
-      'translatable' => TRUE,
-    ])->save();
-
-    $manager->syncEntityTypes(['node']);
-
-    $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
-
-    $this->assertSame(['media', 'node'], array_keys($entity_type_settings));
-    $this->assertArrayNotHasKey('taxonomy_term', $entity_type_settings);
   }
 
 }

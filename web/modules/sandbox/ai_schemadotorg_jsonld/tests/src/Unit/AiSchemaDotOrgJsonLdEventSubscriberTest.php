@@ -75,71 +75,20 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
   }
 
   /**
-   * Tests that clean JSON is returned unchanged.
+   * Tests getSubscribedEvents().
    */
-  public function testValidJson(): void {
-    $event = $this->buildEvent('{"@type":"WebPage"}');
-    $this->messenger->expects($this->never())->method('addWarning');
-    $this->subscriber->onValuesChange($event);
-
-    // Check that the value is returned unchanged.
-    $this->assertSame('{"@type":"WebPage"}', $event->getValues()[0]['value']);
+  public function testGetSubscribedEvents(): void {
+    // Check that the values change event is subscribed.
+    $this->assertSame([
+      ValuesChangeEvent::EVENT_NAME => 'onValuesChange',
+    ], AiSchemaDotOrgJsonLdEventSubscriber::getSubscribedEvents());
   }
 
   /**
-   * Tests JSON wrapped in markdown fences is extracted.
+   * Tests onValuesChange().
    */
-  public function testJsonInMarkdownFence(): void {
-    $event = $this->buildEvent("```json\n{\"@type\":\"WebPage\"}\n```");
-    $this->subscriber->onValuesChange($event);
-
-    // Check that the extracted value equals the inner JSON.
-    $this->assertSame('{"@type":"WebPage"}', $event->getValues()[0]['value']);
-  }
-
-  /**
-   * Tests JSON surrounded by explanatory text is extracted.
-   */
-  public function testJsonWithSurroundingText(): void {
-    $event = $this->buildEvent('Here is the JSON: {"@type":"WebPage"} Hope that helps!');
-    $this->subscriber->onValuesChange($event);
-
-    // Check that only the JSON object is kept.
-    $this->assertSame('{"@type":"WebPage"}', $event->getValues()[0]['value']);
-  }
-
-  /**
-   * Tests that invalid JSON results in empty value with warnings.
-   */
-  public function testInvalidJson(): void {
-    $this->logger->expects($this->once())->method('warning');
-    $this->messenger->expects($this->once())->method('addWarning');
-
-    $event = $this->buildEvent('{not valid json}');
-    $this->subscriber->onValuesChange($event);
-
-    // Check that the value is cleared.
-    $this->assertSame('', $event->getValues()[0]['value']);
-  }
-
-  /**
-   * Tests that a response with no JSON object triggers warnings.
-   */
-  public function testNoJsonFound(): void {
-    $this->logger->expects($this->once())->method('warning');
-    $this->messenger->expects($this->once())->method('addWarning');
-
-    $event = $this->buildEvent('No JSON here at all');
-    $this->subscriber->onValuesChange($event);
-
-    // Check that the value is cleared.
-    $this->assertSame('', $event->getValues()[0]['value']);
-  }
-
-  /**
-   * Tests that unrelated fields are ignored.
-   */
-  public function testUnrelatedFieldIsIgnored(): void {
+  public function testOnValuesChange(): void {
+    // Check that unrelated fields are ignored.
     $field_definition = $this->createMock(FieldDefinitionInterface::class);
     $field_definition->method('getName')->willReturn('field_other');
 
@@ -156,6 +105,39 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
 
     // Check that the value is untouched.
     $this->assertSame('garbage', $event->getValues()[0]['value']);
+
+    // Check that clean JSON is returned unchanged.
+    $valid_event = $this->buildEvent('{"@type":"WebPage"}');
+    $this->subscriber->onValuesChange($valid_event);
+    $this->assertSame('{"@type":"WebPage"}', $valid_event->getValues()[0]['value']);
+
+    // Check that JSON wrapped in markdown fences is extracted.
+    $markdown_event = $this->buildEvent("```json\n{\"@type\":\"WebPage\"}\n```");
+    $this->subscriber->onValuesChange($markdown_event);
+    $this->assertSame('{"@type":"WebPage"}', $markdown_event->getValues()[0]['value']);
+
+    // Check that JSON surrounded by explanatory text is extracted.
+    $surrounding_text_event = $this->buildEvent('Here is the JSON: {"@type":"WebPage"} Hope that helps!');
+    $this->subscriber->onValuesChange($surrounding_text_event);
+    $this->assertSame('{"@type":"WebPage"}', $surrounding_text_event->getValues()[0]['value']);
+  }
+
+  /**
+   * Tests onValuesChange() warnings.
+   */
+  public function testOnValuesChangeWarnings(): void {
+    $this->logger->expects($this->exactly(2))->method('warning');
+    $this->messenger->expects($this->exactly(2))->method('addWarning');
+
+    // Check that a response with no JSON object triggers warnings.
+    $no_json_event = $this->buildEvent('No JSON here at all');
+    $this->subscriber->onValuesChange($no_json_event);
+    $this->assertSame('', $no_json_event->getValues()[0]['value']);
+
+    // Check that invalid JSON results in an empty value with warnings.
+    $invalid_json_event = $this->buildEvent('{not valid json}');
+    $this->subscriber->onValuesChange($invalid_json_event);
+    $this->assertSame('', $invalid_json_event->getValues()[0]['value']);
   }
 
 }

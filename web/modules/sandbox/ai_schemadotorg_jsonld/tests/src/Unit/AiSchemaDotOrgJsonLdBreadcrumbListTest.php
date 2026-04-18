@@ -24,53 +24,40 @@ use Drupal\Tests\UnitTestCase;
 class AiSchemaDotOrgJsonLdBreadcrumbListTest extends UnitTestCase {
 
   /**
-   * Tests that non-applicable routes return no breadcrumb JSON-LD.
+   * Tests build().
    */
-  public function testBuildReturnsNullWhenBreadcrumbDoesNotApply(): void {
+  public function testBuild(): void {
     $renderer = $this->createMock(RendererInterface::class);
-    $breadcrumb_builder = $this->createMock(ChainBreadcrumbBuilderInterface::class);
-    $route_match = $this->createMock(RouteMatchInterface::class);
     $bubbleable_metadata = new BubbleableMetadata();
 
-    $breadcrumb_builder->expects($this->once())
+    // Check that non-applicable routes return no breadcrumb JSON-LD.
+    $non_applicable_breadcrumb_builder = $this->createMock(ChainBreadcrumbBuilderInterface::class);
+    $non_applicable_route_match = $this->createMock(RouteMatchInterface::class);
+    $non_applicable_breadcrumb_builder->expects($this->once())
       ->method('applies')
-      ->with($route_match)
+      ->with($non_applicable_route_match)
       ->willReturn(FALSE);
 
-    $breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $breadcrumb_builder);
+    $non_applicable_breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $non_applicable_breadcrumb_builder);
+    $this->assertNull($non_applicable_breadcrumb_list->build($non_applicable_route_match, $bubbleable_metadata));
 
-    $this->assertNull($breadcrumb_list->build($route_match, $bubbleable_metadata));
-  }
+    // Check that empty breadcrumbs return no breadcrumb JSON-LD.
+    $empty_breadcrumb_builder = $this->createMock(ChainBreadcrumbBuilderInterface::class);
+    $empty_route_match = $this->createMock(RouteMatchInterface::class);
+    $empty_breadcrumb = new Breadcrumb();
 
-  /**
-   * Tests that empty breadcrumbs return no breadcrumb JSON-LD.
-   */
-  public function testBuildReturnsNullWhenBreadcrumbIsEmpty(): void {
-    $renderer = $this->createMock(RendererInterface::class);
-    $breadcrumb_builder = $this->createMock(ChainBreadcrumbBuilderInterface::class);
-    $route_match = $this->createMock(RouteMatchInterface::class);
-    $bubbleable_metadata = new BubbleableMetadata();
-    $breadcrumb = new Breadcrumb();
-
-    $breadcrumb_builder->method('applies')->willReturn(TRUE);
-    $breadcrumb_builder->expects($this->once())
+    $empty_breadcrumb_builder->method('applies')->willReturn(TRUE);
+    $empty_breadcrumb_builder->expects($this->once())
       ->method('build')
-      ->with($route_match)
-      ->willReturn($breadcrumb);
+      ->with($empty_route_match)
+      ->willReturn($empty_breadcrumb);
 
-    $breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $breadcrumb_builder);
+    $empty_breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $empty_breadcrumb_builder);
+    $this->assertNull($empty_breadcrumb_list->build($empty_route_match, $bubbleable_metadata));
 
-    $this->assertNull($breadcrumb_list->build($route_match, $bubbleable_metadata));
-  }
-
-  /**
-   * Tests that the current canonical entity is appended to the breadcrumb.
-   */
-  public function testBuildAppendsCurrentCanonicalEntity(): void {
-    $renderer = $this->createMock(RendererInterface::class);
+    // Check that the current canonical entity is appended to the breadcrumb.
     $breadcrumb_builder = $this->createMock(ChainBreadcrumbBuilderInterface::class);
     $route_match = $this->createMock(RouteMatchInterface::class);
-    $bubbleable_metadata = new BubbleableMetadata();
     $entity = $this->createMock(ContentEntityInterface::class);
     $home_url = $this->createMock(Url::class);
     $section_url = $this->createMock(Url::class);
@@ -120,6 +107,7 @@ class AiSchemaDotOrgJsonLdBreadcrumbListTest extends UnitTestCase {
     $breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $breadcrumb_builder);
     $result = $breadcrumb_list->build($route_match, $bubbleable_metadata);
 
+    // Check that the breadcrumb JSON-LD contains the current entity.
     $this->assertSame('BreadcrumbList', $result['@type']);
     $this->assertCount(3, $result['itemListElement']);
     $this->assertSame('Home', $result['itemListElement'][0]['item']['name']);

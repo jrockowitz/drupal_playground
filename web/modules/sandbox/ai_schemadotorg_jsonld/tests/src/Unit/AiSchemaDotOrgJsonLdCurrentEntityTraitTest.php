@@ -42,57 +42,37 @@ class AiSchemaDotOrgJsonLdCurrentEntityTraitTest extends UnitTestCase {
   }
 
   /**
-   * Tests that a NULL route name returns no entity.
+   * Tests getCurrentEntity().
    */
-  public function testGetCurrentEntityWithNullRouteName(): void {
-    $route_match = $this->createMock(RouteMatchInterface::class);
-    $route_match->method('getRouteName')->willReturn(NULL);
+  public function testGetCurrentEntity(): void {
+    // Check that a NULL route name returns no entity.
+    $null_route_match = $this->createMock(RouteMatchInterface::class);
+    $null_route_match->method('getRouteName')->willReturn(NULL);
+    $this->assertNull($this->fixture->resolve($null_route_match));
 
-    $this->assertNull($this->fixture->resolve($route_match));
-  }
+    // Check that non-canonical routes return no entity.
+    $non_canonical_route_match = $this->createMock(RouteMatchInterface::class);
+    $non_canonical_route_match->method('getRouteName')->willReturn('view.frontpage.page_1');
+    $this->assertNull($this->fixture->resolve($non_canonical_route_match));
 
-  /**
-   * Tests that non-canonical routes return no entity.
-   */
-  public function testGetCurrentEntityWithNonCanonicalRoute(): void {
-    $route_match = $this->createMock(RouteMatchInterface::class);
-    $route_match->method('getRouteName')->willReturn('view.frontpage.page_1');
+    // Check that canonical routes without an entity parameter return no entity.
+    $missing_parameter_route_match = $this->createMock(RouteMatchInterface::class);
+    $missing_parameter_route_match->method('getRouteName')->willReturn('entity.node.canonical');
+    $missing_parameter_route_match->method('getParameter')->with('node')->willReturn(NULL);
+    $this->assertNull($this->fixture->resolve($missing_parameter_route_match));
 
-    $this->assertNull($this->fixture->resolve($route_match));
-  }
+    // Check that canonical routes with a non-content entity return no entity.
+    $invalid_parameter_route_match = $this->createMock(RouteMatchInterface::class);
+    $invalid_parameter_route_match->method('getRouteName')->willReturn('entity.node.canonical');
+    $invalid_parameter_route_match->method('getParameter')->with('node')->willReturn(new \stdClass());
+    $this->assertNull($this->fixture->resolve($invalid_parameter_route_match));
 
-  /**
-   * Tests that canonical routes without an entity parameter return no entity.
-   */
-  public function testGetCurrentEntityWithoutParameter(): void {
-    $route_match = $this->createMock(RouteMatchInterface::class);
-    $route_match->method('getRouteName')->willReturn('entity.node.canonical');
-    $route_match->method('getParameter')->with('node')->willReturn(NULL);
-
-    $this->assertNull($this->fixture->resolve($route_match));
-  }
-
-  /**
-   * Tests that canonical routes with a non-content entity return no entity.
-   */
-  public function testGetCurrentEntityWithInvalidParameter(): void {
-    $route_match = $this->createMock(RouteMatchInterface::class);
-    $route_match->method('getRouteName')->willReturn('entity.node.canonical');
-    $route_match->method('getParameter')->with('node')->willReturn(new \stdClass());
-
-    $this->assertNull($this->fixture->resolve($route_match));
-  }
-
-  /**
-   * Tests that canonical routes return the matching content entity.
-   */
-  public function testGetCurrentEntityWithValidParameter(): void {
-    $route_match = $this->createMock(RouteMatchInterface::class);
+    // Check that canonical routes return the matching content entity.
+    $valid_parameter_route_match = $this->createMock(RouteMatchInterface::class);
     $entity = $this->createMock(ContentEntityInterface::class);
-    $route_match->method('getRouteName')->willReturn('entity.node.canonical');
-    $route_match->method('getParameter')->with('node')->willReturn($entity);
-
-    $this->assertSame($entity, $this->fixture->resolve($route_match));
+    $valid_parameter_route_match->method('getRouteName')->willReturn('entity.node.canonical');
+    $valid_parameter_route_match->method('getParameter')->with('node')->willReturn($entity);
+    $this->assertSame($entity, $this->fixture->resolve($valid_parameter_route_match));
   }
 
 }

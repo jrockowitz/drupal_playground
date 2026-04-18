@@ -10,12 +10,12 @@ namespace Drupal\ai_schemadotorg_jsonld;
 interface AiSchemaDotOrgJsonLdManagerInterface {
 
   /**
-   * Adds entity type settings for newly enabled content entity types.
+   * Returns supported content entity type definitions.
    *
-   * @param array $entity_type_ids
-   *   The content entity type IDs.
+   * @return array
+   *   Supported entity type definitions keyed by entity type ID.
    */
-  public function addEntityTypes(array $entity_type_ids): void;
+  public function getSupportedEntityTypes(): array;
 
   /**
    * Syncs configured entity types to the enabled entity type list.
@@ -26,11 +26,11 @@ interface AiSchemaDotOrgJsonLdManagerInterface {
   public function syncEntityTypes(array $entity_type_ids): void;
 
   /**
-   * Returns supported content entity type definitions.
+   * Adds entity type settings for newly enabled content entity types.
    *
-   * @return array
-   *   Supported entity type definitions keyed by entity type ID.
+   * @param array $entity_type_ids
+   *   The content entity type IDs.
    */
-  public function getSupportedEntityTypes(): array;
+  public function addEntityTypes(array $entity_type_ids): void;
 
 }
