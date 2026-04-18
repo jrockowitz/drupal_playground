@@ -18,6 +18,14 @@ interface AiSchemaDotOrgJsonLdManagerInterface {
   public function addEntityTypes(array $entity_type_ids): void;
 
   /**
+   * Syncs configured entity types to the enabled entity type list.
+   *
+   * @param array $entity_type_ids
+   *   The enabled content entity type IDs.
+   */
+  public function syncEntityTypes(array $entity_type_ids): void;
+
+  /**
    * Returns supported content entity type definitions.
    *
    * @return array

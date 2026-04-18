@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\ai_schemadotorg_jsonld\Kernel;
 
+use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -41,6 +43,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installEntitySchema('field_storage_config');
     $this->installConfig(['system', 'node', 'media', 'block_content', 'taxonomy', 'ai_schemadotorg_jsonld']);
   }
 
@@ -90,6 +93,67 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     // Check that unsupported canonical entity types are excluded.
     $supported_entity_types = $manager->getSupportedEntityTypes();
     $this->assertArrayNotHasKey('shortcut', $supported_entity_types);
+  }
+
+  /**
+   * Tests addEntityTypes preserves existing settings.
+   */
+  public function testAddEntityTypesPreservesExistingSettings(): void {
+    /** @var \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager */
+    $manager = $this->container->get(AiSchemaDotOrgJsonLdManagerInterface::class);
+
+    $this->config('ai_schemadotorg_jsonld.settings')
+      ->set('entity_types.node.prompt', 'Custom node prompt')
+      ->set('entity_types.node.default_jsonld', '{"@type":"WebPage"}')
+      ->save();
+
+    $manager->addEntityTypes(['node', 'media']);
+
+    $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
+
+    $this->assertSame('Custom node prompt', $entity_type_settings['node']['prompt']);
+    $this->assertSame('{"@type":"WebPage"}', $entity_type_settings['node']['default_jsonld']);
+    $this->assertArrayHasKey('media', $entity_type_settings);
+  }
+
+  /**
+   * Tests syncEntityTypes removes unchecked entity types without field storage.
+   */
+  public function testSyncEntityTypesRemovesUncheckedEntityTypesWithoutFieldStorage(): void {
+    /** @var \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager */
+    $manager = $this->container->get(AiSchemaDotOrgJsonLdManagerInterface::class);
+
+    $manager->addEntityTypes(['media', 'taxonomy_term']);
+    $manager->syncEntityTypes(['node']);
+
+    $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
+
+    $this->assertSame(['node'], array_keys($entity_type_settings));
+  }
+
+  /**
+   * Tests syncEntityTypes retains unchecked entity types with field storage.
+   */
+  public function testSyncEntityTypesRetainsUncheckedEntityTypesWithFieldStorage(): void {
+    /** @var \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager */
+    $manager = $this->container->get(AiSchemaDotOrgJsonLdManagerInterface::class);
+
+    $manager->addEntityTypes(['media', 'taxonomy_term']);
+
+    FieldStorageConfig::create([
+      'field_name' => AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
+      'entity_type' => 'media',
+      'type' => 'json_native',
+      'cardinality' => 1,
+      'translatable' => TRUE,
+    ])->save();
+
+    $manager->syncEntityTypes(['node']);
+
+    $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
+
+    $this->assertSame(['media', 'node'], array_keys($entity_type_settings));
+    $this->assertArrayNotHasKey('taxonomy_term', $entity_type_settings);
   }
 
 }

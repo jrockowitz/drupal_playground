@@ -134,12 +134,3 @@ Other modules can alter these attachments with `hook_page_attachments_alter()`.
     widgets.
 - `AiSchemaDotOrgJsonLdTokenHooks`
   - Defines and resolves the per-entity-type `ai_schemadotorg_jsonld:content` token.
-
-## Extending
-
-- `AiSchemaDotOrgJsonLdBuilder::addFieldToEntity()` accepts any supported `$entity_type_id` and
-  `$bundle` pair.
-- `AiSchemaDotOrgJsonLdManager::getSupportedEntityTypes()` controls which entity types appear in
-  the settings form.
-- `hook_page_attachments_alter()` can alter or replace the JSON-LD script tags added by the
-  module.

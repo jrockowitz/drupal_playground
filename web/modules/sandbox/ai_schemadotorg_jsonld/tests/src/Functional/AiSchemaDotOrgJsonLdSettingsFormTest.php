@@ -98,6 +98,8 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
       'enabled_entity_types[entity_types][taxonomy_term]' => 'taxonomy_term',
     ], 'Save configuration');
     $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->checkboxChecked('enabled_entity_types[entity_types][media]');
+    $this->assertSession()->elementNotExists('css', 'input[name="enabled_entity_types[entity_types][media]"][disabled]');
     $this->assertSession()->fieldExists('entity_types[media][prompt]');
     $this->assertSession()->fieldExists('entity_types[media][default_jsonld]');
     $this->assertSession()->elementExists('css', 'input[name="entity_types[media][bundles][document]"]');
@@ -148,6 +150,25 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     // Check that default_jsonld uses textarea widget when json_field_widget
     // is absent from $modules (the base case in this test class).
     $this->assertSession()->elementExists('css', 'textarea[name="entity_types[node][default_jsonld]"]');
+
+    // Uncheck a removable entity type and confirm its config section is removed.
+    $this->submitForm([
+      'enabled_entity_types[entity_types][media]' => FALSE,
+      'enabled_entity_types[entity_types][taxonomy_term]' => 'taxonomy_term',
+    ], 'Save configuration');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldNotExists('entity_types[media][prompt]');
+    $this->assertSession()->fieldNotExists('entity_types[media][default_jsonld]');
+    $this->assertSession()->checkboxNotChecked('enabled_entity_types[entity_types][media]');
+
+    // Check that field-backed entity types remain checked and disabled.
+    $this->assertSession()->checkboxChecked('enabled_entity_types[entity_types][node]');
+    $this->assertSession()->elementAttributeContains(
+      'css',
+      'input[name="enabled_entity_types[entity_types][node]"]',
+      'disabled',
+      'disabled'
+    );
   }
 
 }

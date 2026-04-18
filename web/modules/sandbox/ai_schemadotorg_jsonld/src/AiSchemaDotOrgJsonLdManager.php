@@ -8,6 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\token\TokenEntityMapperInterface;
 
 /**
@@ -58,6 +59,29 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
         'prompt' => $this->buildDefaultPrompt($entity_type_id, $entity_type),
         'default_jsonld' => '',
       ];
+    }
+
+    ksort($entity_type_settings);
+    $config->set('entity_types', $entity_type_settings)->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function syncEntityTypes(array $entity_type_ids): void {
+    $config = $this->configFactory->getEditable('ai_schemadotorg_jsonld.settings');
+    $entity_type_settings = $config->get('entity_types') ?? [];
+    $enabled_entity_type_ids = array_unique($entity_type_ids);
+
+    foreach (array_keys($entity_type_settings) as $entity_type_id) {
+      if (in_array($entity_type_id, $enabled_entity_type_ids, TRUE)) {
+        continue;
+      }
+      if ($this->hasFieldStorage($entity_type_id)) {
+        continue;
+      }
+
+      unset($entity_type_settings[$entity_type_id]);
     }
 
     ksort($entity_type_settings);
@@ -157,6 +181,13 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
       'taxonomy_term' => 'vocabulary:name',
       default => $entity_type->getKey('bundle') ?: NULL,
     };
+  }
+
+  /**
+   * Returns TRUE when the entity type has Schema.org JSON-LD field storage.
+   */
+  protected function hasFieldStorage(string $entity_type_id): bool {
+    return FieldStorageConfig::loadByName($entity_type_id, AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) !== NULL;
   }
 
 }

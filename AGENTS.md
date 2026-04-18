@@ -89,8 +89,7 @@ $array = [
   - Assertion blocks should have comments that typically begin with `// Check that ...`.
     - Do not use `/* * {comments} * */` comments.
     - Look at existing tests in the module for the expected style.
-  - For BrowserTest (aka functional)
-    - Try to use one test method with assertion blocks to improve the test performance.
+  - For Browser and Kernel test, try to use one test method with assertion blocks to improve the test performance.
 
 ## HTML
 

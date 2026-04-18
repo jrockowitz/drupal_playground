@@ -182,15 +182,21 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $config = $this->configFactory->getEditable('ai_schemadotorg_jsonld.settings');
     $enabled_entity_types = array_filter($form_state->getValue(['enabled_entity_types', 'entity_types']) ?? []);
-    if ($enabled_entity_types !== []) {
-      $this->manager->addEntityTypes(array_keys($enabled_entity_types));
-      $config = $this->configFactory->getEditable('ai_schemadotorg_jsonld.settings');
-    }
+    $enabled_entity_type_ids = array_keys($enabled_entity_types);
+    $this->manager->syncEntityTypes($enabled_entity_type_ids);
+    $this->manager->addEntityTypes($enabled_entity_type_ids);
+
+    $config = $this->configFactory->getEditable('ai_schemadotorg_jsonld.settings');
+    $configured_entity_type_ids = array_keys($config->get('entity_types') ?? []);
     $entity_type_values = $form_state->getValue('entity_types') ?? [];
 
-    foreach ($entity_type_values as $entity_type_id => $entity_type_values_item) {
+    foreach ($configured_entity_type_ids as $entity_type_id) {
+      $entity_type_values_item = $entity_type_values[$entity_type_id] ?? NULL;
+      if (!is_array($entity_type_values_item)) {
+        continue;
+      }
+
       foreach (array_filter($entity_type_values_item['bundles'] ?? []) as $bundle => $value) {
         $this->builder->addFieldToEntity($entity_type_id, $bundle);
       }
@@ -324,12 +330,24 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         'machine_name' => $entity_type_id,
       ];
 
-      if (in_array($entity_type_id, $enabled_entity_type_ids, TRUE)) {
+      if (
+        in_array($entity_type_id, $enabled_entity_type_ids, TRUE)
+        && $this->hasFieldStorage($entity_type_id)
+      ) {
         $options[$entity_type_id]['#disabled'] = TRUE;
       }
     }
 
     return $options;
+  }
+
+  /**
+   * Returns TRUE when the entity type has Schema.org JSON-LD field storage.
+   */
+  protected function hasFieldStorage(string $entity_type_id): bool {
+    return $this->entityTypeManager
+      ->getStorage('field_storage_config')
+      ->load($entity_type_id . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) !== NULL;
   }
 
 }

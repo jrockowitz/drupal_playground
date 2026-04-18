@@ -4,10 +4,10 @@ ai_schemadotorg_jsonld.settings:
   mapping:
     entity_types:
       type: sequence
-      label: 'Entity type settings'
+      label: 'Entity types'
       sequence:
         type: mapping
-        label: 'Entity type settings'
+        label: 'Entity type'
         mapping:
           prompt:
             type: text
