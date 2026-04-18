@@ -51,6 +51,9 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
 
   /**
    * Logs the raw AI response for the Schema.org JSON-LD automator.
+   *
+   * @param \Drupal\ai\Event\PostGenerateResponseEvent $event
+   *   The AI post-generate response event.
    */
   public function onPostGenerateResponse(PostGenerateResponseEvent $event): void {
     if (!$this->isJsonLdAutomatorRequest($event->getTags())) {
@@ -75,6 +78,9 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
 
   /**
    * Cleans the AI response value for the JSON-LD field.
+   *
+   * @param \Drupal\ai_automators\Event\ValuesChangeEvent $event
+   *   The values change event.
    */
   public function onValuesChange(ValuesChangeEvent $event): void {
     if ($event->getFieldDefinition()->getName() !== AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) {
@@ -141,6 +147,9 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
 
   /**
    * Returns TRUE when the tags belong to this module's JSON-LD automator.
+   *
+   * @param array $tags
+   *   The request tags.
    */
   protected function isJsonLdAutomatorRequest(array $tags): bool {
     return in_array('ai_automator', $tags)

@@ -167,6 +167,11 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
 
   /**
    * Element validate callback: ensures the default_jsonld value is valid JSON.
+   *
+   * @param array $element
+   *   The form element being validated.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    */
   public function validateJson(array &$element, FormStateInterface $form_state): void {
     $value = trim((string) ($element['#value'] ?? ''));
@@ -380,6 +385,9 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
 
   /**
    * Returns TRUE when the entity type has Schema.org JSON-LD field storage.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
    */
   protected function hasFieldStorage(string $entity_type_id): bool {
     return $this->entityTypeManager
@@ -389,6 +397,9 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
 
   /**
    * Returns the synthetic bundle for a non-bundle entity type.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
    */
   protected function getSyntheticBundle(string $entity_type_id): string {
     return $entity_type_id;
@@ -396,6 +407,9 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
 
   /**
    * Returns the description for a synthetic non-bundle row.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type_definition
+   *   The content entity type definition.
    */
   protected function getSyntheticBundleDescription(ContentEntityTypeInterface $entity_type_definition): string {
     $description = (string) ($entity_type_definition->get('description') ?? '');
@@ -411,6 +425,9 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
 
   /**
    * Returns the label for a synthetic non-bundle row.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type_definition
+   *   The content entity type definition.
    */
   protected function getSyntheticBundleLabel(ContentEntityTypeInterface $entity_type_definition): array|string {
     return match ($entity_type_definition->id()) {

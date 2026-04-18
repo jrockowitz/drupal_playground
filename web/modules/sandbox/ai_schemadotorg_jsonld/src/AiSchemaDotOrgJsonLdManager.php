@@ -122,6 +122,11 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
 
   /**
    * Builds the default prompt for an entity type.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type
+   *   The content entity type definition.
    */
   protected function buildDefaultPrompt(string $entity_type_id, ContentEntityTypeInterface $entity_type): string {
     $token_name = $this->getTokenName($entity_type_id);
@@ -162,6 +167,9 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
 
   /**
    * Returns the token name for an entity type.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
    */
   protected function getTokenName(string $entity_type_id): string {
     return (string) $this->tokenEntityMapper->getTokenTypeForEntityType($entity_type_id, TRUE);
@@ -169,6 +177,9 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
 
   /**
    * Returns the label token name for an entity type.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type
+   *   The content entity type definition.
    */
   protected function getLabelTokenName(ContentEntityTypeInterface $entity_type): ?string {
     return $entity_type->getKey('label') ?: NULL;
@@ -176,6 +187,11 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
 
   /**
    * Returns the bundle token name for an entity type.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type
+   *   The content entity type definition.
    */
   protected function getBundleTokenName(string $entity_type_id, ContentEntityTypeInterface $entity_type): ?string {
     return match ($entity_type_id) {
@@ -187,6 +203,9 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
 
   /**
    * Returns TRUE when the entity type has Schema.org JSON-LD field storage.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
    */
   protected function hasFieldStorage(string $entity_type_id): bool {
     return FieldStorageConfig::loadByName($entity_type_id, AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) !== NULL;

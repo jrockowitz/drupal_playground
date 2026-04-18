@@ -52,6 +52,9 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
 
   /**
    * Creates or updates the field storage config.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
    */
   protected function createFieldStorage(string $entity_type_id): void {
     $storage_id = $entity_type_id . '.' . self::FIELD_NAME;
@@ -74,6 +77,11 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
 
   /**
    * Creates the field instance if it does not already exist.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
+   * @param string $bundle
+   *   The bundle ID.
    *
    * @return bool
    *   TRUE if the field was created, FALSE if it already existed.
@@ -102,6 +110,11 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
 
   /**
    * Creates the AI automator config entity.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
+   * @param string $bundle
+   *   The bundle ID.
    */
   protected function createAutomator(string $entity_type_id, string $bundle): void {
     $automator_id = $entity_type_id . '.' . $bundle . '.' . self::FIELD_NAME . '.default';
@@ -152,6 +165,11 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
 
   /**
    * Adds the field to the default form display.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
+   * @param string $bundle
+   *   The bundle ID.
    */
   protected function addFormDisplayComponent(string $entity_type_id, string $bundle): void {
     $display_storage = $this->entityTypeManager->getStorage('entity_form_display');
@@ -194,6 +212,11 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
 
   /**
    * Adds the field to the default view display.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
+   * @param string $bundle
+   *   The bundle ID.
    */
   protected function addViewDisplayComponent(string $entity_type_id, string $bundle): void {
     $display_storage = $this->entityTypeManager->getStorage('entity_view_display');

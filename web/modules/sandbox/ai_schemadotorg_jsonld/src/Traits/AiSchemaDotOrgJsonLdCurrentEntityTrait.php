@@ -16,6 +16,9 @@ trait AiSchemaDotOrgJsonLdCurrentEntityTrait {
    * Returns the current canonical content entity, or NULL.
    *
    * Canonical routes follow the pattern: entity.{entity_type_id}.canonical.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The current route match.
    */
   protected function getCurrentEntity(RouteMatchInterface $route_match): ?ContentEntityInterface {
     $route_name = $route_match->getRouteName();

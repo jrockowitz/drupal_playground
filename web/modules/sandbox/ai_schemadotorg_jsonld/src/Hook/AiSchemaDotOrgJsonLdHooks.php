@@ -7,6 +7,7 @@ namespace Drupal\ai_schemadotorg_jsonld\Hook;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBreadcrumbListInterface;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgJsonLdCurrentEntityTrait;
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -20,6 +21,7 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Hook implementations for the ai_schemadotorg_jsonld module.
@@ -135,8 +137,19 @@ class AiSchemaDotOrgJsonLdHooks {
   public function fieldWidgetCompleteFormAlter(array &$field_widget_complete_form, FormStateInterface $form_state, array $context): void {
     $widget_id = $context['widget']->getPluginId();
     $field_name = $context['items']->getFieldDefinition()->getName();
+    $entity = $context['items']->getEntity();
 
     if ($field_name !== AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) {
+      return;
+    }
+
+    if ($entity->isNew()) {
+      $field_widget_complete_form = $this->buildMessage(
+        $this->t('Schema.org JSON-LD can be generated after the @entity is saved.', [
+          '@entity' => (string) $entity->getEntityType()->getSingularLabel(),
+        ]),
+        'warning',
+      );
       return;
     }
 
@@ -149,13 +162,76 @@ class AiSchemaDotOrgJsonLdHooks {
       return;
     }
 
-    $translation_arguments = [
+    $field_widget_complete_form['copy_jsonld'] = $this->buildCopyJsonLd($field_name);
+  }
+
+  /**
+   * Implements hook_entity_field_access().
+   *
+   * @param string $operation
+   *   The operation to be performed.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The field definition.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user account.
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>|null $items
+   *   The field item list, or NULL if field access is checked without context.
+   */
+  #[Hook('entity_field_access')]
+  public function entityFieldAccess(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, ?FieldItemListInterface $items = NULL): AccessResultInterface {
+    if ($field_definition->getName() !== AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) {
+      return AccessResult::neutral();
+    }
+
+    if ($operation === 'view' && $items !== NULL) {
+      $entity = $items->getEntity();
+      if (!$entity->access('update', $account)) {
+        return AccessResult::forbidden()
+          ->cachePerUser()
+          ->addCacheableDependency($entity);
+      }
+    }
+
+    return AccessResult::neutral();
+  }
+
+  /**
+   * Builds a theme-native inline message render array.
+   *
+   * @param string|\Drupal\Component\Render\MarkupInterface $message
+   *   The message text or markup.
+   * @param string $type
+   *   The message type.
+   */
+  protected function buildMessage(string|MarkupInterface $message, string $type): array {
+    $type = in_array($type, ['status', 'warning', 'error']) ? $type : 'status';
+
+    return [
+      '#theme' => 'status_messages',
+      '#message_list' => [
+        $type => [$message],
+      ],
+      '#status_headings' => [
+        'status' => $this->t('Status message'),
+        'warning' => $this->t('Warning message'),
+        'error' => $this->t('Error message'),
+      ],
+    ];
+  }
+
+  /**
+   * Builds the copy JSON-LD UI.
+   *
+   * @param string $field_name
+   *   The field machine name.
+   */
+  protected function buildCopyJsonLd(string $field_name): array {
+    $description = new TranslatableMarkup('<p>Please copy-n-paste the above JSON-LD into the <a href=":schema_href">Schema Markup Validator</a> or <a href=":google_href">Google\'s Rich Results Test</a>.</p>', [
       ':schema_href' => 'https://validator.schema.org/',
       ':google_href' => 'https://search.google.com/test/rich-results',
-    ];
-    $description = $this->t('<p>Please copy-n-paste the above JSON-LD into the <a href=":schema_href">Schema Markup Validator</a> or <a href=":google_href">Google\'s Rich Results Test</a>.</p>', $translation_arguments);
+    ]);
 
-    $field_widget_complete_form['copy_jsonld'] = [
+    return [
       '#type' => 'container',
       '#attributes' => ['class' => ['ai-schemadotorg-jsonld-copy']],
       'description' => [
@@ -177,45 +253,6 @@ class AiSchemaDotOrgJsonLdHooks {
       ],
       '#attached' => ['library' => ['ai_schemadotorg_jsonld/copy']],
     ];
-  }
-
-  /**
-   * Implements hook_entity_field_access().
-   *
-   * @param string $operation
-   *   The operation to be performed.
-   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
-   *   The field definition.
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The user account.
-   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>|null $items
-   *   The field item list, or NULL if field access is checked without context.
-   */
-  #[Hook('entity_field_access')]
-  public function entityFieldAccess(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, ?FieldItemListInterface $items = NULL): AccessResultInterface {
-    if ($field_definition->getName() !== AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) {
-      return AccessResult::neutral();
-    }
-
-    if ($operation === 'edit' && $items !== NULL) {
-      $entity = $items->getEntity();
-      if ($entity->isNew()) {
-        return AccessResult::forbidden()
-          ->addCacheableDependency($entity)
-          ->setReason('Cannot edit Schema.org JSON-LD on unsaved entities.');
-      }
-    }
-
-    if ($operation === 'view' && $items !== NULL) {
-      $entity = $items->getEntity();
-      if (!$entity->access('update', $account)) {
-        return AccessResult::forbidden()
-          ->cachePerUser()
-          ->addCacheableDependency($entity);
-      }
-    }
-
-    return AccessResult::neutral();
   }
 
 }

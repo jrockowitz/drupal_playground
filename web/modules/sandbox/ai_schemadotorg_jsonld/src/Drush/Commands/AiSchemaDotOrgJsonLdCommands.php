@@ -57,6 +57,9 @@ class AiSchemaDotOrgJsonLdCommands extends DrushCommands {
 
   /**
    * Returns a supported content entity type definition.
+   *
+   * @param string $entity_type
+   *   The content entity type ID.
    */
   protected function getSupportedEntityTypeDefinition(string $entity_type): ContentEntityTypeInterface {
     $supported_entity_types = $this->manager->getSupportedEntityTypes();
@@ -71,6 +74,11 @@ class AiSchemaDotOrgJsonLdCommands extends DrushCommands {
 
   /**
    * Validates the provided bundle for the entity type.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type_definition
+   *   The content entity type definition.
+   * @param string $bundle
+   *   The bundle ID.
    */
   protected function validateBundle(ContentEntityTypeInterface $entity_type_definition, string $bundle): void {
     $entity_type_id = $entity_type_definition->id();

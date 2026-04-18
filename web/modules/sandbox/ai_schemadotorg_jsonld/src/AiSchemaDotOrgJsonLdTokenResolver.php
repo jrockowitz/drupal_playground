@@ -99,6 +99,9 @@ class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTokenReso
    * Each pass removes one level of outer <div> whose only direct child is
    * another <div>. Repeats until no more single-child wrappers remain at
    * the outermost level. Deeper nesting (multiple children) is preserved.
+   *
+   * @param string $html
+   *   The rendered HTML markup.
    */
   protected function stripOuterWrappingDivs(string $html): string {
     $trimmed = trim($html);
@@ -114,6 +117,9 @@ class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTokenReso
 
   /**
    * Converts root-relative href and src attributes to absolute URLs.
+   *
+   * @param string $html
+   *   The rendered HTML markup.
    */
   protected function absolutizeUrls(string $html): string {
     $request = $this->requestStack->getCurrentRequest();
