@@ -17,4 +17,4 @@ ai_schemadotorg_jsonld.settings:
             label: 'Default JSON-LD'
     breadcrumb_jsonld:
       type: boolean
-      label: 'Include breadcrumb JSON-LD'
+      label: 'Include Schema.org JSON-LD for breadcrumb'

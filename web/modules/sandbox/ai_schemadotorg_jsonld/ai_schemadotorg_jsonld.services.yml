@@ -38,7 +38,10 @@ services:
     tags:
       - { name: event_subscriber }
 
-  Drupal\ai_schemadotorg_jsonld\Hook\AiSchemaDotOrgJsonLdHooks:
+  Drupal\ai_schemadotorg_jsonld\Hook\AiSchemaDotOrgJsonLdFieldHooks:
+    autowire: true
+
+  Drupal\ai_schemadotorg_jsonld\Hook\AiSchemaDotOrgJsonLdPageHooks:
     autowire: true
 
   Drupal\ai_schemadotorg_jsonld\Hook\AiSchemaDotOrgJsonLdTokenHooks:

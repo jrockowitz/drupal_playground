@@ -129,7 +129,8 @@ Other modules can alter these attachments with `hook_page_attachments_alter()`.
   - Extracts and validates JSON from AI responses before values are saved.
 - `AiSchemaDotOrgJsonLdSettingsForm`
   - Provides the admin UI at `/admin/config/ai/schemadotorg-jsonld`.
-- `AiSchemaDotOrgJsonLdHooks`
+- `AiSchemaDotOrgJsonLdPageHooks`
+- `AiSchemaDotOrgJsonLdFieldHooks`
   - Attaches page-head JSON-LD, controls field access, and adds the copy button to supported field
     widgets.
 - `AiSchemaDotOrgJsonLdTokenHooks`

@@ -1,0 +1,193 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\ai_schemadotorg_jsonld\Hook;
+
+use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+/**
+ * Field hook implementations for the ai_schemadotorg_jsonld module.
+ */
+class AiSchemaDotOrgJsonLdFieldHooks {
+
+  use StringTranslationTrait;
+
+  /**
+   * Constructs an AiSchemaDotOrgJsonLdFieldHooks object.
+   *
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler.
+   */
+  public function __construct(
+    protected readonly ModuleHandlerInterface $moduleHandler,
+  ) {}
+
+  /**
+   * Implements hook_field_widget_action_info_alter().
+   */
+  #[Hook('field_widget_action_info_alter')]
+  public function fieldWidgetActionInfoAlter(array &$definitions): void {
+    if (!$this->moduleHandler->moduleExists('json_field_widget')) {
+      return;
+    }
+    if (!isset($definitions['automator_json'])) {
+      return;
+    }
+    if (!in_array('json_editor', $definitions['automator_json']['widget_types'])) {
+      $definitions['automator_json']['widget_types'][] = 'json_editor';
+    }
+  }
+
+  /**
+   * Implements hook_entity_field_access().
+   *
+   * @param string $operation
+   *   The operation to be performed.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The field definition.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user account.
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>|null $items
+   *   The field item list, or NULL if field access is checked without context.
+   */
+  #[Hook('entity_field_access')]
+  public function entityFieldAccess(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, ?FieldItemListInterface $items = NULL): AccessResultInterface {
+    if ($field_definition->getName() !== AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) {
+      return AccessResult::neutral();
+    }
+
+    if ($operation === 'view' && $items !== NULL) {
+      $entity = $items->getEntity();
+      if (!$entity->access('update', $account)) {
+        return AccessResult::forbidden()
+          ->cachePerUser()
+          ->addCacheableDependency($entity);
+      }
+    }
+
+    return AccessResult::neutral();
+  }
+
+  /**
+   * Implements hook_field_widget_complete_form_alter().
+   */
+  #[Hook('field_widget_complete_json_textarea_form_alter')]
+  #[Hook('field_widget_complete_json_editor_form_alter')]
+  public function fieldWidgetCompleteFormAlter(array &$field_widget_complete_form, FormStateInterface $form_state, array $context): void {
+    $field_name = $context['items']->getFieldDefinition()->getName();
+    $entity = $context['items']->getEntity();
+
+    if ($field_name !== AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) {
+      return;
+    }
+
+    if ($entity->isNew()) {
+      $t_args = [
+        '@entity' =>  $entity->getEntityType()->getSingularLabel(),
+      ];
+      $field_widget_complete_form = $this->buildMessages(
+        $this->t('Schema.org JSON-LD can be generated after the @entity is saved.', $t_args),
+        'warning',
+      );
+      return;
+    }
+  }
+
+  /**
+   * Implements hook_field_widget_single_element_form_alter().
+   */
+  #[Hook('field_widget_single_element_json_textarea_form_alter')]
+  #[Hook('field_widget_single_element_json_editor_form_alter')]
+  public function fieldWidgetSingleElementFormAlter(array &$element, FormStateInterface $form_state, array $context): void {
+    $field_name = $context['items']->getFieldDefinition()->getName();
+    $entity = $context['items']->getEntity();
+
+    if ($field_name !== AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) {
+      return;
+    }
+    if ($entity->isNew()) {
+      return;
+    }
+
+    $element['copy_jsonld'] = $this->buildCopyJsonLd($field_name);
+  }
+
+
+  /**
+   * Builds a theme-native inline message render array.
+   *
+   * @param array|string|\Drupal\Component\Render\MarkupInterface $messages
+   *   The message text, markup, or list of messages.
+   * @param string $type
+   *   The message type.
+   */
+  protected function buildMessages(array|string|MarkupInterface $messages, string $type): array {
+    if ($messages instanceof MarkupInterface) {
+      $messages = (string) $messages;
+    }
+    $messages = (array) $messages;
+
+    $type = in_array($type, ['status', 'warning', 'error']) ? $type : 'status';
+
+    return [
+      '#theme' => 'status_messages',
+      '#message_list' => [
+        $type => $messages,
+      ],
+      '#status_headings' => [
+        'status' => $this->t('Status message'),
+        'warning' => $this->t('Warning message'),
+        'error' => $this->t('Error message'),
+      ],
+    ];
+  }
+
+  /**
+   * Builds the copy JSON-LD UI.
+   *
+   * @param string $field_name
+   *   The field machine name.
+   */
+  protected function buildCopyJsonLd(string $field_name): array {
+    $description = new TranslatableMarkup('<p>Please copy-n-paste the above Schema.org JSON-LD into the <a href=":schema_href">Schema Markup Validator</a> or <a href=":google_href">Google\'s Rich Results Test</a>.</p>', [
+      ':schema_href' => 'https://validator.schema.org/',
+      ':google_href' => 'https://search.google.com/test/rich-results',
+    ]);
+
+    return [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['ai-schemadotorg-jsonld-copy']],
+      'description' => [
+        '#markup' => $description,
+      ],
+      'button' => [
+        '#type' => 'button',
+        '#value' => $this->t('Copy Schema.org JSON-LD'),
+        '#attributes' => [
+          'class' => ['ai-schemadotorg-jsonld-copy-button', 'button--extrasmall'],
+          'data-field-name' => $field_name,
+        ],
+      ],
+      'message' => [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#attributes' => ['class' => ['ai-schemadotorg-jsonld-copy-message']],
+        '#plain_text' => $this->t('JSON-LD copied to clipboard…'),
+      ],
+      '#attached' => ['library' => ['ai_schemadotorg_jsonld/copy']],
+    ];
+  }
+
+}

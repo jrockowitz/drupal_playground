@@ -157,8 +157,8 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
 
     $form['breadcrumb_jsonld'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Include breadcrumb JSON-LD'),
-      '#description' => $this->t('Attach a BreadcrumbList JSON-LD block to each page.'),
+      '#title' => $this->t('Include Schema.org JSON-LD for breadcrumb'),
+      '#description' => $this->t('Attach a Schema.org JSON-LD for <a href=":href">BreadcrumbList</a> to each page.', [':href' => 'https://schema.org/BreadcrumbList']),
       '#default_value' => (bool) $config->get('breadcrumb_jsonld'),
     ];
 
