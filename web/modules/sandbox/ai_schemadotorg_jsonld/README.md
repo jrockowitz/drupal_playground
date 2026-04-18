@@ -14,13 +14,10 @@ Supported entity types must be:
 
 - content entities
 - fieldable
-- have bundles
 - canonical
 
-Examples include `node`, `media`, `taxonomy_term`, and `block_content`.
+Examples include `node`, `media`, `taxonomy_term`, `block_content`, `comment`, and `user`.
 Only `node` is configured out of the box. Other supported entity types can be enabled after installation.
-
-Canonical content entities without bundles such as `user` are not supported yet.
 
 ## Requirements
 
@@ -85,6 +82,24 @@ The `Enabled entity types` details element lists supported entity types that can
 - `breadcrumb_jsonld`
   - Attaches a `BreadcrumbList` JSON-LD block when breadcrumb data is available.
 
+## Prompt files
+
+The module ships curated default prompts for common entity types in the
+`prompts/entity_types/` directory inside the module. Each file is named
+`ai_schemadotorg_jsonld.{entity_type_id}.prompt.txt`.
+
+When `addEntityTypes()` builds the default prompt for a newly enabled entity type, it checks
+for a matching file in that directory first. If the file exists, its contents are used verbatim.
+If not, a minimal prompt is generated from the entity type definition.
+
+Prompt files are provided for: `block_content`, `comment`, `media`, `node`, `taxonomy_term`, `user`.
+
+To customize the default prompt for an entity type, either:
+
+- Edit the prompt directly in the settings form at `/admin/config/ai/schemadotorg-jsonld`.
+- Add or override `prompts/entity_types/ai_schemadotorg_jsonld.{entity_type_id}.prompt.txt` in
+  a custom module and extend `AiSchemaDotOrgJsonLdManager` to override `getPromptFilePath()`.
+
 ## Tokens
 
 The module defines `ai_schemadotorg_jsonld:content` for each enabled entity type.
@@ -92,8 +107,8 @@ The module defines `ai_schemadotorg_jsonld:content` for each enabled entity type
 Examples:
 
 - `[node:ai_schemadotorg_jsonld:content]`
-- `[media:ai_schemadotorg_jsonld:content]`
 - `[term:ai_schemadotorg_jsonld:content]`
+- `[user:ai_schemadotorg_jsonld:content]`
 
 The token renders the entity as the anonymous user in the site default theme, converts
 root-relative URLs to absolute URLs, and strips wrapper markup to produce cleaner prompt input for
@@ -112,26 +127,3 @@ The module can attach up to three JSON-LD script tags on canonical entity routes
   - The saved `field_schemadotorg_jsonld` value from the current entity.
 
 Other modules can alter these attachments with `hook_page_attachments_alter()`.
-
-## Architecture
-
-- `AiSchemaDotOrgJsonLdBuilder`
-  - Creates field storage, field config, AI automators integration, status field integration, and
-    display configuration for a bundle.
-- `AiSchemaDotOrgJsonLdManager`
-  - Tracks supported entity types and seeds default `entity_types` settings for newly enabled
-    entity types.
-- `AiSchemaDotOrgJsonLdBreadcrumbList`
-  - Builds `BreadcrumbList` JSON-LD data from the current route breadcrumb and canonical route entity.
-- `AiSchemaDotOrgJsonLdTokenResolver`
-  - Renders content entities for token output used in AI prompts.
-- `AiSchemaDotOrgJsonLdEventSubscriber`
-  - Extracts and validates JSON from AI responses before values are saved.
-- `AiSchemaDotOrgJsonLdSettingsForm`
-  - Provides the admin UI at `/admin/config/ai/schemadotorg-jsonld`.
-- `AiSchemaDotOrgJsonLdPageHooks`
-- `AiSchemaDotOrgJsonLdFieldHooks`
-  - Attaches page-head JSON-LD, controls field access, and adds the copy button to supported field
-    widgets.
-- `AiSchemaDotOrgJsonLdTokenHooks`
-  - Defines and resolves the per-entity-type `ai_schemadotorg_jsonld:content` token.

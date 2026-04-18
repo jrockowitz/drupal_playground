@@ -53,7 +53,7 @@ class AiSchemaDotOrgJsonLdPageHooks {
           [
             '#type' => 'html_tag',
             '#tag' => 'script',
-            '#value' => json_encode($breadcrumb_data),
+            '#value' => json_encode($breadcrumb_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
             '#attributes' => ['type' => 'application/ld+json'],
           ],
           'ai_schemadotorg_jsonld_breadcrumb',

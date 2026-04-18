@@ -132,7 +132,7 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
    *   The default AI prompt for the entity type.
    */
   protected function buildDefaultPrompt(string $entity_type_id, ContentEntityTypeInterface $entity_type): string {
-    $file = __DIR__ . '/../prompts/entity_types/ai_schemadotorg_jsonld.' . $entity_type_id . '.prompt.txt';
+    $file = $this->getPromptFilePath($entity_type_id);
     if (file_exists($file)) {
       return trim((string) file_get_contents($file));
     }
@@ -207,6 +207,19 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
       'taxonomy_term' => 'vocabulary:name',
       default => $entity_type->getKey('bundle') ?: NULL,
     };
+  }
+
+  /**
+   * Returns the path to the prompt file for an entity type.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
+   *
+   * @return string
+   *   The absolute path to the prompt file.
+   */
+  protected function getPromptFilePath(string $entity_type_id): string {
+    return __DIR__ . '/../prompts/entity_types/ai_schemadotorg_jsonld.' . $entity_type_id . '.prompt.txt';
   }
 
   /**

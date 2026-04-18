@@ -1,8 +1,0 @@
-<?php
-
-/**
- * @file
- * AI Schema.org JSON-LD module.
- */
-
-declare(strict_types=1);
