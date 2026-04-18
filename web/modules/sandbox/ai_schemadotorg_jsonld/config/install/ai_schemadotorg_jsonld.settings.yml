@@ -1,0 +1,89 @@
+entity_types:
+  node:
+    prompt: |
+      Generate valid Schema.org JSON-LD for the content below:
+
+      # Input
+
+      Type: [node:content-type]
+      URL: [node:url]
+      Title: [node:title]
+      Summary: [node:summary]
+      Image: [node:field_image]
+
+      Body:
+      [node:body]
+
+      Content:
+      [node:ai_schemadotorg_jsonld:content]
+
+      Current JSON-LD: (This will be omitted for new content)
+      [node:field_schemadotorg_jsonld]
+
+      # Requirements
+
+      ## Response
+
+      - Return ONLY the JSON-LD object. No explanatory text, no markdown fences, no preamble.
+      - Output must begin with { and end with }.
+
+      ## Schema.org JSON-LD
+      - Use only valid Schema.org types and properties (https://schema.org).
+      - Set @context to "https://schema.org".
+      - Set url to the canonical URL provided above.
+      - Choose the most specific applicable @type for the content type given.
+      - Use absolute URLs for all links and images.
+
+      ## Schema.org properties and values
+
+      - Try to include all text in the 'Body' and 'Full Content'.
+      - Do not fabricate values or URLs, only include text/values/urls that are in the content.
+
+      ## Misc
+
+      - If Current JSON-LD is provided, preserve any manually curated properties and improve or extend — do not discard existing values without cause.
+      - Follow Google's Structured Data guidelines: https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data
+
+      # Output format
+
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "url": "{url}",
+        "name": "{title}",
+        "description": "{summary}",
+        "text": "{content}",
+        "image": [
+          {
+            "@context": "https://schema.org",
+            "@type": "ImageObject",
+            "contentUrl": "{image:src}",
+            "description": "{image:alt}"
+          }
+        ]
+      }
+    default_jsonld: ''
+  media:
+    prompt: |
+      Generate valid Schema.org JSON-LD for the media item below:
+
+      # Input
+
+      Type: [media:bundle]
+      URL: [media:url]
+      Title: [media:name]
+
+      Current JSON-LD: (This will be omitted for new content)
+      [media:field_schemadotorg_jsonld]
+
+      # Requirements
+
+      - Return ONLY the JSON-LD object. No explanatory text, no markdown fences, no preamble.
+      - Output must begin with { and end with }.
+      - Use only valid Schema.org types and properties (https://schema.org).
+      - Set @context to "https://schema.org".
+      - Set url to the canonical URL provided above.
+      - Choose the most specific applicable @type for the media bundle given.
+      - Do not fabricate values or URLs.
+    default_jsonld: ''
+breadcrumb_jsonld: false

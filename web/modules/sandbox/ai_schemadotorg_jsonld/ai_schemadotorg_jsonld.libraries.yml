@@ -1,0 +1,9 @@
+copy:
+  js:
+    js/ai_schemadotorg_jsonld.copy.js: {}
+  css:
+    component:
+      css/ai_schemadotorg_jsonld.copy.css: {}
+  dependencies:
+    - core/drupal
+    - core/once

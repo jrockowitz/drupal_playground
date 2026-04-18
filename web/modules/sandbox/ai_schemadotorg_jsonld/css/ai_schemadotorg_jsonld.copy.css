@@ -1,0 +1,11 @@
+.ai-schemadotorg-jsonld-copy {
+  margin-top: 0.5rem;
+}
+
+.ai-schemadotorg-jsonld-copy-message {
+  display: none;
+  margin-left: 0.5rem;
+  transition: opacity 0.5s ease;
+  opacity: 1;
+  font-style: italic;
+}

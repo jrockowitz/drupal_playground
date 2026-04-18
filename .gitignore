@@ -123,7 +123,23 @@ yarn-error.log
 # =============================================================================
 # Sandbox
 # =============================================================================
-/web/modules/sandbox/
+
+# /web/modules/sandbox/
+/web/modules/sandbox/eca_report
+/web/modules/sandbox/entity_labels
+/web/modules/sandbox/field_data
+/web/modules/sandbox/local_tasks_more
+/web/modules/sandbox/menu_export_csv
+/web/modules/sandbox/plugin_report
+/web/modules/sandbox/schemadotorg
+/web/modules/sandbox/schemadotorg_experimental
+/web/modules/sandbox/webform
+/web/modules/sandbox/webform_confirmation_file
+/web/modules/sandbox/webform_javascript_setting
+/web/modules/sandbox/webform_no_submissions
+/web/modules/sandbox/webform_payment_element
+/web/modules/sandbox/webform_views
+
 
 # =============================================================================
 # Recipes

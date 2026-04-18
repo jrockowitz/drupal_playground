@@ -1,0 +1,12 @@
+name: 'AI Schema.org JSON-LD'
+type: module
+description: 'Uses AI Automators to generate and attach Schema.org JSON-LD to content types.'
+package: AI
+core_version_requirement: ^11.3
+configure: ai_schemadotorg_jsonld.settings
+dependencies:
+  - ai:ai_automators
+  - json_field:json_field
+  - field_widget_actions:field_widget_actions
+# Optional: json_field:json_field_widget — not listed here as it is a soft
+# dependency only. The module checks moduleExists('json_field_widget') at runtime.

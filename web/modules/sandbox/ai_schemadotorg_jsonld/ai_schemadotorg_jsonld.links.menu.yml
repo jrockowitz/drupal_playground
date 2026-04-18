@@ -1,0 +1,6 @@
+ai_schemadotorg_jsonld.settings:
+  title: 'AI Schema.org JSON-LD'
+  description: 'Configure AI-generated Schema.org JSON-LD for content types.'
+  route_name: ai_schemadotorg_jsonld.settings
+  parent: ai.admin_settings
+  weight: 10

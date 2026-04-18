@@ -56,7 +56,7 @@ The majority of the module's code configures the Schema.org JSON-LD field for ea
 # Architectures
 
 *
-* ai\_schemadototg\_jsonld.info.yml
+* ai\_schemadotorg\_jsonld.info.yml
   * `ai_automators` and `json_field` are dependenciies
   * `json_field_widget` support should be optional
 * services

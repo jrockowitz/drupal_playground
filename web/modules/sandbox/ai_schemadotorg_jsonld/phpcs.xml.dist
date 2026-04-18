@@ -1,0 +1,62 @@
+<ruleset name="ai_schemadotorg_jsonld">
+
+  <description>AI Schema.org JSON-LD coding styles</description>
+
+  <!-- Test all the Drupal PHP file extensions -->
+  <arg name="extensions" value="php,module,inc,install,test,profile,theme"/>
+
+  <!-- Use Drupal coding standards -->
+  <rule ref="Drupal"/>
+  <rule ref="DrupalPractice"/>
+
+  <!-- Use type hints -->
+  <rule ref="SlevomatCodingStandard.TypeHints" />
+
+  <!-- Issue #3173782: Increase line length limit -->
+  <rule ref="Drupal.Files.LineLength">
+    <properties>
+      <property name="lineLimit" value="120"/>
+      <property name="absoluteLineLimit" value="0"/>
+    </properties>
+  </rule>
+
+  <!-- Rules that need to ignored -->
+  <rule ref="Drupal">
+    <!-- Issue #3185082: Drupal.Arrays.Array.LongLineDeclaration make me write less readable code -->
+    <exclude name="Drupal.Arrays.Array.LongLineDeclaration"/>
+    <exclude name="Drupal.Arrays.Array.ArrayIndentation"/>
+    <exclude name="Drupal.Commenting.DocComment.ShortNotCapital"/>
+    <exclude name="Drupal.Commenting.FunctionComment.TypeHintMissing"/>
+    <exclude name="Drupal.Commenting.InlineComment.NotCapital"/>
+    <exclude name="Drupal.Files.LineLength.TooLong"/>
+    <exclude name="Drupal.NamingConventions.ValidVariableName.LowerCamelName"/>
+    <exclude name="Drupal.Semantics.FunctionT.NotLiteralString"/>
+    <exclude name="Drupal.Semantics.FunctionT.ConcatString"/>
+    <exclude name="Drupal.Strings.UnnecessaryStringConcat.Found"/>
+  </rule>
+
+  <rule ref="DrupalPractice">
+    <exclude name="DrupalPractice.General.ExceptionT.ExceptionT"/>
+  </rule>
+
+  <rule ref="Generic.CodeAnalysis.UselessOverridingMethod">
+    <exclude name="Generic.CodeAnalysis.UselessOverridingMethod.Found"/>
+  </rule>
+
+  <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
+  <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison"/>
+  <rule ref="SlevomatCodingStandard.TypeHints.DNFTypeHintFormat"/>
+
+  <rule ref="SlevomatCodingStandard.TypeHints">
+    <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.UselessAnnotation"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingTraversableTypeHintSpecification"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.DisallowArrayTypeHintSyntax.DisallowedArrayTypeHintSyntax"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.ClassConstantTypeHint.MissingNativeTypeHint"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
+  </rule>
+
+</ruleset>
