@@ -29,6 +29,7 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     'options',
     'field_widget_actions',
     'json_field',
+    'json_field_widget',
     'taxonomy',
     'block_content',
     'ai',
@@ -191,9 +192,13 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
       'destination=/admin/config/ai/schemadotorg-jsonld'
     );
 
-    // Check that default_jsonld uses textarea widget when json_field_widget
-    // is absent from $modules (the base case in this test class).
+    // Check that default_jsonld uses a textarea enhanced by json_field_widget.
     $this->assertSession()->elementExists('css', 'textarea[name="entity_types[node][default_jsonld]"]');
+    $this->assertSession()->elementExists('css', 'textarea[name="entity_types[node][default_jsonld]"][data-json-editor="default_jsonld_node"]');
+    $this->assertSession()->responseContains('default_jsonld_node');
+    $this->assertSession()->responseContains('ai_schemadotorg_jsonld.json_widget.js');
+    $this->assertSession()->responseContains('260px');
+    $this->assertSession()->responseContains('60vh');
 
     // Uncheck a removable entity type and confirm its config section is removed.
     $this->submitForm([

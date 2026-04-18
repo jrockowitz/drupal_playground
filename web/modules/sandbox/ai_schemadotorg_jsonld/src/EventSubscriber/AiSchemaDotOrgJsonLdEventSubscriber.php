@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\ai_schemadotorg_jsonld\EventSubscriber;
 
+use Drupal\ai\Event\PostGenerateResponseEvent;
+use Drupal\ai\OperationType\Chat\ChatMessage;
 use Drupal\ai_automators\Event\ValuesChangeEvent;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -42,8 +44,33 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents(): array {
     return [
+      PostGenerateResponseEvent::EVENT_NAME => 'onPostGenerateResponse',
       ValuesChangeEvent::EVENT_NAME => 'onValuesChange',
     ];
+  }
+
+  /**
+   * Logs the raw AI response for the Schema.org JSON-LD automator.
+   */
+  public function onPostGenerateResponse(PostGenerateResponseEvent $event): void {
+    if (!$this->isJsonLdAutomatorRequest($event->getTags())) {
+      return;
+    }
+
+    $output = $event->getOutput();
+    $normalized_output = $output->getNormalized();
+    $response_text = ($normalized_output instanceof ChatMessage)
+      ? $normalized_output->getText()
+      : print_r($normalized_output, TRUE);
+
+    $this->loggerFactory->get('ai_schemadotorg_jsonld')->notice(
+      'Raw AI response before JSON-LD validation. Request ID: @request_id. Response: @response. Raw output: @raw_output',
+      [
+        '@request_id' => $event->getRequestThreadId(),
+        '@response' => $response_text,
+        '@raw_output' => print_r($output->getRawOutput(), TRUE),
+      ],
+    );
   }
 
   /**
@@ -57,8 +84,7 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
     $values = $event->getValues();
     $processed = [];
     foreach ($values as $value) {
-      $raw = trim($value['value'] ?? '');
-      $processed[] = ['value' => $this->extractJson($raw)];
+      $processed[] = $this->extractJson((string) $value);
     }
 
     $event->setValues($processed);
@@ -74,6 +100,8 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
    *   The extracted JSON string, or empty string on failure.
    */
   protected function extractJson(string $raw): string {
+    $raw = trim($raw);
+
     if ($raw === '') {
       return '';
     }
@@ -109,6 +137,14 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
       );
       return '';
     }
+  }
+
+  /**
+   * Returns TRUE when the tags belong to this module's JSON-LD automator.
+   */
+  protected function isJsonLdAutomatorRequest(array $tags): bool {
+    return in_array('ai_automator', $tags)
+      && in_array('ai_automator:field_name:' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME, $tags);
   }
 
 }

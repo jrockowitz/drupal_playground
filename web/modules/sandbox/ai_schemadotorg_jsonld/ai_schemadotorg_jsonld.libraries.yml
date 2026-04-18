@@ -7,3 +7,9 @@ copy:
   dependencies:
     - core/drupal
     - core/once
+
+json_widget:
+  js:
+    js/ai_schemadotorg_jsonld.json_widget.js: {}
+  dependencies:
+    - json_field_widget/json_editor.widget

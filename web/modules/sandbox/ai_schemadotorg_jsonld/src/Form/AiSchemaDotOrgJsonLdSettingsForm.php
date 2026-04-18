@@ -125,20 +125,16 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         '#default_value' => $entity_type_settings[$entity_type_id]['prompt'] ?? '',
       ];
 
-      $default_jsonld_type = $this->moduleHandler->moduleExists('json_field_widget')
-        ? 'json_editor'
-        : 'textarea';
-
       $form['entity_types'][$entity_type_id]['default_jsonld'] = [
-        '#type' => $default_jsonld_type,
+        '#type' => 'textarea',
         '#title' => $this->t('Default JSON-LD'),
         '#description' => $this->t('Default JSON-LD injected for canonical @entity_type pages whose bundle already has the Schema.org JSON-LD field. Leave blank to disable.', ['@entity_type' => $entity_type_definition->getLabel()]),
         '#default_value' => $entity_type_settings[$entity_type_id]['default_jsonld'] ?? '',
         '#element_validate' => [[$this, 'validateJson']],
       ];
 
-      if ($default_jsonld_type === 'json_editor') {
-        $form['entity_types'][$entity_type_id]['default_jsonld']['#attached']['library'][] = 'json_field_widget/json_editor.widget';
+      if ($this->moduleHandler->moduleExists('json_field_widget')) {
+        $form['entity_types'][$entity_type_id]['default_jsonld'] += $this->getJsonEditorElementConfiguration('default_jsonld_' . $entity_type_id);
       }
     }
 
@@ -425,6 +421,36 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       ],
       default => (string) $entity_type_definition->getLabel(),
     };
+  }
+
+  /**
+   * Returns the form element configuration needed for the JSON editor.
+   *
+   * @param string $editor_id
+   *   The editor identifier.
+   *
+   * @return array
+   *   The form element configuration.
+   */
+  protected function getJsonEditorElementConfiguration(string $editor_id): array {
+    return [
+      '#attributes' => [
+        'data-json-editor' => $editor_id,
+      ],
+      '#attached' => [
+        'library' => ['ai_schemadotorg_jsonld/json_widget'],
+        'drupalSettings' => [
+          'json_field' => [
+            $editor_id => [
+              'mode' => 'code',
+              'modes' => ['tree', 'code', 'text'],
+              'height' => '260px',
+              'maxHeight' => '60vh',
+            ],
+          ],
+        ],
+      ],
+    ];
   }
 
 }

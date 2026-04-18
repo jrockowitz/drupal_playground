@@ -19,7 +19,12 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
   /**
    * Unsupported entity types.
    */
-  protected array $unsupportedEntityTypes = ['shortcut', 'automator_chain', 'ai_log'];
+  protected array $unsupportedEntityTypes = [
+    'ai_log',
+    'automator_chain',
+    'menu_link_content',
+    'shortcut',
+  ];
 
   /**
    * Constructs an AiSchemaDotOrgJsonLdManager object.
