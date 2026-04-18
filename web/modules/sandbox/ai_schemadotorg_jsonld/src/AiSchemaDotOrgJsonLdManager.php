@@ -132,6 +132,11 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
    *   The default AI prompt for the entity type.
    */
   protected function buildDefaultPrompt(string $entity_type_id, ContentEntityTypeInterface $entity_type): string {
+    $file = __DIR__ . '/../prompts/entity_types/ai_schemadotorg_jsonld.' . $entity_type_id . '.prompt.txt';
+    if (file_exists($file)) {
+      return trim((string) file_get_contents($file));
+    }
+
     $token_name = $this->getTokenName($entity_type_id);
     $bundle_token_name = $this->getBundleTokenName($entity_type_id, $entity_type);
     $label_token_name = $this->getLabelTokenName($entity_type);

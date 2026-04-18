@@ -153,6 +153,22 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     $this->assertSame('Custom node prompt', $entity_type_settings['node']['prompt']);
     $this->assertSame('{"@type":"WebPage"}', $entity_type_settings['node']['default_jsonld']);
     $this->assertArrayHasKey('media', $entity_type_settings);
+
+    // Check that a file-based prompt is used instead of the generated default.
+    $app_root = $this->container->getParameter('app.root');
+    $module_relative_path = $this->container->get('extension.path.resolver')->getPath('module', 'ai_schemadotorg_jsonld');
+    $prompt_file = $app_root . '/' . $module_relative_path . '/prompts/entity_types/ai_schemadotorg_jsonld.user.prompt.txt';
+
+    $this->assertFileExists($prompt_file);
+
+    $this->container->get('config.storage')->delete('ai_schemadotorg_jsonld.settings');
+    $this->installConfig(['ai_schemadotorg_jsonld']);
+    $manager->addEntityTypes(['user']);
+
+    $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
+
+    // Check that the file content is used as the user prompt.
+    $this->assertSame(trim((string) file_get_contents($prompt_file)), $entity_type_settings['user']['prompt']);
   }
 
 }
