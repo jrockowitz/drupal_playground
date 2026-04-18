@@ -106,6 +106,7 @@ class AiSchemaDotOrgJsonLdBuilderTest extends KernelTestBase {
       ->load('node.page.default');
     $component = $view_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
     $this->assertNotNull($component, 'View display component exists.');
+    $this->assertSame('json', $component['type'], 'View display uses the JSON formatter.');
     $this->assertSame(99, $component['weight'], 'View display weight is 99.');
 
     // Delete downstream config to confirm repeated calls repair partial state.
@@ -162,7 +163,9 @@ class AiSchemaDotOrgJsonLdBuilderTest extends KernelTestBase {
     $user_view_display = $this->container->get('entity_type.manager')
       ->getStorage('entity_view_display')
       ->load('user.user.default');
-    $this->assertNotNull($user_view_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME), 'User view display component exists.');
+    $user_component = $user_view_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
+    $this->assertNotNull($user_component, 'User view display component exists.');
+    $this->assertSame('json', $user_component['type'], 'User view display uses the JSON formatter.');
   }
 
 }

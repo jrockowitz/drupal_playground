@@ -44,11 +44,14 @@ ddev code-fix <file|directory>
     (i.e. `ConfigFactoryInterface` before `EntityTypeManagerInterface` before `EntityRepositoryInterface)
 - Hooks
   - Use OOP hooks instead of procedural hooks with legacy support. @see https://www.drupal.org/node/3442349
-- Drush
-  - Always use `autowire`
 - PHPUnit
   - `::setUp` and `::test` methods should come before protected helper methods.
   - For Functional and Kernel tests, try to have a single test method per class.
+
+# Drush
+
+- Always use `autowire`
+- Do not create any aliases.
 
 # Programming
 

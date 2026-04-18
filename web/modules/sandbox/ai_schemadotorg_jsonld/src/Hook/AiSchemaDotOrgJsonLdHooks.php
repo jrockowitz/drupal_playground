@@ -149,9 +149,18 @@ class AiSchemaDotOrgJsonLdHooks {
       return;
     }
 
+    $translation_arguments = [
+      ':schema_href' => 'https://validator.schema.org/',
+      ':google_href' => 'https://search.google.com/test/rich-results',
+    ];
+    $description = $this->t('<p>Please copy-n-paste the above JSON-LD into the <a href=":schema_href">Schema Markup Validator</a> or <a href=":google_href">Google\'s Rich Results Test</a>.</p>', $translation_arguments);
+
     $field_widget_complete_form['copy_jsonld'] = [
       '#type' => 'container',
       '#attributes' => ['class' => ['ai-schemadotorg-jsonld-copy']],
+      'description' => [
+        '#markup' => $description,
+      ],
       'button' => [
         '#type' => 'button',
         '#value' => $this->t('Copy JSON-LD'),

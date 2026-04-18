@@ -1,11 +1,19 @@
 .ai-schemadotorg-jsonld-copy {
+  display: none;
   margin-top: 0.5rem;
+}
+
+html.js .ai-schemadotorg-jsonld-copy {
+  display: block;
 }
 
 .ai-schemadotorg-jsonld-copy-message {
   display: none;
   margin-left: 0.5rem;
-  transition: opacity 0.5s ease;
-  opacity: 1;
-  font-style: italic;
+  transition: opacity 1s;
+  font-weight: bold;
+}
+
+.ai-schemadotorg-jsonld-copy-message::before {
+  content: "✓";
 }

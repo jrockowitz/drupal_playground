@@ -213,7 +213,7 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
     }
 
     $display->setComponent(self::FIELD_NAME, [
-      'type' => 'pretty',
+      'type' => 'json',
       'weight' => 99,
     ])->save();
   }
