@@ -140,6 +140,29 @@ class AiSchemaDotOrgJsonLdBuilderTest extends KernelTestBase {
       ->getStorage('ai_automator')
       ->load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME . '.default');
     $this->assertNull($automator_after_delete, 'AiAutomator is deleted when FieldConfig is deleted.');
+
+    // Check that non-bundle entity types can use a synthetic bundle.
+    $builder->addFieldToEntity('user', 'user');
+
+    $user_field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('user.user.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
+    $this->assertNotNull($user_field_config, 'User FieldConfig exists.');
+
+    $user_automator = $this->container->get('entity_type.manager')
+      ->getStorage('ai_automator')
+      ->load('user.user.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME . '.default');
+    $this->assertNotNull($user_automator, 'User AiAutomator config entity exists.');
+
+    $user_form_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_form_display')
+      ->load('user.user.default');
+    $this->assertNotNull($user_form_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME), 'User form display component exists.');
+
+    $user_view_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_view_display')
+      ->load('user.user.default');
+    $this->assertNotNull($user_view_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME), 'User view display component exists.');
   }
 
 }

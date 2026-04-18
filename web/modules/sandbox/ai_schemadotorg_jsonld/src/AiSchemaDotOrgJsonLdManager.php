@@ -50,9 +50,6 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
       if (!$entity_type_definition->hasLinkTemplate('canonical')) {
         continue;
       }
-      if (!$entity_type_definition->getBundleEntityType()) {
-        continue;
-      }
       if (!$entity_type_definition->entityClassImplements(FieldableEntityInterface::class)) {
         continue;
       }

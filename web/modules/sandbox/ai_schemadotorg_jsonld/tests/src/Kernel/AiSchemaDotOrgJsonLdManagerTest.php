@@ -57,9 +57,10 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     // Check that unsupported canonical entity types are excluded.
     $supported_entity_types = $manager->getSupportedEntityTypes();
     $this->assertArrayNotHasKey('shortcut', $supported_entity_types);
+    $this->assertArrayHasKey('user', $supported_entity_types);
 
     // Check that unchecked entity types without field storage are removed.
-    $manager->addEntityTypes(['media', 'taxonomy_term']);
+    $manager->addEntityTypes(['media', 'taxonomy_term', 'user']);
     $manager->syncEntityTypes(['node']);
 
     $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
@@ -67,7 +68,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     $this->assertSame(['node'], array_keys($entity_type_settings));
 
     // Check that unchecked entity types with field storage are retained.
-    $manager->addEntityTypes(['media', 'taxonomy_term']);
+    $manager->addEntityTypes(['media', 'taxonomy_term', 'user']);
 
     FieldStorageConfig::create([
       'field_name' => AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
@@ -83,14 +84,15 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
 
     $this->assertSame(['media', 'node'], array_keys($entity_type_settings));
     $this->assertArrayNotHasKey('taxonomy_term', $entity_type_settings);
+    $this->assertArrayNotHasKey('user', $entity_type_settings);
 
     // Check that node stays first and remaining synced entity types are sorted.
-    $manager->addEntityTypes(['block_content', 'taxonomy_term']);
-    $manager->syncEntityTypes(['node', 'taxonomy_term', 'block_content', 'media']);
+    $manager->addEntityTypes(['block_content', 'taxonomy_term', 'user']);
+    $manager->syncEntityTypes(['node', 'taxonomy_term', 'block_content', 'media', 'user']);
 
     $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
 
-    $this->assertSame(['block_content', 'media', 'node', 'taxonomy_term'], array_keys($entity_type_settings));
+    $this->assertSame(['block_content', 'media', 'node', 'taxonomy_term', 'user'], array_keys($entity_type_settings));
 
     // Check that only node is seeded during installation after a config reset.
     $this->container->get('config.storage')->delete('ai_schemadotorg_jsonld.settings');
@@ -106,7 +108,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
       ->set('entity_types.node.default_jsonld', '{"@type":"WebPage"}')
       ->save();
 
-    $manager->addEntityTypes(['taxonomy_term', 'block_content', 'media']);
+    $manager->addEntityTypes(['taxonomy_term', 'block_content', 'media', 'user']);
 
     $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
 
@@ -119,8 +121,11 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     // Check that media settings were added.
     $this->assertArrayHasKey('media', $entity_type_settings);
 
+    // Check that user settings were added.
+    $this->assertArrayHasKey('user', $entity_type_settings);
+
     // Check that entity type settings are sorted by key.
-    $this->assertSame(['block_content', 'media', 'node', 'taxonomy_term'], array_keys($entity_type_settings));
+    $this->assertSame(['block_content', 'media', 'node', 'taxonomy_term', 'user'], array_keys($entity_type_settings));
 
     // Check that taxonomy terms use the term token namespace.
     $this->assertStringContainsString('[term:url]', $entity_type_settings['taxonomy_term']['prompt']);
@@ -132,10 +137,14 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     // Check that media uses the expected token namespace.
     $this->assertStringContainsString('[media:url]', $entity_type_settings['media']['prompt']);
 
+    // Check that user uses the expected token namespace.
+    $this->assertStringContainsString('[user:url]', $entity_type_settings['user']['prompt']);
+
     // Check that newly added entity types default to empty JSON-LD.
     $this->assertSame('', $entity_type_settings['taxonomy_term']['default_jsonld']);
     $this->assertSame('', $entity_type_settings['block_content']['default_jsonld']);
     $this->assertSame('', $entity_type_settings['media']['default_jsonld']);
+    $this->assertSame('', $entity_type_settings['user']['default_jsonld']);
 
     $manager->addEntityTypes(['node', 'media']);
 

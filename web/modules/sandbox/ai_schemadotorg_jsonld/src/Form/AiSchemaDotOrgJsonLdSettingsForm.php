@@ -148,8 +148,6 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Enable the supported entity types you want to manage with this module. After saving, each enabled entity type will appear above with bundle, prompt, and default JSON-LD settings.'),
       '#open' => FALSE,
       '#tree' => TRUE,
-      // Canonical content entities without bundles, such as user, are a future
-      // follow-up once the field builder supports them.
     ];
     $form['enabled_entity_types']['entity_types'] = [
       '#type' => 'tableselect',
@@ -238,6 +236,8 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     $bundle_entity_type_id = $entity_type_definition->getBundleEntityType();
 
     if ($bundle_entity_type_id === NULL) {
+      $bundle = $this->getSyntheticBundle($entity_type_id);
+      $options[$bundle] = $this->buildEntityTypeOption($entity_type_definition, $bundle, $this->getSyntheticBundleLabel($entity_type_definition), $this->getSyntheticBundleDescription($entity_type_definition));
       return $options;
     }
 
@@ -259,76 +259,98 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       if ($description === '' && method_exists($type, 'getDescription')) {
         $description = (string) $type->getDescription();
       }
-      $field_config = $this->entityTypeManager
-        ->getStorage('field_config')
-        ->load($entity_type_id . '.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
-
-      $links = [];
-      if ($field_config !== NULL && $entity_type_definition->get('field_ui_base_route')) {
-        $route_parameters = FieldUI::getRouteBundleParameter($entity_type_definition, $bundle) + [
-          'field_config' => $entity_type_id . '.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
-        ];
-        $destination = '/admin/config/ai/schemadotorg-jsonld';
-        $attributes = [
-          'class' => ['use-ajax'],
-          'data-dialog-type' => 'modal',
-        ];
-
-        $edit_url = Url::fromRoute('entity.field_config.' . $entity_type_id . '_field_edit_form', $route_parameters);
-        $edit_url->setOption('query', ['destination' => $destination]);
-        $links['edit'] = [
-          'title' => $this->t('Edit field'),
-          'weight' => 10,
-          'url' => $edit_url,
-          'attributes' => $attributes + [
-            'title' => $this->t('Edit field settings.'),
-            'data-dialog-options' => Json::encode(['width' => 1100]),
-          ],
-        ];
-
-        $delete_url = Url::fromRoute('entity.field_config.' . $entity_type_id . '_field_delete_form', $route_parameters);
-        $delete_url->setOption('query', ['destination' => $destination]);
-        $links['delete'] = [
-          'title' => $this->t('Delete field'),
-          'weight' => 100,
-          'url' => $delete_url,
-          'attributes' => $attributes + [
-            'title' => $this->t('Delete field.'),
-            'data-dialog-options' => Json::encode(['width' => 880]),
-          ],
-        ];
-      }
-
       $label_cell = ['#plain_text' => $label];
       if ($bundle_entity_type_definition->hasLinkTemplate('edit-form')) {
         $label_cell = $type->toLink($label, 'edit-form')->toRenderable();
       }
 
-      $options[$bundle] = [
-        'label' => [
-          'data' => $label_cell,
-        ],
-        'description' => [
-          'data' => ['#markup' => $description],
-          'class' => [RESPONSIVE_PRIORITY_MEDIUM],
-        ],
-        'operations' => [
-          'data' => [
-            '#type' => 'operations',
-            '#links' => $links,
-            '#attached' => [
-              'library' => ['core/drupal.dialog.ajax'],
-            ],
-          ],
-        ],
-      ];
-
-      if ($field_config !== NULL) {
-        $options[$bundle]['#disabled'] = TRUE;
-      }
+      $options[$bundle] = $this->buildEntityTypeOption($entity_type_definition, $bundle, $label_cell, $description);
     }
 
     return $options;
+  }
+
+  /**
+   * Builds a bundle row for the entity type table.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type_definition
+   *   The content entity type definition.
+   * @param string $bundle
+   *   The bundle ID.
+   * @param mixed $label
+   *   The label render array or string.
+   * @param string $description
+   *   The description text.
+   *
+   * @return array
+   *   The tableselect option row.
+   */
+  protected function buildEntityTypeOption(ContentEntityTypeInterface $entity_type_definition, string $bundle, mixed $label, string $description): array {
+    $entity_type_id = $entity_type_definition->id();
+    $field_config = $this->entityTypeManager
+      ->getStorage('field_config')
+      ->load($entity_type_id . '.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
+
+    $links = [];
+    if ($field_config !== NULL && $entity_type_definition->get('field_ui_base_route')) {
+      $route_parameters = FieldUI::getRouteBundleParameter($entity_type_definition, $bundle) + [
+        'field_config' => $entity_type_id . '.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
+      ];
+      $destination = '/admin/config/ai/schemadotorg-jsonld';
+      $attributes = [
+        'class' => ['use-ajax'],
+        'data-dialog-type' => 'modal',
+      ];
+
+      $edit_url = Url::fromRoute('entity.field_config.' . $entity_type_id . '_field_edit_form', $route_parameters);
+      $edit_url->setOption('query', ['destination' => $destination]);
+      $links['edit'] = [
+        'title' => $this->t('Edit field'),
+        'weight' => 10,
+        'url' => $edit_url,
+        'attributes' => $attributes + [
+          'title' => $this->t('Edit field settings.'),
+          'data-dialog-options' => Json::encode(['width' => 1100]),
+        ],
+      ];
+
+      $delete_url = Url::fromRoute('entity.field_config.' . $entity_type_id . '_field_delete_form', $route_parameters);
+      $delete_url->setOption('query', ['destination' => $destination]);
+      $links['delete'] = [
+        'title' => $this->t('Delete field'),
+        'weight' => 100,
+        'url' => $delete_url,
+        'attributes' => $attributes + [
+          'title' => $this->t('Delete field.'),
+          'data-dialog-options' => Json::encode(['width' => 880]),
+        ],
+      ];
+    }
+
+    $option = [
+      'label' => [
+        'data' => is_array($label) ? $label : ['#plain_text' => (string) $label],
+      ],
+      'description' => [
+        'data' => ['#markup' => $description],
+        'class' => [RESPONSIVE_PRIORITY_MEDIUM],
+      ],
+      'operations' => [
+        'data' => [
+          '#type' => 'operations',
+          '#links' => $links,
+          '#attached' => [
+            'library' => ['core/drupal.dialog.ajax'],
+          ],
+        ],
+      ],
+    ];
+
+    if ($field_config !== NULL) {
+      $option['#disabled'] = TRUE;
+    }
+
+    return $option;
   }
 
   /**
@@ -367,6 +389,42 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     return $this->entityTypeManager
       ->getStorage('field_storage_config')
       ->load($entity_type_id . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) !== NULL;
+  }
+
+  /**
+   * Returns the synthetic bundle for a non-bundle entity type.
+   */
+  protected function getSyntheticBundle(string $entity_type_id): string {
+    return $entity_type_id;
+  }
+
+  /**
+   * Returns the description for a synthetic non-bundle row.
+   */
+  protected function getSyntheticBundleDescription(ContentEntityTypeInterface $entity_type_definition): string {
+    $description = (string) ($entity_type_definition->get('description') ?? '');
+    if ($description !== '') {
+      return $description;
+    }
+
+    return match ($entity_type_definition->id()) {
+      'user' => (string) $this->t('Individual registered user accounts on a website.'),
+      default => '',
+    };
+  }
+
+  /**
+   * Returns the label for a synthetic non-bundle row.
+   */
+  protected function getSyntheticBundleLabel(ContentEntityTypeInterface $entity_type_definition): array|string {
+    return match ($entity_type_definition->id()) {
+      'user' => [
+        '#type' => 'link',
+        '#title' => (string) $entity_type_definition->getLabel(),
+        '#url' => Url::fromRoute('entity.user.admin_form'),
+      ],
+      default => (string) $entity_type_definition->getLabel(),
+    };
   }
 
 }

@@ -105,14 +105,16 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     $this->assertSession()->elementExists('css', 'input[name="enabled_entity_types[entity_types][media]"]');
     $this->assertSession()->elementExists('css', 'input[name="enabled_entity_types[entity_types][taxonomy_term]"]');
     $this->assertSession()->elementExists('css', 'input[name="enabled_entity_types[entity_types][block_content]"]');
+    $this->assertSession()->elementExists('css', 'input[name="enabled_entity_types[entity_types][user]"]');
     $this->assertSession()->elementNotExists('css', 'input[name="enabled_entity_types[entity_types][shortcut]"]');
     $this->assertSession()->linkByHrefExists('/admin/structure/types/manage/page');
     $this->assertSession()->elementNotExists('css', 'a.use-ajax[href="/admin/structure/types/manage/page"]');
 
-    // Enable media and taxonomy terms and check the new sections appear.
+    // Enable media, taxonomy terms, and users and check the new sections appear.
     $this->submitForm([
       'enabled_entity_types[entity_types][media]' => 'media',
       'enabled_entity_types[entity_types][taxonomy_term]' => 'taxonomy_term',
+      'enabled_entity_types[entity_types][user]' => 'user',
     ], 'Save configuration');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->checkboxChecked('enabled_entity_types[entity_types][media]');
@@ -130,22 +132,45 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     $this->assertSession()->elementExists('css', 'input[name="entity_types[taxonomy_term][bundles][tags]"]');
     $this->assertSession()->pageTextContains('Tags description');
 
-    // Select page bundle and save.
-    $this->submitForm(['entity_types[node][bundles][page]' => 'page'], 'Save configuration');
+    // Check that the user section appears with a synthetic bundle row.
+    $this->assertSession()->fieldExists('entity_types[user][prompt]');
+    $this->assertSession()->fieldExists('entity_types[user][default_jsonld]');
+    $this->assertSession()->elementExists('css', 'input[name="entity_types[user][bundles][user]"]');
+    $this->assertSession()->pageTextContains('Individual registered user accounts on a website.');
+    $this->assertSession()->linkByHrefExists('/admin/config/people/accounts');
+
+    // Select page and user bundles and save.
+    $this->submitForm([
+      'entity_types[node][bundles][page]' => 'page',
+      'entity_types[user][bundles][user]' => 'user',
+    ], 'Save configuration');
     $this->assertSession()->statusCodeEquals(200);
 
-    // Check that field was created.
+    // Check that the node field was created.
     $field_config = $this->container->get('entity_type.manager')
       ->getStorage('field_config')
       ->load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
     $this->assertNotNull($field_config, 'Field was created after saving form.');
 
-    // Reload and check page is pre-checked and disabled.
+    // Check that the user field was created.
+    $field_config = $this->container->get('entity_type.manager')
+      ->getStorage('field_config')
+      ->load('user.user.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
+    $this->assertNotNull($field_config, 'User field was created after saving form.');
+
+    // Reload and check page and user are pre-checked and disabled.
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld');
     $this->assertSession()->checkboxChecked('entity_types[node][bundles][page]');
     $this->assertSession()->elementAttributeContains(
       'css',
       'input[name="entity_types[node][bundles][page]"]',
+      'disabled',
+      'disabled'
+    );
+    $this->assertSession()->checkboxChecked('entity_types[user][bundles][user]');
+    $this->assertSession()->elementAttributeContains(
+      'css',
+      'input[name="entity_types[user][bundles][user]"]',
       'disabled',
       'disabled'
     );
