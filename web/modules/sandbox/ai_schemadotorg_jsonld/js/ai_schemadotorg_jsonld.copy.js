@@ -20,16 +20,14 @@
     attach: function attach(context) {
       once(
         "ai-schemadotorg-jsonld-copy",
-        ".ai-schemadotorg-jsonld-copy",
+        ".ai-schemadotorg-jsonld-copy-button",
         context,
-      ).forEach((container) => {
-        const button = container.querySelector(
-          ".ai-schemadotorg-jsonld-copy-button",
-        );
-        const message = container.querySelector(
-          ".ai-schemadotorg-jsonld-copy-message",
-        );
-        const fieldName = button ? button.dataset.fieldName : null;
+      ).forEach((button) => {
+        const fieldName = button.dataset.fieldName;
+        const messageSelector = `.ai-schemadotorg-jsonld-copy-message[data-field-name="${fieldName}"]`;
+        const message = context.querySelector
+          ? context.querySelector(messageSelector)
+          : null;
 
         if (!button || !message || !fieldName) {
           return;

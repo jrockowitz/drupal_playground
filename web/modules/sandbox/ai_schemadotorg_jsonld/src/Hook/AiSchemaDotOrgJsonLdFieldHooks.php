@@ -126,7 +126,10 @@ class AiSchemaDotOrgJsonLdFieldHooks {
       return;
     }
 
+    $field_widget_complete_form['widget'][0]['copy_jsonld_description'] = $this->buildCopyJsonLdDescription();
+    $field_widget_complete_form['copy_jsonld'] = $this->buildCopyJsonLdButton($field_name);
     $field_widget_complete_form['edit_prompt'] = $this->buildEditPromptLink($entity);
+    $field_widget_complete_form['copy_jsonld_message'] = $this->buildCopyJsonLdMessage($field_name);
   }
 
   /**
@@ -142,17 +145,6 @@ class AiSchemaDotOrgJsonLdFieldHooks {
   #[Hook('field_widget_single_element_json_textarea_form_alter')]
   #[Hook('field_widget_single_element_json_editor_form_alter')]
   public function fieldWidgetSingleElementFormAlter(array &$element, FormStateInterface $form_state, array $context): void {
-    $field_name = $context['items']->getFieldDefinition()->getName();
-    $entity = $context['items']->getEntity();
-
-    if ($field_name !== AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) {
-      return;
-    }
-    if ($entity->isNew()) {
-      return;
-    }
-
-    $element['copy_jsonld'] = $this->buildCopyJsonLd($field_name);
   }
 
   /**
@@ -220,38 +212,57 @@ class AiSchemaDotOrgJsonLdFieldHooks {
   }
 
   /**
-   * Builds the copy JSON-LD UI.
-   *
-   * @param string $field_name
-   *   The field machine name.
+   * Builds the copy JSON-LD description.
    */
-  protected function buildCopyJsonLd(string $field_name): array {
-    $description = new TranslatableMarkup('<p>Please copy and paste the above Schema.org JSON-LD into the <a href=":schema_href">Schema Markup Validator</a> or <a href=":google_href">Google\'s Rich Results Test</a>.</p>', [
+  protected function buildCopyJsonLdDescription(): array {
+    $description = new TranslatableMarkup('Please copy and paste the above Schema.org JSON-LD into the <a href=":schema_href">Schema Markup Validator</a> or <a href=":google_href">Google\'s Rich Results Test</a>.', [
       ':schema_href' => 'https://validator.schema.org/',
       ':google_href' => 'https://search.google.com/test/rich-results',
     ]);
 
     return [
-      '#type' => 'container',
-      '#attributes' => ['class' => ['ai-schemadotorg-jsonld-copy']],
-      'description' => [
-        '#markup' => $description,
-      ],
-      'button' => [
-        '#type' => 'button',
-        '#value' => $this->t('Copy Schema.org JSON-LD'),
-        '#attributes' => [
-          'class' => ['ai-schemadotorg-jsonld-copy-button', 'button--small'],
-          'data-field-name' => $field_name,
-        ],
-      ],
-      'message' => [
-        '#type' => 'html_tag',
-        '#tag' => 'span',
-        '#attributes' => ['class' => ['ai-schemadotorg-jsonld-copy-message']],
-        '#plain_text' => $this->t('JSON-LD copied to clipboard…'),
+      '#markup' => $description,
+      '#prefix' => '<div class="description form-item__description">',
+      '#suffix' => '</div>',
+      '#weight' => 0,
+    ];
+  }
+
+  /**
+   * Builds the copy JSON-LD button.
+   *
+   * @param string $field_name
+   *   The field machine name.
+   */
+  protected function buildCopyJsonLdButton(string $field_name): array {
+    return [
+      '#type' => 'button',
+      '#value' => $this->t('Copy JSON-LD'),
+      '#attributes' => [
+        'class' => ['ai-schemadotorg-jsonld-copy-button', 'button--small'],
+        'data-field-name' => $field_name,
       ],
       '#attached' => ['library' => ['ai_schemadotorg_jsonld/copy']],
+      '#weight' => 99,
+    ];
+  }
+
+  /**
+   * Builds the copy JSON-LD message.
+   *
+   * @param string $field_name
+   *   The field machine name.
+   */
+  protected function buildCopyJsonLdMessage(string $field_name): array {
+    return [
+      '#type' => 'html_tag',
+      '#tag' => 'span',
+      '#attributes' => [
+        'class' => ['ai-schemadotorg-jsonld-copy-message'],
+        'data-field-name' => $field_name,
+      ],
+      '#plain_text' => $this->t('JSON-LD copied to clipboard…'),
+      '#weight' => 102,
     ];
   }
 

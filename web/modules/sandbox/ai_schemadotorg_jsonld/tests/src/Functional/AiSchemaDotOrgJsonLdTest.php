@@ -101,8 +101,32 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
     // Check that the JSON-LD field is editable on saved entities.
     $this->assertSession()->fieldExists($field_name . '[0][value]');
     $this->assertSession()->fieldValueEquals($field_name . '[0][value]', $node_jsonld);
+    $this->assertSession()->buttonExists('Copy JSON-LD');
+    $this->assertSession()->buttonNotExists('Copy Schema.org JSON-LD');
     $this->assertSession()->linkExists('Edit prompt');
     $this->assertSession()->linkExists('View log');
+    $this->assertSession()->pageTextContains('Please copy and paste the above Schema.org JSON-LD into the Schema Markup Validator or Google\'s Rich Results Test.');
+    $this->assertSession()->pageTextContains('JSON-LD copied to clipboard…');
+
+    // Check that the description appears before the buttons and the message appears after them.
+    $page_content = $this->getSession()->getPage()->getContent();
+    $this->assertLessThan(
+      strpos($page_content, 'Copy JSON-LD'),
+      strpos($page_content, 'Please copy and paste the above Schema.org JSON-LD')
+    );
+    $this->assertLessThan(
+      strpos($page_content, 'Edit prompt'),
+      strpos($page_content, 'Copy JSON-LD')
+    );
+    $this->assertLessThan(
+      strpos($page_content, 'View log'),
+      strpos($page_content, 'Edit prompt')
+    );
+    $this->assertLessThan(
+      strpos($page_content, 'JSON-LD copied to clipboard…'),
+      strpos($page_content, 'View log')
+    );
+
     $this->assertSession()->elementAttributeContains(
       'css',
       'a.use-ajax[href*="/admin/config/ai/schemadotorg-jsonld/log?entity_type=node&entity_id=' . $node->id() . '"]',

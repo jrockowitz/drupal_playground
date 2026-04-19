@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\ai_schemadotorg_jsonld\EventSubscriber;
 
-use Drupal\ai\Event\PostGenerateResponseEvent;
 use Drupal\ai\Event\PreGenerateResponseEvent;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
@@ -47,7 +46,6 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
   public static function getSubscribedEvents(): array {
     return [
       PreGenerateResponseEvent::EVENT_NAME => 'onPreGenerateResponse',
-      PostGenerateResponseEvent::EVENT_NAME => 'onPostGenerateResponse',
       ValuesChangeEvent::EVENT_NAME => 'onValuesChange',
     ];
   }
@@ -75,33 +73,6 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
     }
 
     $event->setInput($input);
-  }
-
-  /**
-   * Logs the raw AI response for the Schema.org JSON-LD automator.
-   *
-   * @param \Drupal\ai\Event\PostGenerateResponseEvent $event
-   *   The AI post-generate response event.
-   */
-  public function onPostGenerateResponse(PostGenerateResponseEvent $event): void {
-    if (!$this->isJsonLdAutomatorRequest($event->getTags())) {
-      return;
-    }
-
-    $output = $event->getOutput();
-    $normalized_output = $output->getNormalized();
-    $response_text = ($normalized_output instanceof ChatMessage)
-      ? $normalized_output->getText()
-      : print_r($normalized_output, TRUE);
-
-    $this->loggerFactory->get('ai_schemadotorg_jsonld')->notice(
-      'Raw AI response before JSON-LD validation. Request ID: @request_id. Response: @response. Raw output: @raw_output',
-      [
-        '@request_id' => $event->getRequestThreadId(),
-        '@response' => $response_text,
-        '@raw_output' => print_r($output->getRawOutput(), TRUE),
-      ],
-    );
   }
 
   /**

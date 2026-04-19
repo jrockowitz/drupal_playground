@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\ai_schemadotorg_jsonld\Unit;
 
-use Drupal\ai\Event\PostGenerateResponseEvent;
 use Drupal\ai\Event\PreGenerateResponseEvent;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
-use Drupal\ai\OperationType\Chat\ChatOutput;
 use Drupal\ai_automators\Event\ValuesChangeEvent;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\ai_schemadotorg_jsonld\EventSubscriber\AiSchemaDotOrgJsonLdEventSubscriber;
@@ -86,7 +84,6 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
     // Check that the pre-generate, post-generate, and values change events are subscribed.
     $this->assertSame([
       PreGenerateResponseEvent::EVENT_NAME => 'onPreGenerateResponse',
-      PostGenerateResponseEvent::EVENT_NAME => 'onPostGenerateResponse',
       ValuesChangeEvent::EVENT_NAME => 'onValuesChange',
     ], AiSchemaDotOrgJsonLdEventSubscriber::getSubscribedEvents());
   }
@@ -258,63 +255,6 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
 
     // Check that the value is untouched.
     $this->assertSame('garbage', $event->getValues()[0]);
-  }
-
-  /**
-   * Tests that onPostGenerateResponse() ignores unrelated AI requests.
-   */
-  public function testOnPostGenerateResponseIgnoresUnrelatedRequests(): void {
-    $unrelated_output = new ChatOutput(
-      new ChatMessage('assistant', '{"@type":"WebPage"}'),
-      ['raw' => 'response'],
-      [],
-    );
-    $unrelated_event = new PostGenerateResponseEvent(
-      'request-id-unrelated',
-      'test_provider',
-      'chat',
-      [],
-      NULL,
-      'test-model',
-      $unrelated_output,
-      ['ai_automator'],
-    );
-
-    // Check that unrelated AI responses do not produce a log notice.
-    $this->logger->expects($this->never())->method('notice');
-    $this->subscriber->onPostGenerateResponse($unrelated_event);
-  }
-
-  /**
-   * Tests that onPostGenerateResponse() logs JSON-LD automator responses.
-   */
-  public function testOnPostGenerateResponseLogsJsonLdRequests(): void {
-    $output = new ChatOutput(
-      new ChatMessage('assistant', '{"@type":"WebPage"}'),
-      ['raw' => 'response'],
-      [],
-    );
-    $event = new PostGenerateResponseEvent(
-      'request-id-jsonld',
-      'test_provider',
-      'chat',
-      [],
-      NULL,
-      'test-model',
-      $output,
-      [
-        'ai_automator',
-        'ai_automator:field_name:' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
-      ],
-    );
-
-    // Check that JSON-LD automator responses are logged with the request ID.
-    $this->logger->expects($this->once())->method('notice')
-      ->with(
-        $this->stringContains('@request_id'),
-        $this->arrayHasKey('@request_id'),
-      );
-    $this->subscriber->onPostGenerateResponse($event);
   }
 
 }
