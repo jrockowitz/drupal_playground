@@ -7,7 +7,6 @@ namespace Drupal\Tests\ai_schemadotorg_jsonld\Kernel;
 use Drupal\ai_automators\AiAutomatorStatusField;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\field\Entity\FieldConfig;
-use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 
 /**
@@ -15,85 +14,51 @@ use Drupal\node\Entity\NodeType;
  *
  * @group ai_schemadotorg_jsonld
  */
-class AiSchemaDotOrgJsonLdBuilderTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'system',
-    'user',
-    'node',
-    'field',
-    'file',
-    'options',
-    'token',
-    'field_widget_actions',
-    'json_field',
-    'ai',
-    'ai_automators',
-    'ai_schemadotorg_jsonld',
-  ];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp(): void {
-    parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('user');
-    $this->installEntitySchema('field_storage_config');
-    $this->installEntitySchema('field_config');
-    $this->installEntitySchema('entity_form_display');
-    $this->installEntitySchema('entity_view_display');
-    $this->installEntitySchema('ai_automator');
-    $this->installConfig(['system', 'field', 'node', 'ai_schemadotorg_jsonld']);
-
-    NodeType::create(['type' => 'page', 'name' => 'Basic page'])->save();
-  }
+class AiSchemaDotOrgJsonLdBuilderTest extends AiSchemaDotOrgJsonLdTestBase {
 
   /**
    * Tests addFieldToEntity creates all required config.
    */
   public function testAddField(): void {
+    // Create a page content type and add the Schema.org JSON-LD field to it.
     /** @var \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface $builder */
     $builder = $this->container->get(AiSchemaDotOrgJsonLdBuilderInterface::class);
-
+    NodeType::create(['type' => 'page', 'name' => 'Basic page'])->save();
     $builder->addFieldToEntity('node', 'page');
 
     // Check that field storage exists.
-    $field_storage = $this->container->get('entity_type.manager')
+    $field_storage = $this->entityTypeManager
       ->getStorage('field_storage_config')
       ->load('node.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
     $this->assertNotNull($field_storage, 'FieldStorageConfig exists.');
 
     // Check that field instance exists and is translatable.
-    $field_config = $this->container->get('entity_type.manager')
+    $field_config = $this->entityTypeManager
       ->getStorage('field_config')
       ->load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
     $this->assertNotNull($field_config, 'FieldConfig exists.');
     $this->assertTrue($field_config->isTranslatable(), 'FieldConfig is translatable.');
 
     // Check that AI automator config exists.
-    $automator = $this->container->get('entity_type.manager')
+    $automator = $this->entityTypeManager
       ->getStorage('ai_automator')
       ->load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME . '.default');
     $this->assertNotNull($automator, 'AiAutomator config entity exists.');
 
     // Check that AI automator status field storage exists.
-    $status_field_storage = $this->container->get('entity_type.manager')
+    $status_field_storage = $this->entityTypeManager
       ->getStorage('field_storage_config')
       ->load('node.' . AiAutomatorStatusField::FIELD_NAME);
     $this->assertNotNull($status_field_storage, 'AI automator status FieldStorageConfig exists.');
 
     // Check that AI automator status field config exists.
-    $status_field_config = $this->container->get('entity_type.manager')
+    $status_field_config = $this->entityTypeManager
       ->getStorage('field_config')
       ->load('node.page.' . AiAutomatorStatusField::FIELD_NAME);
     $this->assertNotNull($status_field_config, 'AI automator status FieldConfig exists.');
 
     // Check that form display includes the field at weight 99.
-    $form_display = $this->container->get('entity_type.manager')
+    $form_display = $this->entityTypeManager
       ->getStorage('entity_form_display')
       ->load('node.page.default');
     $component = $form_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
@@ -101,7 +66,7 @@ class AiSchemaDotOrgJsonLdBuilderTest extends KernelTestBase {
     $this->assertSame(99, $component['weight'], 'Form display weight is 99.');
 
     // Check that view display includes the field at weight 99.
-    $view_display = $this->container->get('entity_type.manager')
+    $view_display = $this->entityTypeManager
       ->getStorage('entity_view_display')
       ->load('node.page.default');
     $component = $view_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
@@ -114,30 +79,30 @@ class AiSchemaDotOrgJsonLdBuilderTest extends KernelTestBase {
     $form_display->removeComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->save();
     $view_display->removeComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->save();
 
-    $this->container->get('entity_type.manager')->getStorage('ai_automator')->resetCache();
+    $this->entityTypeManager->getStorage('ai_automator')->resetCache();
 
     // Check idempotency and repair support — calling again must recreate missing config.
     $builder->addFieldToEntity('node', 'page');
 
-    $repaired_automator = $this->container->get('entity_type.manager')
+    $repaired_automator = $this->entityTypeManager
       ->getStorage('ai_automator')
       ->load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME . '.default');
     $this->assertNotNull($repaired_automator, 'AiAutomator is recreated when missing.');
 
-    $repaired_form_display = $this->container->get('entity_type.manager')
+    $repaired_form_display = $this->entityTypeManager
       ->getStorage('entity_form_display')
       ->load('node.page.default');
     $this->assertNotNull($repaired_form_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME), 'Form display component is recreated when missing.');
 
-    $repaired_view_display = $this->container->get('entity_type.manager')
+    $repaired_view_display = $this->entityTypeManager
       ->getStorage('entity_view_display')
       ->load('node.page.default');
     $this->assertNotNull($repaired_view_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME), 'View display component is recreated when missing.');
 
     // Check cascade delete — deleting FieldConfig should remove the automator.
     FieldConfig::load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->delete();
-    $this->container->get('entity_type.manager')->getStorage('ai_automator')->resetCache();
-    $automator_after_delete = $this->container->get('entity_type.manager')
+    $this->entityTypeManager->getStorage('ai_automator')->resetCache();
+    $automator_after_delete = $this->entityTypeManager
       ->getStorage('ai_automator')
       ->load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME . '.default');
     $this->assertNull($automator_after_delete, 'AiAutomator is deleted when FieldConfig is deleted.');
@@ -145,22 +110,22 @@ class AiSchemaDotOrgJsonLdBuilderTest extends KernelTestBase {
     // Check that non-bundle entity types can use a synthetic bundle.
     $builder->addFieldToEntity('user', 'user');
 
-    $user_field_config = $this->container->get('entity_type.manager')
+    $user_field_config = $this->entityTypeManager
       ->getStorage('field_config')
       ->load('user.user.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
     $this->assertNotNull($user_field_config, 'User FieldConfig exists.');
 
-    $user_automator = $this->container->get('entity_type.manager')
+    $user_automator = $this->entityTypeManager
       ->getStorage('ai_automator')
       ->load('user.user.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME . '.default');
     $this->assertNotNull($user_automator, 'User AiAutomator config entity exists.');
 
-    $user_form_display = $this->container->get('entity_type.manager')
+    $user_form_display = $this->entityTypeManager
       ->getStorage('entity_form_display')
       ->load('user.user.default');
     $this->assertNotNull($user_form_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME), 'User form display component exists.');
 
-    $user_view_display = $this->container->get('entity_type.manager')
+    $user_view_display = $this->entityTypeManager
       ->getStorage('entity_view_display')
       ->load('user.user.default');
     $user_component = $user_view_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
