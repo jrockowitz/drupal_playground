@@ -205,7 +205,9 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
     ]);
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('AI Schema.org JSON-LD: Log node');
+    $this->assertSession()->pageTextNotContains('Entity');
     $this->assertSession()->pageTextContains('Valid prompt 25');
+    $this->assertSession()->pageTextNotContains('Log node (node:page)');
     $this->assertSession()->pageTextNotContains('Stored orphan prompt');
     $this->assertSession()->pageTextNotContains('Orphan prompt');
     $this->assertSession()->pageTextContains('Yes');
@@ -214,6 +216,10 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
     $this->assertSession()->linkNotExists('Clear log');
     $this->assertSession()->linkByHrefExists('/admin/config/ai/schemadotorg-jsonld/log/download?entity_type=node&entity_id=' . $this->nodeId);
     $this->assertSession()->linkByHrefExists('?entity_type=node&entity_id=' . $this->nodeId . '&page=1');
+
+    $filtered_content = $this->getSession()->getPage()->getContent();
+    $this->assertStringNotContainsString('>Entity<', $filtered_content);
+    $this->assertStringNotContainsString('Log node (node:page)', $filtered_content);
 
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log/download', [
       'query' => [

@@ -107,19 +107,30 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
     $query = $this->getFilterQuery();
     $entity_type = $query['entity_type'] ?? '';
     $entity_id = $query['entity_id'] ?? '';
+    $is_filtered = ($query !== []);
     $rows = [];
     foreach ($this->logStorage->loadMultiple($entity_type, $entity_id) as $row) {
-      $rows[] = [
-        'class' => ((int) $row['valid'] === 0) ? ['ai-schemadotorg-jsonld-log-page__row--warning'] : [],
-        'data' => [
-          'created' => $this->formatCreated((int) $row['created']),
+      $data = [
+        'created' => $this->formatCreated((int) $row['created']),
+        'prompt' => $this->buildPreformattedCell($row['prompt']),
+        'response' => $this->buildPreformattedCell($this->formatResponse($row['response'])),
+        'valid' => $this->formatValid((int) $row['valid']),
+      ];
+      if (!$is_filtered) {
+        $data = [
+          'created' => $data['created'],
           'entity' => [
             'data' => $this->buildEntityCell($row),
           ],
-          'prompt' => $this->buildPreformattedCell($row['prompt']),
-          'response' => $this->buildPreformattedCell($this->formatResponse($row['response'])),
-          'valid' => $this->formatValid((int) $row['valid']),
-        ],
+          'prompt' => $data['prompt'],
+          'response' => $data['response'],
+          'valid' => $data['valid'],
+        ];
+      }
+
+      $rows[] = [
+        'class' => ((int) $row['valid'] === 0) ? ['ai-schemadotorg-jsonld-log-page__row--warning'] : [],
+        'data' => $data,
       ];
     }
 
@@ -155,28 +166,7 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
       ],
       'table' => [
         '#type' => 'table',
-        '#header' => [
-          [
-            'data' => $this->t('Created'),
-            'width' => '15%',
-          ],
-          [
-            'data' => $this->t('Entity'),
-            'width' => '15%',
-          ],
-          [
-            'data' => $this->t('Prompt'),
-            'width' => '32%',
-          ],
-          [
-            'data' => $this->t('Response'),
-            'width' => '32%',
-          ],
-          [
-            'data' => $this->t('Valid'),
-            'width' => '5%',
-          ],
-        ],
+        '#header' => $this->buildTableHeader($is_filtered),
         '#rows' => $rows,
         '#empty' => $this->t('No log entries available.'),
         '#attributes' => ['class' => ['ai-schemadotorg-jsonld-log-page__table']],
@@ -186,6 +176,48 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
       ],
       'operations' => $operations,
     ];
+  }
+
+  /**
+   * Builds the display table header.
+   *
+   * @param bool $is_filtered
+   *   TRUE when the log is filtered to a specific entity.
+   *
+   * @return array
+   *   The table header definition.
+   */
+  protected function buildTableHeader(bool $is_filtered): array {
+    $header = [
+      [
+        'data' => $this->t('Created'),
+        'width' => '15%',
+      ],
+    ];
+
+    if (!$is_filtered) {
+      $header[] = [
+        'data' => $this->t('Entity'),
+        'width' => '15%',
+      ];
+    }
+
+    $header = array_merge($header, [
+      [
+        'data' => $this->t('Prompt'),
+        'width' => '32%',
+      ],
+      [
+        'data' => $this->t('Response'),
+        'width' => '32%',
+      ],
+      [
+        'data' => $this->t('Valid'),
+        'width' => '5%',
+      ],
+    ]);
+
+    return $header;
   }
 
   /**
