@@ -30,6 +30,7 @@ class AiSchemaDotOrgJsonLdPromptFormTest extends BrowserTestBase {
     'ai',
     'ai_automators',
     'ai_schemadotorg_jsonld',
+    'token',
   ];
 
   /**
@@ -71,6 +72,9 @@ class AiSchemaDotOrgJsonLdPromptFormTest extends BrowserTestBase {
     $this->assertNotNull($prompt_field);
     $this->assertNotSame('', $prompt_field->getValue());
     $this->assertSession()->fieldNotExists('label');
+    $this->assertSession()->linkExists('Browse available tokens.');
+    $this->assertSession()->elementExists('css', 'a.token-dialog.use-ajax');
+    $this->assertSession()->elementAttributeContains('css', 'a.token-dialog.use-ajax', 'href', '%22token_types%22%3A%5B%22node%22%5D');
 
     $this->submitForm([
       'prompt' => 'Updated prompt token',

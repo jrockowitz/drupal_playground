@@ -136,9 +136,19 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
       '"width":"90%"'
     );
 
+    // Check that disabling logging hides the View log link.
+    $this->config('ai_schemadotorg_jsonld_log.settings')
+      ->set('enable', FALSE)
+      ->save();
+    $this->drupalGet($node->toUrl('edit-form'));
+    $this->assertSession()->linkNotExists('View log');
+
     // Check that disabling the development setting hides the edit prompt link.
     $this->config('ai_schemadotorg_jsonld.settings')
       ->set('development.edit_prompt', FALSE)
+      ->save();
+    $this->config('ai_schemadotorg_jsonld_log.settings')
+      ->set('enable', TRUE)
       ->save();
     $this->drupalGet($node->toUrl('edit-form'));
     $this->assertSession()->linkNotExists('Edit prompt');

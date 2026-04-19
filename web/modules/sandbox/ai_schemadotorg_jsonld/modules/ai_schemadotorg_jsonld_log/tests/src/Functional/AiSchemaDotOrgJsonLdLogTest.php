@@ -171,6 +171,21 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
     $this->assertSession()->responseContains('"No"');
     $this->assertSession()->responseHeaderEquals('Content-Disposition', 'attachment; filename="ai-schemadotorg-jsonld-log.csv"');
 
+    $this->config('ai_schemadotorg_jsonld_log.settings')
+      ->set('enable', FALSE)
+      ->save();
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Prompt and response logging is disabled.');
+    $this->assertSession()->pageTextContains('Enable prompt and response logging in the Schema.org JSON-LD settings to view logs.');
+    $this->assertSession()->elementNotExists('css', '.ai-schemadotorg-jsonld-log-page__table');
+    $this->assertSession()->linkNotExists('Download CSV');
+    $this->assertSession()->linkNotExists('Clear log');
+
+    $this->config('ai_schemadotorg_jsonld_log.settings')
+      ->set('enable', TRUE)
+      ->save();
+
     $editor = $this->drupalCreateUser([
       'access content',
       'edit any page content',

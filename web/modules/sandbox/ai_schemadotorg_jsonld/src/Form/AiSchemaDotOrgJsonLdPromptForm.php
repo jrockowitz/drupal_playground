@@ -14,6 +14,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -43,12 +44,15 @@ class AiSchemaDotOrgJsonLdPromptForm extends FormBase {
   /**
    * Constructs an AiSchemaDotOrgJsonLdPromptForm object.
    *
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.
    */
   public function __construct(
+    protected readonly ModuleHandlerInterface $moduleHandler,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     RequestStack $requestStack,
   ) {
@@ -61,6 +65,7 @@ class AiSchemaDotOrgJsonLdPromptForm extends FormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
+      $container->get('module_handler'),
       $container->get('entity_type.manager'),
       $container->get('request_stack'),
     );
@@ -90,6 +95,15 @@ class AiSchemaDotOrgJsonLdPromptForm extends FormBase {
       '#rows' => 12,
       '#description' => $this->t('Edit the token-based automator prompt used to generate Schema.org JSON-LD for this bundle.'),
     ];
+
+    if ($this->moduleHandler->moduleExists('token')) {
+      $form['token_browser'] = [
+        '#theme' => 'token_tree_link',
+        '#token_types' => [$this->entityTypeId],
+        '#show_restricted' => TRUE,
+        '#show_nested' => FALSE,
+      ];
+    }
 
     $form['actions'] = [
       '#type' => 'actions',

@@ -87,6 +87,23 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
    * Displays the log table and operations.
    */
   public function index(): array {
+    if (!$this->isLoggingEnabled()) {
+      return [
+        '#theme' => 'status_messages',
+        '#message_list' => [
+          'warning' => [
+            $this->t('Prompt and response logging is disabled.'),
+            $this->t('Enable prompt and response logging in the Schema.org JSON-LD settings to view logs.'),
+          ],
+        ],
+        '#status_headings' => [
+          'status' => $this->t('Status message'),
+          'warning' => $this->t('Warning message'),
+          'error' => $this->t('Error message'),
+        ],
+      ];
+    }
+
     $query = $this->getFilterQuery();
     $entity_type = $query['entity_type'] ?? '';
     $entity_id = $query['entity_id'] ?? '';
@@ -303,6 +320,13 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
    */
   protected function formatValid(int $valid): string {
     return ($valid === 1) ? 'Yes' : 'No';
+  }
+
+  /**
+   * Checks if prompt and response logging is enabled.
+   */
+  protected function isLoggingEnabled(): bool {
+    return (bool) $this->config('ai_schemadotorg_jsonld_log.settings')->get('enable');
   }
 
   /**

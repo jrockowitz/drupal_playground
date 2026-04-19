@@ -6,6 +6,7 @@ namespace Drupal\ai_schemadotorg_jsonld_log\Hook;
 
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\Component\Serialization\Json;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -23,10 +24,13 @@ class AiSchemaDotOrgJsonLdLogFieldHooks {
   /**
    * Constructs an AiSchemaDotOrgJsonLdLogFieldHooks object.
    *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
    * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user.
    */
   public function __construct(
+    protected readonly ConfigFactoryInterface $configFactory,
     protected readonly AccountProxyInterface $currentUser,
   ) {}
 
@@ -86,7 +90,10 @@ class AiSchemaDotOrgJsonLdLogFieldHooks {
         'library' => ['core/drupal.dialog.ajax'],
       ],
       '#weight' => 101,
-      '#access' => $entity->access('update', $this->currentUser),
+      '#access' => (
+        (bool) $this->configFactory->get('ai_schemadotorg_jsonld_log.settings')->get('enable')
+        && $entity->access('update', $this->currentUser)
+      ),
     ];
   }
 
