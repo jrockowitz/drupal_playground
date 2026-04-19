@@ -4,15 +4,15 @@
 }
 
 .ai-schemadotorg-jsonld-log-page__table pre {
-  box-sizing: border-box;
   display: block;
-  margin: 0;
-  max-height: 30vh;
   overflow-x: auto;
   overflow-y: auto;
+  box-sizing: border-box;
+  max-height: 30vh;
+  margin: 0;
+  padding: 10px;
   white-space: pre-wrap;
-  font-size: .8em;
   word-break: break-all;
   border: 1px solid #ccc;
-  padding: 10px;
+  font-size: 0.8em;
 }

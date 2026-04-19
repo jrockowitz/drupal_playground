@@ -334,7 +334,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         'attributes' => $attributes + [
             'title' => $this->t('Edit the Schema.org JSON-LD prompt.'),
             'data-dialog-options' => Json::encode(['width' => 1100]),
-          ],
+        ],
       ];
 
       $edit_url = Url::fromRoute('entity.field_config.' . $entity_type_id . '_field_edit_form', $route_parameters);

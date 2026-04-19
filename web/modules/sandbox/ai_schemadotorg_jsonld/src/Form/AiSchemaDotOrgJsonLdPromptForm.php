@@ -11,6 +11,7 @@ use Drupal\Core\Ajax\CloseModalDialogCommand;
 use Drupal\Core\Ajax\MessageCommand;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -99,6 +100,11 @@ class AiSchemaDotOrgJsonLdPromptForm extends FormBase {
       '#button_type' => 'primary',
     ];
 
+    if ($this->isModalRequest()) {
+      $form['actions']['submit']['#submit'] = ['::submitForm'];
+      $form['actions']['submit']['#ajax']['callback'] = '::submitAjaxForm';
+    }
+
     return $form;
   }
 
@@ -107,7 +113,7 @@ class AiSchemaDotOrgJsonLdPromptForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $automator = $this->loadAutomator($this->entityTypeId, $this->bundle);
-    $token = (string) $form_state->getValue('prompt');
+    $token = $form_state->getValue('prompt');
     $plugin_config = $automator->get('plugin_config');
     $plugin_config['automator_token'] = $token;
 
@@ -116,18 +122,31 @@ class AiSchemaDotOrgJsonLdPromptForm extends FormBase {
       ->set('plugin_config', $plugin_config)
       ->save();
 
-    $message = $this->t('The automator prompt has been updated.');
-    $this->messenger()->addStatus($message);
-
-    if ($this->isModalRequest()) {
-      $response = new AjaxResponse();
-      $response->addCommand(new CloseModalDialogCommand());
-      $response->addCommand(new MessageCommand($message));
-      $form_state->setResponse($response);
-      return;
+    if (!$this->isModalRequest()) {
+      $message = $this->t('The automator prompt has been updated.');
+      $this->messenger()->addStatus($message);
     }
+  }
 
-    $form_state->setRedirect('ai_schemadotorg_jsonld.settings');
+  /**
+   * Submit form #ajax callback.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   An Ajax response that closes the modal dialog and displays a status message
+   */
+  public function submitAjaxForm(array &$form, FormStateInterface $form_state): AjaxResponse {
+    $response = new AjaxResponse();
+    $response->addCommand(new MessageCommand(
+      message: $this->t('The automator prompt has been updated.'),
+      clear_previous: TRUE,
+    ));
+    $response->addCommand(new CloseModalDialogCommand());
+    return $response;
   }
 
   /**
@@ -154,8 +173,9 @@ class AiSchemaDotOrgJsonLdPromptForm extends FormBase {
    * Determines if the form is currently rendered in a Drupal modal dialog.
    */
   protected function isModalRequest(): bool {
-    $wrapper_format = (string) $this->requestStack->getCurrentRequest()->query->get('_wrapper_format');
-    return str_contains($wrapper_format, 'drupal_modal');
+    $wrapper_format = $this->getRequest()
+      ->query->get(MainContentViewSubscriber::WRAPPER_FORMAT);
+    return (in_array($wrapper_format, ['drupal_ajax', 'drupal_modal']));
   }
 
 }
