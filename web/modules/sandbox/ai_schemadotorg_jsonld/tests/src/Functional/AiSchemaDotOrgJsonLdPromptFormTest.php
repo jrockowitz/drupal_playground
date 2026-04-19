@@ -62,6 +62,7 @@ class AiSchemaDotOrgJsonLdPromptFormTest extends BrowserTestBase {
     $route = $this->container->get('router.route_provider')
       ->getRouteByName('ai_schemadotorg_jsonld.prompt');
     $this->assertSame('/admin/config/ai/schemadotorg-jsonld/prompt/{entity_type}/{bundle}', $route->getPath());
+    $this->assertSame('Edit Schema.org JSON-LD prompt', $route->getDefault('_title'));
 
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/prompt/node/page');
     $this->assertSession()->statusCodeEquals(200);

@@ -1,3 +1,16 @@
+Logging
+
+- Capture invalid JSON-LD.
+
+
+Testing
+
+- Improve test performance.
+
+Bugs
+
+- Fix prompt dialog closing
+
 Improve prompt management
 
 - Create a shared `[ai_schemadotorg_jsonld:requirements]`

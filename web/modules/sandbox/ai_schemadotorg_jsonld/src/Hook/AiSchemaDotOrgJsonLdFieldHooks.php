@@ -10,11 +10,13 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -37,11 +39,14 @@ class AiSchemaDotOrgJsonLdFieldHooks {
    *   The current user.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The module handler.
+   * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirectDestination
+   *   The redirect destination service.
    */
   public function __construct(
     protected readonly ConfigFactoryInterface $configFactory,
     protected readonly AccountProxyInterface $currentUser,
     protected readonly ModuleHandlerInterface $moduleHandler,
+    protected readonly RedirectDestinationInterface $redirectDestination,
   ) {}
 
   /**
@@ -121,27 +126,7 @@ class AiSchemaDotOrgJsonLdFieldHooks {
       return;
     }
 
-    $field_widget_complete_form['edit_prompt'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Edit Schema.org JSON-LD prompt'),
-      '#url' => Url::fromRoute('ai_schemadotorg_jsonld.prompt', [
-        'entity_type' => $entity->getEntityTypeId(),
-        'bundle' => $entity->bundle(),
-      ]),
-      '#attributes' => [
-        'class' => ['use-ajax', 'button', 'button--small'],
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['width' => 900]),
-      ],
-      '#attached' => [
-        'library' => ['core/drupal.dialog.ajax'],
-      ],
-      '#weight' => 100,
-      '#access' => (
-        (bool) $this->configFactory->get('ai_schemadotorg_jsonld.settings')->get('development.edit_prompt')
-        && $this->currentUser->hasPermission('administer site configuration')
-      ),
-    ];
+    $field_widget_complete_form['edit_prompt'] = $this->buildEditPromptLink($entity);
   }
 
   /**
@@ -196,6 +181,41 @@ class AiSchemaDotOrgJsonLdFieldHooks {
         'warning' => $this->t('Warning message'),
         'error' => $this->t('Error message'),
       ],
+    ];
+  }
+
+  /**
+   * Builds the edit prompt link.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity whose prompt should be edited.
+   */
+  protected function buildEditPromptLink(ContentEntityInterface $entity): array {
+    $url = Url::fromRoute('ai_schemadotorg_jsonld.prompt', [
+      'entity_type' => $entity->getEntityTypeId(),
+      'bundle' => $entity->bundle(),
+    ]);
+    $url->setOption('query', [
+      'destination' => $this->redirectDestination->get(),
+    ]);
+
+    return [
+      '#type' => 'link',
+      '#title' => $this->t('Edit Schema.org JSON-LD prompt'),
+      '#url' => $url,
+      '#attributes' => [
+        'class' => ['use-ajax', 'button', 'button--small'],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => Json::encode(['width' => 900]),
+      ],
+      '#attached' => [
+        'library' => ['core/drupal.dialog.ajax'],
+      ],
+      '#weight' => 100,
+      '#access' => (
+        (bool) $this->configFactory->get('ai_schemadotorg_jsonld.settings')->get('development.edit_prompt')
+        && $this->currentUser->hasPermission('administer site configuration')
+      ),
     ];
   }
 

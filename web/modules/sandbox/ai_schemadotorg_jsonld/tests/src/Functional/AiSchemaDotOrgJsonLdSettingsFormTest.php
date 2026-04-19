@@ -195,8 +195,9 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
       'disabled'
     );
 
-    // Check that Operations column shows Edit field and Delete field links.
+    // Check that Operations column shows Edit field, Edit prompt, and Delete field links.
     $this->assertSession()->linkExists('Edit field');
+    $this->assertSession()->linkExists('Edit prompt');
     $this->assertSession()->linkExists('Delete field');
     $this->assertSession()->elementAttributeContains(
       'css',
@@ -207,6 +208,18 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     $this->assertSession()->elementAttributeContains(
       'css',
       'a.use-ajax[href*="node.page.field_schemadotorg_jsonld?destination=/admin/config/ai/schemadotorg-jsonld"]',
+      'href',
+      'destination=/admin/config/ai/schemadotorg-jsonld'
+    );
+    $this->assertSession()->elementAttributeContains(
+      'css',
+      'a.use-ajax[href*="/admin/config/ai/schemadotorg-jsonld/prompt/node/page?destination=/admin/config/ai/schemadotorg-jsonld"]',
+      'data-dialog-type',
+      'modal'
+    );
+    $this->assertSession()->elementAttributeContains(
+      'css',
+      'a.use-ajax[href*="/admin/config/ai/schemadotorg-jsonld/prompt/node/page?destination=/admin/config/ai/schemadotorg-jsonld"]',
       'href',
       'destination=/admin/config/ai/schemadotorg-jsonld'
     );

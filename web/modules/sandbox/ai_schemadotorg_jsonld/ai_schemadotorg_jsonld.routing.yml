@@ -10,6 +10,6 @@ ai_schemadotorg_jsonld.prompt:
   path: '/admin/config/ai/schemadotorg-jsonld/prompt/{entity_type}/{bundle}'
   defaults:
     _form: '\Drupal\ai_schemadotorg_jsonld\Form\AiSchemaDotOrgJsonLdPromptForm'
-    _title: 'Edit prompt'
+    _title: 'Edit Schema.org JSON-LD prompt'
   requirements:
     _permission: 'administer site configuration'

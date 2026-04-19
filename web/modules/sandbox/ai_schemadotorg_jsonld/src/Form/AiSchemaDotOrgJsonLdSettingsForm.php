@@ -316,14 +316,29 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       $route_parameters = FieldUI::getRouteBundleParameter($entity_type_definition, $bundle) + [
         'field_config' => $entity_type_id . '.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
       ];
-      $destination = '/admin/config/ai/schemadotorg-jsonld';
+      $query = $this->getRedirectDestination()->getAsArray();
       $attributes = [
         'class' => ['use-ajax'],
         'data-dialog-type' => 'modal',
       ];
 
+      $prompt_url = Url::fromRoute('ai_schemadotorg_jsonld.prompt', [
+        'entity_type' => $entity_type_id,
+        'bundle' => $bundle,
+      ]);
+      $prompt_url->setOption('query', $query);
+      $links['edit_prompt'] = [
+        'title' => $this->t('Edit prompt'),
+        'weight' => 50,
+        'url' => $prompt_url,
+        'attributes' => $attributes + [
+            'title' => $this->t('Edit the Schema.org JSON-LD prompt.'),
+            'data-dialog-options' => Json::encode(['width' => 1100]),
+          ],
+      ];
+
       $edit_url = Url::fromRoute('entity.field_config.' . $entity_type_id . '_field_edit_form', $route_parameters);
-      $edit_url->setOption('query', ['destination' => $destination]);
+      $edit_url->setOption('query', $query);
       $links['edit'] = [
         'title' => $this->t('Edit field'),
         'weight' => 10,
@@ -335,7 +350,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       ];
 
       $delete_url = Url::fromRoute('entity.field_config.' . $entity_type_id . '_field_delete_form', $route_parameters);
-      $delete_url->setOption('query', ['destination' => $destination]);
+      $delete_url->setOption('query', $query);
       $links['delete'] = [
         'title' => $this->t('Delete field'),
         'weight' => 100,
