@@ -79,8 +79,11 @@ The `Enabled entity types` details element lists supported entity types that can
 - `default_jsonld`
   - Static JSON-LD injected on canonical pages for bundles of that entity type that already have the generated field.
   - Leave blank to disable entity-type-specific default JSON-LD output.
-- `breadcrumb_jsonld`
-  - Attaches a `BreadcrumbList` JSON-LD block when breadcrumb data is available.
+- `development.edit_prompt`
+  - Displays an edit-prompt button on saved entity edit forms for site configuration administrators.
+
+Install the optional `ai_schemadotorg_jsonld_breadcrumb` submodule to attach a
+`BreadcrumbList` JSON-LD block when breadcrumb data is available.
 
 ## Prompt files
 
@@ -119,7 +122,7 @@ the LLM.
 The module can attach up to three JSON-LD script tags on canonical entity routes.
 
 - `ai_schemadotorg_jsonld_breadcrumb`
-  - Breadcrumb JSON-LD when `breadcrumb_jsonld` is enabled and breadcrumb data is available.
+  - Breadcrumb JSON-LD when the optional `ai_schemadotorg_jsonld_breadcrumb` submodule is enabled and breadcrumb data is available.
 - `ai_schemadotorg_jsonld_default_{entity_type_id}`
   - The configured `entity_types.{entity_type_id}.default_jsonld` value for the current entity
     type when the current entity bundle has the generated field.

@@ -44,6 +44,11 @@ for PRESET in "$@"; do
     drush recipe ../recipes/drupal_playground_ai_devel
     drush recipe ../recipes/drupal_playground_ai_automators
     drush recipe ../recipes/drupal_playground_ai_ckeditor_explain
+
+    drush en -y ai_schemadotorg_jsonld\
+      json_field_widget\
+      ai_schemadotorg_jsonld_breadcrumb\
+      ai_schemadotorg_jsonld_log;
   elif [ "$PRESET" = "schemadotorg" ]; then
     echo "Applying Schema.org Blueprints recipe..."
     drush recipe ../recipes/drupal_playground_schemadotorg

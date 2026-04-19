@@ -1,0 +1,5 @@
+ai_schemadotorg_jsonld.settings:
+  title: 'Settings'
+  route_name: ai_schemadotorg_jsonld.settings
+  base_route: ai_schemadotorg_jsonld.settings
+  weight: 0

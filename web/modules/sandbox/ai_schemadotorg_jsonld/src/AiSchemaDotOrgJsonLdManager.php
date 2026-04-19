@@ -111,7 +111,7 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
       }
 
       $entity_type_settings[$entity_type_id] = [
-        'prompt' => $this->buildDefaultPrompt($entity_type_id, $entity_type),
+        'default_prompt' => $this->buildDefaultPrompt($entity_type_id, $entity_type),
         'default_jsonld' => '',
       ];
     }

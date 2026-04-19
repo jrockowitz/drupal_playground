@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\ai_schemadotorg_jsonld\EventSubscriber;
 
 use Drupal\ai\Event\PostGenerateResponseEvent;
+use Drupal\ai\Event\PreGenerateResponseEvent;
+use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
 use Drupal\ai_automators\Event\ValuesChangeEvent;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
@@ -44,9 +46,35 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents(): array {
     return [
+      PreGenerateResponseEvent::EVENT_NAME => 'onPreGenerateResponse',
       PostGenerateResponseEvent::EVENT_NAME => 'onPostGenerateResponse',
       ValuesChangeEvent::EVENT_NAME => 'onValuesChange',
     ];
+  }
+
+  /**
+   * Unescapes HTML entities in the JSON-LD automator prompt before send.
+   *
+   * @param \Drupal\ai\Event\PreGenerateResponseEvent $event
+   *   The AI pre-generate response event.
+   */
+  public function onPreGenerateResponse(PreGenerateResponseEvent $event): void {
+    if (!$this->isJsonLdAutomatorRequest($event->getTags())) {
+      return;
+    }
+
+    $input = $event->getInput();
+    if (!$input instanceof ChatInput) {
+      return;
+    }
+
+    foreach ($input->getMessages() as $message) {
+      if ($message instanceof ChatMessage && $message->getRole() === 'user') {
+        $message->setText($this->cleanupPromptText($message->getText()));
+      }
+    }
+
+    $event->setInput($input);
   }
 
   /**
@@ -154,6 +182,22 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
   protected function isJsonLdAutomatorRequest(array $tags): bool {
     return in_array('ai_automator', $tags)
       && in_array('ai_automator:field_name:' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME, $tags);
+  }
+
+  /**
+   * Cleans up prompt text before it is sent to the LLM.
+   *
+   * @param string $text
+   *   The prompt text.
+   *
+   * @return string
+   *   The cleaned prompt text.
+   */
+  protected function cleanupPromptText(string $text): string {
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
+    $text = preg_replace("/\r\n?/", "\n", $text) ?? $text;
+    $text = preg_replace("/\n{3,}/", "\n\n", $text) ?? $text;
+    return $text;
   }
 
 }

@@ -1,0 +1,7 @@
+name: 'AI Schema.org JSON-LD Log'
+type: module
+description: 'Logging tools for AI Schema.org JSON-LD prompts and responses.'
+package: AI
+core_version_requirement: ^11
+dependencies:
+  - drupal:ai_schemadotorg_jsonld

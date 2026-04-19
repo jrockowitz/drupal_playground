@@ -92,15 +92,17 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Select the bundles that should get the Schema.org JSON-LD field. Then review the default prompt and optional default JSON-LD used for this entity type.');
     $this->assertSession()->pageTextContains('Note: you can customize the prompt for an individual bundle by clicking Edit field, going to AI Automator Settings, and editing the automator prompt.');
     $this->assertSession()->pageTextContains('Enable the supported entity types you want to manage with this module. After saving, each enabled entity type will appear above with bundle, prompt, and default JSON-LD settings.');
-    $this->assertSession()->responseContains('<th>Name</th>');
-    $this->assertSession()->responseContains('<th class="priority-medium">Description</th>');
-    $this->assertSession()->responseContains('<th>Operations</th>');
+    $this->assertSession()->elementExists('xpath', '//th[@width="20%" and normalize-space()="Name"]');
+    $this->assertSession()->elementExists('xpath', '//th[@width="60%" and contains(@class, "priority-medium") and normalize-space()="Description"]');
+    $this->assertSession()->elementExists('xpath', '//th[@width="20%" and normalize-space()="Operations"]');
     $this->assertSession()->elementExists('css', 'input[name="entity_types[node][bundles][page]"]');
-    $this->assertSession()->fieldExists('entity_types[node][prompt]');
+    $this->assertSession()->elementExists('css', 'details#edit-entity-types-node-default-settings');
+    $this->assertSession()->elementNotExists('css', 'details#edit-entity-types-node-default-settings[open]');
+    $this->assertSession()->fieldExists('entity_types[node][default_prompt]');
     $this->assertSession()->fieldExists('entity_types[node][default_jsonld]');
-    $this->assertSession()->fieldNotExists('entity_types[media][prompt]');
+    $this->assertSession()->fieldNotExists('entity_types[media][default_prompt]');
     $this->assertSession()->fieldNotExists('entity_types[media][default_jsonld]');
-    $this->assertSession()->fieldExists('breadcrumb_jsonld');
+    $this->assertSession()->fieldNotExists('breadcrumb_jsonld');
     $this->assertSession()->elementExists('css', 'details#edit-enabled-entity-types');
     $this->assertSession()->elementNotExists('css', 'details#edit-enabled-entity-types[open]');
     $this->assertSession()->elementExists('css', 'input[name="enabled_entity_types[entity_types][media]"]');
@@ -113,14 +115,18 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
 
     // Enable media, taxonomy terms, and users and check the new sections appear.
     $this->submitForm([
+      'enabled_entity_types[entity_types][node]' => 'node',
       'enabled_entity_types[entity_types][media]' => 'media',
       'enabled_entity_types[entity_types][taxonomy_term]' => 'taxonomy_term',
       'enabled_entity_types[entity_types][user]' => 'user',
     ], 'Save configuration');
     $this->assertSession()->statusCodeEquals(200);
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld');
     $this->assertSession()->checkboxChecked('enabled_entity_types[entity_types][media]');
     $this->assertSession()->elementNotExists('css', 'input[name="enabled_entity_types[entity_types][media]"][disabled]');
-    $this->assertSession()->fieldExists('entity_types[media][prompt]');
+    $this->assertSession()->elementExists('css', 'details#edit-entity-types-media-default-settings');
+    $this->assertSession()->elementNotExists('css', 'details#edit-entity-types-media-default-settings[open]');
+    $this->assertSession()->fieldExists('entity_types[media][default_prompt]');
     $this->assertSession()->fieldExists('entity_types[media][default_jsonld]');
     $this->assertSession()->elementExists('css', 'input[name="entity_types[media][bundles][document]"]');
     $this->assertSession()->pageTextContains('Document description');
@@ -128,22 +134,30 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
     $this->assertSession()->elementNotExists('css', 'a.use-ajax[href="/admin/structure/media/manage/document"]');
 
     // Check that the taxonomy term section appears after enabling it.
-    $this->assertSession()->fieldExists('entity_types[taxonomy_term][prompt]');
+    $this->assertSession()->elementExists('css', 'details#edit-entity-types-taxonomy-term-default-settings');
+    $this->assertSession()->elementNotExists('css', 'details#edit-entity-types-taxonomy-term-default-settings[open]');
+    $this->assertSession()->fieldExists('entity_types[taxonomy_term][default_prompt]');
     $this->assertSession()->fieldExists('entity_types[taxonomy_term][default_jsonld]');
     $this->assertSession()->elementExists('css', 'input[name="entity_types[taxonomy_term][bundles][tags]"]');
     $this->assertSession()->pageTextContains('Tags description');
 
     // Check that the user section appears with a synthetic bundle row.
-    $this->assertSession()->fieldExists('entity_types[user][prompt]');
+    $this->assertSession()->elementExists('css', 'details#edit-entity-types-user-default-settings');
+    $this->assertSession()->elementNotExists('css', 'details#edit-entity-types-user-default-settings[open]');
+    $this->assertSession()->fieldExists('entity_types[user][default_prompt]');
     $this->assertSession()->fieldExists('entity_types[user][default_jsonld]');
     $this->assertSession()->elementExists('css', 'input[name="entity_types[user][bundles][user]"]');
     $this->assertSession()->pageTextContains('Individual registered user accounts on a website.');
     $this->assertSession()->linkByHrefExists('/admin/config/people/accounts');
 
-    // Select page and user bundles and save.
+    // Select page and user bundles, save nested defaults, and confirm they persist.
     $this->submitForm([
       'entity_types[node][bundles][page]' => 'page',
+      'entity_types[node][default_prompt]' => 'Node prompt override',
+      'entity_types[node][default_jsonld]' => '{"@type":"WebPage"}',
       'entity_types[user][bundles][user]' => 'user',
+      'entity_types[user][default_prompt]' => 'User prompt override',
+      'entity_types[user][default_jsonld]' => '{"@type":"Person"}',
     ], 'Save configuration');
     $this->assertSession()->statusCodeEquals(200);
 
@@ -159,6 +173,11 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
       ->load('user.user.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
     $this->assertNotNull($field_config, 'User field was created after saving form.');
 
+    $config = $this->container->get('config.factory')->get('ai_schemadotorg_jsonld.settings');
+    $this->assertSame('Node prompt override', $config->get('entity_types.node.default_prompt'));
+    $this->assertSame('{"@type":"WebPage"}', $config->get('entity_types.node.default_jsonld'));
+    $this->assertSame('User prompt override', $config->get('entity_types.user.default_prompt'));
+    $this->assertSame('{"@type":"Person"}', $config->get('entity_types.user.default_jsonld'));
     // Reload and check page and user are pre-checked and disabled.
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld');
     $this->assertSession()->checkboxChecked('entity_types[node][bundles][page]');
@@ -206,7 +225,7 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
       'enabled_entity_types[entity_types][taxonomy_term]' => 'taxonomy_term',
     ], 'Save configuration');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->fieldNotExists('entity_types[media][prompt]');
+    $this->assertSession()->fieldNotExists('entity_types[media][default_prompt]');
     $this->assertSession()->fieldNotExists('entity_types[media][default_jsonld]');
     $this->assertSession()->checkboxNotChecked('enabled_entity_types[entity_types][media]');
 
@@ -218,6 +237,7 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends BrowserTestBase {
       'disabled',
       'disabled'
     );
+
   }
 
 }

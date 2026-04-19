@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\ai_schemadotorg_jsonld\Kernel;
 
+use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdTokenResolver;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\filter\Entity\FilterFormat;
@@ -122,9 +124,9 @@ class AiSchemaDotOrgJsonLdTokenResolverTest extends KernelTestBase {
     ])->save();
 
     $this->config('ai_schemadotorg_jsonld.settings')
-      ->set('entity_types.media.prompt', 'Prompt')
+      ->set('entity_types.media.default_prompt', 'Prompt')
       ->set('entity_types.media.default_jsonld', '')
-      ->set('entity_types.taxonomy_term.prompt', 'Prompt')
+      ->set('entity_types.taxonomy_term.default_prompt', 'Prompt')
       ->set('entity_types.taxonomy_term.default_jsonld', '')
       ->save();
 
@@ -140,7 +142,7 @@ class AiSchemaDotOrgJsonLdTokenResolverTest extends KernelTestBase {
       'type' => 'page',
       'title' => 'Test page',
       'body' => [
-        'value' => '<p>' . $body_text . '</p><p><a href="/internal-path">Internal link</a></p><img src="/example.png" alt="Example" />',
+        'value' => '<p>' . $body_text . '</p><p><a href="/internal-path" onclick="alert(1)">Internal link</a></p><img src="/example.png" alt="Example" /><script>alert("unsafe")</script>',
         'format' => 'full_html',
       ],
       'status' => 1,
@@ -164,6 +166,15 @@ class AiSchemaDotOrgJsonLdTokenResolverTest extends KernelTestBase {
 
     /** @var \Drupal\Core\Utility\Token $token_service */
     $token_service = $this->container->get('token');
+    $resolver = $this->container->get('ai_schemadotorg_jsonld.token_resolver');
+    $method = new \ReflectionMethod(AiSchemaDotOrgJsonLdTokenResolver::class, 'resolve');
+    $return_type = $method->getReturnType();
+    $this->assertNotNull($return_type);
+    $this->assertInstanceOf(\ReflectionNamedType::class, $return_type);
+    $this->assertSame(FormattableMarkup::class, $return_type->getName());
+
+    $resolved_node = (string) $resolver->resolve($node);
+    $this->assertStringContainsString($body_text, $resolved_node);
 
     $node_result = $token_service->replace(
       '[node:ai_schemadotorg_jsonld:content]',
@@ -176,9 +187,13 @@ class AiSchemaDotOrgJsonLdTokenResolverTest extends KernelTestBase {
 
     // Check that root-relative URLs have been converted to absolute URLs.
     $this->assertStringContainsString('https://drupal-playground.ddev.site/internal-path', $node_result);
-    $this->assertStringContainsString('https://drupal-playground.ddev.site/example.png', $node_result);
     $this->assertStringNotContainsString('href="/', $node_result);
     $this->assertStringNotContainsString('src="/', $node_result);
+    $this->assertStringNotContainsString('<img', $node_result);
+
+    // Check that unsafe tags and attributes are filtered from the final output.
+    $this->assertStringNotContainsString('<script', $node_result);
+    $this->assertStringNotContainsString('onclick=', $node_result);
 
     // Check that rendering was performed as anonymous (no admin markup).
     $this->assertStringNotContainsString('contextual-links', $node_result);

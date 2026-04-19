@@ -9,12 +9,16 @@ ai_schemadotorg_jsonld.settings:
         type: mapping
         label: 'Entity type'
         mapping:
-          prompt:
+          default_prompt:
             type: text
-            label: 'Prompt'
+            label: 'Default prompt'
           default_jsonld:
             type: text
             label: 'Default JSON-LD'
-    breadcrumb_jsonld:
-      type: boolean
-      label: 'Include Schema.org JSON-LD for breadcrumb'
+    development:
+      type: mapping
+      label: 'Development settings'
+      mapping:
+        edit_prompt:
+          type: boolean
+          label: 'Display edit prompt button'

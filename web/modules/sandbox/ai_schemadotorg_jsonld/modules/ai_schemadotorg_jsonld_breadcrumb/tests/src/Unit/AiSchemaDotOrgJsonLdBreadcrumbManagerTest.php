@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\ai_schemadotorg_jsonld\Unit;
+namespace Drupal\Tests\ai_schemadotorg_jsonld_breadcrumb\Unit;
 
-use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBreadcrumbList;
+use Drupal\ai_schemadotorg_jsonld_breadcrumb\AiSchemaDotOrgJsonLdBreadcrumbManager;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -17,11 +17,11 @@ use Drupal\Core\Url;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests AiSchemaDotOrgJsonLdBreadcrumbList.
+ * Tests AiSchemaDotOrgJsonLdBreadcrumbManager.
  *
- * @group ai_schemadotorg_jsonld
+ * @group ai_schemadotorg_jsonld_breadcrumb
  */
-class AiSchemaDotOrgJsonLdBreadcrumbListTest extends UnitTestCase {
+class AiSchemaDotOrgJsonLdBreadcrumbManagerTest extends UnitTestCase {
 
   /**
    * Tests build().
@@ -38,8 +38,8 @@ class AiSchemaDotOrgJsonLdBreadcrumbListTest extends UnitTestCase {
       ->with($non_applicable_route_match)
       ->willReturn(FALSE);
 
-    $non_applicable_breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $non_applicable_breadcrumb_builder);
-    $this->assertNull($non_applicable_breadcrumb_list->build($non_applicable_route_match, $bubbleable_metadata));
+    $non_applicable_breadcrumb_manager = new AiSchemaDotOrgJsonLdBreadcrumbManager($renderer, $non_applicable_breadcrumb_builder);
+    $this->assertNull($non_applicable_breadcrumb_manager->build($non_applicable_route_match, $bubbleable_metadata));
 
     // Check that empty breadcrumbs return no breadcrumb JSON-LD.
     $empty_breadcrumb_builder = $this->createMock(ChainBreadcrumbBuilderInterface::class);
@@ -52,8 +52,8 @@ class AiSchemaDotOrgJsonLdBreadcrumbListTest extends UnitTestCase {
       ->with($empty_route_match)
       ->willReturn($empty_breadcrumb);
 
-    $empty_breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $empty_breadcrumb_builder);
-    $this->assertNull($empty_breadcrumb_list->build($empty_route_match, $bubbleable_metadata));
+    $empty_breadcrumb_manager = new AiSchemaDotOrgJsonLdBreadcrumbManager($renderer, $empty_breadcrumb_builder);
+    $this->assertNull($empty_breadcrumb_manager->build($empty_route_match, $bubbleable_metadata));
 
     // Check that the current canonical entity is appended to the breadcrumb.
     $breadcrumb_builder = $this->createMock(ChainBreadcrumbBuilderInterface::class);
@@ -107,8 +107,8 @@ class AiSchemaDotOrgJsonLdBreadcrumbListTest extends UnitTestCase {
       ->with('canonical')
       ->willReturn($canonical_url);
 
-    $breadcrumb_list = new AiSchemaDotOrgJsonLdBreadcrumbList($renderer, $breadcrumb_builder);
-    $result = $breadcrumb_list->build($route_match, $bubbleable_metadata);
+    $breadcrumb_manager = new AiSchemaDotOrgJsonLdBreadcrumbManager($renderer, $breadcrumb_builder);
+    $result = $breadcrumb_manager->build($route_match, $bubbleable_metadata);
 
     // Check that the breadcrumb JSON-LD contains the current entity.
     $this->assertSame('BreadcrumbList', $result['@type']);

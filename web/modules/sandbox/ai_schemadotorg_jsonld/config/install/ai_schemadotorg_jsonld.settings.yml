@@ -1,6 +1,7 @@
+langcode: en
 entity_types:
   node:
-    prompt: |
+    default_prompt: |
       Generate valid Schema.org JSON-LD for the content below:
 
       # Input
@@ -63,4 +64,5 @@ entity_types:
         ]
       }
     default_jsonld: ''
-breadcrumb_jsonld: false
+development:
+  edit_prompt: true

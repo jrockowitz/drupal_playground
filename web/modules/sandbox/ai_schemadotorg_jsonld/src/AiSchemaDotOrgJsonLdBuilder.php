@@ -125,7 +125,7 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
     if (!$existing) {
       $prompt = $this->configFactory
         ->get('ai_schemadotorg_jsonld.settings')
-        ->get('entity_types.' . $entity_type_id . '.prompt') ?? '';
+        ->get('entity_types.' . $entity_type_id . '.default_prompt') ?? '';
 
       $this->entityTypeManager->getStorage('ai_automator')->create([
         'id' => $automator_id,

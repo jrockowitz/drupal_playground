@@ -1,0 +1,18 @@
+.ai-schemadotorg-jsonld-log-page__table th,
+.ai-schemadotorg-jsonld-log-page__table td {
+  vertical-align: top;
+}
+
+.ai-schemadotorg-jsonld-log-page__table pre {
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  max-height: 30vh;
+  overflow-x: auto;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  font-size: .8em;
+  word-break: break-all;
+  border: 1px solid #ccc;
+  padding: 10px;
+}

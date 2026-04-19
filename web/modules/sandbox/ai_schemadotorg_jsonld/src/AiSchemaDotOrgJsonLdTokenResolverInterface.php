@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\ai_schemadotorg_jsonld;
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
@@ -20,9 +21,9 @@ interface AiSchemaDotOrgJsonLdTokenResolverInterface {
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to render.
    *
-   * @return string
+   * @return \Drupal\Component\Render\FormattableMarkup
    *   The post-processed HTML of the rendered entity.
    */
-  public function resolve(ContentEntityInterface $entity): string;
+  public function resolve(ContentEntityInterface $entity): FormattableMarkup;
 
 }

@@ -1,0 +1,20 @@
+services:
+
+  _defaults:
+    autowire: true
+
+  ai_schemadotorg_jsonld_log.storage:
+    class: Drupal\ai_schemadotorg_jsonld_log\AiSchemaDotOrgJsonLdLogStorage
+
+  Drupal\ai_schemadotorg_jsonld_log\AiSchemaDotOrgJsonLdLogStorageInterface:
+    alias: ai_schemadotorg_jsonld_log.storage
+
+  Drupal\ai_schemadotorg_jsonld_log\EventSubscriber\AiSchemaDotOrgJsonLdLogEventSubscriber:
+    tags:
+      - { name: event_subscriber }
+
+  Drupal\ai_schemadotorg_jsonld_log\Hook\AiSchemaDotOrgJsonLdLogFormHooks:
+    autowire: true
+
+  Drupal\ai_schemadotorg_jsonld_log\Hook\AiSchemaDotOrgJsonLdLogEntityHooks:
+    autowire: true

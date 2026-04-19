@@ -104,7 +104,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
 
     // Check that existing settings are preserved when addEntityTypes runs.
     $this->config('ai_schemadotorg_jsonld.settings')
-      ->set('entity_types.node.prompt', 'Custom node prompt')
+      ->set('entity_types.node.default_prompt', 'Custom node prompt')
       ->set('entity_types.node.default_jsonld', '{"@type":"WebPage"}')
       ->save();
 
@@ -128,17 +128,17 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     $this->assertSame(['block_content', 'media', 'node', 'taxonomy_term', 'user'], array_keys($entity_type_settings));
 
     // Check that taxonomy terms use the term token namespace.
-    $this->assertStringContainsString('[term:url]', $entity_type_settings['taxonomy_term']['prompt']);
-    $this->assertStringContainsString('[term:name]', $entity_type_settings['taxonomy_term']['prompt']);
+    $this->assertStringContainsString('[term:url]', $entity_type_settings['taxonomy_term']['default_prompt']);
+    $this->assertStringContainsString('[term:name]', $entity_type_settings['taxonomy_term']['default_prompt']);
 
     // Check that block content uses the expected token namespace.
-    $this->assertStringContainsString('[block_content:url]', $entity_type_settings['block_content']['prompt']);
+    $this->assertStringContainsString('[block_content:url]', $entity_type_settings['block_content']['default_prompt']);
 
     // Check that media uses the expected token namespace.
-    $this->assertStringContainsString('[media:url]', $entity_type_settings['media']['prompt']);
+    $this->assertStringContainsString('[media:url]', $entity_type_settings['media']['default_prompt']);
 
     // Check that user uses the expected token namespace.
-    $this->assertStringContainsString('[user:url]', $entity_type_settings['user']['prompt']);
+    $this->assertStringContainsString('[user:url]', $entity_type_settings['user']['default_prompt']);
 
     // Check that newly added entity types default to empty JSON-LD.
     $this->assertSame('', $entity_type_settings['taxonomy_term']['default_jsonld']);
@@ -150,7 +150,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
 
     $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
 
-    $this->assertSame('Custom node prompt', $entity_type_settings['node']['prompt']);
+    $this->assertSame('Custom node prompt', $entity_type_settings['node']['default_prompt']);
     $this->assertSame('{"@type":"WebPage"}', $entity_type_settings['node']['default_jsonld']);
     $this->assertArrayHasKey('media', $entity_type_settings);
 
@@ -168,7 +168,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends KernelTestBase {
     $entity_type_settings = $this->config('ai_schemadotorg_jsonld.settings')->get('entity_types');
 
     // Check that the file content is used as the user prompt.
-    $this->assertSame(trim((string) file_get_contents($prompt_file)), $entity_type_settings['user']['prompt']);
+    $this->assertSame(trim((string) file_get_contents($prompt_file)), $entity_type_settings['user']['default_prompt']);
   }
 
 }

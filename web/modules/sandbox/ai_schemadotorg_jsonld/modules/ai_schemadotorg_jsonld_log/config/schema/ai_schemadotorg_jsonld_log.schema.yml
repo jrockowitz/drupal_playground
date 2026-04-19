@@ -1,0 +1,7 @@
+ai_schemadotorg_jsonld_log.settings:
+  type: config_object
+  label: 'AI Schema.org JSON-LD log settings'
+  mapping:
+    enable:
+      type: boolean
+      label: 'Enable prompt and response logging'

@@ -6,16 +6,20 @@ namespace Drupal\ai_schemadotorg_jsonld\Hook;
 
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\Component\Render\MarkupInterface;
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 
 /**
  * Field hook implementations for the ai_schemadotorg_jsonld module.
@@ -27,10 +31,16 @@ class AiSchemaDotOrgJsonLdFieldHooks {
   /**
    * Constructs an AiSchemaDotOrgJsonLdFieldHooks object.
    *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   The current user.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The module handler.
    */
   public function __construct(
+    protected readonly ConfigFactoryInterface $configFactory,
+    protected readonly AccountProxyInterface $currentUser,
     protected readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
@@ -110,6 +120,28 @@ class AiSchemaDotOrgJsonLdFieldHooks {
       );
       return;
     }
+
+    $field_widget_complete_form['edit_prompt'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Edit Schema.org JSON-LD prompt'),
+      '#url' => Url::fromRoute('ai_schemadotorg_jsonld.prompt', [
+        'entity_type' => $entity->getEntityTypeId(),
+        'bundle' => $entity->bundle(),
+      ]),
+      '#attributes' => [
+        'class' => ['use-ajax', 'button', 'button--small'],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => Json::encode(['width' => 900]),
+      ],
+      '#attached' => [
+        'library' => ['core/drupal.dialog.ajax'],
+      ],
+      '#weight' => 100,
+      '#access' => (
+        (bool) $this->configFactory->get('ai_schemadotorg_jsonld.settings')->get('development.edit_prompt')
+        && $this->currentUser->hasPermission('administer site configuration')
+      ),
+    ];
   }
 
   /**
@@ -189,7 +221,7 @@ class AiSchemaDotOrgJsonLdFieldHooks {
         '#type' => 'button',
         '#value' => $this->t('Copy Schema.org JSON-LD'),
         '#attributes' => [
-          'class' => ['ai-schemadotorg-jsonld-copy-button', 'button--extrasmall'],
+          'class' => ['ai-schemadotorg-jsonld-copy-button', 'button--small'],
           'data-field-name' => $field_name,
         ],
       ],

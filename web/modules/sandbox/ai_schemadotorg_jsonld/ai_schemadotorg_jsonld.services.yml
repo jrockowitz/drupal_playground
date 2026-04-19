@@ -17,17 +17,6 @@ services:
   Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface:
     alias: ai_schemadotorg_jsonld.manager
 
-  ai_schemadotorg_jsonld.breadcrumb_list:
-    class: Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBreadcrumbList
-    # ChainBreadcrumbBuilderInterface is not auto-aliased in Drupal core,
-    # so we wire it explicitly.
-    arguments:
-      - '@renderer'
-      - '@breadcrumb'
-
-  Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBreadcrumbListInterface:
-    alias: ai_schemadotorg_jsonld.breadcrumb_list
-
   ai_schemadotorg_jsonld.token_resolver:
     class: Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdTokenResolver
 

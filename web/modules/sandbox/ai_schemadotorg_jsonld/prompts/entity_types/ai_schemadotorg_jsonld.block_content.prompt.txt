@@ -13,7 +13,7 @@ Content:
 [block_content:ai_schemadotorg_jsonld:content]
 
 Current JSON-LD: (This will be omitted for new content)
-[block_content:field_schemadotorg_jsonld]
+[block_content:field_schemadotorg_jsonld:value]
 
 # Requirements
 
@@ -23,6 +23,7 @@ Current JSON-LD: (This will be omitted for new content)
 - Output must begin with { and end with }.
 
 ## Schema.org JSON-LD
+
 - Use only valid Schema.org types and properties (https://schema.org).
 - Set @context to "https://schema.org".
 - Set url to the canonical URL provided above.

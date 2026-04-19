@@ -1,0 +1,7 @@
+name: 'AI Schema.org JSON-LD Breadcrumb'
+type: module
+description: 'Attaches BreadcrumbList Schema.org JSON-LD for AI Schema.org JSON-LD.'
+package: AI
+core_version_requirement: ^11
+dependencies:
+  - drupal:ai_schemadotorg_jsonld

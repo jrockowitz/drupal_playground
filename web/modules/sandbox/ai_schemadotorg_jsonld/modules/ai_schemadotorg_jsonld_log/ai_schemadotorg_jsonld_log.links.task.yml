@@ -1,0 +1,5 @@
+ai_schemadotorg_jsonld_log.view:
+  title: 'Log'
+  route_name: ai_schemadotorg_jsonld_log.view
+  base_route: ai_schemadotorg_jsonld.settings
+  weight: 100

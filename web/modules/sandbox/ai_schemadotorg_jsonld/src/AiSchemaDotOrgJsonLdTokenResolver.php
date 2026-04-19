@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\ai_schemadotorg_jsonld;
 
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -50,7 +52,7 @@ class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTokenReso
   /**
    * {@inheritdoc}
    */
-  public function resolve(ContentEntityInterface $entity): string {
+  public function resolve(ContentEntityInterface $entity): FormattableMarkup {
     // Switch to anonymous user.
     $this->accountSwitcher->switchTo(new AnonymousUserSession());
 
@@ -71,7 +73,7 @@ class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTokenReso
       $this->themeManager->setActiveTheme($original_theme);
     }
 
-    return $this->postProcess($html);
+    return new FormattableMarkup(Xss::filter($this->postProcess($html)), []);
   }
 
   /**

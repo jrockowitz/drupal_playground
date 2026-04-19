@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\ai_schemadotorg_jsonld;
+namespace Drupal\ai_schemadotorg_jsonld_breadcrumb;
 
 use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgJsonLdCurrentEntityTrait;
 use Drupal\Core\Breadcrumb\ChainBreadcrumbBuilderInterface;
@@ -13,17 +13,13 @@ use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Builds a BreadcrumbList JSON-LD array for the current page.
- *
- * Modelled on SchemaDotOrgJsonLdBreadcrumbManager but without any dependency
- * on the schemadotorg module. Named BreadcrumbList (not BreadcrumbBuilder) to
- * signal it produces data, not a Drupal breadcrumb object.
  */
-class AiSchemaDotOrgJsonLdBreadcrumbList implements AiSchemaDotOrgJsonLdBreadcrumbListInterface {
+class AiSchemaDotOrgJsonLdBreadcrumbManager implements AiSchemaDotOrgJsonLdBreadcrumbManagerInterface {
 
   use AiSchemaDotOrgJsonLdCurrentEntityTrait;
 
   /**
-   * Constructs an AiSchemaDotOrgJsonLdBreadcrumbList object.
+   * Constructs an AiSchemaDotOrgJsonLdBreadcrumbManager object.
    *
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer service.
@@ -38,18 +34,18 @@ class AiSchemaDotOrgJsonLdBreadcrumbList implements AiSchemaDotOrgJsonLdBreadcru
   /**
    * {@inheritdoc}
    */
-  public function build(RouteMatchInterface $route_match, BubbleableMetadata $bubbleable_metadata): ?array {
-    if (!$this->breadcrumb->applies($route_match)) {
+  public function build(RouteMatchInterface $routeMatch, BubbleableMetadata $bubbleableMetadata): ?array {
+    if (!$this->breadcrumb->applies($routeMatch)) {
       return NULL;
     }
 
-    $breadcrumb = $this->breadcrumb->build($route_match);
+    $breadcrumb = $this->breadcrumb->build($routeMatch);
     $links = $breadcrumb->getLinks();
     if (empty($links)) {
       return NULL;
     }
 
-    $bubbleable_metadata->addCacheableDependency($breadcrumb);
+    $bubbleableMetadata->addCacheableDependency($breadcrumb);
 
     $items = [];
     foreach (array_values($links) as $index => $link) {
@@ -69,10 +65,9 @@ class AiSchemaDotOrgJsonLdBreadcrumbList implements AiSchemaDotOrgJsonLdBreadcru
       ];
     }
 
-    // Append the current canonical entity as the final list item.
-    $entity = $this->getCurrentEntity($route_match);
+    $entity = $this->getCurrentEntity($routeMatch);
     if ($entity instanceof ContentEntityInterface) {
-      $bubbleable_metadata->addCacheableDependency($entity);
+      $bubbleableMetadata->addCacheableDependency($entity);
       $items[] = [
         '@type' => 'ListItem',
         'position' => count($items) + 1,

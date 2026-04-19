@@ -86,12 +86,19 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       }
 
       $header = [
-        'label' => $this->t('Name'),
+        'label' => [
+          'data' => $this->t('Name'),
+          'width' => '20%',
+        ],
         'description' => [
           'data' => $this->t('Description'),
           'class' => [RESPONSIVE_PRIORITY_MEDIUM],
+          'width' => '60%',
         ],
-        'operations' => $this->t('Operations'),
+        'operations' => [
+          'data' => $this->t('Operations'),
+          'width' => '20%',
+        ],
       ];
       $disabled_bundles = [];
       $options = $this->getEntityTypeOptions($entity_type_id);
@@ -115,24 +122,32 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         '#default_value' => array_fill_keys($disabled_bundles, TRUE),
       ];
 
-      $form['entity_types'][$entity_type_id]['prompt'] = [
+      $form['entity_types'][$entity_type_id]['default_settings'] = [
+        '#type' => 'details',
+        '#title' => $this->t('Default settings'),
+        '#open' => FALSE,
+      ];
+
+      $form['entity_types'][$entity_type_id]['default_settings']['default_prompt'] = [
         '#type' => 'textarea',
         '#title' => $this->t('Default prompt'),
         '#description' => $this->t('Token-based prompt sent to the LLM for @entity_type entities. Use <code>[@entity_type:ai_schemadotorg_jsonld:content]</code> to include the full rendered entity.', ['@entity_type' => $entity_type_id]),
         '#rows' => 5,
-        '#default_value' => $entity_type_settings[$entity_type_id]['prompt'] ?? '',
+        '#default_value' => $entity_type_settings[$entity_type_id]['default_prompt'] ?? '',
+        '#parents' => ['entity_types', $entity_type_id, 'default_prompt'],
       ];
 
-      $form['entity_types'][$entity_type_id]['default_jsonld'] = [
+      $form['entity_types'][$entity_type_id]['default_settings']['default_jsonld'] = [
         '#type' => 'textarea',
         '#title' => $this->t('Default JSON-LD'),
         '#description' => $this->t('Default JSON-LD injected for canonical @entity_type pages whose bundle already has the Schema.org JSON-LD field. Leave blank to disable.', ['@entity_type' => $entity_type_definition->getLabel()]),
         '#default_value' => $entity_type_settings[$entity_type_id]['default_jsonld'] ?? '',
         '#element_validate' => [[$this, 'validateJson']],
+        '#parents' => ['entity_types', $entity_type_id, 'default_jsonld'],
       ];
 
       if ($this->moduleHandler->moduleExists('json_field_widget')) {
-        $form['entity_types'][$entity_type_id]['default_jsonld'] += $this->getJsonEditorElementConfiguration('default_jsonld_' . $entity_type_id);
+        $form['entity_types'][$entity_type_id]['default_settings']['default_jsonld'] += $this->getJsonEditorElementConfiguration('default_jsonld_' . $entity_type_id);
       }
     }
 
@@ -153,11 +168,18 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       '#default_value' => array_fill_keys($enabled_entity_type_ids, TRUE),
     ];
 
-    $form['breadcrumb_jsonld'] = [
+    $form['development'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Development settings'),
+      '#description' => $this->t('Configure development-only tooling for tuning and inspecting Schema.org JSON-LD generation.'),
+      '#open' => FALSE,
+      '#weight' => 100,
+    ];
+    $form['development']['edit_prompt'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Include Schema.org JSON-LD for breadcrumb'),
-      '#description' => $this->t('Attach a Schema.org JSON-LD for <a href=":href">BreadcrumbList</a> to each page.', [':href' => 'https://schema.org/BreadcrumbList']),
-      '#default_value' => (bool) $config->get('breadcrumb_jsonld'),
+      '#title' => $this->t('Display edit prompt button when generating Schema.org JSON-LD on entity edit forms'),
+      '#description' => $this->t('Show an AJAX modal link on saved entity edit forms so bundle-specific Schema.org JSON-LD automator prompts can be adjusted during development.'),
+      '#config_target' => 'ai_schemadotorg_jsonld.settings:development.edit_prompt',
     ];
 
     return parent::buildForm($form, $form_state);
@@ -207,11 +229,10 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         $this->builder->addFieldToEntity($entity_type_id, $bundle);
       }
 
-      $config->set('entity_types.' . $entity_type_id . '.prompt', $entity_type_values_item['prompt'] ?? '');
+      $config->set('entity_types.' . $entity_type_id . '.default_prompt', $entity_type_values_item['default_prompt'] ?? '');
       $config->set('entity_types.' . $entity_type_id . '.default_jsonld', $entity_type_values_item['default_jsonld'] ?? '');
     }
 
-    $config->set('breadcrumb_jsonld', (bool) $form_state->getValue('breadcrumb_jsonld'));
     $config->save();
     parent::submitForm($form, $form_state);
   }
