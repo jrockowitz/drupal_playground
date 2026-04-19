@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\ai_schemadotorg_jsonld_log\Functional;
 
+use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Tests\BrowserTestBase;
 
@@ -48,14 +49,27 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+
+    // Create the page content type used across the functional test.
     $this->drupalCreateContentType([
       'type' => 'page',
       'name' => 'Basic page',
     ]);
+
+    // Add the node page AI schema.org JSON-LD automator field.
+    $this->container->get(AiSchemaDotOrgJsonLdBuilderInterface::class)
+      ->addFieldToEntity('node', 'page');
+
+    // Clear cached field definitions to ensure that the new schema.org JSON-LD
+    // automator is used.
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+
+    // Create a saved page used for filtered log assertions.
     $node = Node::create([
       'type' => 'page',
       'title' => 'Log node',
       'status' => 1,
+      AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME => '{"@type":"WebPage"}',
     ]);
     $node->save();
     $this->nodeId = (int) $node->id();
@@ -113,7 +127,11 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
    * Tests the log page, CSV download, and clear flow.
    */
   public function testLogPageShowsRowsAndOperations(): void {
-    $admin = $this->drupalCreateUser(['administer site configuration']);
+    $admin = $this->drupalCreateUser([
+      'access content',
+      'edit any page content',
+      'administer site configuration',
+    ]);
     $this->drupalLogin($admin);
 
     // Check that the settings and log local tasks are registered.
@@ -122,6 +140,10 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
     $this->assertArrayHasKey(0, $local_tasks);
     $this->assertArrayHasKey('ai_schemadotorg_jsonld.settings', $local_tasks[0]);
     $this->assertArrayHasKey('ai_schemadotorg_jsonld_log.view', $local_tasks[0]);
+
+    // Check that the View log link appears on the node edit form.
+    $this->drupalGet('/node/' . $this->nodeId . '/edit');
+    $this->assertSession()->linkExists('View log');
 
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log');
     $this->assertSession()->statusCodeEquals(200);
@@ -174,6 +196,11 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
     $this->config('ai_schemadotorg_jsonld_log.settings')
       ->set('enable', FALSE)
       ->save();
+
+    // Check that disabling logging hides the View log link and the log page.
+    $this->drupalGet('/node/' . $this->nodeId . '/edit');
+    $this->assertSession()->linkNotExists('View log');
+
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Prompt and response logging is disabled.');
@@ -191,6 +218,12 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
       'edit any page content',
     ]);
     $this->drupalLogin($editor);
+
+    // Check that entity editors can open the filtered log and see the edit-form
+    // View log link without site configuration access.
+    $this->drupalGet('/node/' . $this->nodeId . '/edit');
+    $this->assertSession()->linkExists('View log');
+
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log');
     $this->assertSession()->statusCodeEquals(403);
 
@@ -239,6 +272,11 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
       'access content',
     ]);
     $this->drupalLogin($viewer);
+
+    // Check that users without update access do not see the View log link.
+    $this->drupalGet('/node/' . $this->nodeId . '/edit');
+    $this->assertSession()->statusCodeEquals(403);
+
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log', [
       'query' => [
         'entity_type' => 'node',

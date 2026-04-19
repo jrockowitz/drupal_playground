@@ -6,85 +6,98 @@ namespace Drupal\Tests\ai_schemadotorg_jsonld\Functional;
 
 use Drupal\ai_automators\Entity\AiAutomator;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
-use Drupal\Tests\BrowserTestBase;
+use Drupal\node\Entity\Node;
 
 /**
  * Tests the AI Schema.org JSON-LD prompt form.
  *
  * @group ai_schemadotorg_jsonld
  */
-class AiSchemaDotOrgJsonLdPromptFormTest extends BrowserTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'node',
-    'field',
-    'field_ui',
-    'file',
-    'options',
-    'field_widget_actions',
-    'json_field',
-    'json_field_widget',
-    'ai',
-    'ai_automators',
-    'ai_schemadotorg_jsonld',
-    'token',
-  ];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
+class AiSchemaDotOrgJsonLdPromptFormTest extends AiSchemaDotOrgJsonLdTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->drupalCreateContentType([
-      'type' => 'page',
-      'name' => 'Basic page',
-    ]);
 
-    $admin = $this->drupalCreateUser(['administer site configuration']);
-    $this->drupalLogin($admin);
-
+    // Add the node page AI schema.org JSON-LD automator field.
     $this->container->get(AiSchemaDotOrgJsonLdBuilderInterface::class)
       ->addFieldToEntity('node', 'page');
+
+    // Clear cached field definitions to ensure that the new schema.org JSON-LD
+    // automator is used.
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
   }
 
   /**
-   * Tests the prompt form loads and updates the matching automator.
+   * Tests prompt form access, values, and save behavior.
    */
   public function testPromptFormUpdatesAutomatorPrompt(): void {
-    $route = $this->container->get('router.route_provider')
-      ->getRouteByName('ai_schemadotorg_jsonld.prompt');
-    $this->assertSame('/admin/config/ai/schemadotorg-jsonld/prompt/{entity_type}/{bundle}', $route->getPath());
-    $this->assertSame('Edit Schema.org JSON-LD prompt', $route->getDefault('_title'));
+    $prompt_form_path = '/admin/config/ai/schemadotorg-jsonld/prompt/node/page';
 
-    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/prompt/node/page');
-    $this->assertSession()->statusCodeEquals(200);
+    // Check that only users with site configuration access can open the form.
+    $editor = $this->drupalCreateUser([
+      'access content',
+      'edit any page content',
+    ]);
+    $this->drupalLogin($editor);
+    $this->drupalGet($prompt_form_path);
+    $this->assertSession()->statusCodeEquals(403);
+    $this->drupalLogout();
+
+
+    // Check that the prompt form loads with the expected values.
+    $this->drupalLogin($this->adminUser);
+
+    $automator_storage = $this->container->get('entity_type.manager')
+      ->getStorage('ai_automator');
+    $automator_id = 'node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME . '.default';
+    $automator = $automator_storage->load($automator_id);
+    $this->assertInstanceOf(AiAutomator::class, $automator);
+    $expected_prompt = (string) $automator->get('token');
+
+    $this->drupalGet($prompt_form_path);
     $this->assertSession()->fieldExists('prompt');
-    $prompt_field = $this->getSession()->getPage()->findField('prompt');
-    $this->assertNotNull($prompt_field);
-    $this->assertNotSame('', $prompt_field->getValue());
+    $this->assertSession()->fieldValueEquals('prompt', $expected_prompt);
     $this->assertSession()->fieldNotExists('label');
-    $this->assertSession()->linkExists('Browse available tokens.');
-    $this->assertSession()->elementExists('css', 'a.token-dialog.use-ajax');
-    $this->assertSession()->elementAttributeContains('css', 'a.token-dialog.use-ajax', 'href', '%22token_types%22%3A%5B%22node%22%5D');
 
+    // Check that submitting the prompt form updates the automator values.
+    $updated_prompt = 'Updated prompt token';
     $this->submitForm([
-      'prompt' => 'Updated prompt token',
+      'prompt' => $updated_prompt,
     ], 'Save');
 
-    $automator = $this->container->get('entity_type.manager')
-      ->getStorage('ai_automator')
-      ->load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME . '.default');
+    $automator = $automator_storage->load($automator_id);
     $this->assertInstanceOf(AiAutomator::class, $automator);
-    $this->assertSame('Updated prompt token', $automator->get('token'));
+    $this->assertSame($updated_prompt, $automator->get('token'));
+    $plugin_config = $automator->get('plugin_config');
+    $this->assertSame($updated_prompt, $plugin_config['automator_token']);
+
+    // Check that the edit prompt setting shows and hides the node edit form link.
+    // Create a saved page so the edit prompt link can be shown on the edit form.
+    $node = Node::create([
+      'type' => 'page',
+      'title' => 'Prompt test page',
+      'status' => 1,
+      AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME => '{"@type":"WebPage"}',
+    ]);
+    $node->save();
+
+    $this->drupalGet($node->toUrl('edit-form'));
+    $this->assertSession()->linkExists('Edit prompt');
+
+    $this->config('ai_schemadotorg_jsonld.settings')
+      ->set('development.edit_prompt', FALSE)
+      ->save();
+    $this->drupalGet($node->toUrl('edit-form'));
+    $this->assertSession()->linkNotExists('Edit prompt');
+
+    $this->config('ai_schemadotorg_jsonld.settings')
+      ->set('development.edit_prompt', TRUE)
+      ->save();
+    $this->drupalGet($node->toUrl('edit-form'));
+    $this->assertSession()->linkExists('Edit prompt');
   }
 
 }

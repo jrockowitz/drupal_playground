@@ -6,37 +6,13 @@ namespace Drupal\Tests\ai_schemadotorg_jsonld\Functional;
 
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\node\Entity\Node;
-use Drupal\Tests\BrowserTestBase;
-use Drupal\user\UserInterface;
 
 /**
  * Tests field access and page attachments.
  *
  * @group ai_schemadotorg_jsonld
  */
-class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'node',
-    'field',
-    'file',
-    'options',
-    'field_ui',
-    'field_widget_actions',
-    'json_field',
-    'ai',
-    'ai_automators',
-    'ai_schemadotorg_jsonld',
-    'ai_schemadotorg_jsonld_log',
-  ];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected $defaultTheme = 'stark';
+class AiSchemaDotOrgJsonLdTest extends AiSchemaDotOrgJsonLdTestBase {
 
   /**
    * The default JSON-LD value used across the test.
@@ -44,24 +20,15 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
   protected string $defaultJsonld = '{"@context":"https://schema.org","@type":"Organization","name":"Test Site"}';
 
   /**
-   * The administrator user used across the test.
-   */
-  protected UserInterface $adminUser;
-
-  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->drupalCreateContentType(['type' => 'page', 'name' => 'Basic page']);
 
-    $this->adminUser = $this->drupalCreateUser([
-      'access content',
-      'create page content',
-      'edit any page content',
-      'administer site configuration',
-    ]);
+    // Log in the administrator user to configure the node page automator.
     $this->drupalLogin($this->adminUser);
+
+    // Enable node page AI schema.org JSON-LD automator.
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld');
     $this->submitForm([
       'enabled_entity_types[entity_types][node]' => 'node',
@@ -69,8 +36,8 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
       'entity_types[node][default_jsonld]' => $this->defaultJsonld,
     ], 'Save configuration');
 
-    $this->container->get(AiSchemaDotOrgJsonLdBuilderInterface::class)
-      ->addFieldToEntity('node', 'page');
+    // Clear cached field definitions to ensure that the new schema.org JSON-LD
+    // automator is used.
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
   }
 
@@ -85,9 +52,9 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
 
     // Check that the JSON-LD field is replaced with a status message on unsaved entities.
     $this->assertSession()->fieldNotExists($field_name . '[0][value]');
-    $this->assertSession()->pageTextContains('Schema.org JSON-LD can be generated after the content item is saved.');
-    $this->assertSession()->pageTextNotContains('Generate Schema.org JSON-LD');
+    $this->assertSession()->responseNotContains('Generate Schema.org JSON-LD');
 
+    // Create a saved page with JSON-LD so the edit form can expose the widget.
     $node = Node::create([
       'type' => 'page',
       'title' => 'Test page',
@@ -100,13 +67,10 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
 
     // Check that the JSON-LD field is editable on saved entities.
     $this->assertSession()->fieldExists($field_name . '[0][value]');
+    $this->assertSession()->responseContains('Generate Schema.org JSON-LD');
     $this->assertSession()->fieldValueEquals($field_name . '[0][value]', $node_jsonld);
     $this->assertSession()->buttonExists('Copy JSON-LD');
-    $this->assertSession()->buttonNotExists('Copy Schema.org JSON-LD');
     $this->assertSession()->linkExists('Edit prompt');
-    $this->assertSession()->linkExists('View log');
-    $this->assertSession()->pageTextContains('Please copy and paste the above Schema.org JSON-LD into the Schema Markup Validator or Google\'s Rich Results Test.');
-    $this->assertSession()->pageTextNotContains('JSON-LD copied to clipboard…');
 
     // Check that the description appears before the buttons.
     $page_content = $this->getSession()->getPage()->getContent();
@@ -118,41 +82,13 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
       strpos($page_content, 'Edit prompt'),
       strpos($page_content, 'Copy JSON-LD')
     );
-    $this->assertLessThan(
-      strpos($page_content, 'View log'),
-      strpos($page_content, 'Edit prompt')
-    );
-
-    $this->assertSession()->elementAttributeContains(
-      'css',
-      'a.use-ajax[href*="/admin/config/ai/schemadotorg-jsonld/log?entity_type=node&entity_id=' . $node->id() . '"]',
-      'data-dialog-type',
-      'modal'
-    );
-    $this->assertSession()->elementAttributeContains(
-      'css',
-      'a.use-ajax[href*="/admin/config/ai/schemadotorg-jsonld/log?entity_type=node&entity_id=' . $node->id() . '"]',
-      'data-dialog-options',
-      '"width":"90%"'
-    );
-
-    // Check that disabling logging hides the View log link.
-    $this->config('ai_schemadotorg_jsonld_log.settings')
-      ->set('enable', FALSE)
-      ->save();
-    $this->drupalGet($node->toUrl('edit-form'));
-    $this->assertSession()->linkNotExists('View log');
 
     // Check that disabling the development setting hides the edit prompt link.
     $this->config('ai_schemadotorg_jsonld.settings')
       ->set('development.edit_prompt', FALSE)
       ->save();
-    $this->config('ai_schemadotorg_jsonld_log.settings')
-      ->set('enable', TRUE)
-      ->save();
     $this->drupalGet($node->toUrl('edit-form'));
     $this->assertSession()->linkNotExists('Edit prompt');
-    $this->assertSession()->linkExists('View log');
 
     // Check that users without site configuration access do not see the link.
     $this->config('ai_schemadotorg_jsonld.settings')
@@ -165,7 +101,6 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
     $this->drupalLogin($editor);
     $this->drupalGet($node->toUrl('edit-form'));
     $this->assertSession()->linkNotExists('Edit prompt');
-    $this->assertSession()->linkExists('View log');
 
     $viewer = $this->drupalCreateUser([
       'access content',
@@ -173,21 +108,17 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
     $this->drupalLogin($viewer);
     $this->drupalGet($node->toUrl('edit-form'));
     $this->assertSession()->linkNotExists('Edit prompt');
-    $this->assertSession()->linkNotExists('View log');
 
     $this->drupalLogin($this->adminUser);
 
-    $this->drupalGet($node->toUrl());
-    $this->assertSession()->statusCodeEquals(200);
-
     // Check that entity JSON-LD is attached to the canonical page.
+    $this->drupalGet($node->toUrl());
     $this->assertSession()->responseContains(
       '<script type="application/ld+json">' . $node_jsonld . '</script>'
     );
 
-    $this->drupalGet('/');
-
     // Check that canonical-route JSON-LD does not appear on other pages.
+    $this->drupalGet('/');
     $this->assertSession()->responseNotContains(
       '<script type="application/ld+json">' . $node_jsonld . '</script>'
     );

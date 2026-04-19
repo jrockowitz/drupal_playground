@@ -47,6 +47,7 @@ ddev code-fix <file|directory>
 - PHPUnit
   - `::setUp` and `::test` methods should come before protected helper methods.
   - For Functional and Kernel tests, try to have a single test method per class.
+  - Tests for focus on checking expected behavior, instead of exact labels or markup, since these can easily change.
 
 # Drush
 
