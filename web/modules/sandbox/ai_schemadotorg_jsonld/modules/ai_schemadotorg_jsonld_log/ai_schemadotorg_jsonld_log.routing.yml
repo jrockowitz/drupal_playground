@@ -2,7 +2,7 @@ ai_schemadotorg_jsonld_log.view:
   path: '/admin/config/ai/schemadotorg-jsonld/log'
   defaults:
     _controller: '\Drupal\ai_schemadotorg_jsonld_log\Controller\AiSchemaDotOrgJsonLdLogController::index'
-    _title: 'AI Schema.org JSON-LD'
+    _title_callback: '\Drupal\ai_schemadotorg_jsonld_log\Controller\AiSchemaDotOrgJsonLdLogController::title'
   requirements:
     _permission: 'administer site configuration'
 

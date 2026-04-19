@@ -3,6 +3,10 @@
   vertical-align: top;
 }
 
+.ai-schemadotorg-jsonld-log-page__row--warning td {
+  background-color: #fcf4dd;
+}
+
 .ai-schemadotorg-jsonld-log-page__table pre {
   display: block;
   overflow-x: auto;

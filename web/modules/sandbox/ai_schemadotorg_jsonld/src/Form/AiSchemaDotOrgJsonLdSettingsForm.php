@@ -307,16 +307,15 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
    */
   protected function buildEntityTypeOption(ContentEntityTypeInterface $entity_type_definition, string $bundle, mixed $label, string $description): array {
     $entity_type_id = $entity_type_definition->id();
+    $field_config_id = $entity_type_id . '.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME;
     $field_config = $this->entityTypeManager
       ->getStorage('field_config')
-      ->load($entity_type_id . '.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
+      ->load($field_config_id);
 
     $links = [];
     if ($field_config !== NULL && $entity_type_definition->get('field_ui_base_route')) {
-      $route_parameters = FieldUI::getRouteBundleParameter($entity_type_definition, $bundle) + [
-        'field_config' => $entity_type_id . '.' . $bundle . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
-      ];
       $query = $this->getRedirectDestination()->getAsArray();
+
       $attributes = [
         'class' => ['use-ajax'],
         'data-dialog-type' => 'modal',
@@ -329,34 +328,35 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       $prompt_url->setOption('query', $query);
       $links['edit_prompt'] = [
         'title' => $this->t('Edit prompt'),
-        'weight' => 50,
         'url' => $prompt_url,
         'attributes' => $attributes + [
-            'title' => $this->t('Edit the Schema.org JSON-LD prompt.'),
             'data-dialog-options' => Json::encode(['width' => 1100]),
         ],
       ];
 
-      $edit_url = Url::fromRoute('entity.field_config.' . $entity_type_id . '_field_edit_form', $route_parameters);
-      $edit_url->setOption('query', $query);
+      $field_ui_route_parameters = FieldUI::getRouteBundleParameter($entity_type_definition, $bundle);
+      $field_ui_route_parameters['field_config'] = $field_config_id;
+
+      $edit_url = Url::fromRoute(
+        'entity.field_config.' . $entity_type_id . '_field_edit_form',
+        $field_ui_route_parameters,
+      )->setOption('query', $query);
       $links['edit'] = [
         'title' => $this->t('Edit field'),
-        'weight' => 10,
         'url' => $edit_url,
         'attributes' => $attributes + [
-          'title' => $this->t('Edit field settings.'),
           'data-dialog-options' => Json::encode(['width' => 1100]),
         ],
       ];
 
-      $delete_url = Url::fromRoute('entity.field_config.' . $entity_type_id . '_field_delete_form', $route_parameters);
-      $delete_url->setOption('query', $query);
+      $delete_url = Url::fromRoute(
+        'entity.field_config.' . $entity_type_id . '_field_delete_form',
+        $field_ui_route_parameters,
+      )->setOption('query', $query);
       $links['delete'] = [
         'title' => $this->t('Delete field'),
-        'weight' => 100,
         'url' => $delete_url,
         'attributes' => $attributes + [
-          'title' => $this->t('Delete field.'),
           'data-dialog-options' => Json::encode(['width' => 880]),
         ],
       ];
@@ -381,7 +381,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       ],
     ];
 
-    if ($field_config !== NULL) {
+    if ($field_config) {
       $option['#disabled'] = TRUE;
     }
 

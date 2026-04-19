@@ -169,9 +169,78 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
   }
 
   /**
-   * Tests onValuesChange().
+   * Provides JSON-LD value transformation test cases.
+   *
+   * @return array
+   *   The raw value, expected value, warning count, and logger count.
    */
-  public function testOnValuesChange(): void {
+  public static function providerOnValuesChangeReturnsProcessedValues(): array {
+    return [
+      'clean json' => [
+        '{"@type":"WebPage"}',
+        '{"@type":"WebPage"}',
+        0,
+        0,
+      ],
+      'markdown wrapped json' => [
+        "```json\n{\"@type\":\"WebPage\"}\n```",
+        '{"@type":"WebPage"}',
+        0,
+        0,
+      ],
+      'json with surrounding text' => [
+        'Here is the JSON: {"@type":"WebPage"} Hope that helps!',
+        '{"@type":"WebPage"}',
+        0,
+        0,
+      ],
+      'json with repaired adjacent bad quote escapes' => [
+        '{"@context":"https://schema.org","articleBody":"a\&quot;"drops"\&quot;c"}',
+        '{"@context":"https://schema.org","articleBody":"a\"drops\"c"}',
+        0,
+        0,
+      ],
+      'json with unrepaired bad quote escapes' => [
+        '{"@context":"https://schema.org","articleBody":"<p><a href=\"\\&quot;http://www.drupal.org\\&quot;\">www.drupal.org</a></p>"}',
+        '{"@context":"https://schema.org","articleBody":"<p><a href=\"\\&quot;http://www.drupal.org\\&quot;\">www.drupal.org</a></p>"}',
+        1,
+        1,
+      ],
+      'invalid json' => [
+        '{not valid json}',
+        '{not valid json}',
+        1,
+        1,
+      ],
+      'missing json boundaries' => [
+        'No JSON here at all',
+        '',
+        1,
+        1,
+      ],
+    ];
+  }
+
+  /**
+   * Tests onValuesChange() value processing.
+   *
+   * @dataProvider providerOnValuesChangeReturnsProcessedValues
+   */
+  public function testOnValuesChangeReturnsProcessedValue(string $rawValue, string $expectedValue, int $warningCount, int $loggerCount): void {
+    $this->messenger->expects($this->exactly($warningCount))->method('addWarning');
+    $this->logger->expects($this->exactly($loggerCount))->method('warning');
+
+    $event = $this->buildEvent($rawValue);
+    $this->subscriber->onValuesChange($event);
+
+    // Check that the processed value is written back to the event response.
+    $this->assertSame($expectedValue, $event->getValues()[0]);
+  }
+
+  /**
+   * Tests that unrelated fields are ignored by onValuesChange().
+   */
+  public function testOnValuesChangeIgnoresUnrelatedFields(): void {
     // Check that unrelated fields are ignored.
     $field_definition = $this->createMock(FieldDefinitionInterface::class);
     $field_definition->method('getName')->willReturn('field_other');
@@ -189,39 +258,6 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
 
     // Check that the value is untouched.
     $this->assertSame('garbage', $event->getValues()[0]);
-
-    // Check that clean JSON is returned unchanged.
-    $valid_event = $this->buildEvent('{"@type":"WebPage"}');
-    $this->subscriber->onValuesChange($valid_event);
-    $this->assertSame('{"@type":"WebPage"}', $valid_event->getValues()[0]);
-
-    // Check that JSON wrapped in markdown fences is extracted.
-    $markdown_event = $this->buildEvent("```json\n{\"@type\":\"WebPage\"}\n```");
-    $this->subscriber->onValuesChange($markdown_event);
-    $this->assertSame('{"@type":"WebPage"}', $markdown_event->getValues()[0]);
-
-    // Check that JSON surrounded by explanatory text is extracted.
-    $surrounding_text_event = $this->buildEvent('Here is the JSON: {"@type":"WebPage"} Hope that helps!');
-    $this->subscriber->onValuesChange($surrounding_text_event);
-    $this->assertSame('{"@type":"WebPage"}', $surrounding_text_event->getValues()[0]);
-  }
-
-  /**
-   * Tests onValuesChange() warnings.
-   */
-  public function testOnValuesChangeWarnings(): void {
-    $this->logger->expects($this->exactly(2))->method('warning');
-    $this->messenger->expects($this->exactly(2))->method('addWarning');
-
-    // Check that a response with no JSON object triggers warnings.
-    $no_json_event = $this->buildEvent('No JSON here at all');
-    $this->subscriber->onValuesChange($no_json_event);
-    $this->assertSame('', $no_json_event->getValues()[0]);
-
-    // Check that invalid JSON results in an empty value with warnings.
-    $invalid_json_event = $this->buildEvent('{not valid json}');
-    $this->subscriber->onValuesChange($invalid_json_event);
-    $this->assertSame('', $invalid_json_event->getValues()[0]);
   }
 
   /**

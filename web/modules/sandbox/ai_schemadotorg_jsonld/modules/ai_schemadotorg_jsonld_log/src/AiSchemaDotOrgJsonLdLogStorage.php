@@ -7,6 +7,7 @@ namespace Drupal\ai_schemadotorg_jsonld_log;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\PagerSelectExtender;
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
@@ -18,6 +19,11 @@ class AiSchemaDotOrgJsonLdLogStorage implements AiSchemaDotOrgJsonLdLogStorageIn
    * The log table name.
    */
   protected const TABLE_NAME = 'ai_schemadotorg_jsonld_log';
+
+  /**
+   * The number of rows to show per pager page.
+   */
+  protected int $limit = 20;
 
   /**
    * Constructs an AiSchemaDotOrgJsonLdLogStorage object.
@@ -46,9 +52,7 @@ class AiSchemaDotOrgJsonLdLogStorage implements AiSchemaDotOrgJsonLdLogStorageIn
    * {@inheritdoc}
    */
   public function loadAll(): array {
-    return $this->connection->select(self::TABLE_NAME, 'log')
-      ->fields('log')
-      ->orderBy('id', 'DESC')
+    return $this->buildSelectQuery()
       ->execute()
       ->fetchAll(\PDO::FETCH_ASSOC);
   }
@@ -56,14 +60,36 @@ class AiSchemaDotOrgJsonLdLogStorage implements AiSchemaDotOrgJsonLdLogStorageIn
   /**
    * {@inheritdoc}
    */
-  public function loadPage(int $limit = 10): array {
-    $query = $this->connection->select(self::TABLE_NAME, 'log')
-      ->fields('log')
-      ->orderBy('id', 'DESC')
+  public function loadMultiple(string $entity_type_id = '', string $entity_id = ''): array {
+    $query = $this->buildSelectQuery($entity_type_id, $entity_id)
       ->extend(PagerSelectExtender::class);
     assert($query instanceof PagerSelectExtender);
-    $query->limit($limit);
+    $query->limit($this->limit);
     return $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * Builds the base select query for log rows.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param string $entity_id
+   *   The entity ID.
+   *
+   * @return \Drupal\Core\Database\Query\SelectInterface
+   *   The select query.
+   */
+  protected function buildSelectQuery(string $entity_type_id = '', string $entity_id = ''): SelectInterface {
+    $query = $this->connection->select(self::TABLE_NAME, 'log')
+      ->fields('log')
+      ->orderBy('id', 'DESC');
+
+    if ($entity_type_id !== '' && $entity_id !== '') {
+      $query->condition('entity_type', $entity_type_id);
+      $query->condition('entity_id', $entity_id);
+    }
+
+    return $query;
   }
 
   /**

@@ -56,7 +56,7 @@ class AiSchemaDotOrgJsonLdLogStorageTest extends KernelTestBase {
   }
 
   /**
-   * Tests log rows persist metadata, paging, deletion, and clearing.
+   * Tests log rows persist metadata, filtering, deletion, and clearing.
    */
   public function testLogStorageInsertAndLoad(): void {
     $node = Node::create([
@@ -85,27 +85,43 @@ class AiSchemaDotOrgJsonLdLogStorageTest extends KernelTestBase {
       'response' => '{"@type":"Thing","name":"Second"}',
       'created' => 200,
     ]);
+    $this->logStorage->insert([
+      'entity_type' => 'node',
+      'entity_id' => '9999',
+      'entity_label' => 'Other node',
+      'bundle' => 'page',
+      'url' => 'https://example.com/node/9999',
+      'prompt' => 'Other prompt',
+      'response' => '{"@type":"Thing","name":"Other"}',
+      'created' => 300,
+    ]);
 
     $rows = $this->logStorage->loadAll();
-    $this->assertCount(2, $rows);
-    $this->assertSame('node', $rows[0]['entity_type']);
-    $this->assertSame((string) $node->id(), $rows[0]['entity_id']);
-    $this->assertSame('Stored node', $rows[0]['entity_label']);
-    $this->assertSame('page', $rows[0]['bundle']);
-    $this->assertSame('https://example.com/node/' . $node->id(), $rows[0]['url']);
-    $this->assertSame('Prompt text 2', $rows[0]['prompt']);
-    $this->assertSame('{"@type":"Thing","name":"Second"}', $rows[0]['response']);
+    $this->assertCount(3, $rows);
+    $this->assertSame('node', $rows[1]['entity_type']);
+    $this->assertSame((string) $node->id(), $rows[1]['entity_id']);
+    $this->assertSame('Stored node', $rows[1]['entity_label']);
+    $this->assertSame('page', $rows[1]['bundle']);
+    $this->assertSame('https://example.com/node/' . $node->id(), $rows[1]['url']);
+    $this->assertSame('Prompt text 2', $rows[1]['prompt']);
+    $this->assertSame('{"@type":"Thing","name":"Second"}', $rows[1]['response']);
 
-    $paged_rows = $this->logStorage->loadPage(1);
-    $this->assertCount(1, $paged_rows);
-    $this->assertSame('Prompt text 2', $paged_rows[0]['prompt']);
-
-    $paged_rows = $this->logStorage->loadPage(10);
+    $paged_rows = $this->logStorage->loadMultiple('node', (string) $node->id());
     $this->assertCount(2, $paged_rows);
     $this->assertSame('Prompt text 2', $paged_rows[0]['prompt']);
+    $this->assertSame('Prompt text', $paged_rows[1]['prompt']);
+
+    $paged_rows = $this->logStorage->loadMultiple('node', '9999');
+    $this->assertCount(1, $paged_rows);
+    $this->assertSame('Other prompt', $paged_rows[0]['prompt']);
+
+    $paged_rows = $this->logStorage->loadMultiple('node', 'not-found');
+    $this->assertSame([], $paged_rows);
 
     $this->logStorage->deleteByEntity($node);
-    $this->assertSame([], $this->logStorage->loadAll());
+    $rows = $this->logStorage->loadAll();
+    $this->assertCount(1, $rows);
+    $this->assertSame('Other prompt', $rows[0]['prompt']);
 
     $this->logStorage->truncate();
     $this->assertSame([], $this->logStorage->loadAll());

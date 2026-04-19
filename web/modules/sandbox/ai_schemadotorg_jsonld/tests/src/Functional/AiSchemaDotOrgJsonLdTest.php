@@ -30,6 +30,7 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
     'ai',
     'ai_automators',
     'ai_schemadotorg_jsonld',
+    'ai_schemadotorg_jsonld_log',
   ];
 
   /**
@@ -100,14 +101,28 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
     // Check that the JSON-LD field is editable on saved entities.
     $this->assertSession()->fieldExists($field_name . '[0][value]');
     $this->assertSession()->fieldValueEquals($field_name . '[0][value]', $node_jsonld);
-    $this->assertSession()->linkExists('Edit Schema.org JSON-LD prompt');
+    $this->assertSession()->linkExists('Edit prompt');
+    $this->assertSession()->linkExists('View log');
+    $this->assertSession()->elementAttributeContains(
+      'css',
+      'a.use-ajax[href*="/admin/config/ai/schemadotorg-jsonld/log?entity_type=node&entity_id=' . $node->id() . '"]',
+      'data-dialog-type',
+      'modal'
+    );
+    $this->assertSession()->elementAttributeContains(
+      'css',
+      'a.use-ajax[href*="/admin/config/ai/schemadotorg-jsonld/log?entity_type=node&entity_id=' . $node->id() . '"]',
+      'data-dialog-options',
+      '"width":"90%"'
+    );
 
     // Check that disabling the development setting hides the edit prompt link.
     $this->config('ai_schemadotorg_jsonld.settings')
       ->set('development.edit_prompt', FALSE)
       ->save();
     $this->drupalGet($node->toUrl('edit-form'));
-    $this->assertSession()->linkNotExists('Edit Schema.org JSON-LD prompt');
+    $this->assertSession()->linkNotExists('Edit prompt');
+    $this->assertSession()->linkExists('View log');
 
     // Check that users without site configuration access do not see the link.
     $this->config('ai_schemadotorg_jsonld.settings')
@@ -119,7 +134,8 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
     ]);
     $this->drupalLogin($editor);
     $this->drupalGet($node->toUrl('edit-form'));
-    $this->assertSession()->linkNotExists('Edit Schema.org JSON-LD prompt');
+    $this->assertSession()->linkNotExists('Edit prompt');
+    $this->assertSession()->linkNotExists('View log');
 
     $this->drupalLogin($this->adminUser);
 

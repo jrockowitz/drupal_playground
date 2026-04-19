@@ -60,7 +60,7 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
     $node->save();
     $this->nodeId = (int) $node->id();
 
-    for ($index = 1; $index <= 10; $index++) {
+    for ($index = 1; $index <= 25; $index++) {
       $label = sprintf('%02d', $index);
       $this->container->get('database')
         ->insert('ai_schemadotorg_jsonld_log')
@@ -72,6 +72,7 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
           'url' => 'https://example.com/node/' . $this->nodeId,
           'prompt' => 'Valid prompt ' . $label,
           'response' => '{"@type":"Thing","name":"Valid ' . $label . '"}',
+          'valid' => 1,
           'created' => 1700000000 + $index,
         ])
         ->execute();
@@ -87,6 +88,7 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
         'url' => 'https://example.com/node/5555',
         'prompt' => 'Stored orphan prompt',
         'response' => '{"@type":"Thing","name":"Stored orphan"}',
+        'valid' => 1,
         'created' => 1790000000,
       ])
       ->execute();
@@ -100,7 +102,8 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
         'bundle' => '',
         'url' => '',
         'prompt' => 'Orphan prompt',
-        'response' => '{"@type":"Thing","name":"Orphan"}',
+        'response' => '{not valid json}',
+        'valid' => 0,
         'created' => 1800000000,
       ])
       ->execute();
@@ -127,7 +130,8 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Entity');
     $this->assertSession()->pageTextContains('Prompt');
     $this->assertSession()->pageTextContains('Response');
-    $this->assertSession()->pageTextContains('2027-01-15');
+    $this->assertSession()->pageTextContains('Valid');
+    $this->assertSession()->pageTextContains('2027-01-15 19:00:00');
     $this->assertSession()->linkExists('Log node');
     $this->assertSession()->pageTextContains('Log node (node:page)');
     $this->assertSession()->responseContains('<th');
@@ -135,9 +139,13 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
     $this->assertSession()->linkExists('Clear log');
     $this->assertSession()->elementExists('css', '.ai-schemadotorg-jsonld-log-page');
     $this->assertSession()->elementExists('css', 'pre.ai-schemadotorg-jsonld-log-page__content');
-    $this->assertSession()->pageTextContains('"name": "Valid 10"');
-    $this->assertSession()->pageTextNotContains('Valid prompt 01');
+    $this->assertSession()->pageTextContains('"name": "Valid 25"');
+    $this->assertSession()->pageTextContains('Yes');
+    $this->assertSession()->pageTextContains('No');
+    $this->assertSession()->pageTextNotContains('Valid prompt 05');
     $this->assertSession()->elementExists('css', 'nav.pager');
+    $this->assertSession()->linkExists('Next ›');
+    $this->assertSession()->elementExists('css', 'tr.ai-schemadotorg-jsonld-log-page__row--warning');
     $this->assertSession()->elementAttributeContains('css', 'a[href$="/admin/config/ai/schemadotorg-jsonld/log/download"]', 'class', 'button');
     $this->assertSession()->elementAttributeContains('css', 'a[href$="/admin/config/ai/schemadotorg-jsonld/log/download"]', 'class', 'button--small');
     $this->assertSession()->elementAttributeContains('css', 'a.use-ajax[href$="/admin/config/ai/schemadotorg-jsonld/log/clear"]', 'class', 'button');
@@ -158,8 +166,42 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
 
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log/download');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->responseContains('entity_type,entity_id,entity_label,bundle,url,prompt,response,created');
+    $this->assertSession()->responseContains('entity_type,entity_id,entity_label,bundle,url,prompt,response,valid,created');
+    $this->assertSession()->responseContains('"2027-01-15 19:00:00"');
+    $this->assertSession()->responseContains('"No"');
     $this->assertSession()->responseHeaderEquals('Content-Disposition', 'attachment; filename="ai-schemadotorg-jsonld-log.csv"');
+
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log', [
+      'query' => [
+        'entity_type' => 'node',
+        'entity_id' => $this->nodeId,
+      ],
+    ]);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('AI Schema.org JSON-LD: Log node');
+    $this->assertSession()->pageTextContains('Valid prompt 25');
+    $this->assertSession()->pageTextNotContains('Stored orphan prompt');
+    $this->assertSession()->pageTextNotContains('Orphan prompt');
+    $this->assertSession()->pageTextContains('Yes');
+    $this->assertSession()->responseNotContains('<td>No</td>');
+    $this->assertSession()->linkExists('Download CSV');
+    $this->assertSession()->linkNotExists('Clear log');
+    $this->assertSession()->linkByHrefExists('/admin/config/ai/schemadotorg-jsonld/log/download?entity_type=node&entity_id=' . $this->nodeId);
+    $this->assertSession()->linkByHrefExists('?entity_type=node&entity_id=' . $this->nodeId . '&page=1');
+
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log/download', [
+      'query' => [
+        'entity_type' => 'node',
+        'entity_id' => $this->nodeId,
+      ],
+    ]);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->responseContains('Valid prompt 25');
+    $this->assertSession()->responseNotContains('Stored orphan prompt');
+    $this->assertSession()->responseNotContains('Orphan prompt');
+    $this->assertSession()->responseContains('"Yes"');
+    $this->assertSession()->responseNotContains('"No"');
+    $this->assertSession()->responseHeaderEquals('Content-Disposition', 'attachment; filename="ai-schemadotorg-jsonld-node-' . $this->nodeId . '-log.csv"');
 
     $node = Node::load($this->nodeId);
     $this->assertNotNull($node);

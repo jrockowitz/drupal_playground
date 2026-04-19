@@ -55,7 +55,7 @@ class AiSchemaDotOrgJsonLdLogClearForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl(): Url {
-    return Url::fromRoute('ai_schemadotorg_jsonld_log.view');
+    return Url::fromUserInput('/' . $this->getRedirectDestination()->get());
   }
 
   /**
@@ -71,7 +71,7 @@ class AiSchemaDotOrgJsonLdLogClearForm extends ConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->logStorage->truncate();
     $this->messenger()->addStatus($this->t('The AI Schema.org JSON-LD log has been cleared.'));
-    $form_state->setRedirect('ai_schemadotorg_jsonld_log.view');
+    $form_state->setRedirectUrl($this->getCancelUrl());
   }
 
 }

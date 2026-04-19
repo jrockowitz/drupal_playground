@@ -132,6 +132,7 @@ class AiSchemaDotOrgJsonLdLogEventSubscriberTest extends UnitTestCase {
         'url' => 'https://example.com/node/99',
         'prompt' => 'Prompt text',
         'response' => '{"@type":"WebPage"}',
+        'valid' => 1,
       ]);
 
     $this->subscriber->onPostGenerateResponse($event);
@@ -182,6 +183,7 @@ class AiSchemaDotOrgJsonLdLogEventSubscriberTest extends UnitTestCase {
         'url' => '',
         'prompt' => 'Prompt text',
         'response' => '{"@type":"WebPage"}',
+        'valid' => 1,
       ]);
 
     $this->subscriber->onPostGenerateResponse($event);
@@ -208,6 +210,51 @@ class AiSchemaDotOrgJsonLdLogEventSubscriberTest extends UnitTestCase {
     );
 
     $this->logStorage->expects($this->never())->method('insert');
+    $this->subscriber->onPostGenerateResponse($event);
+  }
+
+  /**
+   * Tests invalid JSON responses are logged as invalid.
+   */
+  public function testSubscriberMarksInvalidJsonResponses(): void {
+    $output = new ChatOutput(
+      new ChatMessage('assistant', '{not valid json}'),
+      ['raw' => 'response'],
+      [],
+    );
+    $event = new PostGenerateResponseEvent(
+      'request-id-jsonld-invalid',
+      'test_provider',
+      'chat',
+      [],
+      'Prompt text',
+      'test-model',
+      $output,
+      [
+        'ai_automator',
+        'ai_automator:field_name:' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
+        'ai_automator:entity_type:node',
+        'ai_automator:entity:99',
+      ],
+    );
+
+    $this->entityTypeManager->method('hasDefinition')
+      ->with('node')
+      ->willReturn(FALSE);
+
+    $this->logStorage->expects($this->once())
+      ->method('insert')
+      ->with([
+        'entity_type' => 'node',
+        'entity_id' => '99',
+        'entity_label' => '',
+        'bundle' => '',
+        'url' => '',
+        'prompt' => 'Prompt text',
+        'response' => '{not valid json}',
+        'valid' => 0,
+      ]);
+
     $this->subscriber->onPostGenerateResponse($event);
   }
 

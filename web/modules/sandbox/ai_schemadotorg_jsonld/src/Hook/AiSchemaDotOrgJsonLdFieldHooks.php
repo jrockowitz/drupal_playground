@@ -201,7 +201,7 @@ class AiSchemaDotOrgJsonLdFieldHooks {
 
     return [
       '#type' => 'link',
-      '#title' => $this->t('Edit Schema.org JSON-LD prompt'),
+      '#title' => $this->t('Edit prompt'),
       '#url' => $url,
       '#attributes' => [
         'class' => ['use-ajax', 'button', 'button--small'],

@@ -159,6 +159,8 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
       $json = substr($raw, $start, $end - $start + 1);
     }
 
+    $json = $this->repairInvalidQuoteEscapes($json);
+
     try {
       json_decode($json, TRUE, 512, JSON_THROW_ON_ERROR);
       return $json;
@@ -167,10 +169,25 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
       $this->loggerFactory->get('ai_schemadotorg_jsonld')
         ->warning('Invalid JSON in AI response: @message', ['@message' => $e->getMessage()]);
       $this->messenger->addWarning(
-        $this->t('The AI response contained invalid JSON. The field has been left empty.')
+        $this->t('The AI response contained invalid JSON. The original value has been preserved.')
       );
-      return '';
+      return $raw;
     }
+  }
+
+  /**
+   * Repairs bad quote escapes in extracted JSON before validation.
+   *
+   * @param string $json
+   *   The extracted JSON candidate.
+   *
+   * @return string
+   *   The repaired JSON candidate.
+   */
+  protected function repairInvalidQuoteEscapes(string $json): string {
+    $json = str_replace('\&quot;"', '\"', $json);
+    $json = str_replace('"\&quot;', '\"', $json);
+    return $json;
   }
 
   /**

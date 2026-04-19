@@ -28,15 +28,17 @@ interface AiSchemaDotOrgJsonLdLogStorageInterface {
   public function loadAll(): array;
 
   /**
-   * Loads a single paged slice of log rows ordered newest first.
+   * Loads a filtered paged slice of log rows ordered newest first.
    *
-   * @param int $limit
-   *   The number of rows per page.
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param string $entity_id
+   *   The entity ID.
    *
    * @return array
    *   The log rows.
    */
-  public function loadPage(int $limit = 10): array;
+  public function loadMultiple(string $entity_type_id = '', string $entity_id = ''): array;
 
   /**
    * Deletes log rows for a specific entity.

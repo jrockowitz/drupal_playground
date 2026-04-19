@@ -70,6 +70,7 @@ class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface
       'url' => $this->buildCanonicalUrl($entity),
       'prompt' => $this->extractPrompt($event),
       'response' => $this->extractResponse($event),
+      'valid' => $this->isValidJson($this->extractResponse($event)) ? 1 : 0,
     ]);
   }
 
@@ -97,6 +98,25 @@ class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface
     return ($normalized_output instanceof ChatMessage)
       ? $normalized_output->getText()
       : print_r($normalized_output, TRUE);
+  }
+
+  /**
+   * Determines whether the response contains valid JSON.
+   *
+   * @param string $response
+   *   The response text.
+   *
+   * @return bool
+   *   TRUE if the response is valid JSON, FALSE otherwise.
+   */
+  protected function isValidJson(string $response): bool {
+    try {
+      json_decode($response, TRUE, 512, JSON_THROW_ON_ERROR);
+      return TRUE;
+    }
+    catch (\JsonException) {
+      return FALSE;
+    }
   }
 
   /**

@@ -18,3 +18,6 @@ services:
 
   Drupal\ai_schemadotorg_jsonld_log\Hook\AiSchemaDotOrgJsonLdLogEntityHooks:
     autowire: true
+
+  Drupal\ai_schemadotorg_jsonld_log\Hook\AiSchemaDotOrgJsonLdLogFieldHooks:
+    autowire: true
