@@ -106,9 +106,9 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
     $this->assertSession()->linkExists('Edit prompt');
     $this->assertSession()->linkExists('View log');
     $this->assertSession()->pageTextContains('Please copy and paste the above Schema.org JSON-LD into the Schema Markup Validator or Google\'s Rich Results Test.');
-    $this->assertSession()->pageTextContains('JSON-LD copied to clipboard…');
+    $this->assertSession()->pageTextNotContains('JSON-LD copied to clipboard…');
 
-    // Check that the description appears before the buttons and the message appears after them.
+    // Check that the description appears before the buttons.
     $page_content = $this->getSession()->getPage()->getContent();
     $this->assertLessThan(
       strpos($page_content, 'Copy JSON-LD'),
@@ -121,10 +121,6 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
     $this->assertLessThan(
       strpos($page_content, 'View log'),
       strpos($page_content, 'Edit prompt')
-    );
-    $this->assertLessThan(
-      strpos($page_content, 'JSON-LD copied to clipboard…'),
-      strpos($page_content, 'View log')
     );
 
     $this->assertSession()->elementAttributeContains(
@@ -157,6 +153,14 @@ class AiSchemaDotOrgJsonLdTest extends BrowserTestBase {
       'edit any page content',
     ]);
     $this->drupalLogin($editor);
+    $this->drupalGet($node->toUrl('edit-form'));
+    $this->assertSession()->linkNotExists('Edit prompt');
+    $this->assertSession()->linkExists('View log');
+
+    $viewer = $this->drupalCreateUser([
+      'access content',
+    ]);
+    $this->drupalLogin($viewer);
     $this->drupalGet($node->toUrl('edit-form'));
     $this->assertSession()->linkNotExists('Edit prompt');
     $this->assertSession()->linkNotExists('View log');

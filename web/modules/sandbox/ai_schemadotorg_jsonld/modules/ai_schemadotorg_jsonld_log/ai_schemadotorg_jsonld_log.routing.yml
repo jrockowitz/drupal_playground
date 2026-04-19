@@ -4,14 +4,14 @@ ai_schemadotorg_jsonld_log.view:
     _controller: '\Drupal\ai_schemadotorg_jsonld_log\Controller\AiSchemaDotOrgJsonLdLogController::index'
     _title_callback: '\Drupal\ai_schemadotorg_jsonld_log\Controller\AiSchemaDotOrgJsonLdLogController::title'
   requirements:
-    _permission: 'administer site configuration'
+    _custom_access: '\Drupal\ai_schemadotorg_jsonld_log\Controller\AiSchemaDotOrgJsonLdLogController::access'
 
 ai_schemadotorg_jsonld_log.download:
   path: '/admin/config/ai/schemadotorg-jsonld/log/download'
   defaults:
     _controller: '\Drupal\ai_schemadotorg_jsonld_log\Controller\AiSchemaDotOrgJsonLdLogController::download'
   requirements:
-    _permission: 'administer site configuration'
+    _custom_access: '\Drupal\ai_schemadotorg_jsonld_log\Controller\AiSchemaDotOrgJsonLdLogController::access'
 
 ai_schemadotorg_jsonld_log.clear:
   path: '/admin/config/ai/schemadotorg-jsonld/log/clear'

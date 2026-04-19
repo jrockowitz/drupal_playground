@@ -171,6 +171,17 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
     $this->assertSession()->responseContains('"No"');
     $this->assertSession()->responseHeaderEquals('Content-Disposition', 'attachment; filename="ai-schemadotorg-jsonld-log.csv"');
 
+    $editor = $this->drupalCreateUser([
+      'access content',
+      'edit any page content',
+    ]);
+    $this->drupalLogin($editor);
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log');
+    $this->assertSession()->statusCodeEquals(403);
+
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log/download');
+    $this->assertSession()->statusCodeEquals(403);
+
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log', [
       'query' => [
         'entity_type' => 'node',
@@ -202,6 +213,45 @@ class AiSchemaDotOrgJsonLdLogTest extends BrowserTestBase {
     $this->assertSession()->responseContains('"Yes"');
     $this->assertSession()->responseNotContains('"No"');
     $this->assertSession()->responseHeaderEquals('Content-Disposition', 'attachment; filename="ai-schemadotorg-jsonld-node-' . $this->nodeId . '-log.csv"');
+
+    $viewer = $this->drupalCreateUser([
+      'access content',
+    ]);
+    $this->drupalLogin($viewer);
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log', [
+      'query' => [
+        'entity_type' => 'node',
+        'entity_id' => $this->nodeId,
+      ],
+    ]);
+    $this->assertSession()->statusCodeEquals(403);
+
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log/download', [
+      'query' => [
+        'entity_type' => 'node',
+        'entity_id' => $this->nodeId,
+      ],
+    ]);
+    $this->assertSession()->statusCodeEquals(403);
+
+    $this->drupalLogin($editor);
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log', [
+      'query' => [
+        'entity_type' => 'node',
+        'entity_id' => '999999',
+      ],
+    ]);
+    $this->assertSession()->statusCodeEquals(403);
+
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log/download', [
+      'query' => [
+        'entity_type' => 'node',
+        'entity_id' => '999999',
+      ],
+    ]);
+    $this->assertSession()->statusCodeEquals(403);
+
+    $this->drupalLogin($admin);
 
     $node = Node::load($this->nodeId);
     $this->assertNotNull($node);

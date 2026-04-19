@@ -23,13 +23,10 @@
         ".ai-schemadotorg-jsonld-copy-button",
         context,
       ).forEach((button) => {
-        const fieldName = button.dataset.fieldName;
-        const messageSelector = `.ai-schemadotorg-jsonld-copy-message[data-field-name="${fieldName}"]`;
-        const message = context.querySelector
-          ? context.querySelector(messageSelector)
-          : null;
+        const { fieldName } = button.dataset;
+        let checkmarkTimeout = null;
 
-        if (!button || !message || !fieldName) {
+        if (!button || !fieldName) {
           return;
         }
 
@@ -38,8 +35,6 @@
               `[name="${fieldName}[0][value]"], textarea[data-drupal-selector*="${fieldName}"]`,
             )
           : null;
-
-        message.addEventListener("transitionend", hideMessage);
 
         button.addEventListener("click", (event) => {
           const value = textarea ? textarea.value : "";
@@ -50,21 +45,33 @@
             );
           }
 
-          showMessage();
+          showCheckmark();
           Drupal.announce(Drupal.t("JSON-LD copied to clipboard…"));
           event.preventDefault();
         });
 
-        function showMessage() {
-          message.style.display = "inline-block";
-          setTimeout(() => {
-            message.style.opacity = "0";
-          }, 1500);
-        }
+        function showCheckmark() {
+          let checkmark = button.nextElementSibling;
+          if (
+            !checkmark ||
+            !checkmark.classList.contains(
+              "ai-schemadotorg-jsonld-copy-checkmark",
+            )
+          ) {
+            checkmark = document.createElement("span");
+            checkmark.className = "ai-schemadotorg-jsonld-copy-checkmark";
+            checkmark.textContent = "✓";
+            button.insertAdjacentElement("afterend", checkmark);
+          }
 
-        function hideMessage() {
-          message.style.display = "none";
-          message.style.opacity = "1";
+          if (checkmarkTimeout) {
+            clearTimeout(checkmarkTimeout);
+          }
+
+          checkmarkTimeout = setTimeout(() => {
+            checkmark.remove();
+            checkmarkTimeout = null;
+          }, 1500);
         }
       });
     },

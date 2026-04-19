@@ -6,6 +6,8 @@ namespace Drupal\ai_schemadotorg_jsonld_log\Controller;
 
 use Drupal\ai_schemadotorg_jsonld_log\AiSchemaDotOrgJsonLdLogStorageInterface;
 use Drupal\Component\Serialization\Json;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -59,6 +61,26 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
     }
 
     return 'AI Schema.org JSON-LD';
+  }
+
+  /**
+   * Checks access for the log page and CSV download.
+   */
+  public function access(): AccessResultInterface {
+    $entity = $this->getFilteredEntity();
+    if ($entity) {
+      return AccessResult::allowedIf($entity->access('update'))
+        ->addCacheableDependency($entity)
+        ->cachePerPermissions()
+        ->cachePerUser();
+    }
+
+    $query = $this->getFilterQuery();
+    if ($query !== []) {
+      return AccessResult::forbidden()->cachePerUser();
+    }
+
+    return AccessResult::allowedIfHasPermission($this->currentUser(), 'administer site configuration');
   }
 
   /**

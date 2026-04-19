@@ -1,19 +1,5 @@
-.ai-schemadotorg-jsonld-copy {
-  display: none;
-  margin-top: 0.5rem;
-}
-
-html.js .ai-schemadotorg-jsonld-copy {
-  display: block;
-}
-
-.ai-schemadotorg-jsonld-copy-message {
-  display: none;
-  margin-left: 0.5rem;
-  transition: opacity 1s;
+.ai-schemadotorg-jsonld-copy-checkmark {
+  margin: 0 0.4rem;
   font-weight: bold;
-}
-
-.ai-schemadotorg-jsonld-copy-message::before {
-  content: "✓";
+  font-size: 1.2rem;
 }

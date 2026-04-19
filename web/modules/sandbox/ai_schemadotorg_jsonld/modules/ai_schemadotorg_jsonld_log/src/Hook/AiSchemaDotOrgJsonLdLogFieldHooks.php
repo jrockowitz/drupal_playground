@@ -86,7 +86,7 @@ class AiSchemaDotOrgJsonLdLogFieldHooks {
         'library' => ['core/drupal.dialog.ajax'],
       ],
       '#weight' => 101,
-      '#access' => $this->currentUser->hasPermission('administer site configuration'),
+      '#access' => $entity->access('update', $this->currentUser),
     ];
   }
 

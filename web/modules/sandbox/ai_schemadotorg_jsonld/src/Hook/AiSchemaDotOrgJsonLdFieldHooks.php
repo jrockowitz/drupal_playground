@@ -129,7 +129,6 @@ class AiSchemaDotOrgJsonLdFieldHooks {
     $field_widget_complete_form['widget'][0]['copy_jsonld_description'] = $this->buildCopyJsonLdDescription();
     $field_widget_complete_form['copy_jsonld'] = $this->buildCopyJsonLdButton($field_name);
     $field_widget_complete_form['edit_prompt'] = $this->buildEditPromptLink($entity);
-    $field_widget_complete_form['copy_jsonld_message'] = $this->buildCopyJsonLdMessage($field_name);
   }
 
   /**
@@ -244,25 +243,6 @@ class AiSchemaDotOrgJsonLdFieldHooks {
       ],
       '#attached' => ['library' => ['ai_schemadotorg_jsonld/copy']],
       '#weight' => 99,
-    ];
-  }
-
-  /**
-   * Builds the copy JSON-LD message.
-   *
-   * @param string $field_name
-   *   The field machine name.
-   */
-  protected function buildCopyJsonLdMessage(string $field_name): array {
-    return [
-      '#type' => 'html_tag',
-      '#tag' => 'span',
-      '#attributes' => [
-        'class' => ['ai-schemadotorg-jsonld-copy-message'],
-        'data-field-name' => $field_name,
-      ],
-      '#plain_text' => $this->t('JSON-LD copied to clipboard…'),
-      '#weight' => 102,
     ];
   }
 
