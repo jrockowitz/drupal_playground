@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\Tests\ai_schemadotorg_jsonld\Functional;
 
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
-use Drupal\node\Entity\NodeType;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 
 /**

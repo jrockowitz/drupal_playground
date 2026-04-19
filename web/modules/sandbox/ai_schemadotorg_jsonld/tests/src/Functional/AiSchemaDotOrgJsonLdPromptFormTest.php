@@ -46,7 +46,6 @@ class AiSchemaDotOrgJsonLdPromptFormTest extends AiSchemaDotOrgJsonLdTestBase {
     $this->assertSession()->statusCodeEquals(403);
     $this->drupalLogout();
 
-
     // Check that the prompt form loads with the expected values.
     $this->drupalLogin($this->adminUser);
 
