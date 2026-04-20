@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Creates and manages the Schema.org JSON-LD field on entity bundles.
@@ -36,6 +37,7 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly ModuleHandlerInterface $moduleHandler,
     protected readonly UuidInterface $uuid,
+    #[Autowire(service: 'ai_automator.status_field')]
     protected readonly AiAutomatorStatusField $aiAutomatorStatusField,
   ) {}
 

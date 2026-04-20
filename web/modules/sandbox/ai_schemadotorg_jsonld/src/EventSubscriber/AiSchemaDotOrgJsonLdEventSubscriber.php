@@ -87,12 +87,10 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
     }
 
     $values = $event->getValues();
-    $processed = [];
-    foreach ($values as $value) {
-      $processed[] = $this->extractJson((string) $value);
+    foreach ($values as $index => $value) {
+      $values[$index] = $this->extractJson((string) $value);
     }
-
-    $event->setValues($processed);
+    $event->setValues($values);
   }
 
   /**
