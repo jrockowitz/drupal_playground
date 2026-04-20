@@ -11,7 +11,7 @@ use Drupal\Tests\ai_schemadotorg_jsonld\Functional\AiSchemaDotOrgJsonLdTestBase;
 /**
  * Tests breadcrumb JSON-LD page attachments.
  *
- * @group ai_schemadotorg_jsonld_breadcrumb
+ * @group ai_schemadotorg_jsonld
  */
 class AiSchemaDotOrgJsonLdBreadcrumbTest extends AiSchemaDotOrgJsonLdTestBase {
 
@@ -31,16 +31,16 @@ class AiSchemaDotOrgJsonLdBreadcrumbTest extends AiSchemaDotOrgJsonLdTestBase {
     // Log in the administrator user to configure the node page automator.
     $this->drupalLogin($this->adminUser);
 
-    // Enable node page AI schema.org JSON-LD automator.
+    // Enable node support.
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld');
     $this->submitForm([
-      'enabled_entity_types[entity_types][node]' => 'node',
       'entity_types[node][bundles][page]' => TRUE,
     ], 'Save configuration');
 
-    // Add the node page AI schema.org JSON-LD automator field.
-    $this->container->get(AiSchemaDotOrgJsonLdBuilderInterface::class)
-      ->addFieldToEntity('node', 'page');
+    // Enable node:page AI schema.org JSON-LD automator.
+    $this->submitForm([
+      'enabled_entity_types[entity_types][node]' => 'node',
+    ], 'Save configuration');
 
     // Clear cached field definitions to ensure that the new schema.org JSON-LD
     // automator is used.
@@ -51,7 +51,6 @@ class AiSchemaDotOrgJsonLdBreadcrumbTest extends AiSchemaDotOrgJsonLdTestBase {
    * Tests the breadcrumb submodule attaches BreadcrumbList JSON-LD.
    */
   public function testBreadcrumbAttachment(): void {
-
     // Create a saved page so breadcrumb JSON-LD can be attached to its output.
     $node = Node::create([
       'type' => 'page',

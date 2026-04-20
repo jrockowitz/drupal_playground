@@ -11,7 +11,7 @@ use Drupal\Tests\ai_schemadotorg_jsonld\Functional\AiSchemaDotOrgJsonLdTestBase;
 /**
  * Tests the log admin UI.
  *
- * @group ai_schemadotorg_jsonld_log
+ * @group ai_schemadotorg_jsonld
  */
 class AiSchemaDotOrgJsonLdLogTest extends AiSchemaDotOrgJsonLdTestBase {
 

@@ -23,7 +23,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 /**
  * Tests the log event subscriber.
  *
- * @group ai_schemadotorg_jsonld_log
+ * @group ai_schemadotorg_jsonld
  */
 class AiSchemaDotOrgJsonLdLogEventSubscriberTest extends UnitTestCase {
 

@@ -12,7 +12,7 @@ use Drupal\Tests\ai_schemadotorg_jsonld\Kernel\AiSchemaDotOrgJsonLdTestBase;
 /**
  * Tests log storage.
  *
- * @group ai_schemadotorg_jsonld_log
+ * @group ai_schemadotorg_jsonld
  */
 class AiSchemaDotOrgJsonLdLogStorageTest extends AiSchemaDotOrgJsonLdTestBase {
 

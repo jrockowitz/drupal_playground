@@ -19,7 +19,7 @@ use Drupal\Tests\UnitTestCase;
 /**
  * Tests AiSchemaDotOrgJsonLdBreadcrumbManager.
  *
- * @group ai_schemadotorg_jsonld_breadcrumb
+ * @group ai_schemadotorg_jsonld
  */
 class AiSchemaDotOrgJsonLdBreadcrumbManagerTest extends UnitTestCase {
 

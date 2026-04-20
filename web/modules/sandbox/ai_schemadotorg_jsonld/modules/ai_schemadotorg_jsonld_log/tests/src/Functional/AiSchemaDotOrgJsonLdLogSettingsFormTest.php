@@ -9,7 +9,7 @@ use Drupal\Tests\ai_schemadotorg_jsonld\Functional\AiSchemaDotOrgJsonLdTestBase;
 /**
  * Tests the log settings added to the core settings form.
  *
- * @group ai_schemadotorg_jsonld_log
+ * @group ai_schemadotorg_jsonld
  */
 class AiSchemaDotOrgJsonLdLogSettingsFormTest extends AiSchemaDotOrgJsonLdTestBase {
 
@@ -17,7 +17,6 @@ class AiSchemaDotOrgJsonLdLogSettingsFormTest extends AiSchemaDotOrgJsonLdTestBa
    * {@inheritdoc}
    */
   protected static $modules = [
-    'json_field_widget',
     'ai_schemadotorg_jsonld_log',
   ];
 
