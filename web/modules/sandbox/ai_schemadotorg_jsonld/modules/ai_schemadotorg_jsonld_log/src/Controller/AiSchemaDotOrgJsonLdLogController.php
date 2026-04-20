@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\ai_schemadotorg_jsonld_log\Controller;
 
+use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgMessageTrait;
 use Drupal\ai_schemadotorg_jsonld_log\AiSchemaDotOrgJsonLdLogStorageInterface;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
@@ -23,6 +24,8 @@ use Symfony\Component\HttpFoundation\Response;
  * @phpstan-consistent-constructor
  */
 class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
+
+  use AiSchemaDotOrgMessageTrait;
 
   /**
    * Constructs an AiSchemaDotOrgJsonLdLogController object.
@@ -88,20 +91,10 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
    */
   public function index(): array {
     if (!$this->isLoggingEnabled()) {
-      return [
-        '#theme' => 'status_messages',
-        '#message_list' => [
-          'warning' => [
-            $this->t('Prompt and response logging is disabled.'),
-            $this->t('Enable prompt and response logging in the Schema.org JSON-LD settings to view logs.'),
-          ],
-        ],
-        '#status_headings' => [
-          'status' => $this->t('Status message'),
-          'warning' => $this->t('Warning message'),
-          'error' => $this->t('Error message'),
-        ],
-      ];
+      return $this->buildMessages([
+        $this->t('Prompt and response logging is disabled.'),
+        $this->t('Enable prompt and response logging in the Schema.org JSON-LD settings to view logs.'),
+      ], 'warning');
     }
 
     $query = $this->getFilterQuery();
@@ -167,6 +160,7 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
       'table' => [
         '#type' => 'table',
         '#header' => $this->buildTableHeader($is_filtered),
+        '#rows' => $rows,
         '#rows' => $rows,
         '#empty' => $this->t('No log entries available.'),
         '#attributes' => ['class' => ['ai-schemadotorg-jsonld-log-page__table']],

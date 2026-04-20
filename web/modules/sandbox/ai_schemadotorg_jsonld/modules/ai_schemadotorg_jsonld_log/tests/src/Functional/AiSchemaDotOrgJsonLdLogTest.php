@@ -247,7 +247,6 @@ class AiSchemaDotOrgJsonLdLogTest extends AiSchemaDotOrgJsonLdTestBase {
     $this->drupalLogin($this->adminUser);
 
     $node = Node::load($this->nodeId);
-    $this->assertNotNull($node);
     $node->delete();
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log');
     $this->assertSession()->pageTextContains('Orphan prompt');

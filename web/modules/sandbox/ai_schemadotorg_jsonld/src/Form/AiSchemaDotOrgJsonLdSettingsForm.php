@@ -111,7 +111,13 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       $form['entity_types'][$entity_type_id] = [
         '#type' => 'details',
         '#title' => $entity_type_definition->getLabel(),
-        '#description' => $this->t('Select the bundles that should get the Schema.org JSON-LD field. Then review the default prompt and optional default JSON-LD used for this entity type. Note: you can customize the prompt for an individual bundle by clicking Edit field, going to AI Automator Settings, and editing the automator prompt.'),
+        '#description' => $this->t('Select the bundles that should get the Schema.org JSON-LD field.')
+          . ' '
+          . $this->t("You can set the default prompt and optional default JSON-LD used for this entity type under 'Default settings'.")
+          . ' '
+          . $this->t("Note: you can customize the prompt for an individual bundle by clicking 'Edit prompt', going to AI Automator Settings, and editing the automator prompt.")
+          . ' '
+          . $this->t("To remove the Schema.org JSON-LD field, click 'Delete field' under 'Operations'."),
         '#open' => TRUE,
       ];
 
@@ -119,6 +125,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         '#type' => 'tableselect',
         '#header' => $header,
         '#options' => $options,
+        '#js_select' => (count($options) != count($disabled_bundles)),
         '#default_value' => array_fill_keys($disabled_bundles, TRUE),
       ];
 
@@ -131,12 +138,22 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       $form['entity_types'][$entity_type_id]['default_settings']['default_prompt'] = [
         '#type' => 'textarea',
         '#title' => $this->t('Default prompt'),
-        '#description' => $this->t('Token-based prompt sent to the LLM for @entity_type entities. Use <code>[@entity_type:ai_schemadotorg_jsonld:content]</code> to include the full rendered entity.', ['@entity_type' => $entity_type_id]),
+        '#description' => [
+          'description' => ['#markup' => $this->t('Token-based prompt sent to the LLM for @entity_type entities. Use <code>[@entity_type:ai_schemadotorg_jsonld:content]</code> to include the full rendered entity.', ['@entity_type' => $entity_type_id])],
+        ],
         '#rows' => 5,
         '#default_value' => $entity_type_settings[$entity_type_id]['default_prompt'] ?? '',
         '#parents' => ['entity_types', $entity_type_id, 'default_prompt'],
       ];
-
+      if ($this->moduleHandler->moduleExists('token')) {
+        $form['entity_types'][$entity_type_id]['default_settings']['default_prompt']['#description']['token_tree_link'] = [
+          '#theme' => 'token_tree_link',
+          '#token_types' => [$entity_type_id],
+          '#show_restricted' => TRUE,
+          '#show_nested' => FALSE,
+          '#prefix' => '<br/>',
+        ];
+      }
       $form['entity_types'][$entity_type_id]['default_settings']['default_jsonld'] = [
         '#type' => 'textarea',
         '#title' => $this->t('Default JSON-LD'),

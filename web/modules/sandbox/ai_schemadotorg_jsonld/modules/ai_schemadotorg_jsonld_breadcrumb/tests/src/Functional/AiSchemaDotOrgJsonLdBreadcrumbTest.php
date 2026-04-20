@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\ai_schemadotorg_jsonld_breadcrumb\Functional;
 
-use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Tests\ai_schemadotorg_jsonld\Functional\AiSchemaDotOrgJsonLdTestBase;
 

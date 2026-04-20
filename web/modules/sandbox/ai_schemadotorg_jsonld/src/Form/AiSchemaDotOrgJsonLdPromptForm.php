@@ -93,15 +93,18 @@ class AiSchemaDotOrgJsonLdPromptForm extends FormBase {
       '#default_value' => (string) $automator->get('token'),
       '#required' => TRUE,
       '#rows' => 12,
-      '#description' => $this->t('Edit the token-based automator prompt used to generate Schema.org JSON-LD for this bundle.'),
+      '#description' => [
+        'description' => ['#markup' => $this->t('Edit the token-based automator prompt used to generate Schema.org JSON-LD for this bundle.')],
+      ],
     ];
 
     if ($this->moduleHandler->moduleExists('token')) {
-      $form['token_browser'] = [
+      $form['prompt']['#description']['token_tree_link'] = [
         '#theme' => 'token_tree_link',
         '#token_types' => [$this->entityTypeId],
         '#show_restricted' => TRUE,
         '#show_nested' => FALSE,
+        '#prefix' => '<br/>',
       ];
     }
 
