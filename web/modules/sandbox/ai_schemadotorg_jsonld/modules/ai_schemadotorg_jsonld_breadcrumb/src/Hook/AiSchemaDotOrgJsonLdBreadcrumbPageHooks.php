@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\ai_schemadotorg_jsonld_breadcrumb\Hook;
 
 use Drupal\ai_schemadotorg_jsonld_breadcrumb\AiSchemaDotOrgJsonLdBreadcrumbManagerInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -38,7 +39,15 @@ class AiSchemaDotOrgJsonLdBreadcrumbPageHooks {
       return;
     }
 
-    $bubbleable_metadata->applyTo($attachments);
+    // Use CacheableMetadata (not BubbleableMetadata) to apply only cache
+    // metadata to $attachments. BubbleableMetadata::applyTo() assigns
+    // $build['#attached'] = $this->attachments directly, which would wipe out
+    // any #attached data added by earlier hook_page_attachments() hooks (e.g.
+    // the entity JSON-LD from the main module). CacheableMetadata::applyTo()
+    // only touches #cache, leaving #attached untouched.
+    CacheableMetadata::createFromRenderArray($attachments)
+      ->addCacheableDependency($bubbleable_metadata)
+      ->applyTo($attachments);
     $attachments['#attached']['html_head'][] = [
       [
         '#type' => 'html_tag',

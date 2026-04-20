@@ -46,7 +46,15 @@ class AiSchemaDotOrgJsonLdTest extends AiSchemaDotOrgJsonLdTestBase {
    */
   public function testNodeFlow(): void {
     $field_name = AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME;
-    $node_jsonld = '{"@context":"https://schema.org","@type":"WebPage","name":"Test page"}';
+    // Store pretty-printed JSON to verify the page hook compacts it on output.
+    $node_jsonld = json_encode(
+      ['@context' => 'https://schema.org', '@type' => 'WebPage', 'name' => 'Test page'],
+      JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    );
+    $node_jsonld_compact = json_encode(
+      ['@context' => 'https://schema.org', '@type' => 'WebPage', 'name' => 'Test page'],
+      JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+    );
 
     $this->drupalGet('/node/add/page');
 
@@ -111,16 +119,17 @@ class AiSchemaDotOrgJsonLdTest extends AiSchemaDotOrgJsonLdTestBase {
 
     $this->drupalLogin($this->adminUser);
 
-    // Check that entity JSON-LD is attached to the canonical page.
+    // Check that entity JSON-LD is attached to the canonical page, compacted
+    // (whitespace stripped), regardless of how it was stored in the field.
     $this->drupalGet($node->toUrl());
     $this->assertSession()->responseContains(
-      '<script type="application/ld+json">' . $node_jsonld . '</script>'
+      '<script type="application/ld+json">' . $node_jsonld_compact . '</script>'
     );
 
     // Check that canonical-route JSON-LD does not appear on other pages.
     $this->drupalGet('/');
     $this->assertSession()->responseNotContains(
-      '<script type="application/ld+json">' . $node_jsonld . '</script>'
+      '<script type="application/ld+json">' . $node_jsonld_compact . '</script>'
     );
   }
 

@@ -47,9 +47,6 @@ class AiSchemaDotOrgJsonLdPageHooks {
       return;
     }
     $field_value = $entity->get(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->value;
-    if (empty($field_value)) {
-      $field_value = NULL;
-    }
 
     $default_jsonld = $config->get('entity_types.' . $entity->getEntityTypeId() . '.default_jsonld');
     if (!empty($default_jsonld)) {
@@ -57,24 +54,40 @@ class AiSchemaDotOrgJsonLdPageHooks {
         [
           '#type' => 'html_tag',
           '#tag' => 'script',
-          '#value' => $default_jsonld,
+          '#value' => $this->compactJson($default_jsonld),
           '#attributes' => ['type' => 'application/ld+json'],
         ],
         'ai_schemadotorg_jsonld_default_' . $entity->getEntityTypeId(),
       ];
     }
 
-    if ($field_value !== NULL) {
+    if (!empty($field_value)) {
       $attachments['#attached']['html_head'][] = [
         [
           '#type' => 'html_tag',
           '#tag' => 'script',
-          '#value' => $field_value,
+          '#value' => $this->compactJson($field_value),
           '#attributes' => ['type' => 'application/ld+json'],
         ],
         'ai_schemadotorg_jsonld_' . $entity->getEntityTypeId() . '_' . $entity->id(),
       ];
     }
+  }
+
+  /**
+   * Decodes and re-encodes a JSON string to produce compact, whitespace-free output.
+   *
+   * @param string $json
+   *   The JSON string to compact.
+   *
+   * @return string
+   *   The compacted JSON string, or the original string if it cannot be decoded.
+   */
+  protected function compactJson(string $json): string {
+    $decoded = json_decode($json, TRUE);
+    return ($decoded)
+      ? json_encode($decoded, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+      : $json;
   }
 
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\ai_schemadotorg_jsonld_breadcrumb\Functional;
 
+use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Tests\ai_schemadotorg_jsonld\Functional\AiSchemaDotOrgJsonLdTestBase;
 
@@ -50,11 +51,19 @@ class AiSchemaDotOrgJsonLdBreadcrumbTest extends AiSchemaDotOrgJsonLdTestBase {
    * Tests the breadcrumb submodule attaches BreadcrumbList JSON-LD.
    */
   public function testBreadcrumbAttachment(): void {
-    // Create a saved page so breadcrumb JSON-LD can be attached to its output.
+    $entity_jsonld = json_encode([
+      '@context' => 'https://schema.org',
+      '@type' => 'WebPage',
+      'name' => 'Breadcrumb page',
+    ]);
+
+    // Create a page node with entity JSON-LD pre-populated so that both the
+    // entity JSON-LD hook and the breadcrumb hook are exercised together.
     $node = Node::create([
       'type' => 'page',
       'title' => 'Breadcrumb page',
       'status' => 1,
+      AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME => $entity_jsonld,
     ]);
     $node->save();
 
@@ -63,6 +72,12 @@ class AiSchemaDotOrgJsonLdBreadcrumbTest extends AiSchemaDotOrgJsonLdTestBase {
     // Check that breadcrumb JSON-LD is attached when the submodule is enabled.
     $this->assertSession()->responseContains('"@type":"BreadcrumbList"');
     $this->assertSession()->responseContains('"name":"Breadcrumb page"');
+
+    // Check that entity JSON-LD is also present — previously, the breadcrumb
+    // hook called BubbleableMetadata::applyTo() which replaced
+    // $attachments['#attached'] entirely, wiping out the entity JSON-LD that
+    // the main module's hook had already appended.
+    $this->assertSession()->responseContains('"@type":"WebPage"');
   }
 
 }
