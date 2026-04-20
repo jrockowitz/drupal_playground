@@ -115,14 +115,22 @@ class AiSchemaDotOrgJsonLdLogTest extends AiSchemaDotOrgJsonLdTestBase {
     // Check that administrators can access the global log and see recent data.
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld/log');
     $this->assertSession()->statusCodeEquals(200);
+
+    // Verify that global log operations are present.
     $this->assertSession()->linkExists('Download CSV');
     $this->assertSession()->linkExists('Clear log');
+
+    // Verify that the table contains expected data from the test setup.
     $this->assertSession()->pageTextContains('Valid prompt 25');
     $this->assertSession()->pageTextContains('"name": "Valid 25"');
     $this->assertSession()->pageTextContains('Stored orphan prompt');
     $this->assertSession()->pageTextContains('Orphan prompt');
+
+    // Verify that valid and invalid entries are correctly labeled in the UI.
     $this->assertSession()->pageTextContains('Yes');
     $this->assertSession()->pageTextContains('No');
+
+    // Verify that the pager is functioning by checking for older records.
     $this->assertSession()->pageTextNotContains('Valid prompt 05');
     $this->assertSession()->linkExists('Next ›');
 

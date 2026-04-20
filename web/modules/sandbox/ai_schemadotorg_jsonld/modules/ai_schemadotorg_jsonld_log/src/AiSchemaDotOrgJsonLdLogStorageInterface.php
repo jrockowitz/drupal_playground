@@ -15,7 +15,7 @@ interface AiSchemaDotOrgJsonLdLogStorageInterface {
    * Inserts a log row.
    *
    * @param array $values
-   *   The values to insert.
+   *   The values to insert, keyed by column name.
    */
   public function insert(array $values): void;
 
@@ -23,7 +23,7 @@ interface AiSchemaDotOrgJsonLdLogStorageInterface {
    * Loads all log rows ordered newest first.
    *
    * @return array
-   *   The log rows.
+   *   An array of log rows, where each row is an associative array.
    */
   public function loadAll(): array;
 
@@ -31,12 +31,12 @@ interface AiSchemaDotOrgJsonLdLogStorageInterface {
    * Loads a filtered paged slice of log rows ordered newest first.
    *
    * @param string $entity_type_id
-   *   The entity type ID.
+   *   (optional) The entity type ID to filter by.
    * @param string $entity_id
-   *   The entity ID.
+   *   (optional) The entity ID to filter by.
    *
    * @return array
-   *   The log rows.
+   *   An array of paged log rows.
    */
   public function loadMultiple(string $entity_type_id = '', string $entity_id = ''): array;
 

@@ -107,6 +107,10 @@ class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTokenReso
    */
   protected function stripOuterWrappingDivs(string $html): string {
     $trimmed = trim($html);
+
+    // This regex looks for an outer <div> pair that contains exactly one
+    // other <div> as its direct child (ignoring whitespace). It uses the
+    // /s modifier so that dot matches newlines.
     while (preg_match('/^<div[^>]*>\s*(<div[\s\S]*<\/div>)\s*<\/div>$/s', $trimmed, $matches)) {
       $inner = trim($matches[1]);
       if ($inner === $trimmed) {

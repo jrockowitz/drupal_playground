@@ -60,6 +60,12 @@ class AiSchemaDotOrgJsonLdCommands extends DrushCommands {
    *
    * @param string $entity_type
    *   The content entity type ID.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityTypeInterface
+   *   The entity type definition.
+   *
+   * @throws \InvalidArgumentException
+   *   Thrown if the entity type is not supported.
    */
   protected function getSupportedEntityTypeDefinition(string $entity_type): ContentEntityTypeInterface {
     $supported_entity_types = $this->manager->getSupportedEntityTypes();
@@ -73,12 +79,18 @@ class AiSchemaDotOrgJsonLdCommands extends DrushCommands {
   }
 
   /**
-   * Validates the provided bundle for the entity type.
+   * Validates the provided bundle machine name for the given entity type.
+   *
+   * For entity types without bundles (like 'user'), the bundle ID must match
+   * the entity type ID. For others, the bundle must exist in Drupal.
    *
    * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type_definition
    *   The content entity type definition.
    * @param string $bundle
-   *   The bundle ID.
+   *   The bundle machine name.
+   *
+   * @throws \InvalidArgumentException
+   *   Thrown if the bundle is invalid for the entity type.
    */
   protected function validateBundle(ContentEntityTypeInterface $entity_type_definition, string $bundle): void {
     $entity_type_id = $entity_type_definition->id();

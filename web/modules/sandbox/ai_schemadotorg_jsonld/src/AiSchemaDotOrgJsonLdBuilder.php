@@ -53,7 +53,10 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
   }
 
   /**
-   * Creates or updates the field storage config.
+   * Creates or updates the field storage configuration for the JSON-LD field.
+   *
+   * The storage is created as a 'json_native' field type if it doesn't already
+   * exist for the given entity type.
    *
    * @param string $entity_type_id
    *   The content entity type ID.
@@ -78,7 +81,7 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
   }
 
   /**
-   * Creates the field instance if it does not already exist.
+   * Creates the JSON-LD field instance on the specified bundle.
    *
    * @param string $entity_type_id
    *   The content entity type ID.
@@ -86,7 +89,7 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    *   The bundle ID.
    *
    * @return bool
-   *   TRUE if the field was created, FALSE if it already existed.
+   *   TRUE if the field instance was created, FALSE if it already existed.
    */
   protected function createField(string $entity_type_id, string $bundle): bool {
     $field_id = $entity_type_id . '.' . $bundle . '.' . self::FIELD_NAME;
@@ -111,7 +114,10 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
   }
 
   /**
-   * Creates the AI automator config entity.
+   * Creates the AI automator configuration entity for the bundle.
+   *
+   * Configures a default automator using the 'llm_json_native_field' rule
+   * and populates it with the default prompt for the entity type.
    *
    * @param string $entity_type_id
    *   The content entity type ID.

@@ -51,7 +51,10 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Unescapes HTML entities in the JSON-LD automator prompt before send.
+   * Unescapes HTML entities in the JSON-LD automator prompt before sending to LLM.
+   *
+   * This ensures that tokens containing HTML (like the rendered entity content)
+   * are sent as raw markup rather than double-escaped entities.
    *
    * @param \Drupal\ai\Event\PreGenerateResponseEvent $event
    *   The AI pre-generate response event.
@@ -78,6 +81,9 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
   /**
    * Cleans the AI response value for the JSON-LD field.
    *
+   * Triggers for the specific field_schemadotorg_jsonld field to extract
+   * only the JSON object from the AI's chat response.
+   *
    * @param \Drupal\ai_automators\Event\ValuesChangeEvent $event
    *   The values change event.
    */
@@ -95,6 +101,10 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
 
   /**
    * Extracts and validates a JSON object from a raw string.
+   *
+   * LLMs often wrap JSON in markdown fences or include preamble text. This
+   * method attempts to find the outermost { } boundaries to extract the
+   * actual JSON object.
    *
    * @param string $raw
    *   The raw string from the AI response.
@@ -128,6 +138,7 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
       $json = substr($raw, $start, $end - $start + 1);
     }
 
+    // Attempt to repair common LLM escaping mistakes before validation.
     $json = $this->repairInvalidQuoteEscapes($json);
 
     try {

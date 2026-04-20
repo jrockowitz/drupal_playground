@@ -216,6 +216,12 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
 
   /**
    * Downloads the log as a CSV response.
+   *
+   * Uses StreamedResponse and fputcsv to efficiently handle potentially large
+   * logs and ensure correct escaping of multiline prompts and responses.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *   the CSV download response.
    */
   public function download(): Response {
     $query = $this->getFilterQuery();
@@ -223,8 +229,10 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
     $entity_id = $query['entity_id'] ?? '';
     $filename = $this->buildDownloadFilename($entity_type, $entity_id);
 
-    $response = new StreamedResponse(function () use ($entity_type, $entity_id) {
+    $response = new StreamedResponse(function () use ($entity_type, $entity_id): void {
       $handle = fopen('php://output', 'w');
+
+      // Write the CSV header row.
       fputcsv($handle, [
         'entity_type',
         'entity_id',
@@ -237,6 +245,7 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
         'created',
       ]);
 
+      // Write each log row, formatting the 'valid' and 'created' columns.
       foreach ($this->getDownloadRows($entity_type, $entity_id) as $row) {
         fputcsv($handle, [
           $row['entity_type'],

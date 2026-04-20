@@ -12,7 +12,10 @@ interface AiSchemaDotOrgJsonLdManagerInterface {
   /**
    * Returns supported content entity type definitions.
    *
-   * @return array
+   * Supported entity types are content entities that are fieldable,
+   * have a canonical link template, and are not in the unsupported list.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityTypeInterface[]
    *   Supported entity type definitions keyed by entity type ID.
    */
   public function getSupportedEntityTypes(): array;
@@ -28,8 +31,11 @@ interface AiSchemaDotOrgJsonLdManagerInterface {
   /**
    * Adds entity type settings for newly enabled content entity types.
    *
+   * For each new entity type, a default prompt is built (either from a file
+   * or a fallback template) and saved to the module settings.
+   *
    * @param array $entity_type_ids
-   *   The content entity type IDs.
+   *   The content entity type IDs to add.
    */
   public function addEntityTypes(array $entity_type_ids): void;
 

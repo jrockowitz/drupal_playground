@@ -192,6 +192,8 @@ class AiSchemaDotOrgJsonLdTokenResolverTest extends KernelTestBase {
     $this->assertStringContainsString('https://drupal-playground.ddev.site/internal-path', $node_result);
     $this->assertStringNotContainsString('href="/', $node_result);
     $this->assertStringNotContainsString('src="/', $node_result);
+
+    // Check that images are filtered (unless alt text is kept).
     $this->assertStringNotContainsString('<img', $node_result);
 
     // Check that unsafe tags and attributes are filtered from the final output.

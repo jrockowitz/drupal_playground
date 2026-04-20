@@ -69,6 +69,8 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('ai_schemadotorg_jsonld.settings');
     $entity_type_settings = $config->get('entity_types') ?? [];
+
+    // Ensure 'node' is the first entity type if enabled, then sort others.
     $enabled_entity_type_ids = (isset($entity_type_settings['node']))
       ? array_merge(['node'], array_keys(array_diff_key($entity_type_settings, ['node' => TRUE])))
       : array_keys($entity_type_settings);
@@ -79,6 +81,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       '#tree' => TRUE,
     ];
 
+    // Build a details section for each enabled entity type.
     foreach ($enabled_entity_type_ids as $entity_type_id) {
       $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type_id, FALSE);
       if (!$entity_type_definition instanceof ContentEntityTypeInterface) {
@@ -257,11 +260,14 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
   /**
    * Returns tableselect options for an entity type's bundles.
    *
+   * Each option includes the bundle label (linked to Field UI if available),
+   * the description, and operations like 'Edit field' and 'Delete field'.
+   *
    * @param string $entity_type_id
    *   The content entity type ID.
    *
    * @return array
-   *   Tableselect options keyed by bundle machine name.
+   *   An associative array of tableselect options keyed by bundle machine name.
    */
   protected function getEntityTypeOptions(string $entity_type_id): array {
     $options = [];
@@ -309,6 +315,9 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
 
   /**
    * Builds a bundle row for the entity type table.
+   *
+   * Checks for the existence of the JSON-LD field to determine if the
+   * checkbox should be disabled and which operations should be available.
    *
    * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type_definition
    *   The content entity type definition.
