@@ -28,6 +28,19 @@ interface AiSchemaDotOrgJsonLdLogStorageInterface {
   public function loadAll(): array;
 
   /**
+   * Loads all log rows for a specific entity, ordered newest first.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID to filter by.
+   * @param string $entity_id
+   *   The entity ID to filter by.
+   *
+   * @return array
+   *   An array of log rows, where each row is an associative array.
+   */
+  public function loadAllByEntity(string $entity_type_id, string $entity_id): array;
+
+  /**
    * Loads a filtered paged slice of log rows ordered newest first.
    *
    * @param string $entity_type_id

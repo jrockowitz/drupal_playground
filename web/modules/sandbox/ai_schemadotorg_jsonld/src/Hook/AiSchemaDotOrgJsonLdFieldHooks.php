@@ -133,21 +133,6 @@ class AiSchemaDotOrgJsonLdFieldHooks {
   }
 
   /**
-   * Implements hook_field_widget_single_element_json_textarea_form_alter().
-   *
-   * @param array $element
-   *   The field widget form element.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The form state.
-   * @param array $context
-   *   The widget context.
-   */
-  #[Hook('field_widget_single_element_json_textarea_form_alter')]
-  #[Hook('field_widget_single_element_json_editor_form_alter')]
-  public function fieldWidgetSingleElementFormAlter(array &$element, FormStateInterface $form_state, array $context): void {
-  }
-
-  /**
    * Builds the edit prompt link.
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity

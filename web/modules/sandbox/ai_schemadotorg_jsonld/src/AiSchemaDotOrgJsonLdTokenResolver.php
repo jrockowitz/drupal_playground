@@ -53,16 +53,17 @@ class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTokenReso
    * {@inheritdoc}
    */
   public function resolve(ContentEntityInterface $entity): FormattableMarkup {
-    // Switch to anonymous user.
-    $this->accountSwitcher->switchTo(new AnonymousUserSession());
-
-    // Switch to site default theme.
     $default_theme = $this->configFactory->get('system.theme')->get('default');
-    $active_theme = $this->themeInitialization->initTheme($default_theme);
     $original_theme = $this->themeManager->getActiveTheme();
-    $this->themeManager->setActiveTheme($active_theme);
 
+    // Switch to anonymous user and the site default theme inside the try block
+    // so that both are always restored in the finally, even if initTheme()
+    // or the render call throws.
+    $this->accountSwitcher->switchTo(new AnonymousUserSession());
     try {
+      $active_theme = $this->themeInitialization->initTheme($default_theme);
+      $this->themeManager->setActiveTheme($active_theme);
+
       $view_builder = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
       $build = $view_builder->view($entity, 'default');
       $html = (string) $this->renderer->renderInIsolation($build);
@@ -112,11 +113,7 @@ class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTokenReso
     // other <div> as its direct child (ignoring whitespace). It uses the
     // /s modifier so that dot matches newlines.
     while (preg_match('/^<div[^>]*>\s*(<div[\s\S]*<\/div>)\s*<\/div>$/s', $trimmed, $matches)) {
-      $inner = trim($matches[1]);
-      if ($inner === $trimmed) {
-        break;
-      }
-      $trimmed = $inner;
+      $trimmed = trim($matches[1]);
     }
     return $trimmed;
   }

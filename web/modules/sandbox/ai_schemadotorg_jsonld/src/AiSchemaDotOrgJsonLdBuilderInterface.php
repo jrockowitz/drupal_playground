@@ -20,13 +20,13 @@ interface AiSchemaDotOrgJsonLdBuilderInterface {
    * This orchestration method:
    * 1. Creates or updates the field storage configuration.
    * 2. Creates the field instance for the specific bundle.
-   * 3. Configures the AI automator for the field.
+   * 3. Configures the AI automator for the field (skipped if one already
+   *    exists, to avoid overwriting manual customizations).
    * 4. Adds the field to the default form display with the 'json_editor' or
-   *    'json_textarea' widget and the automator button.
-   * 5. Adds the field to the default view display with the 'json' formatter.
-   *
-   * Steps 3–5 are skipped if the field instance already existed to avoid
-   * overwriting manual customizations.
+   *    'json_textarea' widget and the automator button (skipped if the
+   *    component is already present).
+   * 5. Adds the field to the default view display with the 'json' formatter
+   *    (skipped if the component is already present).
    *
    * @param string $entity_type_id
    *   The entity type ID (e.g. 'node').

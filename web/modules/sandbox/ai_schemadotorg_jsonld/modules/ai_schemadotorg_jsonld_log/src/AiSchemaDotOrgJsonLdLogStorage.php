@@ -60,6 +60,15 @@ class AiSchemaDotOrgJsonLdLogStorage implements AiSchemaDotOrgJsonLdLogStorageIn
   /**
    * {@inheritdoc}
    */
+  public function loadAllByEntity(string $entity_type_id, string $entity_id): array {
+    return $this->buildSelectQuery($entity_type_id, $entity_id)
+      ->execute()
+      ->fetchAll(\PDO::FETCH_ASSOC);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function loadMultiple(string $entity_type_id = '', string $entity_id = ''): array {
     $query = $this->buildSelectQuery($entity_type_id, $entity_id)
       ->extend(PagerSelectExtender::class);
@@ -96,14 +105,9 @@ class AiSchemaDotOrgJsonLdLogStorage implements AiSchemaDotOrgJsonLdLogStorageIn
    * {@inheritdoc}
    */
   public function deleteByEntity(EntityInterface $entity): void {
-    $entity_id = $entity->id();
-    if ($entity_id === NULL) {
-      return;
-    }
-
     $this->connection->delete(self::TABLE_NAME)
       ->condition('entity_type', $entity->getEntityTypeId())
-      ->condition('entity_id', (string) $entity_id)
+      ->condition('entity_id', (string) $entity->id())
       ->execute();
   }
 

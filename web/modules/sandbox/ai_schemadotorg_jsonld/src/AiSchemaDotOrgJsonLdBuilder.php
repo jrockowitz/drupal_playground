@@ -81,24 +81,21 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
   }
 
   /**
-   * Creates the JSON-LD field instance on the specified bundle.
+   * Creates the JSON-LD field instance on the specified bundle if needed.
    *
    * @param string $entity_type_id
    *   The content entity type ID.
    * @param string $bundle
    *   The bundle ID.
-   *
-   * @return bool
-   *   TRUE if the field instance was created, FALSE if it already existed.
    */
-  protected function createField(string $entity_type_id, string $bundle): bool {
+  protected function createField(string $entity_type_id, string $bundle): void {
     $field_id = $entity_type_id . '.' . $bundle . '.' . self::FIELD_NAME;
     $existing = $this->entityTypeManager
       ->getStorage('field_config')
       ->load($field_id);
 
     if ($existing) {
-      return FALSE;
+      return;
     }
 
     FieldConfig::create([
@@ -109,8 +106,6 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
       'required' => FALSE,
       'translatable' => TRUE,
     ])->save();
-
-    return TRUE;
   }
 
   /**

@@ -62,6 +62,7 @@ class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface
     $entity_id = $this->extractTagValue($event->getTags(), 'ai_automator:entity:');
     $entity = $this->loadEntity($entity_type_id, $entity_id);
 
+    $response = $this->extractResponse($event);
     $this->logStorage->insert([
       'entity_type' => $entity_type_id,
       'entity_id' => $entity_id,
@@ -69,8 +70,8 @@ class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface
       'bundle' => ($entity !== NULL) ? $entity->bundle() : '',
       'url' => $this->buildCanonicalUrl($entity),
       'prompt' => $this->extractPrompt($event),
-      'response' => $this->extractResponse($event),
-      'valid' => $this->isValidJson($this->extractResponse($event)) ? 1 : 0,
+      'response' => $response,
+      'valid' => $this->isValidJson($response) ? 1 : 0,
     ]);
   }
 
@@ -150,23 +151,23 @@ class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface
   /**
    * Loads the tagged entity when possible.
    *
-   * @param string $entityTypeId
+   * @param string $entity_type_id
    *   The entity type ID.
-   * @param string $entityId
+   * @param string $entity_id
    *   The entity ID.
    *
    * @return \Drupal\Core\Entity\EntityInterface|null
    *   The loaded entity, or NULL if unavailable.
    */
-  protected function loadEntity(string $entityTypeId, string $entityId): ?EntityInterface {
-    if ($entityTypeId === '' || $entityId === '' || !$this->entityTypeManager->hasDefinition($entityTypeId)) {
+  protected function loadEntity(string $entity_type_id, string $entity_id): ?EntityInterface {
+    if ($entity_type_id === '' || $entity_id === '' || !$this->entityTypeManager->hasDefinition($entity_type_id)) {
       return NULL;
     }
 
     try {
       $entity = $this->entityTypeManager
-        ->getStorage($entityTypeId)
-        ->load($entityId);
+        ->getStorage($entity_type_id)
+        ->load($entity_id);
       return ($entity instanceof EntityInterface) ? $entity : NULL;
     }
     catch (\Throwable) {

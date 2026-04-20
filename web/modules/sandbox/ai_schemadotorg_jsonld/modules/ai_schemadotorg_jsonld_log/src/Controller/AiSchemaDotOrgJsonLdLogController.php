@@ -221,7 +221,7 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
    * logs and ensure correct escaping of multiline prompts and responses.
    *
    * @return \Symfony\Component\HttpFoundation\Response
-   *   the CSV download response.
+   *   The CSV download response.
    */
   public function download(): Response {
     $query = $this->getFilterQuery();
@@ -426,15 +426,7 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
       return $this->logStorage->loadAll();
     }
 
-    $rows = [];
-    foreach ($this->logStorage->loadAll() as $row) {
-      if ($row['entity_type'] !== $entity_type || $row['entity_id'] !== $entity_id) {
-        continue;
-      }
-      $rows[] = $row;
-    }
-
-    return $rows;
+    return $this->logStorage->loadAllByEntity($entity_type, $entity_id);
   }
 
   /**
