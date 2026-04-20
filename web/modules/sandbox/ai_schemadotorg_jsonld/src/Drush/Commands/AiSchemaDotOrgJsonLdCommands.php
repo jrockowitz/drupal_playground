@@ -41,7 +41,6 @@ class AiSchemaDotOrgJsonLdCommands extends DrushCommands {
    * Adds the Schema.org JSON-LD field to an entity bundle.
    */
   #[CLI\Command(name: 'ai_schemadotorg_jsonld:add-field')]
-  #[CLI\Help(category: 'AI')]
   #[CLI\Argument(name: 'entity_type', description: 'The content entity type ID.')]
   #[CLI\Argument(name: 'bundle', description: 'The bundle ID. Omit for entity types without bundles; the entity type ID is used automatically.')]
   #[CLI\Usage(name: 'drush ai_schemadotorg_jsonld:add-field node page', description: 'Adds the Schema.org JSON-LD field to the page node bundle.')]
