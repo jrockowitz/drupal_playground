@@ -132,7 +132,7 @@ class AiSchemaDotOrgJsonLdLogTest extends AiSchemaDotOrgJsonLdTestBase {
     $this->assertSession()->responseContains('Valid prompt 25');
     $this->assertSession()->responseContains('Stored orphan prompt');
     $this->assertSession()->responseContains('Orphan prompt');
-    $this->assertSession()->responseContains('"No"');
+    $this->assertSession()->responseContains(',No,');
     $this->assertSession()->responseHeaderEquals('Content-Disposition', 'attachment; filename="ai-schemadotorg-jsonld-log.csv"');
 
     $this->config('ai_schemadotorg_jsonld_log.settings')
@@ -198,8 +198,8 @@ class AiSchemaDotOrgJsonLdLogTest extends AiSchemaDotOrgJsonLdTestBase {
     $this->assertSession()->responseContains('Valid prompt 25');
     $this->assertSession()->responseNotContains('Stored orphan prompt');
     $this->assertSession()->responseNotContains('Orphan prompt');
-    $this->assertSession()->responseContains('"Yes"');
-    $this->assertSession()->responseNotContains('"No"');
+    $this->assertSession()->responseContains(',Yes,');
+    $this->assertSession()->responseNotContains(',No,');
     $this->assertSession()->responseHeaderEquals('Content-Disposition', 'attachment; filename="ai-schemadotorg-jsonld-node-' . $this->nodeId . '-log.csv"');
 
     $viewer = $this->drupalCreateUser([

@@ -17,6 +17,7 @@ use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Builds the AI Schema.org JSON-LD log admin UI.
@@ -161,7 +162,6 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
         '#type' => 'table',
         '#header' => $this->buildTableHeader($is_filtered),
         '#rows' => $rows,
-        '#rows' => $rows,
         '#empty' => $this->t('No log entries available.'),
         '#attributes' => ['class' => ['ai-schemadotorg-jsonld-log-page__table']],
       ],
@@ -221,39 +221,41 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
     $query = $this->getFilterQuery();
     $entity_type = $query['entity_type'] ?? '';
     $entity_id = $query['entity_id'] ?? '';
-    $lines = [
-      'entity_type,entity_id,entity_label,bundle,url,prompt,response,valid,created',
-    ];
+    $filename = $this->buildDownloadFilename($entity_type, $entity_id);
 
-    foreach ($this->getDownloadRows($entity_type, $entity_id) as $row) {
-      $lines[] = implode(',', [
-        $this->escapeCsvValue($row['entity_type']),
-        $this->escapeCsvValue($row['entity_id']),
-        $this->escapeCsvValue($row['entity_label']),
-        $this->escapeCsvValue($row['bundle']),
-        $this->escapeCsvValue($row['url']),
-        $this->escapeCsvValue($row['prompt']),
-        $this->escapeCsvValue($row['response']),
-        $this->escapeCsvValue($this->formatValid((int) $row['valid'])),
-        $this->escapeCsvValue($this->formatCreated((int) $row['created'])),
+    $response = new StreamedResponse(function () use ($entity_type, $entity_id) {
+      $handle = fopen('php://output', 'w');
+      fputcsv($handle, [
+        'entity_type',
+        'entity_id',
+        'entity_label',
+        'bundle',
+        'url',
+        'prompt',
+        'response',
+        'valid',
+        'created',
       ]);
-    }
 
-    $response = new Response(implode("\n", $lines));
+      foreach ($this->getDownloadRows($entity_type, $entity_id) as $row) {
+        fputcsv($handle, [
+          $row['entity_type'],
+          $row['entity_id'],
+          $row['entity_label'],
+          $row['bundle'],
+          $row['url'],
+          $row['prompt'],
+          $row['response'],
+          $this->formatValid((int) $row['valid']),
+          $this->formatCreated((int) $row['created']),
+        ]);
+      }
+      fclose($handle);
+    });
+
     $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
-    $response->headers->set('Content-Disposition', 'attachment; filename="' . $this->buildDownloadFilename($entity_type, $entity_id) . '"');
+    $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
     return $response;
-  }
-
-  /**
-   * Escapes a CSV value.
-   *
-   * @param string $value
-   *   The value to escape.
-   */
-  protected function escapeCsvValue(string $value): string {
-    $value = str_replace('"', '""', $value);
-    return '"' . $value . '"';
   }
 
   /**

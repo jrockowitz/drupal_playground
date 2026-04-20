@@ -72,7 +72,10 @@ class AiSchemaDotOrgJsonLdTokenResolverTest extends KernelTestBase {
     $this->container->get('theme_installer')->install(['stark']);
     $this->config('system.theme')->set('default', 'stark')->save();
 
-    $request = Request::create('https://drupal-playground.ddev.site/token-resolver');
+    global $base_url;
+    $base_url = 'https://drupal-playground.ddev.site';
+
+    $request = Request::create($base_url . '/token-resolver');
     $request->setSession(new Session(new MockArraySessionStorage()));
     $this->container->get('request_stack')->push($request);
 

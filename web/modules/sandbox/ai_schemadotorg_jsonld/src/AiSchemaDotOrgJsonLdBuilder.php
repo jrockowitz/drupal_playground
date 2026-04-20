@@ -198,6 +198,8 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
 
     $display->setComponent(self::FIELD_NAME, [
       'type' => $widget_type,
+      // Setting widget weight to 99 to ensure it appears last in the form
+      // but before the submit actions.
       'weight' => 99,
       'third_party_settings' => [
         'field_widget_actions' => [
@@ -239,6 +241,7 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
 
     $display->setComponent(self::FIELD_NAME, [
       'type' => 'json',
+      // Setting widget weight to 99 to ensure it appears before links.
       'weight' => 99,
     ])->save();
   }

@@ -124,15 +124,11 @@ class AiSchemaDotOrgJsonLdTokenResolver implements AiSchemaDotOrgJsonLdTokenReso
    *   The rendered HTML markup.
    */
   protected function absolutizeUrls(string $html): string {
-    $request = $this->requestStack->getCurrentRequest();
-    if (!$request) {
-      return $html;
-    }
-    $base = $request->getSchemeAndHttpHost();
+    global $base_url;
 
     // Replace root-relative href and src attributes (starting with /).
-    $html = preg_replace('/\bhref="(\/[^"]*)"/', 'href="' . $base . '$1"', $html);
-    $html = preg_replace('/\bsrc="(\/[^"]*)"/', 'src="' . $base . '$1"', $html);
+    $html = preg_replace("/\bhref=\"(\/[^\"]*)\"/", 'href="' . $base_url . '$1"', $html);
+    $html = preg_replace("/\bsrc=\"(\/[^\"]*)\"/", 'src="' . $base_url . '$1"', $html);
 
     return $html;
   }

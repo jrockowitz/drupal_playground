@@ -1,22 +1,22 @@
 Code review
 
-- Gemini Code review
-- Manual review
+- [x] Gemini Code review
+- [x] Manual review
 
 Documentation
 
-- README.md
+- [x] README.md
 - AGENTS.md
 
 Improve prompt management
 
-- Create a shared `[ai_schemadotorg_jsonld:requirements]`
+- [ ] Create a shared `[ai_schemadotorg_jsonld:requirements]`
 
 JSON-LD
 
-- Create a single @graph block for all JSON-LD output.
-- Default JSON per bundle.
+- [ ] Create a single @graph block for all JSON-LD output.
+- [ ] Default JSON per bundle.
 
 Hooks
 
-- hook_ai_schemadotorg_jsonld_prompt_alter()
+- [ ] hook_ai_schemadotorg_jsonld_prompt_alter()

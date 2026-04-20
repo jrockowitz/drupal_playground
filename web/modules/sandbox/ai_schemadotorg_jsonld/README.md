@@ -26,13 +26,15 @@ Only `node` is configured out of the box. Other supported entity types can be en
 - [Field Widget Actions](https://www.drupal.org/project/field_widget_actions) ^1.3
 - [JSON Field](https://www.drupal.org/project/json_field) ^1.7
 - Optional: `json_field:json_field_widget`
+  - A submodule of the [JSON Field](https://www.drupal.org/project/json_field) project.
   - Enables the `json_editor` widget for `field_schemadotorg_jsonld` and the admin
     `default_jsonld` setting.
 
 ## Installation
 
 1. Enable the module with `drush en ai_schemadotorg_jsonld -y`.
-2. Configure an AI provider at `/admin/config/ai/settings`.
+2. (Optional) Enable the logging submodule with `drush en ai_schemadotorg_jsonld_log -y`.
+3. Configure an AI provider at `/admin/config/ai/settings`.
 3. Go to `/admin/config/ai/schemadotorg-jsonld`.
 4. Review the enabled entity types, enable any additional supported entity types you need, and
    save the form.
@@ -129,4 +131,17 @@ The module can attach up to three JSON-LD script tags on canonical entity routes
 - `ai_schemadotorg_jsonld_{entity_type_id}_{id}`
   - The saved `field_schemadotorg_jsonld` value from the current entity.
 
-Other modules can alter these attachments with `hook_page_attachments_alter()`.
+## Submodules
+
+### AI Schema.org JSON-LD Log
+
+The `ai_schemadotorg_jsonld_log` submodule provides logging for AI prompts and responses.
+
+- **Admin UI**: Access logs at `/admin/config/ai/schemadotorg-jsonld/log`.
+- **Entity Integration**: Adds a "View log" link to the JSON-LD field on entity edit forms for quick access to that entity's history.
+- **CSV Export**: Logs can be exported to CSV for offline analysis.
+- **Auto-cleanup**: Logs are automatically deleted when the associated entity is deleted.
+
+### AI Schema.org JSON-LD Breadcrumb
+
+The `ai_schemadotorg_jsonld_breadcrumb` submodule attaches a `BreadcrumbList` JSON-LD block to canonical pages when breadcrumb data is available.
