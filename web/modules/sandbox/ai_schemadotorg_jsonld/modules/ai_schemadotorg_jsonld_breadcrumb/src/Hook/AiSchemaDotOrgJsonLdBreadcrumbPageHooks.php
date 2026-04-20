@@ -35,7 +35,7 @@ class AiSchemaDotOrgJsonLdBreadcrumbPageHooks {
   public function pageAttachments(array &$attachments): void {
     $bubbleable_metadata = new BubbleableMetadata();
     $breadcrumb_data = $this->breadcrumbManager->build($this->routeMatch, $bubbleable_metadata);
-    if ($breadcrumb_data === NULL) {
+    if (!$breadcrumb_data) {
       return;
     }
 

@@ -63,19 +63,17 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    */
   protected function createFieldStorage(string $entity_type_id): void {
     $storage_id = $entity_type_id . '.' . self::FIELD_NAME;
+
     $field_storage = $this->entityTypeManager
       ->getStorage('field_storage_config')
-      ->load($storage_id);
-
-    if (!$field_storage) {
-      $field_storage = FieldStorageConfig::create([
+      ->load($storage_id)
+      ?? FieldStorageConfig::create([
         'field_name' => self::FIELD_NAME,
         'entity_type' => $entity_type_id,
         'type' => 'json_native',
         'cardinality' => 1,
         'translatable' => TRUE,
       ]);
-    }
 
     $field_storage->save();
   }
@@ -90,11 +88,11 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    */
   protected function createField(string $entity_type_id, string $bundle): void {
     $field_id = $entity_type_id . '.' . $bundle . '.' . self::FIELD_NAME;
-    $existing = $this->entityTypeManager
+    $field_config = $this->entityTypeManager
       ->getStorage('field_config')
       ->load($field_id);
 
-    if ($existing) {
+    if ($field_config) {
       return;
     }
 
@@ -121,47 +119,48 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    */
   protected function createAutomator(string $entity_type_id, string $bundle): void {
     $automator_id = $entity_type_id . '.' . $bundle . '.' . self::FIELD_NAME . '.default';
-    $existing = $this->entityTypeManager
+
+    $automator = $this->entityTypeManager
       ->getStorage('ai_automator')
       ->load($automator_id);
-
-    if (!$existing) {
-      $prompt = $this->configFactory
-        ->get('ai_schemadotorg_jsonld.settings')
-        ->get('entity_types.' . $entity_type_id . '.default_prompt') ?? '';
-
-      $this->entityTypeManager->getStorage('ai_automator')->create([
-        'id' => $automator_id,
-        'label' => 'Schema.org JSON-LD Default',
-        'rule' => 'llm_json_native_field',
-        'input_mode' => 'token',
-        'weight' => 100,
-        'worker_type' => 'field_widget_actions',
-        'entity_type' => $entity_type_id,
-        'bundle' => $bundle,
-        'field_name' => self::FIELD_NAME,
-        'edit_mode' => FALSE,
-        'base_field' => 'revision_log',
-        'prompt' => '',
-        'token' => $prompt,
-        // plugin_config is used by AiAutomatorEntityModifier to build the
-        // runtime automatorConfig array (stripping the 'automator_' prefix).
-        // All fields that are read at runtime must be present here.
-        'plugin_config' => [
-          'automator_enabled' => 1,
-          'automator_rule' => 'llm_json_native_field',
-          'automator_mode' => 'token',
-          'automator_base_field' => 'revision_log',
-          'automator_prompt' => '',
-          'automator_token' => $prompt,
-          'automator_edit_mode' => 0,
-          'automator_label' => 'Schema.org JSON-LD Default',
-          'automator_weight' => '100',
-          'automator_worker_type' => 'field_widget_actions',
-          'automator_ai_provider' => 'default_json',
-        ],
-      ])->save();
+    if ($automator) {
+      return;
     }
+    $prompt = $this->configFactory
+      ->get('ai_schemadotorg_jsonld.settings')
+      ->get('entity_types.' . $entity_type_id . '.default_prompt') ?? '';
+
+    $this->entityTypeManager->getStorage('ai_automator')->create([
+      'id' => $automator_id,
+      'label' => 'Schema.org JSON-LD Default',
+      'rule' => 'llm_json_native_field',
+      'input_mode' => 'token',
+      'weight' => 100,
+      'worker_type' => 'field_widget_actions',
+      'entity_type' => $entity_type_id,
+      'bundle' => $bundle,
+      'field_name' => self::FIELD_NAME,
+      'edit_mode' => FALSE,
+      'base_field' => 'revision_log',
+      'prompt' => '',
+      'token' => $prompt,
+      // plugin_config is used by AiAutomatorEntityModifier to build the
+      // runtime automatorConfig array (stripping the 'automator_' prefix).
+      // All fields that are read at runtime must be present here.
+      'plugin_config' => [
+        'automator_enabled' => 1,
+        'automator_rule' => 'llm_json_native_field',
+        'automator_mode' => 'token',
+        'automator_base_field' => 'revision_log',
+        'automator_prompt' => '',
+        'automator_token' => $prompt,
+        'automator_edit_mode' => 0,
+        'automator_label' => 'Schema.org JSON-LD Default',
+        'automator_weight' => '100',
+        'automator_worker_type' => 'field_widget_actions',
+        'automator_ai_provider' => 'default_json',
+      ],
+    ])->save();
 
     $this->aiAutomatorStatusField->modifyStatusField($entity_type_id, $bundle);
   }
@@ -176,16 +175,13 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    */
   protected function addFormDisplayComponent(string $entity_type_id, string $bundle): void {
     $display_storage = $this->entityTypeManager->getStorage('entity_form_display');
-    $display = $display_storage->load($entity_type_id . '.' . $bundle . '.default');
-
-    if (!$display) {
-      $display = $display_storage->create([
-        'targetEntityType' => $entity_type_id,
-        'bundle' => $bundle,
-        'mode' => 'default',
-        'status' => TRUE,
-      ]);
-    }
+    $display = $display_storage->load($entity_type_id . '.' . $bundle . '.default')
+      ?? $display_storage->create([
+      'targetEntityType' => $entity_type_id,
+      'bundle' => $bundle,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
 
     if ($display->getComponent(self::FIELD_NAME)) {
       return;
@@ -225,16 +221,13 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    */
   protected function addViewDisplayComponent(string $entity_type_id, string $bundle): void {
     $display_storage = $this->entityTypeManager->getStorage('entity_view_display');
-    $display = $display_storage->load($entity_type_id . '.' . $bundle . '.default');
-
-    if (!$display) {
-      $display = $display_storage->create([
+    $display = $display_storage->load($entity_type_id . '.' . $bundle . '.default')
+      ?? $display_storage->create([
         'targetEntityType' => $entity_type_id,
         'bundle' => $bundle,
         'mode' => 'default',
         'status' => TRUE,
       ]);
-    }
 
     if ($display->getComponent(self::FIELD_NAME)) {
       return;

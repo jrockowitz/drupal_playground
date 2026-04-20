@@ -1,4 +1,4 @@
 ai_schemadotorg_jsonld_log:
   css:
-    theme:
+    component:
       css/ai_schemadotorg_jsonld_log.css: {}

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\ai_schemadotorg_jsonld\Hook;
 
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
-use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgMessageTrait;
+use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgJsonLdMessageTrait;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
@@ -28,7 +28,7 @@ use Drupal\Core\Url;
  */
 class AiSchemaDotOrgJsonLdFieldHooks {
 
-  use AiSchemaDotOrgMessageTrait;
+  use AiSchemaDotOrgJsonLdMessageTrait;
   use StringTranslationTrait;
 
   /**
@@ -52,6 +52,10 @@ class AiSchemaDotOrgJsonLdFieldHooks {
 
   /**
    * Implements hook_field_widget_action_info_alter().
+   *
+   * Adds 'json_editor' widget type to 'automator_json' field widget action info.
+   *
+   * @todo Get this change committed upstream to ai_automators.module.
    */
   #[Hook('field_widget_action_info_alter')]
   public function fieldWidgetActionInfoAlter(array &$definitions): void {
@@ -84,7 +88,7 @@ class AiSchemaDotOrgJsonLdFieldHooks {
       return AccessResult::neutral();
     }
 
-    if ($operation === 'view' && $items !== NULL) {
+    if ($operation === 'view' && $items) {
       $entity = $items->getEntity();
       if (!$entity->access('update', $account)) {
         return AccessResult::forbidden()

@@ -33,23 +33,21 @@ class AiSchemaDotOrgJsonLdPageHooks {
 
   /**
    * Implements hook_page_attachments().
+   *
+   * Attach entity field JSON-LD on canonical entity routes.
    */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     $config = $this->configFactory->get('ai_schemadotorg_jsonld.settings');
 
-    // Attach entity field JSON-LD on canonical entity routes.
     $entity = $this->getCurrentEntity($this->routeMatch);
-    if (!$entity instanceof ContentEntityInterface) {
+    if (!$entity instanceof ContentEntityInterface
+     || !$entity->hasField(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)) {
       return;
     }
-    if (!$entity->hasField(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)) {
-      return;
-    }
-    $field_value = $entity->get(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->value;
 
-    $default_jsonld = $config->get('entity_types.' . $entity->getEntityTypeId() . '.default_jsonld');
-    if (!empty($default_jsonld)) {
+    $default_jsonld = trim($config->get('entity_types.' . $entity->getEntityTypeId() . '.default_jsonld'));
+    if ($default_jsonld) {
       $attachments['#attached']['html_head'][] = [
         [
           '#type' => 'html_tag',
@@ -61,7 +59,8 @@ class AiSchemaDotOrgJsonLdPageHooks {
       ];
     }
 
-    if (!empty($field_value)) {
+    $field_value = $entity->get(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->value;
+    if ($field_value) {
       $attachments['#attached']['html_head'][] = [
         [
           '#type' => 'html_tag',

@@ -9,10 +9,10 @@ use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
 use Drupal\ai_automators\Event\ValuesChangeEvent;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
+use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgJsonLdAutomatorTrait;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -20,6 +20,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
 
+  use AiSchemaDotOrgJsonLdAutomatorTrait;
   use StringTranslationTrait;
 
   /**
@@ -29,16 +30,11 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
    *   The messenger service.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
    *   The logger channel factory.
-   * @param \Drupal\Core\StringTranslation\TranslationInterface $stringTranslation
-   *   The string translation service.
    */
   public function __construct(
     protected readonly MessengerInterface $messenger,
     protected readonly LoggerChannelFactoryInterface $loggerFactory,
-    TranslationInterface $stringTranslation,
-  ) {
-    $this->stringTranslation = $stringTranslation;
-  }
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -60,7 +56,7 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
    *   The AI pre-generate response event.
    */
   public function onPreGenerateResponse(PreGenerateResponseEvent $event): void {
-    if (!$this->isJsonLdAutomatorRequest($event->getTags())) {
+    if (!$this->hasTags($event->getTags())) {
       return;
     }
 
@@ -110,13 +106,13 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
    *   The raw string from the AI response.
    *
    * @return string
-   *   The extracted JSON string, or empty string on failure.
+   *   The extracted JSON string, or the original string on failure.
    */
   protected function extractJson(string $raw): string {
     $raw = trim($raw);
 
-    if ($raw === '') {
-      return '';
+    if (!$raw) {
+      return $raw;
     }
 
     if (str_starts_with($raw, '{') && str_ends_with($raw, '}')) {
@@ -130,9 +126,9 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
         $this->loggerFactory->get('ai_schemadotorg_jsonld')
           ->warning('Could not find JSON object boundaries in AI response.');
         $this->messenger->addWarning(
-          $this->t('The AI response did not contain a valid JSON object. The field has been left empty.')
+          $this->t('The AI response did not contain a valid JSON object. The original value has been preserved.')
         );
-        return '';
+        return $raw;
       }
 
       $json = substr($raw, $start, $end - $start + 1);
@@ -168,17 +164,6 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
     $json = str_replace('\&quot;"', '\"', $json);
     $json = str_replace('"\&quot;', '\"', $json);
     return $json;
-  }
-
-  /**
-   * Returns TRUE when the tags belong to this module's JSON-LD automator.
-   *
-   * @param array $tags
-   *   The request tags.
-   */
-  protected function isJsonLdAutomatorRequest(array $tags): bool {
-    return in_array('ai_automator', $tags)
-      && in_array('ai_automator:field_name:' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME, $tags);
   }
 
   /**

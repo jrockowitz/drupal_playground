@@ -22,7 +22,7 @@ trait AiSchemaDotOrgJsonLdCurrentEntityTrait {
    */
   protected function getCurrentEntity(RouteMatchInterface $route_match): ?ContentEntityInterface {
     $route_name = $route_match->getRouteName();
-    if ($route_name === NULL) {
+    if (!$route_name) {
       return NULL;
     }
 

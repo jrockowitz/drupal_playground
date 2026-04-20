@@ -16,7 +16,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -48,15 +47,11 @@ class AiSchemaDotOrgJsonLdPromptForm extends FormBase {
    *   The module handler.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
-   *   The request stack.
    */
   public function __construct(
     protected readonly ModuleHandlerInterface $moduleHandler,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
-    RequestStack $requestStack,
   ) {
-    $this->requestStack = $requestStack;
     $this->aiAutomatorStorage = $this->entityTypeManager->getStorage('ai_automator');
   }
 
@@ -67,7 +62,6 @@ class AiSchemaDotOrgJsonLdPromptForm extends FormBase {
     return new static(
       $container->get('module_handler'),
       $container->get('entity_type.manager'),
-      $container->get('request_stack'),
     );
   }
 

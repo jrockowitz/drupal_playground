@@ -17,6 +17,7 @@ use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Tests AiSchemaDotOrgJsonLdEventSubscriber.
@@ -52,10 +53,15 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
     $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
     $logger_factory->method('get')->willReturn($this->logger);
 
+    // The subscriber uses StringTranslationTrait which lazily loads the
+    // translation service from the container, so register it here.
+    $container = new Container();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
+
     $this->subscriber = new AiSchemaDotOrgJsonLdEventSubscriber(
       $this->messenger,
       $logger_factory,
-      $this->getStringTranslationStub(),
     );
   }
 
@@ -211,7 +217,7 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
       ],
       'missing json boundaries' => [
         'No JSON here at all',
-        '',
+        'No JSON here at all',
         1,
         1,
       ],

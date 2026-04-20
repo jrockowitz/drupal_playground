@@ -43,10 +43,10 @@ class AiSchemaDotOrgJsonLdCommands extends DrushCommands {
   #[CLI\Command(name: 'ai_schemadotorg_jsonld:add-field')]
   #[CLI\Help(category: 'AI')]
   #[CLI\Argument(name: 'entity_type', description: 'The content entity type ID.')]
-  #[CLI\Argument(name: 'bundle', description: 'The bundle ID, or the synthetic bundle equal to the entity type ID for non-bundle entities.')]
+  #[CLI\Argument(name: 'bundle', description: 'The bundle ID. Omit for entity types without bundles; the entity type ID is used automatically.')]
   #[CLI\Usage(name: 'drush ai_schemadotorg_jsonld:add-field node page', description: 'Adds the Schema.org JSON-LD field to the page node bundle.')]
-  #[CLI\Usage(name: 'drush ai_schemadotorg_jsonld:add-field user user', description: 'Adds the Schema.org JSON-LD field to the synthetic user bundle.')]
-  public function addField(string $entity_type, string $bundle): void {
+  #[CLI\Usage(name: 'drush ai_schemadotorg_jsonld:add-field user', description: 'Adds the Schema.org JSON-LD field to the user entity type (no bundle required).')]
+  public function addField(string $entity_type, string $bundle = ''): void {
     $entity_type_definition = $this->getSupportedEntityTypeDefinition($entity_type);
     $this->validateBundle($entity_type_definition, $bundle);
 
@@ -80,25 +80,29 @@ class AiSchemaDotOrgJsonLdCommands extends DrushCommands {
   }
 
   /**
-   * Validates the provided bundle machine name for the given entity type.
+   * Validates and resolves the bundle machine name for the given entity type.
    *
-   * For entity types without bundles (like 'user'), the bundle ID must match
-   * the entity type ID. For others, the bundle must exist in Drupal.
+   * For entity types without bundles (like 'user'), an empty bundle is
+   * automatically resolved to the entity type ID. For others, the bundle must
+   * exist in Drupal.
    *
    * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type_definition
    *   The content entity type definition.
    * @param string $bundle
-   *   The bundle machine name.
+   *   The bundle machine name. Resolved in-place for non-bundle entity types.
    *
    * @throws \InvalidArgumentException
    *   Thrown if the bundle is invalid for the entity type.
    */
-  protected function validateBundle(ContentEntityTypeInterface $entity_type_definition, string $bundle): void {
+  protected function validateBundle(ContentEntityTypeInterface $entity_type_definition, string &$bundle): void {
     $entity_type_id = $entity_type_definition->id();
     $bundle_entity_type_id = $entity_type_definition->getBundleEntityType();
 
     if (!$bundle_entity_type_id) {
-      if ($bundle !== $entity_type_id) {
+      if ($bundle === '') {
+        $bundle = $entity_type_id;
+      }
+      elseif ($bundle !== $entity_type_id) {
         throw new \InvalidArgumentException('The non-bundle entity type ' . $entity_type_id . ' requires the synthetic bundle ' . $entity_type_id . '.');
       }
       return;

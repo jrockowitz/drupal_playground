@@ -7,7 +7,7 @@ namespace Drupal\ai_schemadotorg_jsonld_log\EventSubscriber;
 use Drupal\ai\Event\PostGenerateResponseEvent;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
-use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
+use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgJsonLdAutomatorTrait;
 use Drupal\ai_schemadotorg_jsonld_log\AiSchemaDotOrgJsonLdLogStorageInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -18,6 +18,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * Logs prompt and response pairs for AI Schema.org JSON-LD requests.
  */
 class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface {
+
+  use AiSchemaDotOrgJsonLdAutomatorTrait;
 
   /**
    * Constructs an AiSchemaDotOrgJsonLdLogEventSubscriber object.
@@ -54,7 +56,7 @@ class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface
     if (!$this->configFactory->get('ai_schemadotorg_jsonld_log.settings')->get('enable')) {
       return;
     }
-    if (!$this->isJsonLdAutomatorRequest($event->getTags())) {
+    if (!$this->hasTags($event->getTags())) {
       return;
     }
 
@@ -66,8 +68,8 @@ class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface
     $this->logStorage->insert([
       'entity_type' => $entity_type_id,
       'entity_id' => $entity_id,
-      'entity_label' => ($entity !== NULL && $entity->label() !== NULL) ? (string) $entity->label() : '',
-      'bundle' => ($entity !== NULL) ? $entity->bundle() : '',
+      'entity_label' => ($entity && $entity->label()) ? (string) $entity->label() : '',
+      'bundle' => ($entity) ? $entity->bundle() : '',
       'url' => $this->buildCanonicalUrl($entity),
       'prompt' => $this->extractPrompt($event),
       'response' => $response,
@@ -138,17 +140,6 @@ class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface
   }
 
   /**
-   * Returns TRUE when the tags belong to this module's JSON-LD automator.
-   *
-   * @param array $tags
-   *   The request tags.
-   */
-  protected function isJsonLdAutomatorRequest(array $tags): bool {
-    return in_array('ai_automator', $tags)
-      && in_array('ai_automator:field_name:' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME, $tags);
-  }
-
-  /**
    * Loads the tagged entity when possible.
    *
    * @param string $entity_type_id
@@ -160,7 +151,7 @@ class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface
    *   The loaded entity, or NULL if unavailable.
    */
   protected function loadEntity(string $entity_type_id, string $entity_id): ?EntityInterface {
-    if ($entity_type_id === '' || $entity_id === '' || !$this->entityTypeManager->hasDefinition($entity_type_id)) {
+    if (!$entity_type_id || !$entity_id || !$this->entityTypeManager->hasDefinition($entity_type_id)) {
       return NULL;
     }
 
@@ -182,7 +173,7 @@ class AiSchemaDotOrgJsonLdLogEventSubscriber implements EventSubscriberInterface
    *   The loaded entity.
    */
   protected function buildCanonicalUrl(?EntityInterface $entity): string {
-    if ($entity === NULL || !$entity->getEntityType()->hasLinkTemplate('canonical')) {
+    if (!$entity || !$entity->getEntityType()->hasLinkTemplate('canonical')) {
       return '';
     }
 

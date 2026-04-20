@@ -10,7 +10,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 /**
  * Provides theme-native inline status messages.
  */
-trait AiSchemaDotOrgMessageTrait {
+trait AiSchemaDotOrgJsonLdMessageTrait {
 
   use StringTranslationTrait;
 

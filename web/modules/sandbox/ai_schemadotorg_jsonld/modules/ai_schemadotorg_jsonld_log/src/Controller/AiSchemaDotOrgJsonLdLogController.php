@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\ai_schemadotorg_jsonld_log\Controller;
 
-use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgMessageTrait;
+use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgJsonLdMessageTrait;
 use Drupal\ai_schemadotorg_jsonld_log\AiSchemaDotOrgJsonLdLogStorageInterface;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Access\AccessResult;
@@ -13,6 +13,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Link;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -26,7 +27,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
 
-  use AiSchemaDotOrgMessageTrait;
+  use AiSchemaDotOrgJsonLdMessageTrait;
 
   /**
    * Constructs an AiSchemaDotOrgJsonLdLogController object.
@@ -58,13 +59,13 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
   /**
    * Gets the page title.
    */
-  public function title(): string {
+  public function title(): TranslatableMarkup {
     $entity = $this->getFilteredEntity();
     if ($entity) {
-      return 'AI Schema.org JSON-LD: ' . $entity->label();
+      return $this->t('AI Schema.org JSON-LD: @label', ['@label' => $entity->label()]);
     }
 
-    return 'AI Schema.org JSON-LD';
+    return $this->t('AI Schema.org JSON-LD');
   }
 
   /**
@@ -98,19 +99,20 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
       ], 'warning');
     }
 
-    $query = $this->getFilterQuery();
-    $entity_type = $query['entity_type'] ?? '';
-    $entity_id = $query['entity_id'] ?? '';
-    $is_filtered = ($query !== []);
+    $filter_query = $this->getFilterQuery();
+    $entity_type = $filter_query['entity_type'] ?? '';
+    $entity_id = $filter_query['entity_id'] ?? '';
+
+    // Builds rows.
     $rows = [];
     foreach ($this->logStorage->loadMultiple($entity_type, $entity_id) as $row) {
       $data = [
         'created' => $this->formatCreated((int) $row['created']),
         'prompt' => $this->buildPreformattedCell($row['prompt']),
         'response' => $this->buildPreformattedCell($this->formatResponse($row['response'])),
-        'valid' => $this->formatValid((int) $row['valid']),
+        'value' => $this->formatYesNo((int) $row['valid']),
       ];
-      if (!$is_filtered) {
+      if (!$filter_query) {
         $data = [
           'created' => $data['created'],
           'entity' => [
@@ -118,7 +120,7 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
           ],
           'prompt' => $data['prompt'],
           'response' => $data['response'],
-          'valid' => $data['valid'],
+          'value' => $data['value'],
         ];
       }
 
@@ -128,21 +130,22 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
       ];
     }
 
+    // Build operations.
+    $operations = [
+      '#type' => 'container',
+    ];
+
     $download_url = Url::fromRoute('ai_schemadotorg_jsonld_log.download');
-    if ($query !== []) {
-      $download_url->setOption('query', $query);
+    if ($filter_query) {
+      $download_url->setOption('query', $filter_query);
     }
     $download_link = Link::fromTextAndUrl($this->t('Download CSV'), $download_url)
       ->toRenderable();
     $download_link['#attributes']['class'] = ['button', 'button--small'];
 
-    $operations = [
-      '#type' => 'container',
-      '#attributes' => ['class' => ['ai-schemadotorg-jsonld-log-operations']],
-      'download' => $download_link,
-    ];
+    $operations['download'] = $download_link;
 
-    if ($query === []) {
+    if (!$filter_query) {
       $clear_link = Link::fromTextAndUrl($this->t('Clear log'), Url::fromRoute('ai_schemadotorg_jsonld_log.clear'))
         ->toRenderable();
       $clear_link['#attributes']['class'] = ['use-ajax', 'button', 'button--small'];
@@ -152,15 +155,24 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
       $operations['clear'] = $clear_link;
     }
 
+    $header = [];
+    $header['created'] = ['data' => $this->t('Created'), 'width' => '15%'];
+    if (!$filter_query) {
+      $header['entity'] = ['data' => $this->t('Entity'), 'width' => '15%'];
+    }
+    $header['prompt'] = ['data' => $this->t('Prompt'), 'width' => '32%'];
+    $header['response'] = ['data' => $this->t('Response'), 'width' => '32%'];
+    $header['value'] = ['data' => $this->t('Valid'), 'width' => '5%'];
+
+
     return [
       '#type' => 'container',
-      '#attributes' => ['class' => ['ai-schemadotorg-jsonld-log-page']],
       '#attached' => [
         'library' => ['ai_schemadotorg_jsonld_log/ai_schemadotorg_jsonld_log'],
       ],
       'table' => [
         '#type' => 'table',
-        '#header' => $this->buildTableHeader($is_filtered),
+        '#header' => $header,
         '#rows' => $rows,
         '#empty' => $this->t('No log entries available.'),
         '#attributes' => ['class' => ['ai-schemadotorg-jsonld-log-page__table']],
@@ -170,48 +182,6 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
       ],
       'operations' => $operations,
     ];
-  }
-
-  /**
-   * Builds the display table header.
-   *
-   * @param bool $is_filtered
-   *   TRUE when the log is filtered to a specific entity.
-   *
-   * @return array
-   *   The table header definition.
-   */
-  protected function buildTableHeader(bool $is_filtered): array {
-    $header = [
-      [
-        'data' => $this->t('Created'),
-        'width' => '15%',
-      ],
-    ];
-
-    if (!$is_filtered) {
-      $header[] = [
-        'data' => $this->t('Entity'),
-        'width' => '15%',
-      ];
-    }
-
-    $header = array_merge($header, [
-      [
-        'data' => $this->t('Prompt'),
-        'width' => '32%',
-      ],
-      [
-        'data' => $this->t('Response'),
-        'width' => '32%',
-      ],
-      [
-        'data' => $this->t('Valid'),
-        'width' => '5%',
-      ],
-    ]);
-
-    return $header;
   }
 
   /**
@@ -245,7 +215,7 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
         'created',
       ]);
 
-      // Write each log row, formatting the 'valid' and 'created' columns.
+      // Write each log row, formatting the 'value' and 'created' columns.
       foreach ($this->getDownloadRows($entity_type, $entity_id) as $row) {
         fputcsv($handle, [
           $row['entity_type'],
@@ -255,7 +225,7 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
           $row['url'],
           $row['prompt'],
           $row['response'],
-          $this->formatValid((int) $row['valid']),
+          $this->formatYesNo((int) $row['valid']),
           $this->formatCreated((int) $row['created']),
         ]);
       }
@@ -279,18 +249,11 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
       ? ($row['entity_type'] . ':' . $row['bundle'])
       : $row['entity_type'];
 
-    $suffix = [
-      '#markup' => ' (' . $entity_type . ')',
-    ];
+    $label_element = $row['url']
+      ? Link::fromTextAndUrl($entity_label, Url::fromUri($row['url']))->toRenderable()
+      : ['#plain_text' => $entity_label];
 
-    if ($row['url'] !== '') {
-      return [
-        'link' => Link::fromTextAndUrl($entity_label, Url::fromUri($row['url']))->toRenderable(),
-        'suffix' => $suffix,
-      ];
-    }
-
-    return $entity_label . ' (' . $entity_type . ')';
+    return $label_element + ['#suffix' => ' (' . $entity_type . ')'];
   }
 
   /**
@@ -305,11 +268,9 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
   protected function buildPreformattedCell(string $value): array {
     return [
       'data' => [
-        '#type' => 'inline_template',
-        '#template' => '<pre class="ai-schemadotorg-jsonld-log-page__content">{{ value }}</pre>',
-        '#context' => [
-          'value' => $value,
-        ],
+        '#plain_text' => $value,
+        '#prefix' => '<pre>',
+        '#suffix' => '</pre>',
       ],
     ];
   }
@@ -347,16 +308,16 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
   }
 
   /**
-   * Formats the valid flag for display and export.
+   * Formats a value as Yes/No.
    *
-   * @param int $valid
-   *   The valid flag.
+   * @param int $value
+   *   The value.
    *
-   * @return string
-   *   Yes when valid, otherwise No.
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   Yes when value is TRUE, otherwise No.
    */
-  protected function formatValid(int $valid): string {
-    return ($valid === 1) ? 'Yes' : 'No';
+  protected function formatYesNo(int $value): TranslatableMarkup {
+    return ($value) ? $this->t('Yes') : $this->t('No');
   }
 
   /**
@@ -374,17 +335,11 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
    */
   protected function getFilterQuery(): array {
     $request = $this->requestStack->getCurrentRequest();
-    $entity_type = (string) $request->query->get('entity_type', '');
-    $entity_id = (string) $request->query->get('entity_id', '');
-
-    if ($entity_type === '' || $entity_id === '') {
-      return [];
-    }
-
-    return [
-      'entity_type' => $entity_type,
-      'entity_id' => $entity_id,
-    ];
+    $entity_type = $request->query->get('entity_type');
+    $entity_id = $request->query->get('entity_id');
+    return ($entity_type && $entity_id)
+      ? ['entity_type' => $entity_type, 'entity_id' => $entity_id]
+      : [];
   }
 
   /**
@@ -395,7 +350,7 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
    */
   protected function getFilteredEntity(): ?EntityInterface {
     $query = $this->getFilterQuery();
-    if ($query === []) {
+    if (!$query) {
       return NULL;
     }
 
@@ -422,7 +377,7 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
    *   The rows to export.
    */
   protected function getDownloadRows(string $entity_type = '', string $entity_id = ''): array {
-    if ($entity_type === '' || $entity_id === '') {
+    if (!$entity_type && !$entity_id) {
       return $this->logStorage->loadAll();
     }
 
@@ -441,11 +396,9 @@ class AiSchemaDotOrgJsonLdLogController extends ControllerBase {
    *   The CSV filename.
    */
   protected function buildDownloadFilename(string $entity_type = '', string $entity_id = ''): string {
-    if ($entity_type !== '' && $entity_id !== '') {
-      return 'ai-schemadotorg-jsonld-' . $entity_type . '-' . $entity_id . '-log.csv';
-    }
-
-    return 'ai-schemadotorg-jsonld-log.csv';
+    return ($entity_type  && $entity_id)
+      ? 'ai-schemadotorg-jsonld-' . $entity_type . '-' . $entity_id . '-log.csv'
+      : 'ai-schemadotorg-jsonld-log.csv';
   }
 
 }

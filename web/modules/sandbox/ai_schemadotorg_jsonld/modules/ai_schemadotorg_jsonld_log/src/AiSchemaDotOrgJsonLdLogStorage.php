@@ -93,7 +93,7 @@ class AiSchemaDotOrgJsonLdLogStorage implements AiSchemaDotOrgJsonLdLogStorageIn
       ->fields('log')
       ->orderBy('id', 'DESC');
 
-    if ($entity_type_id !== '' && $entity_id !== '') {
+    if ($entity_type_id && $entity_id) {
       $query->condition('entity_type', $entity_type_id);
       $query->condition('entity_id', $entity_id);
     }

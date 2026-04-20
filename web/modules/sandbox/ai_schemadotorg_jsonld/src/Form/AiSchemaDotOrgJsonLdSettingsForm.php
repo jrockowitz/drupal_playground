@@ -71,10 +71,9 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     $entity_type_settings = $config->get('entity_types') ?? [];
 
     // Ensure 'node' is the first entity type if enabled, then sort others.
-    $enabled_entity_type_ids = (isset($entity_type_settings['node']))
+    $entity_type_ids = (isset($entity_type_settings['node']))
       ? array_merge(['node'], array_keys(array_diff_key($entity_type_settings, ['node' => TRUE])))
       : array_keys($entity_type_settings);
-    $enabled_entity_type_options = $this->getEnabledEntityTypeOptions($enabled_entity_type_ids);
 
     $form['entity_types'] = [
       '#type' => 'container',
@@ -82,7 +81,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     ];
 
     // Build a details section for each enabled entity type.
-    foreach ($enabled_entity_type_ids as $entity_type_id) {
+    foreach ($entity_type_ids as $entity_type_id) {
       $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type_id, FALSE);
       if (!$entity_type_definition instanceof ContentEntityTypeInterface) {
         continue;
@@ -104,8 +103,8 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         ],
       ];
       $disabled_bundles = [];
-      $options = $this->getEntityTypeOptions($entity_type_id);
-      foreach ($options as $bundle => $option) {
+      $bundle_options = $this->getEntityTypeBundleOptions($entity_type_id);
+      foreach ($bundle_options as $bundle => $option) {
         if (!empty($option['#disabled'])) {
           $disabled_bundles[] = $bundle;
         }
@@ -127,15 +126,14 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       $form['entity_types'][$entity_type_id]['bundles'] = [
         '#type' => 'tableselect',
         '#header' => $header,
-        '#options' => $options,
-        '#js_select' => (count($options) != count($disabled_bundles)),
+        '#options' => $bundle_options,
+        '#js_select' => (count($bundle_options) != count($disabled_bundles)),
         '#default_value' => array_fill_keys($disabled_bundles, TRUE),
       ];
 
       $form['entity_types'][$entity_type_id]['default_settings'] = [
         '#type' => 'details',
         '#title' => $this->t('Default settings'),
-        '#open' => FALSE,
       ];
 
       $form['entity_types'][$entity_type_id]['default_settings']['default_prompt'] = [
@@ -175,7 +173,6 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Enabled entity types'),
       '#description' => $this->t('Enable the supported entity types you want to manage with this module. After saving, each enabled entity type will appear above with bundle, prompt, and default JSON-LD settings.'),
-      '#open' => FALSE,
       '#tree' => TRUE,
     ];
     $form['enabled_entity_types']['entity_types'] = [
@@ -184,15 +181,14 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         'label' => $this->t('Entity type'),
         'machine_name' => $this->t('Machine name'),
       ],
-      '#options' => $enabled_entity_type_options,
-      '#default_value' => array_fill_keys($enabled_entity_type_ids, TRUE),
+      '#options' => $this->getEnabledEntityTypeOptions($entity_type_ids),
+      '#default_value' => array_fill_keys($entity_type_ids, TRUE),
     ];
 
     $form['development'] = [
       '#type' => 'details',
       '#title' => $this->t('Development settings'),
       '#description' => $this->t('Configure development-only tooling for tuning and inspecting Schema.org JSON-LD generation.'),
-      '#open' => FALSE,
       '#weight' => 100,
     ];
     $form['development']['edit_prompt'] = [
@@ -218,6 +214,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     if ($value === '') {
       return;
     }
+
     try {
       json_decode($value, TRUE, 512, JSON_THROW_ON_ERROR);
     }
@@ -236,8 +233,8 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     $this->manager->addEntityTypes($enabled_entity_type_ids);
 
     $config = $this->configFactory->getEditable('ai_schemadotorg_jsonld.settings');
-    $configured_entity_type_ids = array_keys($config->get('entity_types') ?? []);
-    $entity_type_values = $form_state->getValue('entity_types') ?? [];
+    $configured_entity_type_ids = array_keys($config->get('entity_types'));
+    $entity_type_values = $form_state->getValue('entity_types');
 
     foreach ($configured_entity_type_ids as $entity_type_id) {
       $entity_type_values_item = $entity_type_values[$entity_type_id] ?? NULL;
@@ -245,7 +242,8 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
         continue;
       }
 
-      foreach (array_filter($entity_type_values_item['bundles'] ?? []) as $bundle => $value) {
+      $bundles = array_keys(array_filter($entity_type_values_item['bundles']));
+      foreach ($bundles as $bundle) {
         $this->builder->addFieldToEntity($entity_type_id, $bundle);
       }
 
@@ -269,7 +267,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
    * @return array
    *   An associative array of tableselect options keyed by bundle machine name.
    */
-  protected function getEntityTypeOptions(string $entity_type_id): array {
+  protected function getEntityTypeBundleOptions(string $entity_type_id): array {
     $options = [];
 
     $entity_type_definition = $this->entityTypeManager->getDefinition($entity_type_id, FALSE);
@@ -278,14 +276,14 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
     }
     $bundle_entity_type_id = $entity_type_definition->getBundleEntityType();
 
-    if ($bundle_entity_type_id === NULL) {
+    if (!$bundle_entity_type_id) {
       $bundle = $this->getSyntheticBundle($entity_type_id);
       $options[$bundle] = $this->buildEntityTypeOption($entity_type_definition, $bundle, $this->getSyntheticBundleLabel($entity_type_definition), $this->getSyntheticBundleDescription($entity_type_definition));
       return $options;
     }
 
     $bundle_entity_type_definition = $this->entityTypeManager->getDefinition($bundle_entity_type_id, FALSE);
-    if ($bundle_entity_type_definition === NULL) {
+    if (!$bundle_entity_type_definition) {
       return $options;
     }
 
@@ -339,7 +337,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       ->load($field_config_id);
 
     $links = [];
-    if ($field_config !== NULL && $entity_type_definition->get('field_ui_base_route')) {
+    if ($field_config && $entity_type_definition->get('field_ui_base_route')) {
       $query = $this->getRedirectDestination()->getAsArray();
 
       $attributes = [
@@ -472,14 +470,9 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
    *   The content entity type definition.
    */
   protected function getSyntheticBundleDescription(ContentEntityTypeInterface $entity_type_definition): string {
-    $description = (string) ($entity_type_definition->get('description') ?? '');
-    if ($description !== '') {
-      return $description;
-    }
-
     return match ($entity_type_definition->id()) {
       'user' => (string) $this->t('Individual registered user accounts on a website.'),
-      default => '',
+      default => $entity_type_definition->get('description') ?? '',
     };
   }
 

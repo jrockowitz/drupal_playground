@@ -35,10 +35,10 @@ class AiSchemaDotOrgJsonLdCommandsTest extends AiSchemaDotOrgJsonLdTestBase {
     // Create a 'page' node type first.
     NodeType::create(['type' => 'page', 'name' => 'Basic page'])->save();
 
-    // Expect a success message from the logger.
-    $logger->expects($this->once())
+    // Expect a success message for each successful addField call.
+    $logger->expects($this->exactly(2))
       ->method('log')
-      ->with('success', 'Added Schema.org JSON-LD field to node.page.');
+      ->with('success', $this->stringContains('Added Schema.org JSON-LD field to'));
 
     // Check that field is added successfully.
     $commands->addField('node', 'page');
@@ -65,6 +65,13 @@ class AiSchemaDotOrgJsonLdCommandsTest extends AiSchemaDotOrgJsonLdTestBase {
     catch (\InvalidArgumentException $e) {
       $this->assertSame('The bundle invalid_bundle does not exist for the entity type node.', $e->getMessage());
     }
+
+    // Check that omitting the bundle for a non-bundle entity type auto-sets it.
+    $commands->addField('user');
+    $user_field_config = $this->entityTypeManager
+      ->getStorage('field_config')
+      ->load('user.user.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
+    $this->assertNotNull($user_field_config, 'FieldConfig for user.user exists when bundle is omitted.');
 
     // Check that an exception is thrown for an invalid synthetic bundle on 'user'.
     try {

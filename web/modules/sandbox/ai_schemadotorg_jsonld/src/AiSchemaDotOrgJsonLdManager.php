@@ -49,6 +49,9 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
     $supported_entity_types = [];
 
     foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type_definition) {
+      if (in_array($entity_type_id, $this->unsupportedEntityTypes)) {
+        continue;
+      }
       if (!$entity_type_definition instanceof ContentEntityTypeInterface) {
         continue;
       }
@@ -56,9 +59,6 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
         continue;
       }
       if (!$entity_type_definition->entityClassImplements(FieldableEntityInterface::class)) {
-        continue;
-      }
-      if (in_array($entity_type_id, $this->unsupportedEntityTypes)) {
         continue;
       }
 
@@ -78,10 +78,8 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
     $enabled_entity_type_ids = array_unique($entity_type_ids);
 
     foreach (array_keys($entity_type_settings) as $entity_type_id) {
-      if (in_array($entity_type_id, $enabled_entity_type_ids)) {
-        continue;
-      }
-      if ($this->hasFieldStorage($entity_type_id)) {
+      if (in_array($entity_type_id, $enabled_entity_type_ids)
+        || $this->hasFieldStorage($entity_type_id)) {
         continue;
       }
 
@@ -149,11 +147,11 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
       '',
     ];
 
-    if ($bundle_token_name !== NULL) {
+    if ($bundle_token_name) {
       $lines[] = 'Type: [' . $token_name . ':' . $bundle_token_name . ']';
     }
     $lines[] = 'URL: [' . $token_name . ':url]';
-    if ($label_token_name !== NULL) {
+    if ($label_token_name) {
       $lines[] = 'Title: [' . $token_name . ':' . $label_token_name . ']';
     }
     $lines[] = '';
@@ -180,7 +178,7 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
    *   The content entity type ID.
    */
   protected function getTokenName(string $entity_type_id): string {
-    return (string) $this->tokenEntityMapper->getTokenTypeForEntityType($entity_type_id, TRUE);
+    return $this->tokenEntityMapper->getTokenTypeForEntityType($entity_type_id, TRUE);
   }
 
   /**
@@ -229,7 +227,9 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
    *   The content entity type ID.
    */
   protected function hasFieldStorage(string $entity_type_id): bool {
-    return FieldStorageConfig::loadByName($entity_type_id, AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME) !== NULL;
+    return (bool) $this->entityTypeManager
+      ->getStorage('field_storage_config')
+      ->load($entity_type_id . '.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
   }
 
 }
