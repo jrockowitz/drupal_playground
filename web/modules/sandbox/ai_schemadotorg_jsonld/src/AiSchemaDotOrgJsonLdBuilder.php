@@ -26,21 +26,21 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    *   The config factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
-   * @param \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager
-   *   The Schema.org JSON-LD manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The module handler.
    * @param \Drupal\Component\Uuid\UuidInterface $uuid
    *   The UUID generator.
+   * @param \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager
+   *   The Schema.org JSON-LD manager.
    * @param \Drupal\ai_automators\AiAutomatorStatusField $aiAutomatorStatusField
    *   The AI automator status field manager.
    */
   public function __construct(
     protected readonly ConfigFactoryInterface $configFactory,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
-    protected readonly AiSchemaDotOrgJsonLdManagerInterface $manager,
     protected readonly ModuleHandlerInterface $moduleHandler,
     protected readonly UuidInterface $uuid,
+    protected readonly AiSchemaDotOrgJsonLdManagerInterface $manager,
     #[Autowire(service: 'ai_automator.status_field')]
     protected readonly AiAutomatorStatusField $aiAutomatorStatusField,
   ) {}
