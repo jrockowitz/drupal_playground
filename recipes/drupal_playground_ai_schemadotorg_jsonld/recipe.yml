@@ -3,7 +3,8 @@ description: >
   Installs and configures AI Schema.org JSON-LD for Drupal Playground and adds
   the Schema.org JSON-LD field to all current node bundles.
 type: 'Site'
-
+recipes:
+  - drupal_playground_ai
 install:
   - ai_schemadotorg_jsonld
   - json_field_widget

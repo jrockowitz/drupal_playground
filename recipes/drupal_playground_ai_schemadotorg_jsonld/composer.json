@@ -6,7 +6,6 @@
   "version": "1.0.0",
   "require": {
     "drupal/core": "^11.3",
-    "drupal/ai": "^1",
     "drupal/field_widget_actions": "^1",
     "drupal/json_field": "^1"
   }
