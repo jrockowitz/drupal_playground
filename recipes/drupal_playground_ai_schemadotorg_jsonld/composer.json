@@ -1,0 +1,13 @@
+{
+  "name": "drupal/drupal_playground_ai_schemadotorg_jsonld",
+  "description": "Installs AI Schema.org JSON-LD for Drupal Playground.",
+  "type": "drupal-recipe",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "require": {
+    "drupal/core": "^11.3",
+    "drupal/ai": "^1",
+    "drupal/field_widget_actions": "^1",
+    "drupal/json_field": "^1"
+  }
+}

@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace Drupal\ai_schemadotorg_jsonld\Drush\Commands;
 
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
-use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface;
-use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drush\Attributes as CLI;
 use Drush\Commands\AutowireTrait;
 use Drush\Commands\DrushCommands;
@@ -22,17 +19,11 @@ class AiSchemaDotOrgJsonLdCommands extends DrushCommands {
   /**
    * Constructs an AiSchemaDotOrgJsonLdCommands object.
    *
-   * @param \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager
-   *   The Schema.org JSON-LD manager.
    * @param \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface $builder
    *   The Schema.org JSON-LD builder.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The entity type manager.
    */
   public function __construct(
-    protected readonly AiSchemaDotOrgJsonLdManagerInterface $manager,
     protected readonly AiSchemaDotOrgJsonLdBuilderInterface $builder,
-    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct();
   }
@@ -42,78 +33,21 @@ class AiSchemaDotOrgJsonLdCommands extends DrushCommands {
    */
   #[CLI\Command(name: 'ai_schemadotorg_jsonld:add-field')]
   #[CLI\Argument(name: 'entity_type', description: 'The content entity type ID.')]
-  #[CLI\Argument(name: 'bundle', description: 'The bundle ID. Omit for entity types without bundles; the entity type ID is used automatically.')]
+  #[CLI\Argument(name: 'bundle', description: 'The bundle ID or * for all current bundles. Omit for entity types without bundles.')]
   #[CLI\Usage(name: 'drush ai_schemadotorg_jsonld:add-field node page', description: 'Adds the Schema.org JSON-LD field to the page node bundle.')]
+  #[CLI\Usage(name: 'drush ai_schemadotorg_jsonld:add-field node *', description: 'Adds the Schema.org JSON-LD field to all current node bundles.')]
   #[CLI\Usage(name: 'drush ai_schemadotorg_jsonld:add-field user', description: 'Adds the Schema.org JSON-LD field to the user entity type (no bundle required).')]
   public function addField(string $entity_type, string $bundle = ''): void {
-    $entity_type_definition = $this->getSupportedEntityTypeDefinition($entity_type);
-    $this->validateBundle($entity_type_definition, $bundle);
-
-    $this->manager->addEntityTypes([$entity_type]);
-    $this->builder->addFieldToEntity($entity_type, $bundle);
-
-    $this->logger()->success('Added Schema.org JSON-LD field to ' . $entity_type . '.' . $bundle . '.');
-  }
-
-  /**
-   * Returns a supported content entity type definition.
-   *
-   * @param string $entity_type
-   *   The content entity type ID.
-   *
-   * @return \Drupal\Core\Entity\ContentEntityTypeInterface
-   *   The entity type definition.
-   *
-   * @throws \InvalidArgumentException
-   *   Thrown if the entity type is not supported.
-   */
-  protected function getSupportedEntityTypeDefinition(string $entity_type): ContentEntityTypeInterface {
-    $supported_entity_types = $this->manager->getSupportedEntityTypes();
-    $entity_type_definition = $supported_entity_types[$entity_type] ?? NULL;
-
-    if (!$entity_type_definition instanceof ContentEntityTypeInterface) {
-      throw new \InvalidArgumentException('The entity type ' . $entity_type . ' is not supported.');
+    $bundles = ($bundle === '') ? ['*'] : [$bundle];
+    try {
+      $this->builder->addFieldToBundles($entity_type, $bundles);
+    }
+    catch (\Throwable $throwable) {
+      throw new \RuntimeException($throwable->getMessage(), 0, $throwable);
     }
 
-    return $entity_type_definition;
-  }
-
-  /**
-   * Validates and resolves the bundle machine name for the given entity type.
-   *
-   * For entity types without bundles (like 'user'), an empty bundle is
-   * automatically resolved to the entity type ID. For others, the bundle must
-   * exist in Drupal.
-   *
-   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type_definition
-   *   The content entity type definition.
-   * @param string $bundle
-   *   The bundle machine name. Resolved in-place for non-bundle entity types.
-   *
-   * @throws \InvalidArgumentException
-   *   Thrown if the bundle is invalid for the entity type.
-   */
-  protected function validateBundle(ContentEntityTypeInterface $entity_type_definition, string &$bundle): void {
-    $entity_type_id = $entity_type_definition->id();
-    $bundle_entity_type_id = $entity_type_definition->getBundleEntityType();
-
-    if (!$bundle_entity_type_id) {
-      if ($bundle === '') {
-        $bundle = $entity_type_id;
-      }
-      elseif ($bundle !== $entity_type_id) {
-        throw new \InvalidArgumentException('The non-bundle entity type ' . $entity_type_id . ' requires the synthetic bundle ' . $entity_type_id . '.');
-      }
-      return;
-    }
-
-    $bundle_entity = $this->entityTypeManager
-      ->getStorage($bundle_entity_type_id)
-      ->load($bundle);
-
-    if (!$bundle_entity) {
-      throw new \InvalidArgumentException('The bundle ' . $bundle . ' does not exist for the entity type ' . $entity_type_id . '.');
-    }
+    $bundle_label = ($bundle === '') ? '*' : $bundle;
+    $this->logger()->success('Added Schema.org JSON-LD field to ' . $entity_type . '.' . $bundle_label . '.');
   }
 
 }

@@ -244,7 +244,7 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
 
       $bundles = array_keys(array_filter($entity_type_values_item['bundles']));
       foreach ($bundles as $bundle) {
-        $this->builder->addFieldToEntity($entity_type_id, $bundle);
+        $this->builder->addFieldToBundle($entity_type_id, $bundle);
       }
 
       $config->set('entity_types.' . $entity_type_id . '.default_prompt', $entity_type_values_item['default_prompt'] ?? '');

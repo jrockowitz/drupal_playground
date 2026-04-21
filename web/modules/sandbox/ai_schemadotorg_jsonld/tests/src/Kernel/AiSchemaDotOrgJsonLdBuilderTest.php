@@ -17,14 +17,29 @@ use Drupal\node\Entity\NodeType;
 class AiSchemaDotOrgJsonLdBuilderTest extends AiSchemaDotOrgJsonLdTestBase {
 
   /**
-   * Tests addFieldToEntity creates all required config.
+   * Tests bundle-aware field creation and repair behavior.
    */
   public function testAddField(): void {
     // Create a page content type and add the Schema.org JSON-LD field to it.
     /** @var \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface $builder */
     $builder = $this->container->get(AiSchemaDotOrgJsonLdBuilderInterface::class);
     NodeType::create(['type' => 'page', 'name' => 'Basic page'])->save();
-    $builder->addFieldToEntity('node', 'page');
+    NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
+
+    /** @var \Drupal\Core\Config\ConfigFactoryInterface $config_factory */
+    $config_factory = $this->container->get('config.factory');
+    $config = $config_factory->getEditable('ai_schemadotorg_jsonld.settings');
+    $entity_types = $config->get('entity_types') ?? [];
+    unset($entity_types['node']);
+    $config->set('entity_types', $entity_types)->save();
+
+    $builder->addFieldToBundle('node', 'page');
+
+    // Check that missing entity type settings are initialized on demand.
+    $entity_type_settings = $config_factory
+      ->get('ai_schemadotorg_jsonld.settings')
+      ->get('entity_types.node');
+    $this->assertNotNull($entity_type_settings, 'Node entity type settings are initialized on demand.');
 
     // Check that field storage exists.
     $field_storage = $this->entityTypeManager
@@ -82,7 +97,7 @@ class AiSchemaDotOrgJsonLdBuilderTest extends AiSchemaDotOrgJsonLdTestBase {
     $this->entityTypeManager->getStorage('ai_automator')->resetCache();
 
     // Check idempotency and repair support — calling again must recreate missing config.
-    $builder->addFieldToEntity('node', 'page');
+    $builder->addFieldToBundle('node', 'page');
 
     $repaired_automator = $this->entityTypeManager
       ->getStorage('ai_automator')
@@ -99,6 +114,23 @@ class AiSchemaDotOrgJsonLdBuilderTest extends AiSchemaDotOrgJsonLdTestBase {
       ->load('node.page.default');
     $this->assertNotNull($repaired_view_display->getComponent(AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME), 'View display component is recreated when missing.');
 
+    // Check that wildcard bundle resolution adds the field to all current bundles.
+    $builder->addFieldToBundles('node', ['*']);
+
+    $article_field_config = $this->entityTypeManager
+      ->getStorage('field_config')
+      ->load('node.article.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME);
+    $this->assertNotNull($article_field_config, 'Wildcard bundle resolution adds the field to all current bundles.');
+
+    // Check invalid bundle lists are rejected.
+    try {
+      $builder->addFieldToBundles('node', ['*', 'page']);
+      $this->fail('Expected an InvalidArgumentException for mixed wildcard and explicit bundles.');
+    }
+    catch (\InvalidArgumentException $exception) {
+      $this->assertSame('The bundles list for node cannot mix "*" with explicit bundle names.', $exception->getMessage());
+    }
+
     // Check cascade delete — deleting FieldConfig should remove the automator.
     FieldConfig::load('node.page.' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME)->delete();
     $this->entityTypeManager->getStorage('ai_automator')->resetCache();
@@ -108,7 +140,7 @@ class AiSchemaDotOrgJsonLdBuilderTest extends AiSchemaDotOrgJsonLdTestBase {
     $this->assertNull($automator_after_delete, 'AiAutomator is deleted when FieldConfig is deleted.');
 
     // Check that non-bundle entity types can use a synthetic bundle.
-    $builder->addFieldToEntity('user', 'user');
+    $builder->addFieldToBundles('user', ['*']);
 
     $user_field_config = $this->entityTypeManager
       ->getStorage('field_config')

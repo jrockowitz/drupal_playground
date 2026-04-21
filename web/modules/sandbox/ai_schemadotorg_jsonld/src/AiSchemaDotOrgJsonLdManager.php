@@ -8,7 +8,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\token\TokenEntityMapperInterface;
 
 /**
@@ -116,6 +115,13 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
 
     ksort($entity_type_settings);
     $config->set('entity_types', $entity_type_settings)->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addEntityType(string $entity_type_id): void {
+    $this->addEntityTypes([$entity_type_id]);
   }
 
   /**
