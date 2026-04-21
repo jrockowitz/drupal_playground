@@ -10,6 +10,14 @@ namespace Drupal\ai_schemadotorg_jsonld;
 interface AiSchemaDotOrgJsonLdManagerInterface {
 
   /**
+   * Returns TRUE when a content entity type is supported.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
+   */
+  public function isSupportedEntityType(string $entity_type_id): bool;
+
+  /**
    * Returns supported content entity type definitions.
    *
    * Supported entity types are content entities that are fieldable,

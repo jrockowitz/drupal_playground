@@ -44,6 +44,14 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
   /**
    * {@inheritdoc}
    */
+  public function isSupportedEntityType(string $entity_type_id): bool {
+    $supported_entity_types = $this->getSupportedEntityTypes();
+    return isset($supported_entity_types[$entity_type_id]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSupportedEntityTypes(): array {
     $supported_entity_types = [];
 

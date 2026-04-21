@@ -49,8 +49,8 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    * {@inheritdoc}
    */
   public function addFieldToBundles(string $entity_type_id, array $bundles): void {
-    $entity_type_definition = $this->getSupportedEntityTypeDefinition($entity_type_id);
-    foreach ($this->resolveBundles($entity_type_definition, $bundles) as $bundle) {
+    $bundles = $this->resolveBundles($entity_type_id, $bundles);
+    foreach ($bundles as $bundle) {
       $this->addFieldToBundle($entity_type_id, $bundle);
     }
   }
@@ -59,8 +59,12 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    * {@inheritdoc}
    */
   public function addFieldToBundle(string $entity_type_id, string $bundle): void {
-    $this->getSupportedEntityTypeDefinition($entity_type_id);
+    if (!$this->manager->isSupportedEntityType($entity_type_id)) {
+      throw new \InvalidArgumentException('The entity type ' . $entity_type_id . ' is not supported.');
+    }
+
     $this->ensureEntityTypeSettings($entity_type_id);
+
     $this->createFieldStorage($entity_type_id);
     $this->createField($entity_type_id, $bundle);
     $this->createAutomator($entity_type_id, $bundle);
@@ -266,12 +270,12 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    *   The supported content entity type definition.
    */
   protected function getSupportedEntityTypeDefinition(string $entity_type_id): ContentEntityTypeInterface {
-    $supported_entity_types = $this->manager->getSupportedEntityTypes();
-    $entity_type_definition = $supported_entity_types[$entity_type_id] ?? NULL;
-
-    if (!$entity_type_definition instanceof ContentEntityTypeInterface) {
+    if (!$this->manager->isSupportedEntityType($entity_type_id)) {
       throw new \InvalidArgumentException('The entity type ' . $entity_type_id . ' is not supported.');
     }
+
+    $supported_entity_types = $this->manager->getSupportedEntityTypes();
+    $entity_type_definition = $supported_entity_types[$entity_type_id];
 
     return $entity_type_definition;
   }
@@ -279,16 +283,15 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
   /**
    * Resolves the bundle list for a supported content entity type.
    *
-   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type_definition
-   *   The supported content entity type definition.
+   * @param string $entity_type_id
+   *   The supported content entity type ID.
    * @param array $bundles
    *   The requested bundle list.
    *
    * @return array
    *   The resolved bundle list.
    */
-  protected function resolveBundles(ContentEntityTypeInterface $entity_type_definition, array $bundles): array {
-    $entity_type_id = $entity_type_definition->id();
+  protected function resolveBundles(string $entity_type_id, array $bundles): array {
     if ($bundles === []) {
       throw new \InvalidArgumentException('The bundles list for ' . $entity_type_id . ' cannot be empty.');
     }
@@ -298,6 +301,7 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
       throw new \InvalidArgumentException('The bundles list for ' . $entity_type_id . ' cannot mix "*" with explicit bundle names.');
     }
 
+    $entity_type_definition = $this->getSupportedEntityTypeDefinition($entity_type_id);
     $bundle_entity_type_id = $entity_type_definition->getBundleEntityType();
     if (!$bundle_entity_type_id) {
       if (($bundles === ['*']) || ($bundles === [$entity_type_id])) {
@@ -333,12 +337,9 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
     $entity_type_settings = $this->configFactory
       ->get('ai_schemadotorg_jsonld.settings')
       ->get('entity_types.' . $entity_type_id);
-
-    if ($entity_type_settings !== NULL) {
-      return;
+    if (!$entity_type_settings) {
+      $this->manager->addEntityType($entity_type_id);
     }
-
-    $this->manager->addEntityType($entity_type_id);
   }
 
 }
