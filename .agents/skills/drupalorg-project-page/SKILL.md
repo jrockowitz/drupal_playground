@@ -200,6 +200,7 @@ If the user provides existing markup to improve, extract what you can and ask on
 
 ## Tips and Common Mistakes
 
+- **Line breaks** Don't break lines in the middle of a sentence. paragraph, list item, or tag. There is no need to wrap text.
 - **Always use `<br/>`** (XHTML self-closing), never `<br>`. The Drupal.org body field is XHTML-filtered.
 - **Floated tables must always be followed by `<br clear="both"/>`.** Without it, subsequent content will wrap around the float in unexpected ways.
 - **Use `align="center"` on `<p>` or `<div>`** wrapping action buttons — do not use CSS `text-align` inline styles.

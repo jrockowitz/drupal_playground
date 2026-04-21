@@ -1,0 +1,66 @@
+<p>AI Schema.org JSON-LD (<code>ai_schemadotorg_jsonld</code>) adds AI-assisted Schema.org JSON-LD generation to supported Drupal content entity bundles by connecting AI Automators, Field Widget Actions, and JSON Field. It stores the generated JSON-LD in a field and injects saved values into canonical entity pages as <code>&lt;script type="application/ld+json"&gt;</code> tags.</p>
+<h2>Features</h2>
+<blockquote>A glue module for generating, editing, storing, and outputting Schema.org JSON-LD from Drupal entity content.</blockquote>
+<ul>
+  <li>Adds a generated <code>field_schemadotorg_jsonld</code> field to supported, fieldable content entity bundles with canonical routes.</li>
+  <li>Creates a matching AI Automator configuration that uses the bundle's entity-type prompt and the Field Widget Actions "Generate Schema.org JSON-LD" button.</li>
+  <li>Uses JSON Field for storage and display, with optional <code>json_field_widget</code> support for a richer JSON editor widget.</li>
+  <li>Ships with node support configured out of the box and can also support additional canonical, fieldable content entity types such as media, taxonomy terms, block content, comments, and users.</li>
+  <li>Uses the same builder behavior from the settings form, the Drush command, and the recipe config action so generated field, automator, and display configuration stay consistent.</li>
+</ul>
+<h2>Requirements and installation</h2>
+<p>AI Schema.org JSON-LD requires Drupal core 11.3 or later, AI with the <code>ai_automators</code> submodule, Field Widget Actions, and JSON Field. The optional <code>json_field_widget</code> submodule enables the <code>json_editor</code> widget for the generated field and for the admin <code>default_jsonld</code> setting.</p>
+<ul>
+  <li>Required modules: <code>ai:ai_automators</code>, <code>field_widget_actions:field_widget_actions</code>, and <code>json_field:json_field</code>.</li>
+  <li>Optional module: <code>json_field:json_field_widget</code>.</li>
+  <li>Development dependency: Token improves token browsing in the settings form, but the module's runtime requirements come from the required modules above.</li>
+</ul>
+<p>After enabling <code>ai_schemadotorg_jsonld</code>, configure an AI provider at <code>/admin/config/ai/settings</code>, then open <code>/admin/config/ai/schemadotorg-jsonld</code> to enable entity types and select bundles.</p>
+<h2>Configuration</h2>
+<p>The settings form at <code>/admin/config/ai/schemadotorg-jsonld</code> is the main admin workflow. It shows one section per enabled entity type and an "Enabled entity types" section for turning on additional supported entity types.</p>
+<ul>
+  <li>By default, <code>node</code> is enabled and ships with a curated default prompt.</li>
+  <li>Saving newly enabled entity types adds default prompt and <code>default_jsonld</code> settings for those entity types.</li>
+  <li>Selecting bundles and saving builds the generated field, AI automator, AI automator status support, form display, and view display configuration for each selected bundle.</li>
+  <li>Each entity type section lets you manage bundle selection, a token-based default prompt, and optional static <code>default_jsonld</code> that is injected on canonical pages for bundles that already have the generated field.</li>
+  <li>Saved entity edit forms can expose an "Edit prompt" modal for site configuration administrators when the development setting is enabled.</li>
+</ul>
+<div class="note"><p>Only supported content entities that are fieldable and have canonical routes can use this module. Existing field storage is respected, so enabled entity-type settings are not removed while generated Schema.org JSON-LD storage still exists.</p></div>
+<h2>Drush and recipes</h2>
+<p>The module includes a Drush command and a recipe config action plugin. Both delegate to the same builder service used by the settings form.</p>
+<p>Add the field to a specific bundle:</p>
+<div class="codeblock">drush ai_schemadotorg_jsonld:add-field node page</div>
+<p>Add the field to all current bundles for an entity type, or to a bundle-less entity type such as <code>user</code>:</p>
+<div class="codeblock">drush ai_schemadotorg_jsonld:add-field node '*'
+drush ai_schemadotorg_jsonld:add-field user</div>
+<p>Use the <code>addField</code> config action in a recipe to apply the same generated field setup during installation or site assembly:</p>
+<div class="codeblock">config:
+  actions:
+    ai_schemadotorg_jsonld.settings:
+      addField:
+        entity_type: node
+        bundles: ['article', 'page']</div>
+<p>To target all bundles that exist when the recipe runs, use a wildcard bundle list:</p>
+<div class="codeblock">config:
+  actions:
+    ai_schemadotorg_jsonld.settings:
+      addField:
+        entity_type: node
+        bundles: ['*']</div>
+<p>The repository also includes the <code>Drupal Playground AI Schema.org JSON-LD</code> recipe, which installs the module, enables related submodules, and applies <code>addField</code> to all current node bundles.</p>
+<h2>Prompts, tokens, and output</h2>
+<p>AI Schema.org JSON-LD ships prompt files in <code>prompts/entity_types/</code> for common entity types including <code>node</code>, <code>media</code>, <code>taxonomy_term</code>, <code>block_content</code>, <code>comment</code>, and <code>user</code>. When you enable a new supported entity type, the module uses a matching prompt file when one exists and otherwise builds a minimal default prompt from the entity type definition.</p>
+<ul>
+  <li>Prompts are token-based and can include the rendered entity content token such as <code>[node:ai_schemadotorg_jsonld:content]</code>.</li>
+  <li>The content token renders the entity as the anonymous user in the site default theme, converts root-relative URLs to absolute URLs, and strips outer wrapper markup to keep prompt input cleaner for the LLM.</li>
+  <li>The generated field stores the JSON-LD returned by the model, and the module outputs compact JSON in <code>application/ld+json</code> script tags on canonical entity pages.</li>
+  <li>Depending on configuration, a page can emit saved entity JSON-LD, entity-type-level <code>default_jsonld</code>, and breadcrumb JSON-LD from the optional breadcrumb submodule.</li>
+</ul>
+<div class="help"><p>New entities must be saved before Schema.org JSON-LD can be generated, because the field widget action works on saved entity edit forms.</p></div>
+<h2>Submodules</h2>
+<h3>AI Schema.org JSON-LD Log</h3>
+<p><code>ai_schemadotorg_jsonld_log</code> adds prompt and response logging tools for AI Schema.org JSON-LD. It provides a log UI at <code>/admin/config/ai/schemadotorg-jsonld/log</code>, a "View log" link from supported entity edit forms, CSV export, filtered per-entity log views, and automatic cleanup when logged entities are deleted.</p>
+<h3>AI Schema.org JSON-LD Breadcrumb</h3>
+<p><code>ai_schemadotorg_jsonld_breadcrumb</code> attaches a <code>BreadcrumbList</code> JSON-LD block on canonical pages when breadcrumb data is available.</p>
+<h2>Getting help</h2>
+<p>Use the Drupal.org issue queue to report bugs, request improvements, and discuss follow-up work. When reporting a problem, include the Drupal version, enabled AI provider, entity type and bundle, and whether the issue happens in the settings form, the field widget action, the Drush command, or recipe-based installation.</p>
