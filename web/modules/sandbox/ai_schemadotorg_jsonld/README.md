@@ -45,6 +45,59 @@ Only `node` is configured out of the box. Other supported entity types can be en
 Saving the settings form creates the field, AI automator, status field, and display configuration
 for each selected bundle.
 
+## Drush
+
+Use Drush to add the generated `field_schemadotorg_jsonld` field without opening the module's
+settings form.
+
+```bash
+drush ai_schemadotorg_jsonld:add-field node page
+drush ai_schemadotorg_jsonld:add-field node '*'
+drush ai_schemadotorg_jsonld:add-field user
+```
+
+Supported patterns are:
+
+- `drush ai_schemadotorg_jsonld:add-field {entity_type} {bundle}`
+  - Adds the field to a specific bundle.
+- `drush ai_schemadotorg_jsonld:add-field {entity_type} '*'`
+  - Adds the field to all bundles that currently exist for that entity type.
+- `drush ai_schemadotorg_jsonld:add-field {entity_type}`
+  - Adds the field to entity types that do not use bundles, such as `user`.
+
+The command delegates to the same builder service used by the settings form and recipe config
+actions, so generated field, automator, and display configuration stay consistent across all entry
+points.
+
+## Recipes
+
+The module provides a config action plugin that Drupal recipes can use to add the generated field
+to one or more bundles.
+
+```yaml
+config:
+  actions:
+    ai_schemadotorg_jsonld.settings:
+      addField:
+        entity_type: node
+        bundles: ['article', 'page']
+```
+
+To target all bundles that exist when the recipe is applied, use `['*']`.
+
+```yaml
+config:
+  actions:
+    ai_schemadotorg_jsonld.settings:
+      addField:
+        entity_type: node
+        bundles: ['*']
+```
+
+Drupal Playground includes a reusable recipe at
+`recipes/drupal_playground_ai_schemadotorg_jsonld/recipe.yml` that installs the module,
+enables related submodules, and applies `addField` to all current node bundles.
+
 ## Configuration
 
 Navigate to `/admin/config/ai/schemadotorg-jsonld`.

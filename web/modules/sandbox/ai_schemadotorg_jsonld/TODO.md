@@ -1,16 +1,6 @@
-Config Action
-
-- [ ] Add a config action to entity types that calls something like
-  \Drupal\ai_schemadotorg_jsonld\Drush\Commands\AiSchemaDotOrgJsonLdCommands::addField
-
 AI Automator
 
-- See if it isnpossible to have a single AI Automator used via Queue and Field Widget Actions.
-
-- Documentation
-
-- [x] README.md
-- AGENTS.md
+- See if it is possible to have a single AI Automator used via Queue and Field Widget Actions.
 
 Improve prompt management
 
