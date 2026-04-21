@@ -15,24 +15,29 @@ interface AiSchemaDotOrgJsonLdBuilderInterface {
   const FIELD_NAME = 'field_schemadotorg_jsonld';
 
   /**
+   * Adds the Schema.org JSON-LD field to one or more bundles.
+   *
+   * Bundle lists support explicit bundle IDs or a single '*' wildcard to target
+   * all current bundles of the supported entity type.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID (e.g. 'node').
+   * @param array $bundles
+   *   The bundle machine names or ['*'].
+   */
+  public function addFieldToBundles(string $entity_type_id, array $bundles): void;
+
+  /**
    * Adds the Schema.org JSON-LD field and related config to an entity bundle.
    *
-   * This orchestration method:
-   * 1. Creates or updates the field storage configuration.
-   * 2. Creates the field instance for the specific bundle.
-   * 3. Configures the AI automator for the field (skipped if one already
-   *    exists, to avoid overwriting manual customizations).
-   * 4. Adds the field to the default form display with the 'json_editor' or
-   *    'json_textarea' widget and the automator button (skipped if the
-   *    component is already present).
-   * 5. Adds the field to the default view display with the 'json' formatter
-   *    (skipped if the component is already present).
+   * This method initializes missing entity type settings automatically before
+   * creating the field, automator, and display configuration for the bundle.
    *
    * @param string $entity_type_id
    *   The entity type ID (e.g. 'node').
    * @param string $bundle
    *   The bundle machine name (e.g. 'page').
    */
-  public function addFieldToEntity(string $entity_type_id, string $bundle): void;
+  public function addFieldToBundle(string $entity_type_id, string $bundle): void;
 
 }

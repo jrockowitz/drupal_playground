@@ -7,6 +7,7 @@ namespace Drupal\ai_schemadotorg_jsonld;
 use Drupal\ai_automators\AiAutomatorStatusField;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\Entity\FieldConfig;
@@ -29,6 +30,8 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
    *   The module handler.
    * @param \Drupal\Component\Uuid\UuidInterface $uuid
    *   The UUID generator.
+   * @param \Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdManagerInterface $manager
+   *   The Schema.org JSON-LD manager.
    * @param \Drupal\ai_automators\AiAutomatorStatusField $aiAutomatorStatusField
    *   The AI automator status field manager.
    */
@@ -37,6 +40,7 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly ModuleHandlerInterface $moduleHandler,
     protected readonly UuidInterface $uuid,
+    protected readonly AiSchemaDotOrgJsonLdManagerInterface $manager,
     #[Autowire(service: 'ai_automator.status_field')]
     protected readonly AiAutomatorStatusField $aiAutomatorStatusField,
   ) {}
@@ -44,7 +48,19 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
   /**
    * {@inheritdoc}
    */
-  public function addFieldToEntity(string $entity_type_id, string $bundle): void {
+  public function addFieldToBundles(string $entity_type_id, array $bundles): void {
+    $entity_type_definition = $this->getSupportedEntityTypeDefinition($entity_type_id);
+    foreach ($this->resolveBundles($entity_type_definition, $bundles) as $bundle) {
+      $this->addFieldToBundle($entity_type_id, $bundle);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addFieldToBundle(string $entity_type_id, string $bundle): void {
+    $this->getSupportedEntityTypeDefinition($entity_type_id);
+    $this->ensureEntityTypeSettings($entity_type_id);
     $this->createFieldStorage($entity_type_id);
     $this->createField($entity_type_id, $bundle);
     $this->createAutomator($entity_type_id, $bundle);
@@ -177,11 +193,11 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
     $display_storage = $this->entityTypeManager->getStorage('entity_form_display');
     $display = $display_storage->load($entity_type_id . '.' . $bundle . '.default')
       ?? $display_storage->create([
-      'targetEntityType' => $entity_type_id,
-      'bundle' => $bundle,
-      'mode' => 'default',
-      'status' => TRUE,
-    ]);
+        'targetEntityType' => $entity_type_id,
+        'bundle' => $bundle,
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
 
     if ($display->getComponent(self::FIELD_NAME)) {
       return;
@@ -238,6 +254,91 @@ class AiSchemaDotOrgJsonLdBuilder implements AiSchemaDotOrgJsonLdBuilderInterfac
       // Setting widget weight to 99 to ensure it appears before links.
       'weight' => 99,
     ])->save();
+  }
+
+  /**
+   * Returns a supported content entity type definition.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityTypeInterface
+   *   The supported content entity type definition.
+   */
+  protected function getSupportedEntityTypeDefinition(string $entity_type_id): ContentEntityTypeInterface {
+    $supported_entity_types = $this->manager->getSupportedEntityTypes();
+    $entity_type_definition = $supported_entity_types[$entity_type_id] ?? NULL;
+
+    if (!$entity_type_definition instanceof ContentEntityTypeInterface) {
+      throw new \InvalidArgumentException('The entity type ' . $entity_type_id . ' is not supported.');
+    }
+
+    return $entity_type_definition;
+  }
+
+  /**
+   * Resolves the bundle list for a supported content entity type.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type_definition
+   *   The supported content entity type definition.
+   * @param array $bundles
+   *   The requested bundle list.
+   *
+   * @return array
+   *   The resolved bundle list.
+   */
+  protected function resolveBundles(ContentEntityTypeInterface $entity_type_definition, array $bundles): array {
+    $entity_type_id = $entity_type_definition->id();
+    if ($bundles === []) {
+      throw new \InvalidArgumentException('The bundles list for ' . $entity_type_id . ' cannot be empty.');
+    }
+
+    $bundles = array_values(array_unique($bundles));
+    if (in_array('*', $bundles) && count($bundles) > 1) {
+      throw new \InvalidArgumentException('The bundles list for ' . $entity_type_id . ' cannot mix "*" with explicit bundle names.');
+    }
+
+    $bundle_entity_type_id = $entity_type_definition->getBundleEntityType();
+    if (!$bundle_entity_type_id) {
+      if (($bundles === ['*']) || ($bundles === [$entity_type_id])) {
+        return [$entity_type_id];
+      }
+
+      throw new \InvalidArgumentException('The non-bundle entity type ' . $entity_type_id . ' requires the synthetic bundle ' . $entity_type_id . '.');
+    }
+
+    $bundle_storage = $this->entityTypeManager->getStorage($bundle_entity_type_id);
+    if ($bundles === ['*']) {
+      $bundle_ids = array_keys($bundle_storage->loadMultiple());
+      sort($bundle_ids);
+      return $bundle_ids;
+    }
+
+    foreach ($bundles as $bundle) {
+      if (!$bundle_storage->load($bundle)) {
+        throw new \InvalidArgumentException('The bundle ' . $bundle . ' does not exist for the entity type ' . $entity_type_id . '.');
+      }
+    }
+
+    return $bundles;
+  }
+
+  /**
+   * Ensures entity type settings exist for the given content entity type.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID.
+   */
+  protected function ensureEntityTypeSettings(string $entity_type_id): void {
+    $entity_type_settings = $this->configFactory
+      ->get('ai_schemadotorg_jsonld.settings')
+      ->get('entity_types.' . $entity_type_id);
+
+    if ($entity_type_settings !== NULL) {
+      return;
+    }
+
+    $this->manager->addEntityType($entity_type_id);
   }
 
 }

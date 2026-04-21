@@ -41,6 +41,10 @@
             "url": "recipes/drupal_playground_ai_content_suggestions"
         },
         {
+          "type": "path",
+          "url": "recipes/drupal_playground_ai_schemadotorg_jsonld"
+        },
+        {
             "type": "path",
             "url": "recipes/drupal_playground_ai_devel"
         },

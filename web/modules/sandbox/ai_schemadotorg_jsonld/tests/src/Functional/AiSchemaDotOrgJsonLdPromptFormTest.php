@@ -23,7 +23,7 @@ class AiSchemaDotOrgJsonLdPromptFormTest extends AiSchemaDotOrgJsonLdTestBase {
 
     // Add the node page AI schema.org JSON-LD automator field.
     $this->container->get(AiSchemaDotOrgJsonLdBuilderInterface::class)
-      ->addFieldToEntity('node', 'page');
+      ->addFieldToBundle('node', 'page');
 
     // Clear cached field definitions to ensure that the new schema.org JSON-LD
     // automator is used.

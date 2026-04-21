@@ -39,4 +39,12 @@ interface AiSchemaDotOrgJsonLdManagerInterface {
    */
   public function addEntityTypes(array $entity_type_ids): void;
 
+  /**
+   * Adds entity type settings for a single content entity type.
+   *
+   * @param string $entity_type_id
+   *   The content entity type ID to add.
+   */
+  public function addEntityType(string $entity_type_id): void;
+
 }
