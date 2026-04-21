@@ -11,6 +11,7 @@ install:
   - navigation
   - navigation_extra_tools
   - type_tray
+  - queue_ui
 config:
   strict: false
   import:

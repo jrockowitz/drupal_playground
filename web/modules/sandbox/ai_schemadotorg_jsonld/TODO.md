@@ -1,3 +1,8 @@
+Config Action
+
+- [ ] Add a config action to entity types that calls something like
+  \Drupal\ai_schemadotorg_jsonld\Drush\Commands\AiSchemaDotOrgJsonLdCommands::addField
+
 Documentation
 
 - [x] README.md

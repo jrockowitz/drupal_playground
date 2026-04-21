@@ -11,7 +11,8 @@
         "drupal/gin_toolbar": "^3",
         "drupal/gin_type_tray": "^1",
         "drupal/navigation_extra_tools": "^1",
-        "drupal/type_tray": "^1"
+        "drupal/type_tray": "^1",
+        "drupal/queue_ui" : "^3"
     },
     "extra": {
         "patches": {

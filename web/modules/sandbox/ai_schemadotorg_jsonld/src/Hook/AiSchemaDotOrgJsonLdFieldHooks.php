@@ -126,7 +126,8 @@ class AiSchemaDotOrgJsonLdFieldHooks {
       ];
       $field_widget_complete_form = $this->buildMessages(
         $this->t('Schema.org JSON-LD can be generated after the @entity is saved.', $t_args),
-        'warning',
+        'info',
+        $this->t('Note'),
       );
       return;
     }
