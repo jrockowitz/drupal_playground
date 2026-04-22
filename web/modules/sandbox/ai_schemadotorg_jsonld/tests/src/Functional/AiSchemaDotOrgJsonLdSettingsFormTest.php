@@ -42,6 +42,20 @@ class AiSchemaDotOrgJsonLdSettingsFormTest extends AiSchemaDotOrgJsonLdTestBase 
     // Log in the administrator user to configure Schema.org JSON-LD settings.
     $this->drupalLogin($this->adminUser);
 
+    // Check that the Additional settings section with the requirements textarea exists.
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld');
+    $this->assertSession()->fieldExists('requirements');
+    $requirements_value = $this->assertSession()->fieldExists('requirements')->getValue();
+    $this->assertStringContainsString('# Requirements', $requirements_value);
+
+    // Check that saving a custom requirements value persists correctly.
+    $this->submitForm([
+      'requirements' => 'Custom requirements for testing.',
+    ], 'Save configuration');
+
+    $this->drupalGet('/admin/config/ai/schemadotorg-jsonld');
+    $this->assertSession()->fieldValueEquals('requirements', 'Custom requirements for testing.');
+
     // Check that enabling entity types works as expected.
     $this->drupalGet('/admin/config/ai/schemadotorg-jsonld');
     $this->assertSession()->fieldExists('entity_types[node][bundles][page]');

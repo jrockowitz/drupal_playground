@@ -83,6 +83,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends UnitTestCase {
     $this->assertStringContainsString('URL: [node:url]', $node_prompt);
     $this->assertStringContainsString('Title: [node:title]', $node_prompt);
     $this->assertStringContainsString('[node:' . $field_name . ']', $node_prompt);
+    $this->assertStringContainsString('[ai_schemadotorg_jsonld:requirements]', $node_prompt);
 
     // Check that the taxonomy_term fallback prompt includes vocabulary:name and name tokens.
     $term_entity_type = $this->createEntityTypeMock('Taxonomy term', 'vid', 'name');
@@ -91,6 +92,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends UnitTestCase {
     $this->assertStringContainsString('URL: [term:url]', $term_prompt);
     $this->assertStringContainsString('Title: [term:name]', $term_prompt);
     $this->assertStringContainsString('[term:' . $field_name . ']', $term_prompt);
+    $this->assertStringContainsString('[ai_schemadotorg_jsonld:requirements]', $term_prompt);
 
     // Check that the user fallback prompt has no Type line (no bundle) but includes url and name tokens.
     $user_entity_type = $this->createEntityTypeMock('User', '', 'name');
@@ -99,6 +101,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends UnitTestCase {
     $this->assertStringContainsString('URL: [user:url]', $user_prompt);
     $this->assertStringContainsString('Title: [user:name]', $user_prompt);
     $this->assertStringContainsString('[user:' . $field_name . ']', $user_prompt);
+    $this->assertStringContainsString('[ai_schemadotorg_jsonld:requirements]', $user_prompt);
 
     // Check that the media fallback prompt includes bundle, url, and name tokens.
     $media_entity_type = $this->createEntityTypeMock('Media', 'bundle', 'name');
@@ -107,6 +110,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends UnitTestCase {
     $this->assertStringContainsString('URL: [media:url]', $media_prompt);
     $this->assertStringContainsString('Title: [media:name]', $media_prompt);
     $this->assertStringContainsString('[media:' . $field_name . ']', $media_prompt);
+    $this->assertStringContainsString('[ai_schemadotorg_jsonld:requirements]', $media_prompt);
 
     // Check that the block_content fallback prompt includes type, url, and info tokens.
     $block_content_entity_type = $this->createEntityTypeMock('Custom block', 'type', 'info');
@@ -115,6 +119,7 @@ class AiSchemaDotOrgJsonLdManagerTest extends UnitTestCase {
     $this->assertStringContainsString('URL: [block_content:url]', $block_content_prompt);
     $this->assertStringContainsString('Title: [block_content:info]', $block_content_prompt);
     $this->assertStringContainsString('[block_content:' . $field_name . ']', $block_content_prompt);
+    $this->assertStringContainsString('[ai_schemadotorg_jsonld:requirements]', $block_content_prompt);
   }
 
 }

@@ -10,6 +10,8 @@ use Drupal\ai\OperationType\Chat\ChatMessage;
 use Drupal\ai_automators\Event\ValuesChangeEvent;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\ai_schemadotorg_jsonld\EventSubscriber\AiSchemaDotOrgJsonLdEventSubscriber;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -32,6 +34,11 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
   private AiSchemaDotOrgJsonLdEventSubscriber $subscriber;
 
   /**
+   * The config factory mock.
+   */
+  private ConfigFactoryInterface&MockObject $configFactory;
+
+  /**
    * The messenger mock.
    */
   private MessengerInterface&MockObject $messenger;
@@ -47,6 +54,14 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
 
+    $config = $this->createMock(ImmutableConfig::class);
+    $config->method('get')->with('requirements')->willReturn('');
+
+    $this->configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $this->configFactory->method('get')
+      ->with('ai_schemadotorg_jsonld.settings')
+      ->willReturn($config);
+
     $this->messenger = $this->createMock(MessengerInterface::class);
     $this->logger = $this->createMock(LoggerChannelInterface::class);
 
@@ -60,6 +75,7 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
     \Drupal::setContainer($container);
 
     $this->subscriber = new AiSchemaDotOrgJsonLdEventSubscriber(
+      $this->configFactory,
       $this->messenger,
       $logger_factory,
     );
@@ -121,6 +137,55 @@ class AiSchemaDotOrgJsonLdEventSubscriberTest extends UnitTestCase {
     $messages = $updated_input->getMessages();
     $this->assertCount(1, $messages);
     $this->assertSame("<p>Prompt</p>\n\n& \"quoted\"", $messages[0]->getText());
+  }
+
+  /**
+   * Tests that the requirements token is replaced with the configured value.
+   */
+  public function testOnPreGenerateResponseReplacesRequirementsToken(): void {
+    $requirements = "# Requirements\n\n- Return only JSON.";
+
+    $config = $this->createMock(ImmutableConfig::class);
+    $config->method('get')->with('requirements')->willReturn($requirements);
+
+    $config_factory = $this->createMock(ConfigFactoryInterface::class);
+    $config_factory->method('get')
+      ->with('ai_schemadotorg_jsonld.settings')
+      ->willReturn($config);
+
+    $logger_factory = $this->createMock(LoggerChannelFactoryInterface::class);
+    $logger_factory->method('get')->willReturn($this->logger);
+
+    $subscriber = new AiSchemaDotOrgJsonLdEventSubscriber(
+      $config_factory,
+      $this->messenger,
+      $logger_factory,
+    );
+
+    $input = new ChatInput([
+      new ChatMessage('user', "Prompt\n\n[ai_schemadotorg_jsonld:requirements]\n\n# Output format"),
+    ]);
+    $event = new PreGenerateResponseEvent(
+      'request-id-jsonld',
+      'test_provider',
+      'chat',
+      [],
+      $input,
+      'test-model',
+      [
+        'ai_automator',
+        'ai_automator:field_name:' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME,
+      ],
+    );
+
+    $subscriber->onPreGenerateResponse($event);
+
+    $text = $event->getInput()->getMessages()[0]->getText();
+
+    // Check that the token has been replaced with the requirements value.
+    $this->assertStringContainsString('# Requirements', $text);
+    $this->assertStringContainsString('- Return only JSON.', $text);
+    $this->assertStringNotContainsString('[ai_schemadotorg_jsonld:requirements]', $text);
   }
 
   /**

@@ -10,6 +10,7 @@ use Drupal\ai\OperationType\Chat\ChatMessage;
 use Drupal\ai_automators\Event\ValuesChangeEvent;
 use Drupal\ai_schemadotorg_jsonld\AiSchemaDotOrgJsonLdBuilderInterface;
 use Drupal\ai_schemadotorg_jsonld\Traits\AiSchemaDotOrgJsonLdAutomatorTrait;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -26,12 +27,15 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
   /**
    * Constructs an AiSchemaDotOrgJsonLdEventSubscriber object.
    *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger service.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
    *   The logger channel factory.
    */
   public function __construct(
+    protected readonly ConfigFactoryInterface $configFactory,
     protected readonly MessengerInterface $messenger,
     protected readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {}
@@ -176,6 +180,8 @@ class AiSchemaDotOrgJsonLdEventSubscriber implements EventSubscriberInterface {
    *   The cleaned prompt text.
    */
   protected function cleanupPromptText(string $text): string {
+    $requirements = $this->configFactory->get('ai_schemadotorg_jsonld.settings')->get('requirements') ?? '';
+    $text = str_replace('[ai_schemadotorg_jsonld:requirements]', $requirements, $text);
     $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
     $text = preg_replace("/\r\n?/", "\n", $text) ?? $text;
     $text = preg_replace("/\n{3,}/", "\n\n", $text) ?? $text;

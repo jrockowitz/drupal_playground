@@ -185,6 +185,19 @@ class AiSchemaDotOrgJsonLdSettingsForm extends ConfigFormBase {
       '#default_value' => array_fill_keys($entity_type_ids, TRUE),
     ];
 
+    $form['additional_settings'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Additional settings'),
+      '#weight' => 50,
+    ];
+    $form['additional_settings']['requirements'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Schema.org JSON-LD requirements for AI prompt'),
+      '#description' => $this->t('Requirements text included in AI prompts via the <code>[ai_schemadotorg_jsonld:requirements]</code> token. Changing this value affects all entity type prompts that reference the token.'),
+      '#rows' => 20,
+      '#config_target' => 'ai_schemadotorg_jsonld.settings:requirements',
+    ];
+
     $form['development'] = [
       '#type' => 'details',
       '#title' => $this->t('Development settings'),

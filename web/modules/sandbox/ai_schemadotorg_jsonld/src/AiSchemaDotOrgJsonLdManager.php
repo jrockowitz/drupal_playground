@@ -172,15 +172,7 @@ class AiSchemaDotOrgJsonLdManager implements AiSchemaDotOrgJsonLdManagerInterfac
     $lines[] = 'Current JSON-LD: (This will be omitted for new content)';
     $lines[] = '[' . $token_name . ':' . AiSchemaDotOrgJsonLdBuilderInterface::FIELD_NAME . ']';
     $lines[] = '';
-    $lines[] = '# Requirements';
-    $lines[] = '';
-    $lines[] = '- Return ONLY the JSON-LD object. No explanatory text, no markdown fences, no preamble.';
-    $lines[] = '- Output must begin with { and end with }.';
-    $lines[] = '- Use only valid Schema.org types and properties (https://schema.org).';
-    $lines[] = '- Set @context to "https://schema.org".';
-    $lines[] = '- Set url to the canonical URL provided above.';
-    $lines[] = '- Choose the most specific applicable @type for the ' . $label . ' given.';
-    $lines[] = '- Do not fabricate values or URLs.';
+    $lines[] = '[ai_schemadotorg_jsonld:requirements]';
 
     return implode(PHP_EOL, $lines);
   }

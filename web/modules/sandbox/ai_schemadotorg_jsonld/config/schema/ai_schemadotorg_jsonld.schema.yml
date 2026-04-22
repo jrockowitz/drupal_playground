@@ -15,6 +15,9 @@ ai_schemadotorg_jsonld.settings:
           default_jsonld:
             type: text
             label: 'Default JSON-LD'
+    requirements:
+      type: text
+      label: 'Schema.org JSON-LD requirements for AI prompt'
     development:
       type: mapping
       label: 'Development settings'

@@ -21,29 +21,7 @@ entity_types:
       Current JSON-LD: (This will be omitted for new content)
       [node:field_schemadotorg_jsonld]
 
-      # Requirements
-
-      ## Response
-
-      - Return ONLY the JSON-LD object. No explanatory text, no markdown fences, no preamble.
-      - Output must begin with { and end with }.
-
-      ## Schema.org JSON-LD
-      - Use only valid Schema.org types and properties (https://schema.org).
-      - Set @context to "https://schema.org".
-      - Set url to the canonical URL provided above.
-      - Choose the most specific applicable @type for the content type given.
-      - Use absolute URLs for all links and images.
-
-      ## Schema.org properties and values
-
-      - Try to include all text in the 'Body' and 'Full Content'.
-      - Do not fabricate values or URLs, only include text/values/urls that are in the content.
-
-      ## Misc
-
-      - If Current JSON-LD is provided, preserve any manually curated properties and improve or extend — do not discard existing values without cause.
-      - Follow Google's Structured Data guidelines: https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data
+      [ai_schemadotorg_jsonld:requirements]
 
       # Output format
 
@@ -64,5 +42,30 @@ entity_types:
         ]
       }
     default_jsonld: ''
+requirements: |
+  # Requirements
+
+  ## Response
+
+  - Return ONLY the JSON-LD object. No explanatory text, no markdown fences, no preamble.
+  - Output must begin with { and end with }.
+
+  ## Schema.org JSON-LD
+
+  - Use only valid Schema.org types and properties (https://schema.org).
+  - Set @context to "https://schema.org".
+  - Set url to the canonical URL provided above.
+  - Choose the most specific applicable @type for the content type given.
+  - Use absolute URLs for all links and images.
+
+  ## Schema.org properties and values
+
+  - Try to include all text in the 'Body' and 'Full Content'.
+  - Do not fabricate values or URLs, only include text/values/urls that are in the content.
+
+  ## Misc
+
+  - If Current JSON-LD is provided, preserve any manually curated properties and improve or extend — do not discard existing values without cause.
+  - Follow Google's Structured Data guidelines: https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data
 development:
   edit_prompt: true

@@ -134,6 +134,10 @@ The `Enabled entity types` details element lists supported entity types that can
 - `default_jsonld`
   - Static JSON-LD injected on canonical pages for bundles of that entity type that already have the generated field.
   - Leave blank to disable entity-type-specific default JSON-LD output.
+- `requirements` (under **Additional settings**)
+  - The Schema.org JSON-LD requirements injected into AI prompts via the
+    `[ai_schemadotorg_jsonld:requirements]` token.
+  - Editing this value affects all entity type prompts that reference the token.
 - `development.edit_prompt`
   - Displays an edit-prompt button on saved entity edit forms for site configuration administrators.
 
@@ -160,7 +164,7 @@ To customize the default prompt for an entity type, either:
 
 ## Tokens
 
-The module defines `ai_schemadotorg_jsonld:content` for each enabled entity type.
+The module defines an `ai_schemadotorg_jsonld:content` token for each enabled entity type.
 
 Examples:
 
@@ -171,6 +175,11 @@ Examples:
 The token renders the entity as the anonymous user in the site default theme, converts
 root-relative URLs to absolute URLs, and strips wrapper markup to produce cleaner prompt input for
 the LLM.
+
+The module also defines a module-level token `[ai_schemadotorg_jsonld:requirements]` that resolves
+to the configured Schema.org JSON-LD requirements text. This token is used inside the shipped
+prompt files to centralise the requirements block. The requirements text can be edited at
+`/admin/config/ai/schemadotorg-jsonld` under **Additional settings**.
 
 ## Page Header Output
 
