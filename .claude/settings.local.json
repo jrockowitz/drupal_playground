@@ -40,7 +40,17 @@
       "Bash(mkdir -p /Users/rockowij/Sites/msk_migrate/docroot/modules/custom/msk_gerstner/tests/src/Unit)",
       "Bash(mkdir -p /Users/rockowij/Sites/msk_migrate/docroot/modules/custom/msk_gerstner/tests/src/Kernel)",
       "mcp__plugin_playwright_playwright__browser_navigate",
-      "Bash(curl -k -s \"https://drupal-playground.ddev.site/sites/simpletest/browser_output/Drupal_Tests_ai_schemadotorg_jsonld_log_Functional_AiSchemaDotOrgJsonLdLogTest-1609-16912392.html\")"
+      "Bash(curl -k -s \"https://drupal-playground.ddev.site/sites/simpletest/browser_output/Drupal_Tests_ai_schemadotorg_jsonld_log_Functional_AiSchemaDotOrgJsonLdLogTest-1609-16912392.html\")",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_tabs",
+      "Bash(curl -s \"https://drupal-playground.ddev.site/clinical-trials-gov.php?path=%2Fstudies\")",
+      "Bash(curl -s \"https://drupal-playground.ddev.site/clinical-trials-gov.php\")",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/stats/field/values?fields=Phase\")",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/stats/field/sizes?fields=BriefTitle\")",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/stats/field/sizes\")",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/stats/field/values\")",
+      "Bash(curl -s \"https://drupal-playground.ddev.site/clinical-trials-gov.php?path=%2Fstats%2Ffield%2Fvalues\")"
     ],
     "deny": [
       "Bash(ddev delete *)",
