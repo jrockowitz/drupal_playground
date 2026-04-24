@@ -1,8 +1,18 @@
 <?php
 
 // Rendering functions only.
-// Requires constants (API_BASE, SELF), $status_colours, and build_query_string()
-// from clinical-trials-gov.php, which includes this file.
+// Requires SELF, build_query_string(), and flatten_study()
+// from clinicaltrialsgov.php, which includes this file.
+
+$status_colours = [
+  'RECRUITING' => 'success',
+  'NOT_YET_RECRUITING' => 'warning text-dark',
+  'ACTIVE_NOT_RECRUITING' => 'info text-dark',
+  'COMPLETED' => 'secondary',
+  'TERMINATED' => 'danger',
+  'WITHDRAWN' => 'danger',
+  'SUSPENDED' => 'warning text-dark',
+];
 
 /**
  * Outputs the HTML head, navbar, and opening container with an <h1> page title.
@@ -13,7 +23,7 @@ function render_page_start(string $title): void {
   echo '<head>' . "\n";
   echo '<meta charset="UTF-8">' . "\n";
   echo '<meta name="viewport" content="width=device-width, initial-scale=1">' . "\n";
-  echo '<title>' . htmlspecialchars($title) . ' — ClinicalTrials.gov Explorer</title>' . "\n";
+  echo '<title>' . htmlspecialchars($title) . ' - ClinicalTrials.gov Explorer</title>' . "\n";
   echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">' . "\n";
   echo '<style>' . "\n";
   echo 'pre { font-size: .85rem; }' . "\n";
@@ -53,10 +63,44 @@ function render_page_end(): void {
 }
 
 /**
+ * Renders a Bootstrap alert for API and request errors.
+ */
+function render_error_message(string $message, string $url = '', string $classes = ''): void {
+  $class_suffix = ($classes !== '') ? ' ' . $classes : '';
+  echo '<div class="alert alert-danger' . htmlspecialchars($class_suffix) . '">' . htmlspecialchars($message) . '</div>' . "\n";
+  if ($url !== '') {
+    echo '<p class="small text-muted mb-3">API URL: <a href="' . htmlspecialchars($url) . '" target="_blank" class="font-monospace">' . htmlspecialchars($url) . '</a></p>' . "\n";
+  }
+}
+
+/**
+ * Returns a Bootstrap badge HTML string for a study overall status value.
+ */
+function build_status_badge(string $status): string {
+  global $status_colours;
+  $colour = $status_colours[$status] ?? 'light text-dark';
+  return '<span class="badge bg-' . $colour . '">' . htmlspecialchars($status) . '</span>';
+}
+
+/**
+ * Converts a ClinicalTrials.gov phase enum to a readable label.
+ */
+function format_phase_label(string $phase): string {
+  return match ($phase) {
+    'PHASE1' => 'Phase 1',
+    'PHASE2' => 'Phase 2',
+    'PHASE3' => 'Phase 3',
+    'PHASE4' => 'Phase 4',
+    'EARLY_PHASE1' => 'Early Phase 1',
+    'NA' => 'N/A',
+    default => ucwords(strtolower(str_replace('_', ' ', $phase))),
+  };
+}
+
+/**
  * Renders the endpoint index grouped by section as linked list groups.
  */
 function render_endpoint_index(array $endpoints): void {
-  // Group endpoints by section.
   $sections = [];
   foreach ($endpoints as $endpoint) {
     $sections[$endpoint['section']][] = $endpoint;
@@ -67,7 +111,7 @@ function render_endpoint_index(array $endpoints): void {
     echo '<ul class="list-group mb-4">' . "\n";
     foreach ($section_endpoints as $endpoint) {
       $path = $endpoint['path'];
-      $is_placeholder = (str_contains($path, '{'));
+      $is_placeholder = str_contains($path, '{');
       $href = $is_placeholder ? NULL : htmlspecialchars(SELF . '?path=' . rawurlencode($path));
       echo '<li class="list-group-item d-flex justify-content-between align-items-center">' . "\n";
       echo '<div>' . "\n";
@@ -117,6 +161,90 @@ function render_studies_form(array $studies_params, array $current_values, bool 
 }
 
 /**
+ * Renders the minimal field form required by the stats endpoints.
+ */
+function render_field_stats_form(string $path, string $current_value = ''): void {
+  echo '<form action="' . htmlspecialchars(SELF) . '" method="get" class="row gy-2 gx-3 align-items-end mt-4 mb-4">' . "\n";
+  echo '<input type="hidden" name="path" value="' . htmlspecialchars($path) . '">' . "\n";
+  echo '<div class="col-sm-9">' . "\n";
+  echo '<label class="form-label" for="fields">Fields</label>' . "\n";
+  echo '<input type="text" class="form-control" id="fields" name="fields" value="' . htmlspecialchars($current_value) . '">' . "\n";
+  echo '</div>' . "\n";
+  echo '<div class="col-sm-3">' . "\n";
+  echo '<button type="submit" class="btn btn-primary w-100">Fetch</button>' . "\n";
+  echo '</div>' . "\n";
+  echo '</form>' . "\n";
+}
+
+/**
+ * Renders the /studies results table with a count summary and next-page link.
+ */
+function render_studies_results(array $data, array $current_params): void {
+  $studies = $data['studies'] ?? [];
+  $next_page_token = $data['nextPageToken'] ?? NULL;
+  $total_count = $data['totalCount'] ?? NULL;
+  $count = count($studies);
+
+  if (empty($studies)) {
+    echo '<div class="alert alert-info">No studies found.</div>' . "\n";
+    return;
+  }
+
+  echo '<h2 class="mt-4 mb-3">Results</h2>' . "\n";
+
+  $summary = 'Showing ' . $count . ' ' . (($count === 1) ? 'study' : 'studies');
+  if ($total_count !== NULL) {
+    $summary .= ' of ' . number_format($total_count) . ' total';
+  }
+  echo '<p class="text-muted small">' . htmlspecialchars($summary) . '</p>' . "\n";
+
+  echo '<table class="table table-striped table-hover table-sm align-middle">' . "\n";
+  echo '<thead>' . "\n";
+  echo '<tr>' . "\n";
+  echo '<th style="width:10%">NCT ID</th>' . "\n";
+  echo '<th style="width:35%">Title</th>' . "\n";
+  echo '<th style="width:13%">Status</th>' . "\n";
+  echo '<th style="width:10%">Phase</th>' . "\n";
+  echo '<th style="width:32%">Conditions</th>' . "\n";
+  echo '</tr>' . "\n";
+  echo '</thead>' . "\n";
+  echo '<tbody>' . "\n";
+  foreach ($studies as $study) {
+    $protocol = $study['protocolSection'] ?? [];
+    $identification = $protocol['identificationModule'] ?? [];
+    $status_module = $protocol['statusModule'] ?? [];
+    $conditions_module = $protocol['conditionsModule'] ?? [];
+    $design_module = $protocol['designModule'] ?? [];
+
+    $nct_id = $identification['nctId'] ?? '';
+    $title = $identification['briefTitle'] ?? '';
+    $status = $status_module['overallStatus'] ?? '';
+    $phases = [];
+    foreach (($design_module['phases'] ?? []) as $phase) {
+      $phases[] = format_phase_label($phase);
+    }
+    $conditions = implode(', ', $conditions_module['conditions'] ?? []);
+
+    echo '<tr>' . "\n";
+    echo '<td><a href="' . htmlspecialchars(SELF . '?path=' . rawurlencode('/studies/' . $nct_id)) . '" class="font-monospace">' . htmlspecialchars($nct_id) . '</a></td>' . "\n";
+    echo '<td>' . htmlspecialchars($title) . '</td>' . "\n";
+    echo '<td>' . build_status_badge($status) . '</td>' . "\n";
+    echo '<td>' . htmlspecialchars(implode(', ', $phases)) . '</td>' . "\n";
+    echo '<td>' . htmlspecialchars($conditions) . '</td>' . "\n";
+    echo '</tr>' . "\n";
+  }
+  echo '</tbody>' . "\n";
+  echo '</table>' . "\n";
+
+  if ($next_page_token) {
+    $next_params = $current_params;
+    $next_params['pageToken'] = $next_page_token;
+    $href = htmlspecialchars(SELF . '?path=' . rawurlencode('/studies') . '&' . build_query_string($next_params));
+    echo '<a href="' . $href . '" class="btn btn-outline-secondary btn-sm">Next page &rarr;</a>' . "\n";
+  }
+}
+
+/**
  * Renders /stats/field/values or /stats/field/sizes data as a table.
  *
  * The 'piece' column is linked back to the same path with that field selected.
@@ -159,203 +287,39 @@ function render_field_stats(array $data, string $path): void {
 }
 
 /**
- * Returns a Bootstrap badge HTML string for a study overall status value.
- */
-function build_status_badge(string $status): string {
-  global $status_colours;
-  $colour = $status_colours[$status] ?? 'light text-dark';
-  return '<span class="badge bg-' . $colour . '">' . htmlspecialchars($status) . '</span>';
-}
-
-/**
- * Renders the /studies results table with a count summary and next-page link.
- */
-function render_studies_results(array $data, array $current_params): void {
-  $studies = $data['studies'] ?? [];
-  $next_page_token = $data['nextPageToken'] ?? NULL;
-  $total_count = $data['totalCount'] ?? NULL;
-  $count = count($studies);
-
-  if (empty($studies)) {
-    echo '<div class="alert alert-info">No studies found.</div>' . "\n";
-    return;
-  }
-
-  echo '<h2 class="mt-4 mb-3">Results</h2>' . "\n";
-
-  $summary = 'Showing ' . $count . ' ' . ($count === 1 ? 'study' : 'studies');
-  if ($total_count !== NULL) {
-    $summary .= ' of ' . number_format($total_count) . ' total';
-  }
-  echo '<p class="text-muted small">' . htmlspecialchars($summary) . '</p>' . "\n";
-
-  echo '<table class="table table-striped table-hover table-sm align-middle">' . "\n";
-  echo '<thead>' . "\n";
-  echo '<tr>';
-  echo '<th style="width:10%">NCT ID</th>';
-  echo '<th style="width:35%">Title</th>';
-  echo '<th style="width:13%">Status</th>';
-  echo '<th style="width:10%">Phase</th>';
-  echo '<th style="width:32%">Conditions</th>';
-  echo '</tr>' . "\n";
-  echo '</thead>' . "\n";
-  echo '<tbody>' . "\n";
-  foreach ($studies as $study) {
-    $protocol = $study['protocolSection'] ?? [];
-    $identification = $protocol['identificationModule'] ?? [];
-    $status_module = $protocol['statusModule'] ?? [];
-    $conditions_module = $protocol['conditionsModule'] ?? [];
-    $design_module = $protocol['designModule'] ?? [];
-
-    $nct_id = $identification['nctId'] ?? '';
-    $title = $identification['briefTitle'] ?? '';
-    $status = $status_module['overallStatus'] ?? '';
-    $phases = $design_module['phases'] ?? [];
-    $phase = implode(', ', $phases);
-    $conditions = implode(', ', $conditions_module['conditions'] ?? []);
-
-    echo '<tr>' . "\n";
-    echo '<td><a href="' . htmlspecialchars(SELF . '?path=' . rawurlencode('/studies/' . $nct_id)) . '" class="font-monospace">' . htmlspecialchars($nct_id) . '</a></td>' . "\n";
-    echo '<td>' . htmlspecialchars($title) . '</td>' . "\n";
-    echo '<td>' . build_status_badge($status) . '</td>' . "\n";
-    echo '<td>' . htmlspecialchars($phase) . '</td>' . "\n";
-    echo '<td>' . htmlspecialchars($conditions) . '</td>' . "\n";
-    echo '</tr>' . "\n";
-  }
-  echo '</tbody>' . "\n";
-  echo '</table>' . "\n";
-
-  if ($next_page_token) {
-    $next_params = $current_params;
-    $next_params['pageToken'] = $next_page_token;
-    $href = htmlspecialchars(SELF . '?path=' . rawurlencode('/studies') . '&' . build_query_string($next_params));
-    echo '<a href="' . $href . '" class="btn btn-outline-secondary btn-sm">Next page &rarr;</a>' . "\n";
-  }
-}
-
-/**
- * Recursively renders arbitrary JSON data as definition lists, tables, or lists.
- */
-function render_generic(mixed $data, int $depth = 0): void {
-  if (is_array($data)) {
-    $is_list = array_is_list($data);
-
-    if (!$is_list) {
-      echo '<dl class="row">' . "\n";
-      foreach ($data as $key => $value) {
-        echo '<dt class="col-sm-3">' . htmlspecialchars((string) $key) . '</dt>' . "\n";
-        echo '<dd class="col-sm-9">' . "\n";
-        render_generic($value, $depth + 1);
-        echo '</dd>' . "\n";
-      }
-      echo '</dl>' . "\n";
-    }
-    elseif (empty($data)) {
-      echo '<em class="text-muted">empty</em>' . "\n";
-    }
-    elseif (is_scalar($data[0])) {
-      echo '<ul class="list-group list-group-flush">' . "\n";
-      foreach ($data as $item) {
-        echo '<li class="list-group-item">' . htmlspecialchars((string) $item) . '</li>' . "\n";
-      }
-      echo '</ul>' . "\n";
-    }
-    elseif (is_array($data[0])) {
-      $keys = array_keys($data[0]);
-      $column_width = round(100 / count($keys)) . '%';
-      echo '<table class="table table-sm table-bordered">' . "\n";
-      echo '<thead><tr>' . "\n";
-      foreach ($keys as $key) {
-        echo '<th style="width:' . $column_width . '">' . htmlspecialchars((string) $key) . '</th>' . "\n";
-      }
-      echo '</tr></thead>' . "\n";
-      echo '<tbody>' . "\n";
-      foreach ($data as $row) {
-        echo '<tr>' . "\n";
-        foreach ($keys as $key) {
-          $cell_value = $row[$key] ?? '';
-          echo '<td>';
-          if (is_array($cell_value)) {
-            render_generic($cell_value, $depth + 1);
-          }
-          else {
-            echo htmlspecialchars((string) $cell_value);
-          }
-          echo '</td>' . "\n";
-        }
-        echo '</tr>' . "\n";
-      }
-      echo '</tbody>' . "\n";
-      echo '</table>' . "\n";
-    }
-    else {
-      echo '<ul class="list-group list-group-flush">' . "\n";
-      foreach ($data as $item) {
-        echo '<li class="list-group-item">' . "\n";
-        render_generic($item, $depth + 1);
-        echo '</li>' . "\n";
-      }
-      echo '</ul>' . "\n";
-    }
-  }
-  elseif ($data === NULL) {
-    echo '<em class="text-muted">null</em>' . "\n";
-  }
-  else {
-    echo htmlspecialchars((string) $data);
-  }
-}
-
-/**
  * Renders a Summary / Data toggle button group for single-study pages.
  */
 function render_study_toggle(string $path, string $current_view): void {
   $summary_href = htmlspecialchars(SELF . '?path=' . rawurlencode($path) . '&view=summary');
-  $data_href    = htmlspecialchars(SELF . '?path=' . rawurlencode($path) . '&view=data');
+  $data_href = htmlspecialchars(SELF . '?path=' . rawurlencode($path) . '&view=data');
   echo '<div class="btn-group mb-4" role="group" aria-label="Display mode">' . "\n";
-  echo '<a href="' . $summary_href . '" class="btn btn-sm ' . ($current_view === 'summary' ? 'btn-primary' : 'btn-outline-primary') . '">Summary</a>' . "\n";
-  echo '<a href="' . $data_href    . '" class="btn btn-sm ' . ($current_view === 'data'    ? 'btn-primary' : 'btn-outline-primary') . '">Data</a>' . "\n";
+  echo '<a href="' . $summary_href . '" class="btn btn-sm ' . (($current_view === 'summary') ? 'btn-primary' : 'btn-outline-primary') . '">Summary</a>' . "\n";
+  echo '<a href="' . $data_href . '" class="btn btn-sm ' . (($current_view === 'data') ? 'btn-primary' : 'btn-outline-primary') . '">Data</a>' . "\n";
   echo '</div>' . "\n";
-}
-
-/**
- * Converts a ClinicalTrials.gov phase enum to a readable label.
- */
-function format_phase_label(string $phase): string {
-  return match ($phase) {
-    'PHASE1'       => 'Phase 1',
-    'PHASE2'       => 'Phase 2',
-    'PHASE3'       => 'Phase 3',
-    'PHASE4'       => 'Phase 4',
-    'EARLY_PHASE1' => 'Early Phase 1',
-    'NA'           => 'N/A',
-    default        => ucwords(strtolower(str_replace('_', ' ', $phase))),
-  };
 }
 
 /**
  * Renders a human-readable summary of a single study.
  */
 function render_study_summary(array $data): void {
-  $protocol         = $data['protocolSection'] ?? [];
-  $identification   = $protocol['identificationModule'] ?? [];
-  $status_module    = $protocol['statusModule'] ?? [];
+  $protocol = $data['protocolSection'] ?? [];
+  $identification = $protocol['identificationModule'] ?? [];
+  $status_module = $protocol['statusModule'] ?? [];
   $description_module = $protocol['descriptionModule'] ?? [];
-  $conditions_module  = $protocol['conditionsModule'] ?? [];
-  $design_module    = $protocol['designModule'] ?? [];
+  $conditions_module = $protocol['conditionsModule'] ?? [];
+  $design_module = $protocol['designModule'] ?? [];
   $eligibility_module = $protocol['eligibilityModule'] ?? [];
-  $contacts_module  = $protocol['contactsLocationsModule'] ?? [];
-  $sponsors_module  = $protocol['sponsorCollaboratorsModule'] ?? [];
-  $outcomes_module  = $protocol['outcomesModule'] ?? [];
-  $arms_module      = $protocol['armsInterventionsModule'] ?? [];
+  $contacts_module = $protocol['contactsLocationsModule'] ?? [];
+  $sponsors_module = $protocol['sponsorCollaboratorsModule'] ?? [];
+  $outcomes_module = $protocol['outcomesModule'] ?? [];
+  $arms_module = $protocol['armsInterventionsModule'] ?? [];
 
-  $nct_id      = $identification['nctId'] ?? '';
-  $status      = $status_module['overallStatus'] ?? '';
-  $phases      = $design_module['phases'] ?? [];
-  $study_type  = $design_module['studyType'] ?? '';
+  $nct_id = $identification['nctId'] ?? '';
+  $status = $status_module['overallStatus'] ?? '';
+  $phases = $design_module['phases'] ?? [];
+  $study_type = $design_module['studyType'] ?? '';
   $lead_sponsor = $sponsors_module['leadSponsor']['name'] ?? '';
 
-  // Status + phase + study-type badges.
   echo '<div class="mb-2">' . "\n";
   if ($status) {
     echo build_status_badge($status) . ' ';
@@ -368,30 +332,44 @@ function render_study_summary(array $data): void {
   }
   echo '</div>' . "\n";
 
-  // NCT ID / sponsor subtitle line.
   $subtitle_parts = array_filter([$nct_id, $lead_sponsor]);
   echo '<p class="text-muted mb-4">' . htmlspecialchars(implode(' · ', $subtitle_parts)) . '</p>' . "\n";
 
-  // Meta-card grid.
   $enrollment_count = $design_module['enrollmentInfo']['count'] ?? NULL;
-  $enrollment_type  = $design_module['enrollmentInfo']['type'] ?? '';
-  $start_date       = $status_module['startDateStruct']['date'] ?? '';
-  $completion_date  = $status_module['completionDateStruct']['date'] ?? '';
-  $sex              = $eligibility_module['sex'] ?? '';
-  $min_age          = $eligibility_module['minimumAge'] ?? '';
-  $max_age          = $eligibility_module['maximumAge'] ?? '';
-  $healthy_raw      = $eligibility_module['healthyVolunteers'] ?? NULL;
+  $enrollment_type = $design_module['enrollmentInfo']['type'] ?? '';
+  $start_date = $status_module['startDateStruct']['date'] ?? '';
+  $completion_date = $status_module['completionDateStruct']['date'] ?? '';
+  $sex = $eligibility_module['sex'] ?? '';
+  $min_age = $eligibility_module['minimumAge'] ?? '';
+  $max_age = $eligibility_module['maximumAge'] ?? '';
+  $healthy_raw = $eligibility_module['healthyVolunteers'] ?? NULL;
   $healthy_volunteers = ($healthy_raw === NULL) ? NULL : ($healthy_raw ? 'Yes' : 'No');
 
   $cards = [];
-  if ($lead_sponsor)                    $cards[] = ['Sponsor', $lead_sponsor];
-  if ($study_type)                      $cards[] = ['Study Type', $study_type];
-  if ($start_date)                      $cards[] = ['Start Date', $start_date];
-  if ($completion_date)                 $cards[] = ['Completion Date', $completion_date];
-  if ($enrollment_count !== NULL)       $cards[] = ['Enrollment', $enrollment_count . ($enrollment_type ? ' (' . $enrollment_type . ')' : '')];
-  if ($sex)                             $cards[] = ['Sex', $sex];
-  if ($min_age || $max_age)             $cards[] = ['Age Range', ($min_age ?: 'N/A') . ' – ' . ($max_age ?: 'N/A')];
-  if ($healthy_volunteers !== NULL)     $cards[] = ['Healthy Volunteers', $healthy_volunteers];
+  if ($lead_sponsor) {
+    $cards[] = ['Sponsor', $lead_sponsor];
+  }
+  if ($study_type) {
+    $cards[] = ['Study Type', $study_type];
+  }
+  if ($start_date) {
+    $cards[] = ['Start Date', $start_date];
+  }
+  if ($completion_date) {
+    $cards[] = ['Completion Date', $completion_date];
+  }
+  if ($enrollment_count !== NULL) {
+    $cards[] = ['Enrollment', $enrollment_count . ($enrollment_type ? ' (' . $enrollment_type . ')' : '')];
+  }
+  if ($sex) {
+    $cards[] = ['Sex', $sex];
+  }
+  if ($min_age || $max_age) {
+    $cards[] = ['Age Range', ($min_age ?: 'N/A') . ' - ' . ($max_age ?: 'N/A')];
+  }
+  if ($healthy_volunteers !== NULL) {
+    $cards[] = ['Healthy Volunteers', $healthy_volunteers];
+  }
 
   if (!empty($cards)) {
     echo '<div class="row g-3 mb-4">' . "\n";
@@ -406,7 +384,6 @@ function render_study_summary(array $data): void {
     echo '</div>' . "\n";
   }
 
-  // Conditions.
   $conditions = $conditions_module['conditions'] ?? [];
   if (!empty($conditions)) {
     echo '<h2 class="h5 mt-4">Conditions</h2>' . "\n";
@@ -417,7 +394,6 @@ function render_study_summary(array $data): void {
     echo '</p>' . "\n";
   }
 
-  // Brief Summary.
   $brief_summary = $description_module['briefSummary'] ?? '';
   if ($brief_summary) {
     echo '<h2 class="h5 mt-4">Summary</h2>' . "\n";
@@ -425,14 +401,13 @@ function render_study_summary(array $data): void {
     echo '<p>' . nl2br(htmlspecialchars(trim($clean_summary))) . '</p>' . "\n";
   }
 
-  // Interventions.
   $interventions = $arms_module['interventions'] ?? [];
   if (!empty($interventions)) {
     echo '<h2 class="h5 mt-4">Interventions</h2>' . "\n";
     echo '<ul>' . "\n";
     foreach ($interventions as $intervention) {
-      $name        = $intervention['name'] ?? '';
-      $type        = $intervention['type'] ?? '';
+      $name = $intervention['name'] ?? '';
+      $type = $intervention['type'] ?? '';
       $description = $intervention['description'] ?? '';
       echo '<li>';
       echo '<strong>' . htmlspecialchars($name) . '</strong>';
@@ -440,20 +415,19 @@ function render_study_summary(array $data): void {
         echo ' <span class="text-muted">(' . htmlspecialchars($type) . ')</span>';
       }
       if ($description) {
-        echo ' — ' . htmlspecialchars($description);
+        echo ' - ' . htmlspecialchars($description);
       }
       echo '</li>' . "\n";
     }
     echo '</ul>' . "\n";
   }
 
-  // Primary Outcomes.
   $primary_outcomes = $outcomes_module['primaryOutcomes'] ?? [];
   if (!empty($primary_outcomes)) {
     echo '<h2 class="h5 mt-4">Primary Outcomes</h2>' . "\n";
     echo '<ol>' . "\n";
     foreach ($primary_outcomes as $outcome) {
-      $measure    = $outcome['measure'] ?? '';
+      $measure = $outcome['measure'] ?? '';
       $time_frame = $outcome['timeFrame'] ?? '';
       echo '<li>';
       echo htmlspecialchars($measure);
@@ -465,7 +439,6 @@ function render_study_summary(array $data): void {
     echo '</ol>' . "\n";
   }
 
-  // Eligibility.
   $criteria_text = $eligibility_module['eligibilityCriteria'] ?? '';
   if ($criteria_text) {
     echo '<h2 class="h5 mt-4">Eligibility</h2>' . "\n";
@@ -474,7 +447,7 @@ function render_study_summary(array $data): void {
     if (count($parts) > 1) {
       for ($i = 1; $i < count($parts); $i += 2) {
         $section_title = trim($parts[$i]);
-        $section_body  = trim($parts[$i + 1] ?? '');
+        $section_body = trim($parts[$i + 1] ?? '');
         echo '<h3 class="h6 mt-3">' . htmlspecialchars($section_title) . ' Criteria</h3>' . "\n";
         echo '<ul>' . "\n";
         foreach (preg_split('/\n+/', $section_body) as $line) {
@@ -491,7 +464,6 @@ function render_study_summary(array $data): void {
     }
   }
 
-  // Locations.
   $locations = $contacts_module['locations'] ?? [];
   if (!empty($locations)) {
     $total_locations = count($locations);
@@ -499,13 +471,13 @@ function render_study_summary(array $data): void {
     echo '<ul class="list-group mb-4">' . "\n";
     $shown = min(10, $total_locations);
     for ($i = 0; $i < $shown; $i++) {
-      $location         = $locations[$i];
-      $facility         = $location['facility'] ?? '';
-      $city             = $location['city'] ?? '';
-      $state            = $location['state'] ?? '';
-      $country          = $location['country'] ?? '';
-      $location_status  = $location['status'] ?? '';
-      $location_parts   = array_filter([$city, $state, $country]);
+      $location = $locations[$i];
+      $facility = $location['facility'] ?? '';
+      $city = $location['city'] ?? '';
+      $state = $location['state'] ?? '';
+      $country = $location['country'] ?? '';
+      $location_status = $location['status'] ?? '';
+      $location_parts = array_filter([$city, $state, $country]);
       echo '<li class="list-group-item d-flex justify-content-between align-items-start">' . "\n";
       echo '<div>';
       if ($facility) {
@@ -521,7 +493,7 @@ function render_study_summary(array $data): void {
       echo '</li>' . "\n";
     }
     if ($total_locations > 10) {
-      echo '<li class="list-group-item text-muted small">… and ' . ($total_locations - 10) . ' more locations</li>' . "\n";
+      echo '<li class="list-group-item text-muted small">... and ' . ($total_locations - 10) . ' more locations</li>' . "\n";
     }
     echo '</ul>' . "\n";
   }
@@ -531,17 +503,17 @@ function render_study_summary(array $data): void {
  * Renders a single flattened value as HTML for the Data table.
  *
  * Dispatches on value type:
- *   null              → em dash
- *   bool              → Yes / No
- *   long string       → scrollable container with nl2br
- *   scalar            → escaped string
- *   empty array       → em dash
- *   list of scalars   → bullet <ul>
- *   list of objects   → inline <table>
+ *   null              -> em dash
+ *   bool              -> Yes / No
+ *   long string       -> scrollable container with nl2br
+ *   scalar            -> escaped string
+ *   empty array       -> em dash
+ *   list of scalars   -> bullet <ul>
+ *   list of objects   -> inline <table>
  */
 function render_study_data_value(mixed $value): string {
   if ($value === NULL) {
-    return '<em class="text-muted">—</em>';
+    return '<em class="text-muted">-</em>';
   }
 
   if (is_bool($value)) {
@@ -557,10 +529,9 @@ function render_study_data_value(mixed $value): string {
   }
 
   if (empty($value)) {
-    return '<em class="text-muted">—</em>';
+    return '<em class="text-muted">-</em>';
   }
 
-  // List of scalars → bullet list.
   if (is_scalar($value[0]) || $value[0] === NULL) {
     $items = '';
     foreach ($value as $item) {
@@ -569,7 +540,6 @@ function render_study_data_value(mixed $value): string {
     return '<ul class="mb-0 ps-3">' . $items . '</ul>';
   }
 
-  // List of objects → inline table.
   $keys = array_keys($value[0]);
   $table = '<table class="table table-sm table-bordered mb-0"><thead><tr>';
   foreach ($keys as $key) {
@@ -606,6 +576,87 @@ function render_study_data(array $data): void {
   }
   echo '</tbody>' . "\n";
   echo '</table>' . "\n";
+}
+
+/**
+ * Recursively renders arbitrary JSON data as definition lists, tables, or lists.
+ */
+function render_generic(mixed $data): void {
+  if (is_array($data)) {
+    $is_list = array_is_list($data);
+
+    if (!$is_list) {
+      echo '<dl class="row">' . "\n";
+      foreach ($data as $key => $value) {
+        echo '<dt class="col-sm-3">' . htmlspecialchars((string) $key) . '</dt>' . "\n";
+        echo '<dd class="col-sm-9">' . "\n";
+        render_generic($value);
+        echo '</dd>' . "\n";
+      }
+      echo '</dl>' . "\n";
+      return;
+    }
+
+    if (empty($data)) {
+      echo '<em class="text-muted">empty</em>' . "\n";
+      return;
+    }
+
+    if (is_scalar($data[0])) {
+      echo '<ul class="list-group list-group-flush">' . "\n";
+      foreach ($data as $item) {
+        echo '<li class="list-group-item">' . htmlspecialchars((string) $item) . '</li>' . "\n";
+      }
+      echo '</ul>' . "\n";
+      return;
+    }
+
+    if (is_array($data[0])) {
+      $keys = array_keys($data[0]);
+      $column_width = round(100 / count($keys)) . '%';
+      echo '<table class="table table-sm table-bordered">' . "\n";
+      echo '<thead><tr>' . "\n";
+      foreach ($keys as $key) {
+        echo '<th style="width:' . $column_width . '">' . htmlspecialchars((string) $key) . '</th>' . "\n";
+      }
+      echo '</tr></thead>' . "\n";
+      echo '<tbody>' . "\n";
+      foreach ($data as $row) {
+        echo '<tr>' . "\n";
+        foreach ($keys as $key) {
+          $cell_value = $row[$key] ?? '';
+          echo '<td>';
+          if (is_array($cell_value)) {
+            render_generic($cell_value);
+          }
+          else {
+            echo htmlspecialchars((string) $cell_value);
+          }
+          echo '</td>' . "\n";
+        }
+        echo '</tr>' . "\n";
+      }
+      echo '</tbody>' . "\n";
+      echo '</table>' . "\n";
+      return;
+    }
+
+    echo '<ul class="list-group list-group-flush">' . "\n";
+    foreach ($data as $item) {
+      echo '<li class="list-group-item">' . "\n";
+      render_generic($item);
+      echo '</li>' . "\n";
+    }
+    echo '</ul>' . "\n";
+    return;
+  }
+
+  if ($data === NULL) {
+    echo '<em class="text-muted">null</em>' . "\n";
+    return;
+  }
+
+  echo htmlspecialchars((string) $data);
 }
 
 /**

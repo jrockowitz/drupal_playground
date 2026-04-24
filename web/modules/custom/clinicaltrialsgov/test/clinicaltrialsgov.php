@@ -44,19 +44,80 @@ $studies_params = [
   ['sort',                 'string',  'Sort field and direction e.g. LastUpdatePostDate:desc'],
 ];
 
-$status_colours = [
-  'RECRUITING'            => 'success',
-  'NOT_YET_RECRUITING'    => 'warning text-dark',
-  'ACTIVE_NOT_RECRUITING' => 'info text-dark',
-  'COMPLETED'             => 'secondary',
-  'TERMINATED'            => 'danger',
-  'WITHDRAWN'             => 'danger',
-  'SUSPENDED'             => 'warning text-dark',
-];
+// =============================================================================
+// REQUEST HELPERS
+// =============================================================================
 
+/**
+ * Parses a query string while preserving dot-notation keys (e.g. query.cond).
+ *
+ * $_GET and parse_str() convert dots to underscores, so we parse
+ * QUERY_STRING manually to keep keys like query.cond intact.
+ */
+function parse_query_string(string $query_string): array {
+  $result = [];
+  if ($query_string === '') {
+    return $result;
+  }
+
+  foreach (explode('&', $query_string) as $pair) {
+    $parts = explode('=', $pair, 2);
+    $key = urldecode($parts[0]);
+    $value = isset($parts[1]) ? urldecode($parts[1]) : '';
+    if ($key !== '') {
+      $result[$key] = $value;
+    }
+  }
+
+  return $result;
+}
+
+/**
+ * Builds a URL query string from an array, omitting empty values.
+ */
+function build_query_string(array $params): string {
+  $parts = [];
+  foreach ($params as $key => $value) {
+    if ($value !== '' && $value !== NULL) {
+      $parts[] = rawurlencode($key) . '=' . rawurlencode($value);
+    }
+  }
+  return implode('&', $parts);
+}
+
+/**
+ * Extracts the requested path and forwarded params from the current URL.
+ */
+function get_request_context(): array {
+  $all_params = parse_query_string($_SERVER['QUERY_STRING'] ?? '');
+  $path = $all_params['path'] ?? '';
+  unset($all_params['path']);
+
+  return [
+    'path' => $path,
+    'params' => $all_params,
+  ];
+}
+
+/**
+ * Removes local-only UI params before forwarding to the upstream API.
+ */
+function build_api_params(array $params, array $excluded_keys = []): array {
+  foreach ($excluded_keys as $excluded_key) {
+    unset($params[$excluded_key]);
+  }
+  return $params;
+}
+
+/**
+ * Adds default API params for the studies listing request.
+ */
+function build_studies_api_params(array $params): array {
+  return $params + ['countTotal' => 'true'];
+}
 
 // =============================================================================
-// FUNCTIONS
+// API HELPERS
 // =============================================================================
 
 /**
@@ -113,40 +174,9 @@ function fetch_api(string $path, array $params = []): array {
   return ['data' => $decoded, 'url' => $url];
 }
 
-/**
- * Builds a URL query string from an array, omitting empty values.
- */
-function build_query_string(array $params): string {
-  $parts = [];
-  foreach ($params as $key => $value) {
-    if ($value !== '' && $value !== NULL) {
-      $parts[] = rawurlencode($key) . '=' . rawurlencode($value);
-    }
-  }
-  return implode('&', $parts);
-}
-
-/**
- * Parses a query string while preserving dot-notation keys (e.g. query.cond).
- *
- * $_GET and parse_str() convert dots to underscores, so we parse
- * QUERY_STRING manually to keep keys like query.cond intact.
- */
-function parse_query_string(string $query_string): array {
-  $result = [];
-  if ($query_string === '') {
-    return $result;
-  }
-  foreach (explode('&', $query_string) as $pair) {
-    $parts = explode('=', $pair, 2);
-    $key = urldecode($parts[0]);
-    $value = isset($parts[1]) ? urldecode($parts[1]) : '';
-    if ($key !== '') {
-      $result[$key] = $value;
-    }
-  }
-  return $result;
-}
+// =============================================================================
+// NON-RENDER DATA HELPERS
+// =============================================================================
 
 /**
  * Recursively flattens nested study data into a key_path => raw_value map.
@@ -167,29 +197,52 @@ function flatten_study(mixed $data, string $prefix = ''): array {
   return [$prefix => $data];
 }
 
-require __DIR__ . '/clinicaltrialsgov.inc';
-
 // =============================================================================
-// ROUTER
+// ROUTING HELPERS
 // =============================================================================
 
-$all_params = parse_query_string($_SERVER['QUERY_STRING'] ?? '');
-$path = $all_params['path'] ?? '';
-unset($all_params['path']);
-$params = $all_params;
+/**
+ * Renders the initial index page.
+ */
+function route_index_request(array $endpoints): void {
+  render_page_start('Endpoints');
+  render_endpoint_index($endpoints);
+  render_page_end();
+}
 
-// Handle single-study paths early so the page title can come from the study data.
-if (preg_match('#^/studies/NCT\d+$#i', $path)) {
+/**
+ * Renders the /studies endpoint.
+ */
+function route_studies_request(array $studies_params, array $params): void {
+  render_page_start('/studies');
+  render_studies_form($studies_params, $params, open: empty($params));
+
+  $result = fetch_api('/studies', build_studies_api_params($params));
+  if (isset($result['error'])) {
+    render_error_message($result['error'], $result['url'] ?? '', 'mt-3');
+  }
+  else {
+    render_studies_results($result['data'], $params);
+    render_raw_json($result['data'], $result['url']);
+  }
+
+  render_page_end();
+}
+
+/**
+ * Renders a single-study endpoint.
+ */
+function route_single_study_request(string $path, array $params): void {
   $view = (($params['view'] ?? 'summary') === 'data') ? 'data' : 'summary';
-  $api_params = $params;
-  unset($api_params['view']);
-  $result = fetch_api($path, $api_params);
+  $result = fetch_api($path, build_api_params($params, ['view']));
   $page_title = ($view === 'summary' && isset($result['data']))
     ? ($result['data']['protocolSection']['identificationModule']['briefTitle'] ?? $path)
     : $path;
+
   render_page_start($page_title);
+
   if (isset($result['error'])) {
-    echo '<div class="alert alert-danger">' . htmlspecialchars($result['error']) . '</div>' . "\n";
+    render_error_message($result['error'], $result['url'] ?? '');
   }
   else {
     render_study_toggle($path, $view);
@@ -199,43 +252,90 @@ if (preg_match('#^/studies/NCT\d+$#i', $path)) {
     else {
       render_study_data($result['data']);
     }
+    render_raw_json($result['data'], $result['url']);
   }
-  render_raw_json($result['data'] ?? NULL, $result['url'] ?? '');
+
   render_page_end();
-  exit;
 }
 
-render_page_start($path ?: 'Endpoints');
+/**
+ * Renders stats field endpoints, including the required field form.
+ */
+function route_field_stats_request(string $path, array $params): void {
+  render_page_start($path);
+  render_field_stats_form($path, (string) ($params['fields'] ?? ''));
 
-if ($path === '') {
-  render_endpoint_index($endpoints);
-}
-elseif ($path === '/studies') {
-  render_studies_form($studies_params, $params, open: empty($params));
-  $api_params = $params + ['countTotal' => 'true'];
-  $result = fetch_api('/studies', $api_params);
-  if (isset($result['error'])) {
-    echo '<div class="alert alert-danger mt-3">' . htmlspecialchars($result['error']) . '</div>' . "\n";
-  }
-  else {
-    render_studies_results($result['data'], $params);
-  }
-}
-else {
   $result = fetch_api($path, $params);
   if (isset($result['error'])) {
-    echo '<div class="alert alert-danger">' . htmlspecialchars($result['error']) . '</div>' . "\n";
+    render_error_message($result['error'], $result['url'] ?? '', 'mt-3');
   }
-  else if (in_array($path, ['/stats/field/values', '/stats/field/sizes'])) {
+  else {
     render_field_stats($result['data'], $path);
+    render_raw_json($result['data'], $result['url']);
+  }
+
+  render_page_end();
+}
+
+/**
+ * Renders all remaining endpoints with generic output.
+ */
+function route_generic_request(string $path, array $params): void {
+  render_page_start($path);
+
+  $result = fetch_api($path, $params);
+  if (isset($result['error'])) {
+    render_error_message($result['error'], $result['url'] ?? '');
   }
   else {
     render_generic($result['data']);
+    render_raw_json($result['data'], $result['url']);
   }
+
+  render_page_end();
 }
 
-if (isset($result) && isset($result['data']) && isset($result['url'])) {
-  render_raw_json($result['data'], $result['url']);
+/**
+ * Dispatches the current request to the correct route helper.
+ */
+function route_request(array $request_context, array $endpoints, array $studies_params): void {
+  $path = $request_context['path'];
+  $params = $request_context['params'];
+
+  if ($path === '') {
+    // Handle the index route: ''.
+    route_index_request($endpoints);
+    return;
+  }
+
+  if ($path === '/studies') {
+    // Handle the studies search route: '/studies'.
+    route_studies_request($studies_params, $params);
+    return;
+  }
+
+  if (preg_match('#^/studies/NCT\d+$#i', $path)) {
+    // Handle single-study routes: '/studies/NCT04001699' and other '/studies/NCT\d+' paths.
+    route_single_study_request($path, $params);
+    return;
+  }
+
+  if (in_array($path, ['/stats/field/values', '/stats/field/sizes'])) {
+    // Handle stats field routes: '/stats/field/values' and '/stats/field/sizes'.
+    route_field_stats_request($path, $params);
+    return;
+  }
+
+  // Handle generic pass-through routes such as '/version', '/stats/size',
+  // '/studies/metadata', '/studies/search-areas', and '/studies/enums'.
+  route_generic_request($path, $params);
 }
 
-render_page_end();
+require __DIR__ . '/clinicaltrialsgov.inc';
+
+// =============================================================================
+// ENTRYPOINT
+// =============================================================================
+
+$request_context = get_request_context();
+route_request($request_context, $endpoints, $studies_params);
