@@ -148,6 +148,25 @@ function parse_query_string(string $query_string): array {
   return $result;
 }
 
+/**
+ * Recursively flattens nested study data into a key_path => raw_value map.
+ *
+ * Assoc arrays (objects) are recursed into using dot-notation keys.
+ * Lists and scalars are stored as-is for rendering by render_study_data_value().
+ */
+function flatten_study(mixed $data, string $prefix = ''): array {
+  if (is_array($data) && !array_is_list($data)) {
+    $result = [];
+    foreach ($data as $key => $value) {
+      $child_key = ($prefix !== '') ? $prefix . '.' . $key : (string) $key;
+      $result += flatten_study($value, $child_key);
+    }
+    return $result;
+  }
+
+  return [$prefix => $data];
+}
+
 require __DIR__ . '/clinicaltrialsgov.inc';
 
 // =============================================================================
@@ -158,6 +177,33 @@ $all_params = parse_query_string($_SERVER['QUERY_STRING'] ?? '');
 $path = $all_params['path'] ?? '';
 unset($all_params['path']);
 $params = $all_params;
+
+// Handle single-study paths early so the page title can come from the study data.
+if (preg_match('#^/studies/NCT\d+$#i', $path)) {
+  $view = (($params['view'] ?? 'summary') === 'data') ? 'data' : 'summary';
+  $api_params = $params;
+  unset($api_params['view']);
+  $result = fetch_api($path, $api_params);
+  $page_title = ($view === 'summary' && isset($result['data']))
+    ? ($result['data']['protocolSection']['identificationModule']['briefTitle'] ?? $path)
+    : $path;
+  render_page_start($page_title);
+  if (isset($result['error'])) {
+    echo '<div class="alert alert-danger">' . htmlspecialchars($result['error']) . '</div>' . "\n";
+  }
+  else {
+    render_study_toggle($path, $view);
+    if ($view === 'summary') {
+      render_study_summary($result['data']);
+    }
+    else {
+      render_study_data($result['data']);
+    }
+  }
+  render_raw_json($result['data'] ?? NULL, $result['url'] ?? '');
+  render_page_end();
+  exit;
+}
 
 render_page_start($path ?: 'Endpoints');
 

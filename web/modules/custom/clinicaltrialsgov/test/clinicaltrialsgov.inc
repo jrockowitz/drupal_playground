@@ -23,6 +23,12 @@ function render_page_start(string $title): void {
   echo 'details.param-box > summary { color: #212529; font-size: 1.25rem; font-weight: 500; margin-bottom: 0; }' . "\n";
   echo 'dt { font-weight: 600; }' . "\n";
   echo 'table thead { --bs-table-bg: #e9ecef; --bs-table-color: #212529; }' . "\n";
+  echo '.study-meta-card { border: 1px solid #dee2e6; border-radius: .375rem; padding: .75rem 1rem; }' . "\n";
+  echo '.study-meta-card .label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: #6c757d; }' . "\n";
+  echo '.study-meta-card .value { font-weight: 600; font-size: .95rem; }' . "\n";
+  echo '.breadcrumb-key { font-size: .8rem; white-space: nowrap; }' . "\n";
+  echo '.breadcrumb-key a { font-family: monospace; color: #6c757d; text-decoration: none; }' . "\n";
+  echo '.breadcrumb-key a:hover { color: #495057; text-decoration: underline; }' . "\n";
   echo '</style>' . "\n";
   echo '</head>' . "\n";
   echo '<body>' . "\n";
@@ -298,6 +304,308 @@ function render_generic(mixed $data, int $depth = 0): void {
   else {
     echo htmlspecialchars((string) $data);
   }
+}
+
+/**
+ * Renders a Summary / Data toggle button group for single-study pages.
+ */
+function render_study_toggle(string $path, string $current_view): void {
+  $summary_href = htmlspecialchars(SELF . '?path=' . rawurlencode($path) . '&view=summary');
+  $data_href    = htmlspecialchars(SELF . '?path=' . rawurlencode($path) . '&view=data');
+  echo '<div class="btn-group mb-4" role="group" aria-label="Display mode">' . "\n";
+  echo '<a href="' . $summary_href . '" class="btn btn-sm ' . ($current_view === 'summary' ? 'btn-primary' : 'btn-outline-primary') . '">Summary</a>' . "\n";
+  echo '<a href="' . $data_href    . '" class="btn btn-sm ' . ($current_view === 'data'    ? 'btn-primary' : 'btn-outline-primary') . '">Data</a>' . "\n";
+  echo '</div>' . "\n";
+}
+
+/**
+ * Converts a ClinicalTrials.gov phase enum to a readable label.
+ */
+function format_phase_label(string $phase): string {
+  return match ($phase) {
+    'PHASE1'       => 'Phase 1',
+    'PHASE2'       => 'Phase 2',
+    'PHASE3'       => 'Phase 3',
+    'PHASE4'       => 'Phase 4',
+    'EARLY_PHASE1' => 'Early Phase 1',
+    'NA'           => 'N/A',
+    default        => ucwords(strtolower(str_replace('_', ' ', $phase))),
+  };
+}
+
+/**
+ * Renders a human-readable summary of a single study.
+ */
+function render_study_summary(array $data): void {
+  $protocol         = $data['protocolSection'] ?? [];
+  $identification   = $protocol['identificationModule'] ?? [];
+  $status_module    = $protocol['statusModule'] ?? [];
+  $description_module = $protocol['descriptionModule'] ?? [];
+  $conditions_module  = $protocol['conditionsModule'] ?? [];
+  $design_module    = $protocol['designModule'] ?? [];
+  $eligibility_module = $protocol['eligibilityModule'] ?? [];
+  $contacts_module  = $protocol['contactsLocationsModule'] ?? [];
+  $sponsors_module  = $protocol['sponsorCollaboratorsModule'] ?? [];
+  $outcomes_module  = $protocol['outcomesModule'] ?? [];
+  $arms_module      = $protocol['armsInterventionsModule'] ?? [];
+
+  $nct_id      = $identification['nctId'] ?? '';
+  $status      = $status_module['overallStatus'] ?? '';
+  $phases      = $design_module['phases'] ?? [];
+  $study_type  = $design_module['studyType'] ?? '';
+  $lead_sponsor = $sponsors_module['leadSponsor']['name'] ?? '';
+
+  // Status + phase + study-type badges.
+  echo '<div class="mb-2">' . "\n";
+  if ($status) {
+    echo build_status_badge($status) . ' ';
+  }
+  foreach ($phases as $phase) {
+    echo '<span class="badge bg-light text-dark border me-1">' . htmlspecialchars(format_phase_label($phase)) . '</span>';
+  }
+  if ($study_type) {
+    echo '<span class="badge bg-light text-dark border">' . htmlspecialchars($study_type) . '</span>';
+  }
+  echo '</div>' . "\n";
+
+  // NCT ID / sponsor subtitle line.
+  $subtitle_parts = array_filter([$nct_id, $lead_sponsor]);
+  echo '<p class="text-muted mb-4">' . htmlspecialchars(implode(' · ', $subtitle_parts)) . '</p>' . "\n";
+
+  // Meta-card grid.
+  $enrollment_count = $design_module['enrollmentInfo']['count'] ?? NULL;
+  $enrollment_type  = $design_module['enrollmentInfo']['type'] ?? '';
+  $start_date       = $status_module['startDateStruct']['date'] ?? '';
+  $completion_date  = $status_module['completionDateStruct']['date'] ?? '';
+  $sex              = $eligibility_module['sex'] ?? '';
+  $min_age          = $eligibility_module['minimumAge'] ?? '';
+  $max_age          = $eligibility_module['maximumAge'] ?? '';
+  $healthy_raw      = $eligibility_module['healthyVolunteers'] ?? NULL;
+  $healthy_volunteers = ($healthy_raw === NULL) ? NULL : ($healthy_raw ? 'Yes' : 'No');
+
+  $cards = [];
+  if ($lead_sponsor)                    $cards[] = ['Sponsor', $lead_sponsor];
+  if ($study_type)                      $cards[] = ['Study Type', $study_type];
+  if ($start_date)                      $cards[] = ['Start Date', $start_date];
+  if ($completion_date)                 $cards[] = ['Completion Date', $completion_date];
+  if ($enrollment_count !== NULL)       $cards[] = ['Enrollment', $enrollment_count . ($enrollment_type ? ' (' . $enrollment_type . ')' : '')];
+  if ($sex)                             $cards[] = ['Sex', $sex];
+  if ($min_age || $max_age)             $cards[] = ['Age Range', ($min_age ?: 'N/A') . ' – ' . ($max_age ?: 'N/A')];
+  if ($healthy_volunteers !== NULL)     $cards[] = ['Healthy Volunteers', $healthy_volunteers];
+
+  if (!empty($cards)) {
+    echo '<div class="row g-3 mb-4">' . "\n";
+    foreach ($cards as [$label, $value]) {
+      echo '<div class="col-sm-6 col-md-4 col-lg-3">' . "\n";
+      echo '<div class="study-meta-card h-100">' . "\n";
+      echo '<div class="label">' . htmlspecialchars($label) . '</div>' . "\n";
+      echo '<div class="value">' . htmlspecialchars((string) $value) . '</div>' . "\n";
+      echo '</div>' . "\n";
+      echo '</div>' . "\n";
+    }
+    echo '</div>' . "\n";
+  }
+
+  // Conditions.
+  $conditions = $conditions_module['conditions'] ?? [];
+  if (!empty($conditions)) {
+    echo '<h2 class="h5 mt-4">Conditions</h2>' . "\n";
+    echo '<p>';
+    foreach ($conditions as $condition) {
+      echo '<span class="badge bg-secondary me-1">' . htmlspecialchars($condition) . '</span>';
+    }
+    echo '</p>' . "\n";
+  }
+
+  // Brief Summary.
+  $brief_summary = $description_module['briefSummary'] ?? '';
+  if ($brief_summary) {
+    echo '<h2 class="h5 mt-4">Summary</h2>' . "\n";
+    $clean_summary = strip_tags(str_replace(['<br/>', '<br />', '<br>'], "\n", $brief_summary));
+    echo '<p>' . nl2br(htmlspecialchars(trim($clean_summary))) . '</p>' . "\n";
+  }
+
+  // Interventions.
+  $interventions = $arms_module['interventions'] ?? [];
+  if (!empty($interventions)) {
+    echo '<h2 class="h5 mt-4">Interventions</h2>' . "\n";
+    echo '<ul>' . "\n";
+    foreach ($interventions as $intervention) {
+      $name        = $intervention['name'] ?? '';
+      $type        = $intervention['type'] ?? '';
+      $description = $intervention['description'] ?? '';
+      echo '<li>';
+      echo '<strong>' . htmlspecialchars($name) . '</strong>';
+      if ($type) {
+        echo ' <span class="text-muted">(' . htmlspecialchars($type) . ')</span>';
+      }
+      if ($description) {
+        echo ' — ' . htmlspecialchars($description);
+      }
+      echo '</li>' . "\n";
+    }
+    echo '</ul>' . "\n";
+  }
+
+  // Primary Outcomes.
+  $primary_outcomes = $outcomes_module['primaryOutcomes'] ?? [];
+  if (!empty($primary_outcomes)) {
+    echo '<h2 class="h5 mt-4">Primary Outcomes</h2>' . "\n";
+    echo '<ol>' . "\n";
+    foreach ($primary_outcomes as $outcome) {
+      $measure    = $outcome['measure'] ?? '';
+      $time_frame = $outcome['timeFrame'] ?? '';
+      echo '<li>';
+      echo htmlspecialchars($measure);
+      if ($time_frame) {
+        echo ' <span class="text-muted small">(' . htmlspecialchars($time_frame) . ')</span>';
+      }
+      echo '</li>' . "\n";
+    }
+    echo '</ol>' . "\n";
+  }
+
+  // Eligibility.
+  $criteria_text = $eligibility_module['eligibilityCriteria'] ?? '';
+  if ($criteria_text) {
+    echo '<h2 class="h5 mt-4">Eligibility</h2>' . "\n";
+    $clean_criteria = strip_tags(str_replace(['<br/>', '<br />', '<br>'], "\n", $criteria_text));
+    $parts = preg_split('/(Inclusion Criteria|Exclusion Criteria)\s*:/i', $clean_criteria, -1, PREG_SPLIT_DELIM_CAPTURE);
+    if (count($parts) > 1) {
+      for ($i = 1; $i < count($parts); $i += 2) {
+        $section_title = trim($parts[$i]);
+        $section_body  = trim($parts[$i + 1] ?? '');
+        echo '<h3 class="h6 mt-3">' . htmlspecialchars($section_title) . ' Criteria</h3>' . "\n";
+        echo '<ul>' . "\n";
+        foreach (preg_split('/\n+/', $section_body) as $line) {
+          $line = trim(preg_replace('/^[\*\-•]\s*/', '', trim($line)));
+          if ($line !== '') {
+            echo '<li>' . htmlspecialchars($line) . '</li>' . "\n";
+          }
+        }
+        echo '</ul>' . "\n";
+      }
+    }
+    else {
+      echo '<p>' . nl2br(htmlspecialchars(trim($clean_criteria))) . '</p>' . "\n";
+    }
+  }
+
+  // Locations.
+  $locations = $contacts_module['locations'] ?? [];
+  if (!empty($locations)) {
+    $total_locations = count($locations);
+    echo '<h2 class="h5 mt-4">Locations (' . $total_locations . ')</h2>' . "\n";
+    echo '<ul class="list-group mb-4">' . "\n";
+    $shown = min(10, $total_locations);
+    for ($i = 0; $i < $shown; $i++) {
+      $location         = $locations[$i];
+      $facility         = $location['facility'] ?? '';
+      $city             = $location['city'] ?? '';
+      $state            = $location['state'] ?? '';
+      $country          = $location['country'] ?? '';
+      $location_status  = $location['status'] ?? '';
+      $location_parts   = array_filter([$city, $state, $country]);
+      echo '<li class="list-group-item d-flex justify-content-between align-items-start">' . "\n";
+      echo '<div>';
+      if ($facility) {
+        echo '<strong>' . htmlspecialchars($facility) . '</strong>';
+      }
+      if (!empty($location_parts)) {
+        echo '<br><span class="text-muted small">' . htmlspecialchars(implode(', ', $location_parts)) . '</span>';
+      }
+      echo '</div>' . "\n";
+      if ($location_status) {
+        echo build_status_badge($location_status);
+      }
+      echo '</li>' . "\n";
+    }
+    if ($total_locations > 10) {
+      echo '<li class="list-group-item text-muted small">… and ' . ($total_locations - 10) . ' more locations</li>' . "\n";
+    }
+    echo '</ul>' . "\n";
+  }
+}
+
+/**
+ * Renders a single flattened value as HTML for the Data table.
+ *
+ * Dispatches on value type:
+ *   null              → em dash
+ *   bool              → Yes / No
+ *   long string       → scrollable container with nl2br
+ *   scalar            → escaped string
+ *   empty array       → em dash
+ *   list of scalars   → bullet <ul>
+ *   list of objects   → inline <table>
+ */
+function render_study_data_value(mixed $value): string {
+  if ($value === NULL) {
+    return '<em class="text-muted">—</em>';
+  }
+
+  if (is_bool($value)) {
+    return $value ? 'Yes' : 'No';
+  }
+
+  if (!is_array($value)) {
+    $string_value = (string) $value;
+    if (strlen($string_value) > 200) {
+      return '<div style="max-height:8rem;overflow-y:auto" class="small">' . nl2br(htmlspecialchars($string_value)) . '</div>';
+    }
+    return htmlspecialchars($string_value);
+  }
+
+  if (empty($value)) {
+    return '<em class="text-muted">—</em>';
+  }
+
+  // List of scalars → bullet list.
+  if (is_scalar($value[0]) || $value[0] === NULL) {
+    $items = '';
+    foreach ($value as $item) {
+      $items .= '<li>' . htmlspecialchars((string) $item) . '</li>';
+    }
+    return '<ul class="mb-0 ps-3">' . $items . '</ul>';
+  }
+
+  // List of objects → inline table.
+  $keys = array_keys($value[0]);
+  $table = '<table class="table table-sm table-bordered mb-0"><thead><tr>';
+  foreach ($keys as $key) {
+    $table .= '<th>' . htmlspecialchars((string) $key) . '</th>';
+  }
+  $table .= '</tr></thead><tbody>';
+  foreach ($value as $object_row) {
+    $table .= '<tr>';
+    foreach ($keys as $key) {
+      $cell = $object_row[$key] ?? NULL;
+      $table .= '<td>';
+      $table .= is_array($cell) ? htmlspecialchars(json_encode($cell)) : htmlspecialchars((string) ($cell ?? ''));
+      $table .= '</td>';
+    }
+    $table .= '</tr>';
+  }
+  $table .= '</tbody></table>';
+  return $table;
+}
+
+/**
+ * Renders the flat Data view for a single study as a two-column breadcrumb table.
+ */
+function render_study_data(array $data): void {
+  echo '<table class="table table-sm table-bordered table-hover">' . "\n";
+  echo '<thead><tr><th style="width:35%">Key</th><th>Value</th></tr></thead>' . "\n";
+  echo '<tbody>' . "\n";
+  foreach (flatten_study($data) as $key => $value) {
+    $field_href = htmlspecialchars(SELF . '?path=' . rawurlencode('/stats/field/values') . '&fields=' . rawurlencode($key));
+    echo '<tr>' . "\n";
+    echo '<td class="breadcrumb-key"><a href="' . $field_href . '">' . htmlspecialchars($key) . '</a></td>' . "\n";
+    echo '<td>' . render_study_data_value($value) . '</td>' . "\n";
+    echo '</tr>' . "\n";
+  }
+  echo '</tbody>' . "\n";
+  echo '</table>' . "\n";
 }
 
 /**

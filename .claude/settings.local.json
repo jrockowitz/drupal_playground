@@ -50,7 +50,11 @@
       "Bash(curl -s \"https://clinicaltrials.gov/api/v2/stats/field/sizes?fields=BriefTitle\")",
       "Bash(curl -s \"https://clinicaltrials.gov/api/v2/stats/field/sizes\")",
       "Bash(curl -s \"https://clinicaltrials.gov/api/v2/stats/field/values\")",
-      "Bash(curl -s \"https://drupal-playground.ddev.site/clinical-trials-gov.php?path=%2Fstats%2Ffield%2Fvalues\")"
+      "Bash(curl -s \"https://drupal-playground.ddev.site/clinical-trials-gov.php?path=%2Fstats%2Ffield%2Fvalues\")",
+      "WebFetch(domain:clinicaltrials.gov)",
+      "mcp__plugin_playwright_playwright__browser_run_code",
+      "Bash(curl -s \"https://drupal-playground.ddev.site/modules/custom/clinicaltrialsgov/test/clinicaltrialsgov.php?path=%2Fstudies%2FNCT01927341\")",
+      "Bash(curl -s \"https://drupal-playground.ddev.site/modules/custom/clinicaltrialsgov/test/clinicaltrialsgov.php?path=%2Fstudies%2FNCT01927341&view=data\")"
     ],
     "deny": [
       "Bash(ddev delete *)",
