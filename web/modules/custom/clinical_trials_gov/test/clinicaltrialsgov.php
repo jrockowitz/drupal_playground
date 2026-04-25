@@ -1,52 +1,52 @@
 <?php
 
-// =============================================================================
-// CONSTANTS
-// =============================================================================
+/**
+ * @file
+ * ClinicalTrials.gov standalone PHP explorer entry point.
+ */
 
+// CONSTANTS
+// =============================================================================.
 define('API_BASE', 'https://clinicaltrials.gov/api/v2');
-define('SELF', basename($_SERVER['PHP_SELF']));
+define('CURRENT_SCRIPT', basename($_SERVER['PHP_SELF']));
 
 // =============================================================================
 // DATA
 // =============================================================================
-
 $endpoints = [
-  ['path' => '/studies',              'description' => 'Search / list studies',                            'section' => 'Studies'],
-  ['path' => '/studies/{nctId}',      'description' => 'Single study record (replace {nctId} in the URL)', 'section' => 'Studies'],
-  ['path' => '/studies/metadata',     'description' => 'Study data model / field tree',                    'section' => 'Studies'],
-  ['path' => '/studies/search-areas', 'description' => 'Full-text search areas and their syntax',          'section' => 'Studies'],
-  ['path' => '/studies/enums',        'description' => 'All enumeration types and their allowed values',   'section' => 'Studies'],
-  ['path' => '/stats/size',           'description' => 'Total number of studies in the database',          'section' => 'Data statistics'],
-  ['path' => '/stats/field/values',   'description' => 'Value stats for a specific field',                 'section' => 'Data statistics'],
-  ['path' => '/stats/field/sizes',    'description' => 'Size stats for a specific field',                  'section' => 'Data statistics'],
-  ['path' => '/version',              'description' => 'API version and data timestamp',                   'section' => 'Version'],
+  ['path' => '/studies', 'description' => 'Search / list studies', 'section' => 'Studies'],
+  ['path' => '/studies/{nctId}', 'description' => 'Single study record (replace {nctId} in the URL)', 'section' => 'Studies'],
+  ['path' => '/studies/metadata', 'description' => 'Study data model / field tree', 'section' => 'Studies'],
+  ['path' => '/studies/search-areas', 'description' => 'Full-text search areas and their syntax', 'section' => 'Studies'],
+  ['path' => '/studies/enums', 'description' => 'All enumeration types and their allowed values', 'section' => 'Studies'],
+  ['path' => '/stats/size', 'description' => 'Total number of studies in the database', 'section' => 'Data statistics'],
+  ['path' => '/stats/field/values', 'description' => 'Value stats for a specific field', 'section' => 'Data statistics'],
+  ['path' => '/stats/field/sizes', 'description' => 'Size stats for a specific field', 'section' => 'Data statistics'],
+  ['path' => '/version', 'description' => 'API version and data timestamp', 'section' => 'Version'],
 ];
 
 $studies_params = [
-  ['query.cond',           'string',  'Condition or disease'],
-  ['query.term',           'string',  'Other search terms (full-text)'],
-  ['query.locn',           'string',  'Location terms'],
-  ['query.titles',         'string',  'Title / acronym search'],
-  ['query.intr',           'string',  'Intervention or treatment'],
-  ['query.outc',           'string',  'Outcome measure'],
-  ['query.spons',          'string',  'Sponsor or collaborator'],
-  ['query.lead',           'string',  'Lead sponsor only'],
-  ['query.id',             'string',  'NCT number or study ID'],
-  ['filter.overallStatus', 'string',  'Pipe-separated statuses e.g. RECRUITING|COMPLETED'],
-  ['filter.geo',           'string',  'Geo filter e.g. distance(lat,lng,50mi)'],
-  ['filter.ids',           'string',  'Pipe-separated NCT IDs e.g. NCT001|NCT002'],
-  ['filter.advanced',      'string',  'Essie expression syntax filter'],
-  ['aggFilters',           'string',  'Aggregation filters e.g. phase:phase2,studyType:int'],
-  ['pageSize',             'integer', 'Results per page (1–1000, default 10)'],
-  ['pageToken',            'string',  'Pagination cursor token from previous response'],
-  ['countTotal',           'boolean', 'Include total matching count in response'],
-  ['sort',                 'string',  'Sort field and direction e.g. LastUpdatePostDate:desc'],
+  ['query.cond', 'string', 'Condition or disease'],
+  ['query.term', 'string', 'Other search terms (full-text)'],
+  ['query.locn', 'string', 'Location terms'],
+  ['query.titles', 'string', 'Title / acronym search'],
+  ['query.intr', 'string', 'Intervention or treatment'],
+  ['query.outc', 'string', 'Outcome measure'],
+  ['query.spons', 'string', 'Sponsor or collaborator'],
+  ['query.lead', 'string', 'Lead sponsor only'],
+  ['query.id', 'string', 'NCT number or study ID'],
+  ['filter.overallStatus', 'string', 'Pipe-separated statuses e.g. RECRUITING|COMPLETED'],
+  ['filter.geo', 'string', 'Geo filter e.g. distance(lat,lng,50mi)'],
+  ['filter.ids', 'string', 'Pipe-separated NCT IDs e.g. NCT001|NCT002'],
+  ['filter.advanced', 'string', 'Essie expression syntax filter'],
+  ['aggFilters', 'string', 'Aggregation filters e.g. phase:phase2,studyType:int'],
+  ['pageSize', 'integer', 'Results per page (1–1000, default 10)'],
+  ['pageToken', 'string', 'Pagination cursor token from previous response'],
+  ['countTotal', 'boolean', 'Include total matching count in response'],
+  ['sort', 'string', 'Sort field and direction e.g. LastUpdatePostDate:desc'],
 ];
 
-// =============================================================================
-// REQUEST HELPERS
-// =============================================================================
+/* REQUEST HELPERS */
 
 /**
  * Parses a query string while preserving dot-notation keys (e.g. query.cond).
@@ -116,9 +116,7 @@ function build_studies_api_params(array $params): array {
   return $params + ['countTotal' => 'true'];
 }
 
-// =============================================================================
-// API HELPERS
-// =============================================================================
+/* API HELPERS */
 
 /**
  * Fetches a ClinicalTrials.gov API endpoint and returns the decoded response.
@@ -174,9 +172,7 @@ function fetch_api(string $path, array $params = []): array {
   return ['data' => $decoded, 'url' => $url];
 }
 
-// =============================================================================
-// NON-RENDER DATA HELPERS
-// =============================================================================
+/* NON-RENDER DATA HELPERS */
 
 /**
  * Recursively flattens nested study data into a key_path => raw_value map.
@@ -254,9 +250,7 @@ function metadata_anchor_id(string $key): string {
   return ($anchor !== '') ? 'metadata-' . $anchor : 'metadata-key';
 }
 
-// =============================================================================
-// ROUTING HELPERS
-// =============================================================================
+/* ROUTING HELPERS */
 
 /**
  * Renders the initial index page.
@@ -417,6 +411,5 @@ require __DIR__ . '/clinicaltrialsgov.inc';
 // =============================================================================
 // ENTRYPOINT
 // =============================================================================
-
 $request_context = get_request_context();
 route_request($request_context, $endpoints, $studies_params);

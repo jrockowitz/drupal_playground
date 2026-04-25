@@ -1,10 +1,13 @@
 <?php
 
-// Rendering functions only.
+/**
+ * @file
+ * Rendering functions only.
+ */
+
 // Requires SELF, build_query_string(), flatten_study(), and metadata_anchor_id()
 // from clinicaltrialsgov.php, which includes this file.
-
-$status_colours = [
+define('_CLINICALTRIALS_STATUS_COLOURS', [
   'RECRUITING' => 'success',
   'NOT_YET_RECRUITING' => 'warning text-dark',
   'ACTIVE_NOT_RECRUITING' => 'info text-dark',
@@ -12,7 +15,7 @@ $status_colours = [
   'TERMINATED' => 'danger',
   'WITHDRAWN' => 'danger',
   'SUSPENDED' => 'warning text-dark',
-];
+]);
 
 /**
  * Outputs the HTML head, navbar, and opening container with an <h1> page title.
@@ -46,7 +49,7 @@ function render_page_start(string $title): void {
   echo '<body>' . "\n";
   echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">' . "\n";
   echo '<div class="container">' . "\n";
-  echo '<a class="navbar-brand" href="' . htmlspecialchars(SELF) . '">ClinicalTrials.gov Explorer</a>' . "\n";
+  echo '<a class="navbar-brand" href="' . htmlspecialchars(CURRENT_SCRIPT) . '">ClinicalTrials.gov Explorer</a>' . "\n";
   echo '<a class="ms-auto text-white-50 small text-decoration-none" href="https://clinicaltrials.gov/data-api/api" target="_blank">ClinicalTrials.gov API</a>' . "\n";
   echo '</div>' . "\n";
   echo '</nav>' . "\n";
@@ -79,8 +82,7 @@ function render_error_message(string $message, string $url = '', string $classes
  * Returns a Bootstrap badge HTML string for a study overall status value.
  */
 function build_status_badge(string $status): string {
-  global $status_colours;
-  $colour = $status_colours[$status] ?? 'light text-dark';
+  $colour = _CLINICALTRIALS_STATUS_COLOURS[$status] ?? 'light text-dark';
   return '<span class="badge bg-' . $colour . '">' . htmlspecialchars($status) . '</span>';
 }
 
@@ -114,7 +116,7 @@ function render_endpoint_index(array $endpoints): void {
     foreach ($section_endpoints as $endpoint) {
       $path = $endpoint['path'];
       $is_placeholder = str_contains($path, '{');
-      $href = $is_placeholder ? NULL : htmlspecialchars(SELF . '?path=' . rawurlencode($path));
+      $href = $is_placeholder ? NULL : htmlspecialchars(CURRENT_SCRIPT . '?path=' . rawurlencode($path));
       echo '<li class="list-group-item d-flex justify-content-between align-items-center">' . "\n";
       echo '<div>' . "\n";
       echo '<span class="font-monospace fw-semibold">' . htmlspecialchars($path) . '</span>' . "\n";
@@ -135,7 +137,7 @@ function render_endpoint_index(array $endpoints): void {
 function render_studies_form(array $studies_params, array $current_values, bool $open = TRUE): void {
   echo '<details class="param-box mt-4"' . ($open ? ' open' : '') . '>' . "\n";
   echo '<summary>Search Parameters</summary>' . "\n";
-  echo '<form action="' . htmlspecialchars(SELF) . '" method="get" class="mt-3">' . "\n";
+  echo '<form action="' . htmlspecialchars(CURRENT_SCRIPT) . '" method="get" class="mt-3">' . "\n";
   echo '<input type="hidden" name="path" value="/studies">' . "\n";
   foreach ($studies_params as [$key, $type, $description]) {
     $current_value = $current_values[$key] ?? '';
@@ -166,7 +168,7 @@ function render_studies_form(array $studies_params, array $current_values, bool 
  * Renders the minimal field form required by the stats endpoints.
  */
 function render_field_stats_form(string $path, string $current_value = ''): void {
-  echo '<form action="' . htmlspecialchars(SELF) . '" method="get" class="row gy-2 gx-3 align-items-end mt-4 mb-4">' . "\n";
+  echo '<form action="' . htmlspecialchars(CURRENT_SCRIPT) . '" method="get" class="row gy-2 gx-3 align-items-end mt-4 mb-4">' . "\n";
   echo '<input type="hidden" name="path" value="' . htmlspecialchars($path) . '">' . "\n";
   echo '<div class="col-sm-9">' . "\n";
   echo '<label class="form-label" for="fields">Fields</label>' . "\n";
@@ -228,7 +230,7 @@ function render_studies_results(array $data, array $current_params): void {
     $conditions = implode(', ', $conditions_module['conditions'] ?? []);
 
     echo '<tr>' . "\n";
-    echo '<td><a href="' . htmlspecialchars(SELF . '?path=' . rawurlencode('/studies/' . $nct_id)) . '" class="font-monospace">' . htmlspecialchars($nct_id) . '</a></td>' . "\n";
+    echo '<td><a href="' . htmlspecialchars(CURRENT_SCRIPT . '?path=' . rawurlencode('/studies/' . $nct_id)) . '" class="font-monospace">' . htmlspecialchars($nct_id) . '</a></td>' . "\n";
     echo '<td>' . htmlspecialchars($title) . '</td>' . "\n";
     echo '<td>' . build_status_badge($status) . '</td>' . "\n";
     echo '<td>' . htmlspecialchars(implode(', ', $phases)) . '</td>' . "\n";
@@ -241,7 +243,7 @@ function render_studies_results(array $data, array $current_params): void {
   if ($next_page_token) {
     $next_params = $current_params;
     $next_params['pageToken'] = $next_page_token;
-    $href = htmlspecialchars(SELF . '?path=' . rawurlencode('/studies') . '&' . build_query_string($next_params));
+    $href = htmlspecialchars(CURRENT_SCRIPT . '?path=' . rawurlencode('/studies') . '&' . build_query_string($next_params));
     echo '<a href="' . $href . '" class="btn btn-outline-secondary btn-sm">Next page &rarr;</a>' . "\n";
   }
 }
@@ -308,7 +310,7 @@ function render_field_stats(array $data, string $path): void {
       $cell_value = $row[$key] ?? '';
       echo '<td>';
       if ($key === 'piece' && is_string($cell_value) && $cell_value !== '') {
-        $href = htmlspecialchars(SELF . '?path=' . rawurlencode($path) . '&fields=' . rawurlencode($cell_value));
+        $href = htmlspecialchars(CURRENT_SCRIPT . '?path=' . rawurlencode($path) . '&fields=' . rawurlencode($cell_value));
         echo '<a href="' . $href . '" class="font-monospace">' . htmlspecialchars($cell_value) . '</a>';
       }
       elseif (is_array($cell_value)) {
@@ -329,8 +331,8 @@ function render_field_stats(array $data, string $path): void {
  * Renders a Summary / Data toggle button group for single-study pages.
  */
 function render_study_toggle(string $path, string $current_view): void {
-  $summary_href = htmlspecialchars(SELF . '?path=' . rawurlencode($path) . '&view=summary');
-  $data_href = htmlspecialchars(SELF . '?path=' . rawurlencode($path) . '&view=data');
+  $summary_href = htmlspecialchars(CURRENT_SCRIPT . '?path=' . rawurlencode($path) . '&view=summary');
+  $data_href = htmlspecialchars(CURRENT_SCRIPT . '?path=' . rawurlencode($path) . '&view=data');
   echo '<div class="btn-group mb-4" role="group" aria-label="Display mode">' . "\n";
   echo '<a href="' . $summary_href . '" class="btn btn-sm ' . (($current_view === 'summary') ? 'btn-primary' : 'btn-outline-primary') . '">Summary</a>' . "\n";
   echo '<a href="' . $data_href . '" class="btn btn-sm ' . (($current_view === 'data') ? 'btn-primary' : 'btn-outline-primary') . '">Data</a>' . "\n";
@@ -607,7 +609,7 @@ function render_study_data(array $data): void {
   echo '<thead><tr><th style="width:35%">Key</th><th>Value</th></tr></thead>' . "\n";
   echo '<tbody>' . "\n";
   foreach (flatten_study($data) as $key => $value) {
-    $metadata_href = htmlspecialchars(SELF . '?path=' . rawurlencode('/studies/metadata') . '#' . rawurlencode(metadata_anchor_id($key)));
+    $metadata_href = htmlspecialchars(CURRENT_SCRIPT . '?path=' . rawurlencode('/studies/metadata') . '#' . rawurlencode(metadata_anchor_id($key)));
     echo '<tr>' . "\n";
     echo '<td class="breadcrumb-key"><a href="' . $metadata_href . '">' . htmlspecialchars($key) . '</a></td>' . "\n";
     echo '<td>' . render_study_data_value($value) . '</td>' . "\n";

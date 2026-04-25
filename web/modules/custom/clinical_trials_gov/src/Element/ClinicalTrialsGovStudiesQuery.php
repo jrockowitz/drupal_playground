@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov\Element;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element\FormElement;
+use Drupal\Core\Render\Element\FormElementBase;
 
 /**
  * Composite form element for the ClinicalTrials.gov /studies query interface.
@@ -23,7 +23,7 @@ use Drupal\Core\Render\Element\FormElement;
  *
  * @FormElement("clinical_trials_gov_studies_query")
  */
-class ClinicalTrialsGovStudiesQuery extends FormElement {
+class ClinicalTrialsGovStudiesQuery extends FormElementBase {
 
   /**
    * {@inheritdoc}
