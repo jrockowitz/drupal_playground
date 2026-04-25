@@ -42,25 +42,28 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
       $complete_form
     );
 
+    // Check that the search details wrapper is built.
+    $this->assertArrayHasKey('search', $processed);
+
     // Check that query parameter sub-elements are built.
-    $this->assertArrayHasKey('query_parameters', $processed);
-    $this->assertArrayHasKey('query__cond', $processed['query_parameters']);
+    $this->assertArrayHasKey('query_parameters', $processed['search']);
+    $this->assertArrayHasKey('query__cond', $processed['search']['query_parameters']);
 
     // Check that the default value is populated into the sub-element.
-    $this->assertSame('cancer', $processed['query_parameters']['query__cond']['#default_value']);
+    $this->assertSame('cancer', $processed['search']['query_parameters']['query__cond']['#default_value']);
 
     // Check that filter sub-elements are built.
-    $this->assertArrayHasKey('filters', $processed);
-    $this->assertArrayHasKey('filter__overallStatus', $processed['filters']);
-    $this->assertSame('RECRUITING', $processed['filters']['filter__overallStatus']['#default_value']);
+    $this->assertArrayHasKey('filters', $processed['search']);
+    $this->assertArrayHasKey('filter__overallStatus', $processed['search']['filters']);
+    $this->assertSame('RECRUITING', $processed['search']['filters']['filter__overallStatus']['#default_value']);
 
     // Check that pagination sub-elements are built.
-    $this->assertArrayHasKey('pagination', $processed);
+    $this->assertArrayHasKey('pagination', $processed['search']);
 
     // Simulate submission: set #value on each relevant sub-element.
-    $processed['query_parameters']['query__cond']['#value'] = 'cancer';
-    $processed['filters']['filter__overallStatus']['#value'] = 'RECRUITING';
-    $processed['pagination']['pageSize']['#value'] = '';
+    $processed['search']['query_parameters']['query__cond']['#value'] = 'cancer';
+    $processed['search']['filters']['filter__overallStatus']['#value'] = 'RECRUITING';
+    $processed['search']['pagination']['pageSize']['#value'] = '';
 
     ClinicalTrialsGovStudiesQuery::validateStudiesQuery($processed, $form_state, $complete_form);
 

@@ -91,47 +91,55 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     $filter_keys = ['filter.overallStatus', 'filter.geo', 'filter.ids', 'filter.advanced', 'aggFilters'];
     $pagination_keys = ['pageSize', 'pageToken', 'countTotal', 'sort'];
 
-    $element['query_parameters'] = [
+    $has_defaults = !empty($defaults);
+
+    $element['search'] = [
+      '#type' => 'details',
+      '#title' => t('Search'),
+      '#open' => !$has_defaults,
+    ];
+
+    $element['search']['query_parameters'] = [
       '#type' => 'details',
       '#title' => t('Query parameters'),
-      '#open' => !empty(array_intersect_key($defaults, array_flip($query_keys))),
+      '#open' => !$has_defaults || !empty(array_intersect_key($defaults, array_flip($query_keys))),
     ];
     foreach (static::queryParameterDefinitions() as $definition) {
       $name = static::apiKeyToElementName($definition['key']);
-      $element['query_parameters'][$name] = static::buildTextField(
+      $element['search']['query_parameters'][$name] = static::buildTextField(
         $definition['label'],
         $definition['description'],
         $defaults[$definition['key']] ?? '',
       );
     }
 
-    $element['filters'] = [
+    $element['search']['filters'] = [
       '#type' => 'details',
       '#title' => t('Filters'),
-      '#open' => !empty(array_intersect_key($defaults, array_flip($filter_keys))),
+      '#open' => !$has_defaults || !empty(array_intersect_key($defaults, array_flip($filter_keys))),
     ];
     $overall_status_options = ['' => t('- Any -')];
     foreach ($manager->getEnum('OverallStatus') as $status) {
       $overall_status_options[$status] = $status;
     }
-    $element['filters']['filter__overallStatus'] = [
+    $element['search']['filters']['filter__overallStatus'] = [
       '#type' => 'select',
       '#title' => t('Overall status'),
       '#description' => t('See <a href=":url">API documentation</a>.', [':url' => 'https://clinicaltrials.gov/data-api/api']),
       '#options' => $overall_status_options,
       '#default_value' => $defaults['filter.overallStatus'] ?? '',
     ];
-    $element['filters']['filter__geo'] = static::buildTextField('Geographic filter', 'e.g. distance(39.0035,-77.1088,50mi)', $defaults['filter.geo'] ?? '');
-    $element['filters']['filter__ids'] = static::buildTextField('NCT ID filter', 'Pipe-separated NCT IDs', $defaults['filter.ids'] ?? '');
-    $element['filters']['filter__advanced'] = static::buildTextField('Advanced filter', 'Essie expression syntax', $defaults['filter.advanced'] ?? '');
-    $element['filters']['aggFilters'] = static::buildTextField('Aggregation filters', 'e.g. phase:phase2,studyType:int', $defaults['aggFilters'] ?? '');
+    $element['search']['filters']['filter__geo'] = static::buildTextField('Geographic filter', 'e.g. distance(39.0035,-77.1088,50mi)', $defaults['filter.geo'] ?? '');
+    $element['search']['filters']['filter__ids'] = static::buildTextField('NCT ID filter', 'Pipe-separated NCT IDs', $defaults['filter.ids'] ?? '');
+    $element['search']['filters']['filter__advanced'] = static::buildTextField('Advanced filter', 'Essie expression syntax', $defaults['filter.advanced'] ?? '');
+    $element['search']['filters']['aggFilters'] = static::buildTextField('Aggregation filters', 'e.g. phase:phase2,studyType:int', $defaults['aggFilters'] ?? '');
 
-    $element['pagination'] = [
+    $element['search']['pagination'] = [
       '#type' => 'details',
       '#title' => t('Pagination and sort'),
-      '#open' => !empty(array_intersect_key($defaults, array_flip($pagination_keys))),
+      '#open' => !$has_defaults || !empty(array_intersect_key($defaults, array_flip($pagination_keys))),
     ];
-    $element['pagination']['pageSize'] = [
+    $element['search']['pagination']['pageSize'] = [
       '#type' => 'number',
       '#title' => t('Page size'),
       '#description' => t('Results per page (1–1000). Default: 10. See <a href=":url">API documentation</a>.', [':url' => 'https://clinicaltrials.gov/data-api/api']),
@@ -139,15 +147,15 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       '#max' => 1000,
       '#default_value' => $defaults['pageSize'] ?? '',
     ];
-    $element['pagination']['pageToken'] = static::buildTextField('Page token', 'Pagination cursor from previous response', $defaults['pageToken'] ?? '');
-    $element['pagination']['countTotal'] = [
+    $element['search']['pagination']['pageToken'] = static::buildTextField('Page token', 'Pagination cursor from previous response', $defaults['pageToken'] ?? '');
+    $element['search']['pagination']['countTotal'] = [
       '#type' => 'select',
       '#title' => t('Count total'),
       '#description' => t('Include total match count in response. See <a href=":url">API documentation</a>.', [':url' => 'https://clinicaltrials.gov/data-api/api']),
       '#options' => ['' => t('- Default -'), 'true' => t('Yes'), 'false' => t('No')],
       '#default_value' => $defaults['countTotal'] ?? '',
     ];
-    $element['pagination']['sort'] = static::buildTextField('Sort', 'Field and direction, e.g. LastUpdatePostDate:desc', $defaults['sort'] ?? '');
+    $element['search']['pagination']['sort'] = static::buildTextField('Sort', 'Field and direction, e.g. LastUpdatePostDate:desc', $defaults['sort'] ?? '');
 
     return $element;
   }
@@ -162,10 +170,10 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
   ): void {
     $parts = [];
     foreach (['query_parameters', 'filters', 'pagination'] as $group) {
-      if (!isset($element[$group])) {
+      if (!isset($element['search'][$group])) {
         continue;
       }
-      foreach ($element[$group] as $name => $child) {
+      foreach ($element['search'][$group] as $name => $child) {
         if (!is_array($child) || !array_key_exists('#value', $child)) {
           continue;
         }
