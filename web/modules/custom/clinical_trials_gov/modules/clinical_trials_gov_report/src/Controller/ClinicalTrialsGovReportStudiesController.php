@@ -6,7 +6,7 @@ namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
-use Drupal\clinical_trials_gov_report\Form\ClinicalTrialsGovStudiesSearchForm;
+use Drupal\clinical_trials_gov_report\Form\ClinicalTrialsGovReportStudiesSearchForm;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Renders the ClinicalTrials.gov studies list report.
  */
-class ClinicalTrialsGovReportController extends ControllerBase {
+class ClinicalTrialsGovReportStudiesController extends ControllerBase {
 
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
@@ -25,7 +25,7 @@ class ClinicalTrialsGovReportController extends ControllerBase {
    */
   public function index(Request $request): array {
     $build = [];
-    $build['search_form'] = $this->formBuilder()->getForm(ClinicalTrialsGovStudiesSearchForm::class);
+    $build['search_form'] = $this->formBuilder()->getForm(ClinicalTrialsGovReportStudiesSearchForm::class);
 
     $query_string = $request->getQueryString() ?? '';
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query_string);

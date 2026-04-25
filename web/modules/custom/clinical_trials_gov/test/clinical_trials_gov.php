@@ -406,7 +406,7 @@ function route_request(array $request_context, array $endpoints, array $studies_
   route_generic_request($path, $params);
 }
 
-require __DIR__ . '/clinicaltrialsgov.inc';
+require __DIR__ . '/clinical_trials_gov.inc';
 
 // =============================================================================
 // ENTRYPOINT

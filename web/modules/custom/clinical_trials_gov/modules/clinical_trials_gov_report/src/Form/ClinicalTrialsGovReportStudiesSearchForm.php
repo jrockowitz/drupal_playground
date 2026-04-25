@@ -15,7 +15,7 @@ use Drupal\Core\Form\FormStateInterface;
  * redirects to the studies report route with the assembled query string
  * as URL parameters.
  */
-class ClinicalTrialsGovStudiesSearchForm extends FormBase {
+class ClinicalTrialsGovReportStudiesSearchForm extends FormBase {
 
   /**
    * {@inheritdoc}

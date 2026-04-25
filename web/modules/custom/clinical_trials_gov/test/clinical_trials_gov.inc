@@ -6,7 +6,7 @@
  */
 
 // Requires SELF, build_query_string(), flatten_study(), and metadata_anchor_id()
-// from clinicaltrialsgov.php, which includes this file.
+// from clinical_trials_gov.php, which includes this file.
 define('_CLINICALTRIALS_STATUS_COLOURS', [
   'RECRUITING' => 'success',
   'NOT_YET_RECRUITING' => 'warning text-dark',

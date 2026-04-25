@@ -1,7 +1,8 @@
 name: "ClinicalTrials.gov Report"
 type: module
 description: "Admin report for browsing ClinicalTrials.gov studies."
-package: Custom
+package: ClinicalTrials.gov
 core_version_requirement: ^10.3 || ^11
+configure: clinical_trials_gov_report.studies
 dependencies:
   - clinical_trials_gov:clinical_trials_gov

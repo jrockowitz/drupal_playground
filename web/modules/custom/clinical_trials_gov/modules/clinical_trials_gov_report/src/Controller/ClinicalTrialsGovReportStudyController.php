@@ -11,7 +11,7 @@ use Drupal\Core\Controller\ControllerBase;
 /**
  * Renders the detail page for a single ClinicalTrials.gov study.
  */
-class ClinicalTrialsGovStudyController extends ControllerBase {
+class ClinicalTrialsGovReportStudyController extends ControllerBase {
 
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
