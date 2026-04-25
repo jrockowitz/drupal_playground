@@ -31,6 +31,8 @@ The runnable files are [clinicaltrialsgov.php](/Users/rockowij/Sites/drupal_play
   Fetches and renders search results.
 - `?path=/studies/NCT...`
   Shows a single study with `summary` and `data` views.
+- `?path=/studies/metadata`
+  Shows a flattened metadata table keyed by dotted `name` paths, plus raw JSON.
 - `?path=/stats/field/values&fields=...`
   Shows field value statistics.
 - `?path=/stats/field/sizes&fields=...`
@@ -40,28 +42,55 @@ The runnable files are [clinicaltrialsgov.php](/Users/rockowij/Sites/drupal_play
 - Other supported endpoints
   Render through the generic JSON renderer plus raw JSON output.
 
+## API Notes
+
+Studies - These are the main endpoints which we can use to search and fetch studies.
+
+
+- /studies - Used to search for studies.
+- /studies/{nctId} - Used to fetch a single study.
+- /studies/metadata - Use to fetch the study metadata (aka field name and data types)
+- /studies/search-areas - Use to how search rankings are set up.
+- /studies/enums - Enumerations for fields keyed by piece.
+
+Stats - These can be ignored.
+
+- /stats/size
+- /stats/field/values
+- /stats/field/sizes
+
+Version
+
+- /version
+
 ## Working API Examples
+
+### Studies
+
+- Study search
+  `https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&pageSize=10`
+- Single study
+  `https://clinicaltrials.gov/api/v2/studies/NCT04001699`
+- Metadata
+  `https://clinicaltrials.gov/api/v2/studies/metadata`
+- Enums
+  `https://clinicaltrials.gov/api/v2/studies/enums`
+- Search areas
+  `https://clinicaltrials.gov/api/v2/studies/search-areas`
+
+### Stats
+
+- Field value stats
+  `https://clinicaltrials.gov/api/v2/stats/field/values?fields=OverallStatus`
+- Field size stats
+  `https://clinicaltrials.gov/api/v2/stats/field/sizes?fields=Condition`
+- Total study count
+  `https://clinicaltrials.gov/api/v2/stats/size`
+
+### Version
 
 - Version
   `https://clinicaltrials.gov/api/v2/version`
-- Total study count
-  `https://clinicaltrials.gov/api/v2/stats/size`
-- Enums
-  `https://clinicaltrials.gov/api/v2/studies/enums`
-- Single study
-  `https://clinicaltrials.gov/api/v2/studies/NCT04001699`
-- Study search
-  `https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&pageSize=10`
-- Metadata
-  `https://clinicaltrials.gov/api/v2/studies/metadata`
-- Search areas
-  `https://clinicaltrials.gov/api/v2/studies/search-areas`
-- Field value stats
-  `https://clinicaltrials.gov/api/v2/stats/field/values?fields=OverallStatus`
-- Phase value stats
-  `https://clinicaltrials.gov/api/v2/stats/field/values?fields=Phase`
-- Field size stats
-  `https://clinicaltrials.gov/api/v2/stats/field/sizes?fields=Condition`
 
 ## Review Steps
 
@@ -80,7 +109,19 @@ The runnable files are [clinicaltrialsgov.php](/Users/rockowij/Sites/drupal_play
 
 ## Notes
 
-- The original spec is in [docs/CLINICAL-TRIALS-GOV-PHP-SPEC.md](/Users/rockowij/Sites/drupal_playground/docs/CLINICAL-TRIALS-GOV-PHP-SPEC.md).
-- The stats routes follow the live ClinicalTrials.gov examples that use `fields`, even though older parts of the local spec still mention `field`.
-- The no-parameter stats pages still call their passed stats route and render that overview response instead of substituting `/studies/metadata`.
 - This is still a proof of concept, not integrated Drupal runtime code.
+- We should focus on the /studies and /studies/{nctId} endpoints while using the /studies/metadata for field information.
+- When referencing fields, we should use the dotted `name` path. (ie derivedSection.conditionBrowseModule.meshes)
+- The API should return JSON for all endpoints, including stats and metadata.
+- The Manager should wrap the API calls
+  - Method
+  - getStudies(array $params = [])
+  - getStudy
+  - getStudyMetadata
+  - getStudyFieldMetadata(string $index_field);
+
+## Todo
+
+- We need to pull a glossary from  https://clinicaltrials.gov/data-api/about-api/study-data-structure
+
+

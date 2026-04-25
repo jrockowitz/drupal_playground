@@ -197,6 +197,63 @@ function flatten_study(mixed $data, string $prefix = ''): array {
   return [$prefix => $data];
 }
 
+/**
+ * Recursively flattens metadata nodes into name-based dotted key rows.
+ */
+function flatten_metadata(array $items, string $prefix = ''): array {
+  $rows = [];
+
+  foreach ($items as $item) {
+    if (!is_array($item)) {
+      continue;
+    }
+
+    $name = (string) ($item['name'] ?? '');
+    $key = ($prefix !== '' && $name !== '') ? $prefix . '.' . $name : $name;
+    $children = [];
+    foreach (($item['children'] ?? []) as $child) {
+      if (!is_array($child)) {
+        continue;
+      }
+
+      $child_name = (string) ($child['name'] ?? '');
+      if ($child_name === '') {
+        continue;
+      }
+
+      $children[] = ($key !== '') ? $key . '.' . $child_name : $child_name;
+    }
+
+    $rows[$key] = [
+      'key' => $key,
+      'name' => $name,
+      'piece' => (string) ($item['piece'] ?? ''),
+      'title' => (string) ($item['title'] ?? ''),
+      'type' => (string) ($item['type'] ?? ''),
+      'sourceType' => (string) ($item['sourceType'] ?? ''),
+      'description' => (string) ($item['description'] ?? ''),
+      'children' => $children,
+    ];
+
+    if (!empty($item['children']) && is_array($item['children'])) {
+      $rows += flatten_metadata($item['children'], $key);
+    }
+  }
+
+  return $rows;
+}
+
+/**
+ * Builds a stable HTML anchor id for a flattened metadata key.
+ */
+function metadata_anchor_id(string $key): string {
+  $anchor = strtolower($key);
+  $anchor = preg_replace('/[^a-z0-9]+/', '-', $anchor) ?? '';
+  $anchor = trim($anchor, '-');
+
+  return ($anchor !== '') ? 'metadata-' . $anchor : 'metadata-key';
+}
+
 // =============================================================================
 // ROUTING HELPERS
 // =============================================================================
@@ -278,6 +335,24 @@ function route_field_stats_request(string $path, array $params): void {
 }
 
 /**
+ * Renders the /studies/metadata endpoint as a flattened name-path table.
+ */
+function route_metadata_request(): void {
+  render_page_start('/studies/metadata');
+
+  $result = fetch_api('/studies/metadata');
+  if (isset($result['error'])) {
+    render_error_message($result['error'], $result['url'] ?? '');
+  }
+  else {
+    render_metadata(flatten_metadata($result['data']));
+    render_raw_json($result['data'], $result['url']);
+  }
+
+  render_page_end();
+}
+
+/**
  * Renders all remaining endpoints with generic output.
  */
 function route_generic_request(string $path, array $params): void {
@@ -320,6 +395,12 @@ function route_request(array $request_context, array $endpoints, array $studies_
     return;
   }
 
+  if ($path === '/studies/metadata') {
+    // Handle the metadata route: '/studies/metadata'.
+    route_metadata_request();
+    return;
+  }
+
   if (in_array($path, ['/stats/field/values', '/stats/field/sizes'])) {
     // Handle stats field routes: '/stats/field/values' and '/stats/field/sizes'.
     route_field_stats_request($path, $params);
@@ -327,7 +408,7 @@ function route_request(array $request_context, array $endpoints, array $studies_
   }
 
   // Handle generic pass-through routes such as '/version', '/stats/size',
-  // '/studies/metadata', '/studies/search-areas', and '/studies/enums'.
+  // '/studies/search-areas', and '/studies/enums'.
   route_generic_request($path, $params);
 }
 

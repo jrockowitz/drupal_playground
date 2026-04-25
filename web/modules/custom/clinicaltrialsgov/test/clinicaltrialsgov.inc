@@ -1,7 +1,7 @@
 <?php
 
 // Rendering functions only.
-// Requires SELF, build_query_string(), and flatten_study()
+// Requires SELF, build_query_string(), flatten_study(), and metadata_anchor_id()
 // from clinicaltrialsgov.php, which includes this file.
 
 $status_colours = [
@@ -39,6 +39,8 @@ function render_page_start(string $title): void {
   echo '.breadcrumb-key { font-size: .8rem; white-space: nowrap; }' . "\n";
   echo '.breadcrumb-key a { font-family: monospace; color: #6c757d; text-decoration: none; }' . "\n";
   echo '.breadcrumb-key a:hover { color: #495057; text-decoration: underline; }' . "\n";
+  echo '.metadata-row-struct { font-weight: 700; }' . "\n";
+  echo 'tr:target { outline: 2px solid #0d6efd; outline-offset: -2px; background-color: #e7f1ff; }' . "\n";
   echo '</style>' . "\n";
   echo '</head>' . "\n";
   echo '<body>' . "\n";
@@ -242,6 +244,43 @@ function render_studies_results(array $data, array $current_params): void {
     $href = htmlspecialchars(SELF . '?path=' . rawurlencode('/studies') . '&' . build_query_string($next_params));
     echo '<a href="' . $href . '" class="btn btn-outline-secondary btn-sm">Next page &rarr;</a>' . "\n";
   }
+}
+
+/**
+ * Renders /studies/metadata as a flattened table keyed by dotted name paths.
+ */
+function render_metadata(array $rows): void {
+  if (empty($rows)) {
+    echo '<div class="alert alert-info">No metadata fields found.</div>' . "\n";
+    return;
+  }
+
+  echo '<table class="table table-sm table-bordered table-hover">' . "\n";
+  echo '<thead><tr><th style="width:24%">Key</th><th style="width:12%">Piece</th><th style="width:18%">Title</th><th style="width:12%">Type</th><th style="width:10%">Source Type</th><th style="width:14%">Children</th><th>Description</th></tr></thead>' . "\n";
+  echo '<tbody>' . "\n";
+  foreach ($rows as $row) {
+    $anchor_id = metadata_anchor_id($row['key']);
+    $row_class = ($row['sourceType'] === 'STRUCT') ? ' class="metadata-row-struct"' : '';
+    echo '<tr id="' . htmlspecialchars($anchor_id) . '"' . $row_class . '>' . "\n";
+    echo '<td class="breadcrumb-key">' . htmlspecialchars($row['key']) . '</td>' . "\n";
+    echo '<td class="font-monospace">' . htmlspecialchars($row['piece']) . '</td>' . "\n";
+    echo '<td>' . htmlspecialchars($row['title']) . '</td>' . "\n";
+    echo '<td>' . htmlspecialchars($row['type']) . '</td>' . "\n";
+    echo '<td>' . htmlspecialchars($row['sourceType']) . '</td>' . "\n";
+    echo '<td>' . "\n";
+    if (!empty($row['children'])) {
+      echo '<ul class="mb-0 ps-3">';
+      foreach ($row['children'] as $child_key) {
+        echo '<li class="breadcrumb-key">' . htmlspecialchars($child_key) . '</li>';
+      }
+      echo '</ul>' . "\n";
+    }
+    echo '</td>' . "\n";
+    echo '<td>' . htmlspecialchars($row['description']) . '</td>' . "\n";
+    echo '</tr>' . "\n";
+  }
+  echo '</tbody>' . "\n";
+  echo '</table>' . "\n";
 }
 
 /**
@@ -568,9 +607,9 @@ function render_study_data(array $data): void {
   echo '<thead><tr><th style="width:35%">Key</th><th>Value</th></tr></thead>' . "\n";
   echo '<tbody>' . "\n";
   foreach (flatten_study($data) as $key => $value) {
-    $field_href = htmlspecialchars(SELF . '?path=' . rawurlencode('/stats/field/values') . '&fields=' . rawurlencode($key));
+    $metadata_href = htmlspecialchars(SELF . '?path=' . rawurlencode('/studies/metadata') . '#' . rawurlencode(metadata_anchor_id($key)));
     echo '<tr>' . "\n";
-    echo '<td class="breadcrumb-key"><a href="' . $field_href . '">' . htmlspecialchars($key) . '</a></td>' . "\n";
+    echo '<td class="breadcrumb-key"><a href="' . $metadata_href . '">' . htmlspecialchars($key) . '</a></td>' . "\n";
     echo '<td>' . render_study_data_value($value) . '</td>' . "\n";
     echo '</tr>' . "\n";
   }

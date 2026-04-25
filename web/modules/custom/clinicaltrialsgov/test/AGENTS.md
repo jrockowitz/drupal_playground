@@ -31,6 +31,7 @@
 ## Behavior Guardrails
 
 - `/studies` with no query params should render the form and default results.
+- `/studies/metadata` should render flattened dotted keys built from each node's `name`, not the generic nested JSON renderer.
 - Stats endpoints should use only the documented `fields` query parameter.
 - Stats field endpoints with no `fields` param should still call the passed stats route and render that route's overview response.
 - Individual stats requests should use the same route with `fields=...`, whether submitted from the form or linked from a `piece` value in the overview table.
