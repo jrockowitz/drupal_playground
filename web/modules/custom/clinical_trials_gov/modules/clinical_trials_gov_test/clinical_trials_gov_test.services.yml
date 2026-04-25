@@ -1,0 +1,3 @@
+services:
+  clinical_trials_gov.manager:
+    class: Drupal\clinical_trials_gov_test\ClinicalTrialsGovManagerStub

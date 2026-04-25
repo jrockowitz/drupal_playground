@@ -7,14 +7,14 @@
 
 ## File Boundaries
 
-- `clinicaltrialsgov.php`
+- `clinical_trials_gov.php`
   Keep constants, static endpoint data, request parsing, query helpers, API helpers, non-render data helpers, route helpers, and the thin top-level entry flow here.
-- `clinicaltrialsgov.inc`
+- `clinical_trials_gov.inc`
   Keep all render functions and render-only helpers here.
 
 ## Router Convention
 
-- Prefer a thin top-level entrypoint in `clinicaltrialsgov.php`.
+- Prefer a thin top-level entrypoint in `clinical_trials_gov.php`.
 - Put request branching in named route helper functions.
 - Keep route matching rules visible in `route_request()` when the checks are small and only used once.
 - Add a short inline comment inside each route branch that names the handled paths.
@@ -23,9 +23,9 @@
 
 ## Ordering
 
-- In `clinicaltrialsgov.php`, keep this order:
+- In `clinical_trials_gov.php`, keep this order:
   constants, data, request helpers, API helpers, non-render data helpers, routing helpers, include, entrypoint.
-- In `clinicaltrialsgov.inc`, keep this order:
+- In `clinical_trials_gov.inc`, keep this order:
   page chrome, small render helpers, endpoint-specific renderers, study-specific renderers, generic/raw renderers.
 
 ## Behavior Guardrails

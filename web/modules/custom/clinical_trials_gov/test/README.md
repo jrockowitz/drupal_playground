@@ -2,7 +2,7 @@
 
 This directory contains a standalone PHP proof of concept for exploring the ClinicalTrials.gov REST API v2.
 
-The runnable files are [clinicaltrialsgov.php](/Users/rockowij/Sites/drupal_playground/web/modules/custom/clinicaltrialsgov/test/clinicaltrialsgov.php) and [clinicaltrialsgov.inc](/Users/rockowij/Sites/drupal_playground/web/modules/custom/clinicaltrialsgov/test/clinicaltrialsgov.inc).
+https://drupal-playground.ddev.site/modules/custom/clinical_trials_gov/test/clinical_trials_gov.php
 
 ## Purpose
 
@@ -12,9 +12,9 @@ The runnable files are [clinicaltrialsgov.php](/Users/rockowij/Sites/drupal_play
 
 ## File Layout
 
-- `clinicaltrialsgov.php`
+- `clinical_trials_gov.php`
   Contains constants, endpoint metadata, request parsing, query helpers, API helpers, non-render data helpers, route helpers, and the thin top-level entrypoint.
-- `clinicaltrialsgov.inc`
+- `clinical_trials_gov.inc`
   Contains page rendering, forms, tables, study summary/data views, generic JSON rendering, and render-only helpers.
 - `README.md`
   Human-facing notes, review steps, and direct API examples.
@@ -94,8 +94,8 @@ Version
 
 ## Review Steps
 
-1. Run `php -l web/modules/custom/clinicaltrialsgov/test/clinicaltrialsgov.php`.
-2. Run `php -l web/modules/custom/clinicaltrialsgov/test/clinicaltrialsgov.inc`.
+1. Run `php -l web/modules/custom/clinicaltrialsgov/test/clinical_trials_gov.php`.
+2. Run `php -l web/modules/custom/clinicaltrialsgov/test/clinical_trials_gov.inc`.
 3. Open the explorer and confirm the index page loads with endpoint links.
 4. Open `?path=/studies` and confirm the search form and default results appear on first load.
 5. Submit a `/studies` search and confirm results plus raw JSON render.

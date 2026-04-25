@@ -55,9 +55,9 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->fieldExists('query__cond');
 
     // Check that submitting the form shows a results table.
-    $this->submitForm([
-      'query__cond' => 'cancer',
-    ], 'Search');
+    $this->getSession()->getPage()->fillField('query__cond', 'cancer');
+    $this->assertSession()->elementExists('css', 'input[type="submit"][value="Search"]');
+    $this->getSession()->getPage()->find('css', 'input[type="submit"][value="Search"]')->click();
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->elementExists('css', 'table');
 

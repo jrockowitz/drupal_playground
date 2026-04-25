@@ -2,11 +2,10 @@
 
 ## Executive Summary
 
-- Syndicates clinical trial data from the ClinicalTrials.gov API into Drupal Trial nodes
-- Provides a numbered, three-step admin interface: configure, review, and import
-- Dynamically creates a Trial content type and fields that mirror the ClinicalTrials.gov data schema
-- Leverages existing Drupal contributed modules (Migrate, Migrate Plus, Migrate Tools) with minimal custom code
-- Uses NCT ID as the unique identifier for upsert logic during import
+A Drupal integration for ClinicalTrials.gov built in two phases:
+
+- **Phase 1 — Report:** A `clinical_trials_gov_report` submodule that lets admins browse ClinicalTrials.gov trial data natively inside Drupal using native render elements. No content is imported.
+- **Phase 2 — Import:** Full import/migration workflow that syndicates trial data into Drupal Trial nodes, with a dynamic content type, field builder, and migrate source plugin.
 
 ## Module Metadata
 
@@ -16,7 +15,250 @@
 - **Class prefix:** `ClinicalTrialsGov`
 - **Admin path:** `/admin/config/web-services/clinical-trials-gov`
 
-## Dependencies
+---
+
+## Phase 1 — Report
+
+### Module Structure
+
+```
+web/modules/custom/clinical_trials_gov/
+├── README.md
+├── clinical_trials_gov.info.yml
+├── clinical_trials_gov.services.yml
+├── test/                                             ← POC PHP explorer (reference implementation)
+│   ├── AGENTS.md
+│   ├── README.md
+│   ├── TODO.md
+│   ├── clinicaltrialsgov.inc
+│   └── clinicaltrialsgov.php
+├── src/
+│   ├── ClinicalTrialsGovApiInterface.php
+│   ├── ClinicalTrialsGovApi.php
+│   ├── ClinicalTrialsGovManagerInterface.php
+│   ├── ClinicalTrialsGovManager.php
+│   ├── ClinicalTrialsGovBuilderInterface.php
+│   ├── ClinicalTrialsGovBuilder.php
+│   └── Element/
+│       └── ClinicalTrialsGovStudiesQuery.php
+└── modules/
+    ├── clinical_trials_gov_report/
+    │   ├── clinical_trials_gov_report.info.yml
+    │   ├── clinical_trials_gov_report.routing.yml
+    │   ├── clinical_trials_gov_report.links.menu.yml
+    │   └── src/
+    │       ├── Form/
+    │       │   └── ClinicalTrialsGovStudiesSearchForm.php
+    │       └── Controller/
+    │           ├── ClinicalTrialsGovReportController.php
+    │           └── ClinicalTrialsGovStudyController.php
+    └── clinical_trials_gov_test/
+        ├── clinical_trials_gov_test.info.yml
+        ├── clinical_trials_gov_test.services.yml
+        ├── fixtures/
+        │   ├── studies.json
+        │   ├── study-NCT001.json
+        │   ├── study-NCT002.json
+        │   ├── study-NCT003.json
+        │   ├── metadata.json
+        │   ├── enums.json
+        │   └── search-areas.json
+        └── src/
+            └── ClinicalTrialsGovManagerStub.php
+```
+
+### Services (main module only)
+
+The main `clinical_trials_gov` module provides services only. No routes, forms, or controllers.
+
+#### ClinicalTrialsGovApi
+
+- **Service:** `clinical_trials_gov.api`
+- **Interface:** `ClinicalTrialsGovApiInterface`
+
+Low-level HTTP client for the ClinicalTrials.gov API v2. Handles endpoint construction, HTTP requests, and JSON response decoding. No knowledge of Drupal entities or field mappings.
+
+#### ClinicalTrialsGovManager
+
+- **Service:** `clinical_trials_gov.manager`
+- **Interface:** `ClinicalTrialsGovManagerInterface`
+
+Uses `ClinicalTrialsGovApi` to fetch and organize API data. Public interface:
+
+| Method | Returns | Description |
+|---|---|---|
+| `getStudies(array $parameters): array` | Raw API response | `['studies' => [...], 'nextPageToken' => '...', 'totalCount' => N]`. No massaging. |
+| `getStudy(string $nct_id): array` | Flat Index-field array | Flat associative array keyed by dot-notation Index field paths (e.g. `protocolSection.identificationModule.nctId`). Assoc arrays recursed into; lists and scalars stored as-is. |
+| `getStudyMetadata(): array` | Flat metadata array | Keyed by Index field path. Each value: `[key, name, piece, title, type, sourceType, description, children]`. Mirrors `flatten_metadata()` from the POC. |
+| `getStudyFieldMetadata(string $index_field): ?array` | Metadata for one field | Returns the metadata array for a single Index field path, or NULL. |
+| `getEnums(): array` | Raw enums response | Raw response from `/studies/enums`. |
+| `getEnum(string $enum_type): array` | Allowed values | List of allowed string values for one enum type (e.g. `'OverallStatus'`). |
+
+#### ClinicalTrialsGovBuilder
+
+- **Service:** `clinical_trials_gov.builder`
+- **Interface:** `ClinicalTrialsGovBuilderInterface`
+
+Converts API data into Drupal render arrays. Declared as a service because it requires `t()` for translated `#title` values. Designed to be reused in the Phase 2 review area.
+
+**`buildStudy(array $study): array`**
+
+**Input:** Flat Index-field keyed array from `getStudy()`.
+
+**Output:** A render array using native Drupal elements only (no custom CSS):
+
+```
+container
+  └─ details (open) "protocolSection"
+       └─ details "identificationModule"            ← sourceType STRUCT → details
+            └─ item  nctId: NCT04001699             ← leaf field → item
+            └─ item  briefTitle: A Study of...
+       └─ details "statusModule"
+            └─ item  overallStatus: RECRUITING
+            └─ ...
+  └─ details "derivedSection"
+       └─ ...
+  └─ details (collapsed) "Raw data"
+       └─ table  [ Field path | Name | Piece | Title | Source Type | Value ]
+```
+
+**Branching logic:** Fields with `sourceType === 'STRUCT'` in the metadata are compound/object nodes and become `#type => details` elements. Leaf fields (scalars and lists) become `#type => item` elements. The builder calls `getStudyFieldMetadata()` on each node to determine the correct element type. The "Raw data" table at the bottom is enriched with metadata columns (Name, Piece, Title, Source Type) from `getStudyFieldMetadata()`.
+
+### Form Element: ClinicalTrialsGovStudiesQuery
+
+- **File:** `src/Element/ClinicalTrialsGovStudiesQuery.php`
+- **Plugin type:** `FormElement`
+- **Type:** `clinical_trials_gov_studies_query`
+
+A reusable composite form element that encapsulates the full ClinicalTrials.gov `/studies` query interface. Used by the report search form and reusable in the Phase 2 review area.
+
+- **`#default_value`:** Raw query string (e.g. `query.cond=cancer&filter.overallStatus=RECRUITING`)
+- **`#process`:** Parses the query string using dot-notation-preserving parsing (manual split; no `parse_str()`), then builds one sub-element per parameter using data from the ClinicalTrials.gov API documentation (label, description, examples, allowed values). Fields with enum `allowed` values are populated via `getEnum()`. Related fields are grouped inside `details` elements ("Query parameters", "Filters", "Pagination").
+- **`#element_validate`:** Assembles sub-values back into a query string, skipping empty values, and sets it on `$form_state` via `setValueForElement()`. Uses a Symfony/Drupal query-string builder if one supports dot-notation keys; otherwise builds manually with `rawurlencode()`.
+
+**Parameters** (replicating https://clinicaltrials.gov/data-api/api `/studies` endpoint):
+
+| Key | Drupal type | Notes |
+|---|---|---|
+| `query.cond` | `textfield` | Condition or disease |
+| `query.term` | `textfield` | Other search terms |
+| `query.locn` | `textfield` | Location terms |
+| `query.titles` | `textfield` | Title / acronym |
+| `query.intr` | `textfield` | Intervention or treatment |
+| `query.outc` | `textfield` | Outcome measure |
+| `query.spons` | `textfield` | Sponsor or collaborator |
+| `query.lead` | `textfield` | Lead sponsor only |
+| `query.id` | `textfield` | NCT number or study ID |
+| `filter.overallStatus` | `select` / `checkboxes` | Allowed values from `getEnum('OverallStatus')` |
+| `filter.geo` | `textfield` | Geo filter |
+| `filter.ids` | `textfield` | Pipe-separated NCT IDs |
+| `filter.advanced` | `textfield` | Essie expression filter |
+| `aggFilters` | `textfield` | Aggregation filters |
+| `pageSize` | `number` | 1–1000, default 10 |
+| `pageToken` | `textfield` | Pagination cursor |
+| `countTotal` | `select` | Yes / No / — |
+| `sort` | `textfield` | Field and direction |
+
+### Report Submodule: `clinical_trials_gov_report`
+
+Located at `clinical_trials_gov/modules/clinical_trials_gov_report/`. Depends on `clinical_trials_gov`. Contains only the form and controllers that build the report.
+
+#### Routes
+
+| Route | Path | Controller |
+|---|---|---|
+| `clinical_trials_gov_report.studies` | `/admin/reports/status/clinical-trials-gov` | `ClinicalTrialsGovReportController::index` |
+| `clinical_trials_gov_report.study` | `/admin/reports/status/clinical-trials-gov/{nctId}` | `ClinicalTrialsGovStudyController::view` |
+
+The `{nctId}` parameter is constrained to `NCT\d+`. Both routes require `access administration pages`. A menu link is registered under `system.admin_reports`.
+
+#### ClinicalTrialsGovStudiesSearchForm
+
+- **Base:** `FormBase`
+- Contains one `ClinicalTrialsGovStudiesQuery` element (`#type => clinical_trials_gov_studies_query`)
+- `#default_value` populated from the current request's query string
+- On submit: redirects to the `clinical_trials_gov_report.studies` route with the assembled query string as URL parameters
+
+#### ClinicalTrialsGovReportController
+
+Renders the search form and results table at `/admin/reports/status/clinical-trials-gov`.
+
+1. Embeds `ClinicalTrialsGovStudiesSearchForm`
+2. Parses the request query string (preserving dot-notation keys)
+3. If parameters present, calls `getStudies($parameters)`
+4. Renders a `#type => table` with columns: NCT ID (linked to study route), Title, Overall Status, Phases, Conditions
+5. Renders a pager link if `nextPageToken` is present
+6. Renders a total count item if `totalCount` is present
+
+#### ClinicalTrialsGovStudyController
+
+Renders a single study at `/admin/reports/status/clinical-trials-gov/{nctId}`.
+
+1. Calls `getStudy($nctId)`
+2. Passes result to `ClinicalTrialsGovBuilder::buildStudy()`
+3. Returns the render array; page title sourced from `protocolSection.identificationModule.briefTitle`
+
+### Test Strategy
+
+Tests live in `web/modules/custom/clinical_trials_gov/tests/` and follow the project's single-test-method-per-class Kernel/Functional convention.
+
+#### Unit Tests (no Drupal bootstrap)
+
+| Test class | What it covers |
+|---|---|
+| `ClinicalTrialsGovApiTest` | URL construction, HTTP error handling, JSON decoding, pagination token passthrough. Uses a mock HTTP client; no real API calls. |
+| `ClinicalTrialsGovManagerTest` | `getStudy()` flattening logic, `getStudyMetadata()` flattening logic, `getEnum()` value extraction. Mocks `ClinicalTrialsGovApi`. Uses fixture JSON files recorded from the live API. |
+
+#### Kernel Tests (Drupal bootstrap, no browser)
+
+| Test class | What it covers |
+|---|---|
+| `ClinicalTrialsGovBuilderTest` | `buildStudy()` render array structure — verifies STRUCT nodes produce `details` elements, leaf nodes produce `item` elements, and the "Raw data" table is appended. Uses fixture data; mocks `ClinicalTrialsGovManager`. |
+| `ClinicalTrialsGovStudiesQueryTest` | Element `#process` produces sub-elements for all 18 parameters. `#element_validate` assembles a correct query string from submitted values, skips empty fields, and preserves dot-notation keys. |
+
+#### Functional Tests (full Drupal, browser-level)
+
+| Test class | What it covers |
+|---|---|
+| `ClinicalTrialsGovReportTest` | Single test method covering: report page loads at `/admin/reports/status/clinical-trials-gov`, search form renders, form submission redirects with query parameters, results table appears with linked NCT IDs, study detail page renders nested details structure. Swaps `ClinicalTrialsGovManager` with a stub service via `$this->container->set()` to avoid live API calls. |
+
+#### Test Module: `clinical_trials_gov_test`
+
+A submodule at `clinical_trials_gov/modules/clinical_trials_gov_test/` that provides a stub manager and fixture data for all test types. Installing it replaces the real `clinical_trials_gov.manager` service via `clinical_trials_gov_test.services.yml` — no per-test mocking boilerplate required.
+
+**`ClinicalTrialsGovManagerStub`** implements `ClinicalTrialsGovManagerInterface` and reads from `fixtures/`. Kernel and Functional tests install the test module:
+
+```php
+protected static $modules = [
+  'clinical_trials_gov',
+  'clinical_trials_gov_test',
+  'clinical_trials_gov_report',
+];
+```
+
+Unit tests skip the test module and load fixture JSON directly via `file_get_contents()`.
+
+#### Fixture Files
+
+Recorded API responses stored in `clinical_trials_gov_test/fixtures/`:
+
+| File | Source endpoint | Notes |
+|---|---|---|
+| `studies.json` | `/studies` | Response containing NCT001, NCT002, NCT003 |
+| `study-NCT001.json` | `/studies/{nctId}` | RECRUITING, all modules populated, multiple locations, eligibility with Inclusion/Exclusion split |
+| `study-NCT002.json` | `/studies/{nctId}` | COMPLETED, `hasResults: true`, minimal optional fields |
+| `study-NCT003.json` | `/studies/{nctId}` | Sparse data — several modules absent, tests builder null/missing field handling |
+| `metadata.json` | `/studies/metadata` | Full field tree |
+| `enums.json` | `/studies/enums` | All enum types and allowed values |
+| `search-areas.json` | `/studies/search-areas` | Full-text search area definitions |
+
+---
+
+## Phase 2 — Import
+
+> Phase 2 has not yet been designed in detail. The items below are carried forward from the original spec as starting points.
+
+### Dependencies
 
 | Module | URL | Description |
 |---|---|---|
@@ -24,82 +266,18 @@
 | `migrate_plus` | https://www.drupal.org/project/migrate_plus | Extends Migrate with URL source plugin, HTTP data fetcher, and JSON parser |
 | `migrate_tools` | https://www.drupal.org/project/migrate_tools | Provides Drush commands and admin UI for executing and managing migrations |
 
-## Module Architecture
-
-```
-clinical_trials_gov/
-├── AGENTS.md
-├── README.md
-├── clinical_trials_gov.info.yml
-├── clinical_trials_gov.install
-├── clinical_trials_gov.module
-├── clinical_trials_gov.routing.yml
-├── clinical_trials_gov.services.yml
-├── clinical_trials_gov.links.menu.yml
-├── clinical_trials_gov.links.task.yml
-├── config/
-│   ├── install/
-│   │   ├── clinical_trials_gov.settings.yml
-│   │   └── migrate_plus.migration.clinical_trials_gov.yml
-│   └── schema/
-│       └── clinical_trials_gov.schema.yml
-├── src/
-│   ├── ClinicalTrialsGovApiInterface.php
-│   ├── ClinicalTrialsGovApi.php
-│   ├── ClinicalTrialsGovManagerInterface.php
-│   ├── ClinicalTrialsGovManager.php
-│   ├── ClinicalTrialsGovFieldBuilderInterface.php
-│   ├── ClinicalTrialsGovFieldBuilder.php
-│   ├── Controller/
-│   │   ├── ClinicalTrialsGovController.php
-│   │   └── ClinicalTrialsGovReviewController.php
-│   ├── Form/
-│   │   ├── ClinicalTrialsGovConfigureForm.php
-│   │   └── ClinicalTrialsGovImportForm.php
-│   └── Plugin/
-│       └── migrate/
-│           └── source/
-│               └── ClinicalTrialsGovSource.php
-├── tests/
-│   └── test.php
-└── js/
-```
-
-## Core Services
-
-The module provides three primary services, each defined through an interface.
-
-### ClinicalTrialsGovApi
-
-- **Service name:** `clinical_trials_gov.api`
-- **Interface:** `ClinicalTrialsGovApiInterface`
-- **Class:** `ClinicalTrialsGovApi`
-
-A low-level HTTP client for calling the ClinicalTrials.gov API. Handles endpoint construction, HTTP requests, pagination via `nextPageToken`, and raw JSON response parsing. This service has no knowledge of Drupal entities or field mappings.
-
-### ClinicalTrialsGovManager
-
-- **Service name:** `clinical_trials_gov.manager`
-- **Interface:** `ClinicalTrialsGovManagerInterface`
-- **Class:** `ClinicalTrialsGovManager`
-
-Uses the `ClinicalTrialsGovApi` service to fetch data from ClinicalTrials.gov and organizes it into structured data that the module can consume. Handles autocomplete lookups, trial summary formatting, and count retrieval.
-
-### ClinicalTrialsGovFieldBuilder
+### ClinicalTrialsGovFieldBuilder (Phase 2 service)
 
 - **Service name:** `clinical_trials_gov.field_builder`
 - **Interface:** `ClinicalTrialsGovFieldBuilderInterface`
-- **Class:** `ClinicalTrialsGovFieldBuilder`
 
-Creates and manages the Trial content type and its fields. On module installation, it creates the Trial content type with a set of required and common fields. During configuration, it dynamically creates additional fields based on the admin's selected ClinicalTrials.gov schema fields.
+Creates and manages the Trial content type and its fields. On module installation, creates the Trial content type with a predefined set of fields. During configuration, dynamically creates additional fields based on selected ClinicalTrials.gov schema fields.
 
-## Installation Behavior
+### Installation Behavior (Phase 2)
 
-When the module is installed, `hook_install` calls the Field Builder service to create a `trial` content type with a predefined set of fields.
+When the module is installed, `hook_install` calls the Field Builder service to create a `trial` content type.
 
-### Required Fields (cannot be removed)
-
-These fields are always present and cannot be unconfigured by the admin.
+#### Required Fields (cannot be removed)
 
 | Field Label | Drupal Field Name | Drupal Field Type | Source |
 |---|---|---|---|
@@ -107,22 +285,29 @@ These fields are always present and cannot be unconfigured by the admin.
 | Title | `title` | Node title (core) | `protocolSection.identificationModule.briefTitle` |
 | Brief Summary | `field_brief_summary` | `text_long` | `protocolSection.descriptionModule.briefSummary` |
 
-### Update vs. Create Logic
+#### Update vs. Create Logic
 
-The migration uses NCT ID as the unique migration map key. On each import run, if a trial with a matching NCT ID already exists in the migration map, the existing node is updated with any changed data. If no match is found, a new Trial node is created. This upsert pattern ensures data stays current without creating duplicates.
+The migration uses NCT ID as the unique migration map key. Existing nodes are updated on re-import; new nodes are created if no match is found.
 
-## Data Structure and Field Mapping
+### Admin Interface (Phase 2)
 
-### Reference
+Three-step admin interface at `/admin/config/web-services/clinical-trials-gov`:
 
-- **Data structure metadata:** https://clinicaltrials.gov/api/v2/studies/metadata
-- **Data structure documentation:** https://clinicaltrials.gov/data-api/about-api/study-data-structure
+1. **Configure** — Set query parameters and select additional fields to import
+2. **Review** — Preview matching trials (reuses `ClinicalTrialsGovStudiesQuery` element and `ClinicalTrialsGovBuilder::buildStudy()` from Phase 1; `clinical_trials_gov_test` stub covers this in tests)
+3. **Import** — Confirm and trigger the migration via Migrate Tools batch infrastructure
 
-The ClinicalTrials.gov API v2 returns study data as hierarchical JSON organized into modules within a `protocolSection` and a `derivedSection`. Data uses ISO 8601 dates, enumerated values for statuses and phases, and CommonMark Markdown for rich text.
+### Migration Architecture (Phase 2)
 
-### API to Drupal Field Mapping
+A custom `ClinicalTrialsGovSource` migrate source plugin extends Migrate Plus's URL source plugin to:
 
-The following table maps common ClinicalTrials.gov API fields to Drupal node fields. Fields marked with ⚠️ have Drupal machine names exceeding 32 characters and will need to be shortened.
+- Inject the stored query parameter from module configuration
+- Handle pagination via `nextPageToken`
+- Parse the JSON response from `/api/v2/studies`
+
+The migration can be run via the Import UI button or via Drush (`drush migrate:import clinical_trials_gov`).
+
+### API to Drupal Field Mapping (Phase 2)
 
 | API Path | API Type | Drupal Field Name | Drupal Type | Multi | Notes |
 |---|---|---|---|---|---|
@@ -140,7 +325,7 @@ The following table maps common ClinicalTrials.gov API fields to Drupal node fie
 | `protocolSection.sponsorCollaboratorsModule.leadSponsor.class` | enum | `field_lead_sponsor_class` | `list_string` | No | e.g., INDUSTRY, NIH |
 | `protocolSection.sponsorCollaboratorsModule.collaborators` | array | `field_collaborators` | `string` (255) | Yes | Array of names |
 | `protocolSection.descriptionModule.briefSummary` | markdown | `field_brief_summary` | `text_long` | No | Required. CommonMark. |
-| `protocolSection.descriptionModule.detailedDescription` | markdown | `field_detailed_description` | `text_long` | No | ⚠️ 27 chars, OK |
+| `protocolSection.descriptionModule.detailedDescription` | markdown | `field_detailed_description` | `text_long` | No | |
 | `protocolSection.conditionsModule.conditions` | array | `field_conditions` | `string` (255) | Yes | |
 | `protocolSection.conditionsModule.keywords` | array | `field_keywords` | `string` (255) | Yes | |
 | `protocolSection.designModule.studyType` | enum | `field_study_type` | `list_string` | No | INTERVENTIONAL, OBSERVATIONAL |
@@ -153,87 +338,19 @@ The following table maps common ClinicalTrials.gov API fields to Drupal node fie
 | `protocolSection.eligibilityModule.minimumAge` | string | `field_minimum_age` | `string` (20) | No | e.g., "18 Years" |
 | `protocolSection.eligibilityModule.maximumAge` | string | `field_maximum_age` | `string` (20) | No | e.g., "65 Years" |
 | `protocolSection.eligibilityModule.eligibilityCriteria` | markdown | `field_eligibility_criteria` | `text_long` | No | |
-| `protocolSection.contactsLocationsModule.locations` | array | `field_locations` | `string_long` | Yes | Serialized or structured |
+| `protocolSection.contactsLocationsModule.locations` | array | `field_locations` | `string_long` | Yes | |
 | `protocolSection.outcomesModule.primaryOutcomes` | array | `field_primary_outcomes` | `text_long` | Yes | |
 | `protocolSection.outcomesModule.secondaryOutcomes` | array | `field_secondary_outcomes` | `text_long` | Yes | |
 | `protocolSection.referencesModule.references` | array | `field_references` | `link` | Yes | PMIDs / URLs |
 | `derivedSection.miscInfoModule.versionHolder` | string | `field_version_holder` | `string` (20) | No | |
 | `hasResults` | boolean | `field_has_results` | `boolean` | No | Top-level field |
 
-## User Interface
-
-The module provides an admin interface at `/admin/config/web-services/clinical-trials-gov`.
-
-### Landing Page
-
-The landing page uses Drupal's `system_admin_block` to display the three steps as numbered blocks:
-
-1. **Configure** — Set up the ClinicalTrials.gov query
-2. **Review** — Preview matching trials
-3. **Import** — Import trials into Drupal
-
-### 1. Configure Tab
-
-The configure tab presents a form where administrators enter a search query parameter for the ClinicalTrials.gov API. A text field labeled "Query" accepts search expressions such as "cancer" or "heart disease." As the admin types, an autocomplete callback powered by the `ClinicalTrialsGovManager` service fetches the top ten matching trials from ClinicalTrials.gov to assist in query building. Admins can also select which ClinicalTrials.gov fields to pull beyond the required defaults. A submit button stores the query and field selections in module configuration.
-
-### 2. Review Tab
-
-The review tab executes the stored query against the ClinicalTrials.gov API `/v2/studies` endpoint using the `ClinicalTrialsGovManager` service. It displays a paginated list of matching trials with summaries including trial title, status, condition, and lead sponsor. Each trial includes a link to the full trial on ClinicalTrials.gov. The total count of matching trials is displayed at the bottom.
-
-### 3. Import Tab
-
-The import tab displays the total count of trials from the previous query and presents an "Import Trials" button. This form extends Drupal's `ConfirmFormBase`, requiring the admin to confirm they want to trigger the import. Clicking the button triggers the migration using Migrate Tools' batch infrastructure.
-
-## Migration Architecture
-
-The module includes a custom Drupal migration that uses Migrate Plus's URL source plugin as its foundation. A custom migrate source plugin (`ClinicalTrialsGovSource`) extends the base URL plugin to:
-
-- Inject the stored query parameter from module configuration
-- Handle ClinicalTrials.gov API pagination via `nextPageToken`
-- Parse the JSON response from `/api/v2/studies`
-
-The migration YAML maps trial properties directly to Trial node fields. The unique trial identifier is the NCT ID, used for upsert logic. The migration can be executed via:
-
-- The UI import button using Migrate Tools batch infrastructure
-- Drush (`drush migrate:import clinical_trials_gov`)
-
-## Configuration Storage
-
-Query parameters, selected fields, and migration configuration are stored in Drupal's configuration system under the `clinical_trials_gov` namespace. Configuration persists across requests, allowing admins to return to the interface and re-run reviews or imports with the same query.
-
 ---
 
-## Ideas and Notes
+## Reference
 
-### Autocomplete Enhancement
-
-As the admin types a query on the configure tab, a real-time autocomplete callback from the `ClinicalTrialsGovManager` fetches the top ten matching trials to guide query building.
-
-### Pagination on Review Tab
-
-The review tab needs robust pagination handling for large result sets. The ClinicalTrials.gov API uses cursor-based pagination via `nextPageToken` with a max page size of 1000.
-
-### Data Model Documentation
-
-We need a reliable way to document the complete data structure from https://clinicaltrials.gov/data-api/about-api/study-data-structure. Ideally, we should pull the data model as JSON from the metadata endpoint (https://clinicaltrials.gov/api/v2/studies/metadata) and use it to auto-generate field definitions.
-
-### Import Button — Batch vs. Redirect
-
-Investigate whether to build a custom import button that triggers the migration batch directly from the import page using Migrate Tools' batch infrastructure, or redirect to the Migrate Tools UI execute page. Explore Migrate Tools' public services and classes that can be extended to trigger migrations programmatically while staying on the import page.
-
-### Migrate Tools UI Integration
-
-The module requires Migrate Tools to be installed for admin UI and progress tracking. Explore integration points between the module's import button and Migrate Tools' execution interface.
-
-### Test Script
-
-Generate a basic plain-vanilla `test.php` script that can be used for basic testing, experimentation, and documentation of the ClinicalTrials.gov API responses.
-
----
-
-## Coding Notes
-
-- All three services (`ClinicalTrialsGovApi`, `ClinicalTrialsGovManager`, `ClinicalTrialsGovFieldBuilder`) must be defined with interfaces.
-- Use constructor injection for all services.
-- The import form (`ClinicalTrialsGovImportForm`) extends `ConfirmFormBase`.
-- Follow Drupal coding standards and naming conventions throughout.
+- **API base:** https://clinicaltrials.gov/api/v2
+- **API explorer:** https://clinicaltrials.gov/data-api/api
+- **Data structure documentation:** https://clinicaltrials.gov/data-api/about-api/study-data-structure
+- **Metadata endpoint:** https://clinicaltrials.gov/api/v2/studies/metadata
+- **Enums endpoint:** https://clinicaltrials.gov/api/v2/studies/enums

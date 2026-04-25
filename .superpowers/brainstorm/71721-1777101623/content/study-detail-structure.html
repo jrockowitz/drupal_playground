@@ -1,0 +1,109 @@
+<h2>Study detail page — data structure approach</h2>
+<p class="subtitle">How should the nested JSON be rendered on the study detail page?</p>
+
+<div class="options">
+
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Flat table — dotted key paths</h3>
+      <p>One table, two columns. Every leaf value gets a row with its full dotted path as the key.</p>
+      <div class="mockup" style="margin-top:12px">
+        <div class="mockup-header">Study: NCT04001699</div>
+        <div class="mockup-body" style="padding:0">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+              <tr style="background:#f5f5f5">
+                <th style="padding:6px 10px;text-align:left;border-bottom:2px solid #ddd;width:55%">Field path</th>
+                <th style="padding:6px 10px;text-align:left;border-bottom:2px solid #ddd">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:5px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px">protocolSection.identificationModule.nctId</td><td style="padding:5px 10px;border-bottom:1px solid #eee">NCT04001699</td></tr>
+              <tr style="background:#fafafa"><td style="padding:5px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px">protocolSection.identificationModule.briefTitle</td><td style="padding:5px 10px;border-bottom:1px solid #eee">A Study of ABC123 in Patients With...</td></tr>
+              <tr><td style="padding:5px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px">protocolSection.statusModule.overallStatus</td><td style="padding:5px 10px;border-bottom:1px solid #eee">RECRUITING</td></tr>
+              <tr style="background:#fafafa"><td style="padding:5px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px">protocolSection.statusModule.startDateStruct.date</td><td style="padding:5px 10px;border-bottom:1px solid #eee">2021-03-15</td></tr>
+              <tr><td style="padding:5px 10px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px">protocolSection.sponsorCollaboratorsModule.leadSponsor.name</td><td style="padding:5px 10px;border-bottom:1px solid #eee">Pfizer Inc.</td></tr>
+              <tr style="background:#fafafa"><td style="padding:5px 10px;font-family:monospace;font-size:12px">...</td><td style="padding:5px 10px;color:#999">...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top:10px">
+        <div class="pros"><h4>Pros</h4><ul><li>Dead simple to implement</li><li>Shows exact API paths</li><li>Easiest to scan for specific field</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Long key paths are verbose</li><li>No visual grouping</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Nested <code>&lt;details&gt;</code> — mirrors JSON structure</h3>
+      <p>Top-level sections are collapsible <code>&lt;details&gt;</code> elements. Leaf values are rendered with <code>item</code> elements inside.</p>
+      <div class="mockup" style="margin-top:12px">
+        <div class="mockup-header">Study: NCT04001699</div>
+        <div class="mockup-body" style="font-size:13px">
+          <details open style="margin-bottom:6px;border:1px solid #ddd;padding:6px 10px">
+            <summary style="font-weight:bold;cursor:pointer">protocolSection</summary>
+            <details open style="margin:6px 0 0 16px;border:1px solid #eee;padding:6px 10px">
+              <summary style="cursor:pointer">identificationModule</summary>
+              <div style="margin:6px 0 0 16px">
+                <div style="margin-bottom:4px"><span style="font-weight:600">nctId:</span> NCT04001699</div>
+                <div style="margin-bottom:4px"><span style="font-weight:600">briefTitle:</span> A Study of ABC123 in Patients With...</div>
+              </div>
+            </details>
+            <details style="margin:6px 0 0 16px;border:1px solid #eee;padding:6px 10px">
+              <summary style="cursor:pointer">statusModule</summary>
+              <div style="margin:6px 0 0 16px;color:#999">...</div>
+            </details>
+          </details>
+          <details style="border:1px solid #ddd;padding:6px 10px">
+            <summary style="font-weight:bold;cursor:pointer">derivedSection</summary>
+            <div style="margin:6px 0 0 16px;color:#999">...</div>
+          </details>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top:10px">
+        <div class="pros"><h4>Pros</h4><ul><li>Matches actual API structure</li><li>Collapsible — hides noise</li><li>Short leaf-level key names</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Many click-throughs to find a field</li><li>More complex to build</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>One <code>&lt;details&gt;</code> per top-level module — flat table inside</h3>
+      <p>Each <code>protocolSection.*Module</code> becomes a collapsible <code>&lt;details&gt;</code>. Inside each one, a flat two-column table shows the leaf key (short name) and value.</p>
+      <div class="mockup" style="margin-top:12px">
+        <div class="mockup-header">Study: NCT04001699</div>
+        <div class="mockup-body" style="font-size:13px">
+          <details open style="margin-bottom:6px">
+            <summary style="font-weight:bold;cursor:pointer;padding:4px 0">identificationModule</summary>
+            <table style="width:100%;border-collapse:collapse;margin-top:4px">
+              <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px;width:40%">nctId</td><td style="padding:4px 8px;border-bottom:1px solid #eee">NCT04001699</td></tr>
+              <tr><td style="padding:4px 8px;font-family:monospace;font-size:12px">briefTitle</td><td style="padding:4px 8px">A Study of ABC123 in Patients With...</td></tr>
+            </table>
+          </details>
+          <details style="margin-bottom:6px">
+            <summary style="font-weight:bold;cursor:pointer;padding:4px 0">statusModule</summary>
+            <table style="width:100%;border-collapse:collapse;margin-top:4px">
+              <tr><td style="padding:4px 8px;border-bottom:1px solid #eee;font-family:monospace;font-size:12px;width:40%">overallStatus</td><td style="padding:4px 8px;border-bottom:1px solid #eee">RECRUITING</td></tr>
+              <tr><td style="padding:4px 8px;font-family:monospace;font-size:12px">startDateStruct.date</td><td style="padding:4px 8px">2021-03-15</td></tr>
+            </table>
+          </details>
+          <details style="margin-bottom:6px">
+            <summary style="font-weight:bold;cursor:pointer;padding:4px 0">sponsorCollaboratorsModule</summary>
+            <div style="padding:4px 8px;color:#999;font-size:12px">...</div>
+          </details>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top:10px">
+        <div class="pros"><h4>Pros</h4><ul><li>Grouped and scannable</li><li>Shorter key names in table</li><li>One click to expand a section</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Slightly more complex than A</li><li>Arrays of objects need extra handling</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>

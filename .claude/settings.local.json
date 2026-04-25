@@ -54,7 +54,15 @@
       "WebFetch(domain:clinicaltrials.gov)",
       "mcp__plugin_playwright_playwright__browser_run_code",
       "Bash(curl -s \"https://drupal-playground.ddev.site/modules/custom/clinicaltrialsgov/test/clinicaltrialsgov.php?path=%2Fstudies%2FNCT01927341\")",
-      "Bash(curl -s \"https://drupal-playground.ddev.site/modules/custom/clinicaltrialsgov/test/clinicaltrialsgov.php?path=%2Fstudies%2FNCT01927341&view=data\")"
+      "Bash(curl -s \"https://drupal-playground.ddev.site/modules/custom/clinicaltrialsgov/test/clinicaltrialsgov.php?path=%2Fstudies%2FNCT01927341&view=data\")",
+      "Bash(phpcbf web/modules/custom/clinical_trials_gov/clinical_trials_gov.info.yml web/modules/custom/clinical_trials_gov/clinical_trials_gov.services.yml)",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&filter.overallStatus=RECRUITING|COMPLETED&pageSize=3&countTotal=true\")",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&filter.overallStatus=RECRUITING&pageSize=2&countTotal=true\")",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&filter.overallStatus=COMPLETED&postFilter.results.hasResults=true&pageSize=1&countTotal=true\")",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&filter.overallStatus=COMPLETED&query.term=hasResults:true&pageSize=1\")",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&pageSize=3&countTotal=true\")",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies/NCT05088187\")",
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies/metadata\")"
     ],
     "deny": [
       "Bash(ddev delete *)",

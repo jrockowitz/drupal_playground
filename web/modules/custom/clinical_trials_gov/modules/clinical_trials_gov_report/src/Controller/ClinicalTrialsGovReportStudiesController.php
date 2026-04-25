@@ -30,36 +30,39 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
     $query_string = $request->getQueryString() ?? '';
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query_string);
 
-    if (empty($parameters)) {
-      return $build;
-    }
+    $page_offset = (int) ($parameters['pageOffset'] ?? 0);
+    unset($parameters['pageOffset']);
 
     $response = $this->manager->getStudies($parameters);
     $studies = $response['studies'] ?? [];
 
-    if (empty($studies)) {
-      $build['empty'] = [
+    if (!empty($studies) || isset($response['totalCount'])) {
+      $count = count($studies);
+      $start = $page_offset + 1;
+      $end = $page_offset + $count;
+      $total = $response['totalCount'] ?? NULL;
+
+      $build['summary'] = [
         '#type' => 'item',
-        '#markup' => $this->t('No studies found.'),
+        '#markup' => ($total !== NULL)
+          ? $this->t('Showing @start to @end of @total trials', [
+            '@start' => $start,
+            '@end' => $end,
+            '@total' => $total,
+          ])
+          : $this->t('Showing @start to @end', ['@start' => $start, '@end' => $end]),
       ];
-      return $build;
     }
 
     $build['results'] = $this->buildResultsTable($studies);
 
-    if (isset($response['totalCount'])) {
-      $build['total'] = [
-        '#type' => 'item',
-        '#markup' => $this->t('Total results: @count', ['@count' => $response['totalCount']]),
-      ];
-    }
-
     if (isset($response['nextPageToken'])) {
       $next_parameters = $parameters;
       $next_parameters['pageToken'] = $response['nextPageToken'];
+      $next_parameters['pageOffset'] = $page_offset + count($studies);
       $build['pager'] = [
         '#type' => 'item',
-        '#markup' => $this->t('<a href=":url">Next page</a>', [
+        '#markup' => $this->t('<a href=":url" class="button">Next page &#8250;</a>', [
           ':url' => Url::fromRoute('clinical_trials_gov_report.studies', [], ['query' => $next_parameters])->toString(),
         ]),
       ];
