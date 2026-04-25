@@ -1,5 +1,5 @@
-name: 'ClinicalTrials.gov'
+name: "ClinicalTrials.gov"
 type: module
-description: 'Services and components for the ClinicalTrials.gov API v2 integration.'
+description: "Services and components for the ClinicalTrials.gov API v2 integration."
 package: Custom
 core_version_requirement: ^10.3 || ^11
