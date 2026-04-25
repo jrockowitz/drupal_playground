@@ -1,0 +1,5 @@
+clinical_trials_gov_report.studies:
+  title: 'ClinicalTrials.gov'
+  description: 'Browse ClinicalTrials.gov clinical trial data.'
+  route_name: clinical_trials_gov_report.studies
+  parent: system.admin_reports

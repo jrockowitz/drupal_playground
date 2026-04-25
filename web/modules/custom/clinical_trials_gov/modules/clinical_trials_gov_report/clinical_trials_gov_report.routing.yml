@@ -1,0 +1,16 @@
+clinical_trials_gov_report.studies:
+  path: /admin/reports/status/clinical-trials-gov
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'access administration pages'
+
+clinical_trials_gov_report.study:
+  path: /admin/reports/status/clinical-trials-gov/{nctId}
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovStudyController::view'
+    _title_callback: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovStudyController::title'
+  requirements:
+    _permission: 'access administration pages'
+    nctId: 'NCT\d+'
