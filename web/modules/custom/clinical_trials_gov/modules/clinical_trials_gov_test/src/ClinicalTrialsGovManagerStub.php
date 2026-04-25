@@ -76,7 +76,13 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
         continue;
       }
       if (($enum['type'] ?? '') === $enum_type) {
-        return is_array($enum['values'] ?? NULL) ? $enum['values'] : [];
+        return array_values(array_filter(
+          array_map(
+            fn($item) => is_array($item) ? ($item['value'] ?? NULL) : (is_string($item) ? $item : NULL),
+            is_array($enum['values'] ?? NULL) ? $enum['values'] : []
+          ),
+          fn($value) => $value !== NULL
+        ));
       }
     }
     return [];

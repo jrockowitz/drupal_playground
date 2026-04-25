@@ -145,7 +145,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
   }
 
   /**
-   * Tests that getEnum() returns values for a named enum type.
+   * Tests that getEnum() extracts the value strings from enum objects.
    *
    * @covers ::getEnum
    */
@@ -154,13 +154,26 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
       ->method('get')
       ->with('/studies/enums')
       ->willReturn([
-        ['type' => 'OverallStatus', 'values' => ['RECRUITING', 'COMPLETED', 'TERMINATED']],
-        ['type' => 'Phase', 'values' => ['PHASE1', 'PHASE2', 'PHASE3']],
+        [
+          'type' => 'OverallStatus',
+          'values' => [
+            ['value' => 'RECRUITING', 'legacyValue' => 'Recruiting'],
+            ['value' => 'COMPLETED', 'legacyValue' => 'Completed'],
+            ['value' => 'TERMINATED', 'legacyValue' => 'Terminated'],
+          ],
+        ],
+        [
+          'type' => 'Phase',
+          'values' => [
+            ['value' => 'PHASE1', 'legacyValue' => 'Phase 1'],
+            ['value' => 'PHASE2', 'legacyValue' => 'Phase 2'],
+          ],
+        ],
       ]);
 
     $result = $this->manager->getEnum('OverallStatus');
 
-    // Check that the correct enum values are returned.
+    // Check that the value strings are extracted from the enum objects.
     $this->assertSame(['RECRUITING', 'COMPLETED', 'TERMINATED'], $result);
   }
 
