@@ -4,39 +4,48 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov_report\Controller;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
 
 /**
- * Controller for viewing individual ClinicalTrials.gov studies.
+ * Renders the detail page for a single ClinicalTrials.gov study.
  */
 class ClinicalTrialsGovStudyController extends ControllerBase {
 
+  public function __construct(
+    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovBuilderInterface $builder,
+  ) {}
+
   /**
-   * View page for a single ClinicalTrials.gov study.
+   * Renders the study detail page.
    *
    * @param string $nctId
-   *   The NCT ID of the study.
-   *
-   * @return array
-   *   A render array.
+   *   The NCT ID from the route.
    */
   public function view(string $nctId): array {
-    return [
-      '#markup' => 'Study: ' . $nctId,
-    ];
+    $study = $this->manager->getStudy($nctId);
+
+    if (empty($study)) {
+      return [
+        '#type' => 'item',
+        '#markup' => $this->t('Study @nct_id not found.', ['@nct_id' => $nctId]),
+      ];
+    }
+
+    return $this->builder->buildStudy($study);
   }
 
   /**
-   * Title callback for the study view page.
+   * Returns the page title from the study's brief title.
    *
    * @param string $nctId
-   *   The NCT ID of the study.
-   *
-   * @return string
-   *   The page title.
+   *   The NCT ID from the route.
    */
   public function title(string $nctId): string {
-    return 'Study ' . $nctId;
+    $study = $this->manager->getStudy($nctId);
+    return (string) ($study['protocolSection.identificationModule.briefTitle'] ?? $nctId);
   }
 
 }
