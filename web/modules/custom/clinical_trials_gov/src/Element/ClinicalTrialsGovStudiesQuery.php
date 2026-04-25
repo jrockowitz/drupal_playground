@@ -124,15 +124,31 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     }
     $element['search']['filters']['filter__overallStatus'] = [
       '#type' => 'select',
-      '#title' => t('Overall status'),
-      '#description' => t('See <a href=":url">API documentation</a>.', [':url' => 'https://clinicaltrials.gov/data-api/api']),
+      '#title' => t('Overall status (filter.overallStatus)'),
+      '#description' => t('Filter by comma- or pipe-separated list of study statuses. Example: NOT_YET_RECRUITING|RECRUITING'),
       '#options' => $overall_status_options,
       '#default_value' => $defaults['filter.overallStatus'] ?? '',
     ];
-    $element['search']['filters']['filter__geo'] = static::buildTextField('Geographic filter', 'e.g. distance(39.0035,-77.1088,50mi)', $defaults['filter.geo'] ?? '');
-    $element['search']['filters']['filter__ids'] = static::buildTextField('NCT ID filter', 'Pipe-separated NCT IDs', $defaults['filter.ids'] ?? '');
-    $element['search']['filters']['filter__advanced'] = static::buildTextField('Advanced filter', 'Essie expression syntax', $defaults['filter.advanced'] ?? '');
-    $element['search']['filters']['aggFilters'] = static::buildTextField('Aggregation filters', 'e.g. phase:phase2,studyType:int', $defaults['aggFilters'] ?? '');
+    $element['search']['filters']['filter__geo'] = static::buildTextField(
+      'Geographic filter (filter.geo)',
+      'Filter by distance function from a geographic location. Example: distance(39.0035707,-77.1013313,50mi)',
+      $defaults['filter.geo'] ?? '',
+    );
+    $element['search']['filters']['filter__ids'] = static::buildTextField(
+      'NCT ID filter (filter.ids)',
+      'Filter by NCT IDs, searchable in NCTId and NCTIdAlias fields. Example: NCT04852770|NCT01728545|NCT02109302',
+      $defaults['filter.ids'] ?? '',
+    );
+    $element['search']['filters']['filter__advanced'] = static::buildTextField(
+      'Advanced filter (filter.advanced)',
+      'Filter using Essie expression syntax. Example: AREA[StartDate]2022',
+      $defaults['filter.advanced'] ?? '',
+    );
+    $element['search']['filters']['aggFilters'] = static::buildTextField(
+      'Aggregation filters (aggFilters)',
+      'Apply aggregation filters as comma/pipe-separated "filter_id:option_keys" pairs. Example: results:with,status:com',
+      $defaults['aggFilters'] ?? '',
+    );
 
     $element['search']['pagination'] = [
       '#type' => 'details',
@@ -141,21 +157,29 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     ];
     $element['search']['pagination']['pageSize'] = [
       '#type' => 'number',
-      '#title' => t('Page size'),
-      '#description' => t('Results per page (1–1000). Default: 10. See <a href=":url">API documentation</a>.', [':url' => 'https://clinicaltrials.gov/data-api/api']),
+      '#title' => t('Page size (pageSize)'),
+      '#description' => t('Maximum studies per response page; capped at 1,000. Default: 10.'),
       '#min' => 1,
       '#max' => 1000,
       '#default_value' => $defaults['pageSize'] ?? '',
     ];
-    $element['search']['pagination']['pageToken'] = static::buildTextField('Page token', 'Pagination cursor from previous response', $defaults['pageToken'] ?? '');
+    $element['search']['pagination']['pageToken'] = static::buildTextField(
+      'Page token (pageToken)',
+      'Token for retrieving subsequent pages from previous response',
+      $defaults['pageToken'] ?? '',
+    );
     $element['search']['pagination']['countTotal'] = [
       '#type' => 'select',
-      '#title' => t('Count total'),
-      '#description' => t('Include total match count in response. See <a href=":url">API documentation</a>.', [':url' => 'https://clinicaltrials.gov/data-api/api']),
+      '#title' => t('Count total (countTotal)'),
+      '#description' => t('When true, returns total study count in first page response.'),
       '#options' => ['' => t('- Default -'), 'true' => t('Yes'), 'false' => t('No')],
       '#default_value' => $defaults['countTotal'] ?? '',
     ];
-    $element['search']['pagination']['sort'] = static::buildTextField('Sort', 'Field and direction, e.g. LastUpdatePostDate:desc', $defaults['sort'] ?? '');
+    $element['search']['pagination']['sort'] = static::buildTextField(
+      'Sort (sort)',
+      'Comma- or pipe-separated list of sorting options with optional directions (asc/desc). Example: @relevance',
+      $defaults['sort'] ?? '',
+    );
 
     return $element;
   }
@@ -192,34 +216,67 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    */
   protected static function queryParameterDefinitions(): array {
     return [
-      ['key' => 'query.cond', 'label' => 'Condition or disease', 'description' => 'e.g. cancer, heart disease'],
-      ['key' => 'query.term', 'label' => 'Other search terms', 'description' => 'Full-text search across all fields'],
-      ['key' => 'query.locn', 'label' => 'Location terms', 'description' => 'e.g. Boston, MA'],
-      ['key' => 'query.titles', 'label' => 'Title or acronym', 'description' => ''],
-      ['key' => 'query.intr', 'label' => 'Intervention or treatment', 'description' => ''],
-      ['key' => 'query.outc', 'label' => 'Outcome measure', 'description' => ''],
-      ['key' => 'query.spons', 'label' => 'Sponsor or collaborator', 'description' => ''],
-      ['key' => 'query.lead', 'label' => 'Lead sponsor', 'description' => ''],
-      ['key' => 'query.id', 'label' => 'NCT number or study ID', 'description' => 'e.g. NCT04001699'],
+      [
+        'key' => 'query.cond',
+        'label' => 'Condition or disease (query.cond)',
+        'description' => '"Conditions or disease" query in Essie expression syntax for the Condition Search Area. Example: lung cancer',
+      ],
+      [
+        'key' => 'query.term',
+        'label' => 'Other search terms (query.term)',
+        'description' => '"Other terms" query in Essie expression syntax for the Basic Search Area. Example: AREA[LastUpdatePostDate]RANGE[2023-01-15,MAX]',
+      ],
+      [
+        'key' => 'query.locn',
+        'label' => 'Location terms (query.locn)',
+        'description' => '"Location terms" query in Essie expression syntax for the Location Search Area.',
+      ],
+      [
+        'key' => 'query.titles',
+        'label' => 'Title or acronym (query.titles)',
+        'description' => '"Title / acronym" query in Essie expression syntax for the Title Search Area.',
+      ],
+      [
+        'key' => 'query.intr',
+        'label' => 'Intervention or treatment (query.intr)',
+        'description' => '"Intervention / treatment" query in Essie expression syntax for the Intervention Search Area.',
+      ],
+      [
+        'key' => 'query.outc',
+        'label' => 'Outcome measure (query.outc)',
+        'description' => '"Outcome measure" query in Essie expression syntax for the Outcome Search Area.',
+      ],
+      [
+        'key' => 'query.spons',
+        'label' => 'Sponsor or collaborator (query.spons)',
+        'description' => '"Sponsor / collaborator" query in Essie expression syntax for the Sponsor Search Area.',
+      ],
+      [
+        'key' => 'query.lead',
+        'label' => 'Lead sponsor (query.lead)',
+        'description' => 'Searches the "LeadSponsorName" field using Essie expression syntax.',
+      ],
+      [
+        'key' => 'query.id',
+        'label' => 'NCT number or study ID (query.id)',
+        'description' => '"Study IDs" query in Essie expression syntax for the ID Search Area.',
+      ],
     ];
   }
 
   /**
-   * Builds a textfield sub-element with a link to the API documentation.
+   * Builds a textfield sub-element.
    */
   protected static function buildTextField(string $label, string $description, string $default_value): array {
-    $description_text = $description
-      ? t('@description. See <a href=":url">API documentation</a>.', [
-        '@description' => $description,
-        ':url' => 'https://clinicaltrials.gov/data-api/api',
-      ])
-      : t('See <a href=":url">API documentation</a>.', [':url' => 'https://clinicaltrials.gov/data-api/api']);
-    return [
+    $element = [
       '#type' => 'textfield',
       '#title' => t('@label', ['@label' => $label]),
-      '#description' => $description_text,
       '#default_value' => $default_value,
     ];
+    if ($description !== '') {
+      $element['#description'] = t('@description', ['@description' => $description]);
+    }
+    return $element;
   }
 
 }
