@@ -1,0 +1,16 @@
+services:
+  clinical_trials_gov.api:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovApi
+    autowire: true
+    arguments: ['@http_client']
+  Drupal\clinical_trials_gov\ClinicalTrialsGovApiInterface: '@clinical_trials_gov.api'
+
+  clinical_trials_gov.manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovManager
+    autowire: true
+  Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface: '@clinical_trials_gov.manager'
+
+  clinical_trials_gov.builder:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovBuilder
+    autowire: true
+  Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface: '@clinical_trials_gov.builder'
