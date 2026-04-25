@@ -1,0 +1,472 @@
+{
+    "protocolSection": {
+        "identificationModule": {
+            "nctId": "NCT05189171",
+            "orgStudyIdInfo": {
+                "id": "146057.60"
+            },
+            "organization": {
+                "fullName": "Xilis, Inc.",
+                "class": "INDUSTRY"
+            },
+            "briefTitle": "MicroOrganoSphere (MOS) Drug Screen Pilot Trial in Colorectal Cancer",
+            "officialTitle": "MicroOrganoSphere Drug Screen to Lead Care (MODEL) Precision Oncology Pilot Trial in Colorectal Cancer (CRC)",
+            "acronym": "MODEL-CRC"
+        },
+        "statusModule": {
+            "statusVerifiedDate": "2024-06",
+            "overallStatus": "COMPLETED",
+            "expandedAccessInfo": {
+                "hasExpandedAccess": false
+            },
+            "startDateStruct": {
+                "date": "2022-10-25",
+                "type": "ACTUAL"
+            },
+            "primaryCompletionDateStruct": {
+                "date": "2023-11-03",
+                "type": "ACTUAL"
+            },
+            "completionDateStruct": {
+                "date": "2024-03-18",
+                "type": "ACTUAL"
+            },
+            "studyFirstSubmitDate": "2021-12-22",
+            "studyFirstSubmitQcDate": "2021-12-22",
+            "studyFirstPostDateStruct": {
+                "date": "2022-01-12",
+                "type": "ACTUAL"
+            },
+            "lastUpdateSubmitDate": "2024-06-26",
+            "lastUpdatePostDateStruct": {
+                "date": "2024-06-28",
+                "type": "ACTUAL"
+            }
+        },
+        "sponsorCollaboratorsModule": {
+            "responsibleParty": {
+                "type": "SPONSOR"
+            },
+            "leadSponsor": {
+                "name": "Xilis, Inc.",
+                "class": "INDUSTRY"
+            }
+        },
+        "oversightModule": {
+            "isFdaRegulatedDrug": false,
+            "isFdaRegulatedDevice": true,
+            "isUnapprovedDevice": true,
+            "isUsExport": false
+        },
+        "descriptionModule": {
+            "briefSummary": "The purpose of the study is to determine the feasibility of generating sufficient MicroOrganoSpheres (MOS) from a biopsy of a subject's adenocarcinoma of the colon and/or rectum that is metastatic to the liver and completing a drug screen against patient-derived MOS using standard of care drugs used in the treatment of colorectal cancer (oxaliplatin, irinotecan, 5-FU/capecitabine (Xeloda), bevacizumab, panitumumab or cetuximab, trifluridine/tipiracil (Lonsurf), regorafenib and pembrolizumab or nivolumab) in \u2264 14 days."
+        },
+        "conditionsModule": {
+            "conditions": [
+                "Colorectal Neoplasms"
+            ],
+            "keywords": [
+                "Liver Metastasis",
+                "Colorectal Cancer",
+                "Colon Cancer",
+                "CRC liver metastasis",
+                "patient-derived model"
+            ]
+        },
+        "designModule": {
+            "studyType": "OBSERVATIONAL",
+            "patientRegistry": false,
+            "designInfo": {
+                "observationalModel": "COHORT",
+                "timePerspective": "PROSPECTIVE"
+            },
+            "bioSpec": {
+                "retention": "SAMPLES_WITH_DNA",
+                "description": "A standard-of-care biopsy of the liver metastasis and a blood draw will be used for the purpose of this trial. Where sample size permits, a portion of the sample may be retained."
+            },
+            "enrollmentInfo": {
+                "count": 46,
+                "type": "ACTUAL"
+            }
+        },
+        "armsInterventionsModule": {
+            "armGroups": [
+                {
+                    "label": "Metastatic colorectal cancer",
+                    "description": "Patients having a liver biopsy for suspected adenocarcinoma of the colon and/or rectum that is metastatic to the liver.",
+                    "interventionNames": [
+                        "Device: MicroOrganoSphere (MOS) drug screen"
+                    ]
+                }
+            ],
+            "interventions": [
+                {
+                    "type": "DEVICE",
+                    "name": "MicroOrganoSphere (MOS) drug screen",
+                    "description": "Patient-derived models of cancer, called MOS, will be generated from a biopsy of a subject's adenocarcinoma of the colon and/or rectum that is metastatic to the liver and a drug screen using standard-of-care drugs used will be completed (oxaliplatin, irinotecan, 5-FU/capecitabine (Xeloda), bevacizumab, panitumumab or cetuximab, trifluridine/tipiracil (Lonsurf), regorafenib and pembrolizumab or nivolumab). Subjects will receive standard-of-care therapy for CRC dictated by their treating physicians.",
+                    "armGroupLabels": [
+                        "Metastatic colorectal cancer"
+                    ]
+                }
+            ]
+        },
+        "outcomesModule": {
+            "primaryOutcomes": [
+                {
+                    "measure": "MOS generation",
+                    "description": "Whether or not MOS could be generated from a biopsy of a patient's colorectal cancer liver metastasis",
+                    "timeFrame": "<14 Days from start of MOS generation"
+                }
+            ]
+        },
+        "eligibilityModule": {
+            "eligibilityCriteria": "Key Inclusion Criteria:\n\n* Subject signed a valid, Institutional Review Board (IRB)/Ethics Committee (EC)-approved informed consent form.\n* Male or female age 18 or older when written informed consent is obtained.\n* Study candidate is willing and able to comply with all protocol-required procedures and assessments.\n* Study candidate either\n\n  1. is scheduled for or plans to be scheduled for a biopsy of the liver OR\n  2. has a previous histologically or cytologically confirmed diagnosis of adenocarcinoma of the colon and/or rectum that is metastatic to the liver.\n\nKey Exclusion Criteria:\n\n* If already scheduled for a biopsy of the liver: liver biopsy was ordered to help diagnose, determine the severity of, or treat a disease that is unrelated to colorectal cancer (e.g., nonalcoholic fatty liver disease, chronic hepatitis B or C, autoimmune hepatitis, alcoholic liver disease, primary biliary cirrhosis, primary sclerosing cholangitis, hemochromatosis, Wilson's disease, etc.).\n* Study candidate is participating (or intends to participate) in another clinical study AND either:\n\n  1. is currently receiving investigational systemic therapy for adenocarcinoma of the colon and/or rectum that is metastatic to the liver as part of that study OR\n  2. that study only allows investigational systemic therapy for adenocarcinoma of the colon and/or rectum that is metastatic to the liver (simultaneous participation in a clinical trial standard of care control arm is allowed, provided the subject is either already randomized or may be randomized to the control arm).\n* Confirmed histological or cytological diagnosis of neuroendocrine colorectal cancer.",
+            "healthyVolunteers": false,
+            "sex": "ALL",
+            "minimumAge": "18 Years",
+            "stdAges": [
+                "ADULT",
+                "OLDER_ADULT"
+            ],
+            "studyPopulation": "This study will be open to patients in a medical practice of all demographic groups who meet the eligibility criteria.",
+            "samplingMethod": "NON_PROBABILITY_SAMPLE"
+        },
+        "contactsLocationsModule": {
+            "overallOfficials": [
+                {
+                    "name": "Study Official",
+                    "affiliation": "Xilis, Inc.",
+                    "role": "STUDY_DIRECTOR"
+                }
+            ],
+            "locations": [
+                {
+                    "facility": "Mayo Clinic",
+                    "city": "Scottsdale",
+                    "state": "Arizona",
+                    "zip": "85259",
+                    "country": "United States",
+                    "geoPoint": {
+                        "lat": 33.50921,
+                        "lon": -111.89903
+                    }
+                },
+                {
+                    "facility": "MedStar Washington Hospital",
+                    "city": "Washington D.C.",
+                    "state": "District of Columbia",
+                    "zip": "20010",
+                    "country": "United States",
+                    "geoPoint": {
+                        "lat": 38.89511,
+                        "lon": -77.03637
+                    }
+                },
+                {
+                    "facility": "Mayo Clinic",
+                    "city": "Jacksonville",
+                    "state": "Florida",
+                    "zip": "32224",
+                    "country": "United States",
+                    "geoPoint": {
+                        "lat": 30.33218,
+                        "lon": -81.65565
+                    }
+                },
+                {
+                    "facility": "Mayo Clinic",
+                    "city": "Rochester",
+                    "state": "Minnesota",
+                    "zip": "55905",
+                    "country": "United States",
+                    "geoPoint": {
+                        "lat": 44.02163,
+                        "lon": -92.4699
+                    }
+                },
+                {
+                    "facility": "The University of Tennessee Medical Center",
+                    "city": "Knoxville",
+                    "state": "Tennessee",
+                    "zip": "37920",
+                    "country": "United States",
+                    "geoPoint": {
+                        "lat": 35.96064,
+                        "lon": -83.92074
+                    }
+                },
+                {
+                    "facility": "The University of Texas MD Anderson Cancer Center",
+                    "city": "Houston",
+                    "state": "Texas",
+                    "zip": "77030",
+                    "country": "United States",
+                    "geoPoint": {
+                        "lat": 29.76328,
+                        "lon": -95.36327
+                    }
+                },
+                {
+                    "facility": "Inland Imaging",
+                    "city": "Spokane",
+                    "state": "Washington",
+                    "zip": "99208",
+                    "country": "United States",
+                    "geoPoint": {
+                        "lat": 47.65966,
+                        "lon": -117.42908
+                    }
+                }
+            ]
+        },
+        "referencesModule": {
+            "references": [
+                {
+                    "pmid": "29692415",
+                    "type": "BACKGROUND",
+                    "citation": "Drost J, Clevers H. Organoids in cancer research. Nat Rev Cancer. 2018 Jul;18(7):407-418. doi: 10.1038/s41568-018-0007-6."
+                },
+                {
+                    "pmid": "28248415",
+                    "type": "BACKGROUND",
+                    "citation": "Siegel RL, Miller KD, Fedewa SA, Ahnen DJ, Meester RGS, Barzi A, Jemal A. Colorectal cancer statistics, 2017. CA Cancer J Clin. 2017 May 6;67(3):177-193. doi: 10.3322/caac.21395. Epub 2017 Mar 1."
+                },
+                {
+                    "pmid": "10550155",
+                    "type": "BACKGROUND",
+                    "citation": "Andre T, Bensmaine MA, Louvet C, Francois E, Lucas V, Desseigne F, Beerblock K, Bouche O, Carola E, Merrouche Y, Morvan F, Dupont-Andre G, de Gramont A. Multicenter phase II study of bimonthly high-dose leucovorin, fluorouracil infusion, and oxaliplatin for metastatic colorectal cancer resistant to the same leucovorin and fluorouracil regimen. J Clin Oncol. 1999 Nov;17(11):3560-8. doi: 10.1200/JCO.1999.17.11.3560."
+                },
+                {
+                    "pmid": "3970602",
+                    "type": "BACKGROUND",
+                    "citation": "August DA, Sugarbaker PH, Ottow RT, Gianola FJ, Schneider PD. Hepatic resection of colorectal metastases. Influence of clinical factors and adjuvant intraperitoneal 5-fluorouracil via Tenckhoff catheter on survival. Ann Surg. 1985 Feb;201(2):210-8. doi: 10.1097/00000658-198502000-00013."
+                },
+                {
+                    "pmid": "7515134",
+                    "type": "BACKGROUND",
+                    "citation": "Stangl R, Altendorf-Hofmann A, Charnley RM, Scheele J. Factors influencing the natural history of colorectal liver metastases. Lancet. 1994 Jun 4;343(8910):1405-10. doi: 10.1016/s0140-6736(94)92529-1."
+                },
+                {
+                    "pmid": "15175435",
+                    "type": "BACKGROUND",
+                    "citation": "Hurwitz H, Fehrenbacher L, Novotny W, Cartwright T, Hainsworth J, Heim W, Berlin J, Baron A, Griffing S, Holmgren E, Ferrara N, Fyfe G, Rogers B, Ross R, Kabbinavar F. Bevacizumab plus irinotecan, fluorouracil, and leucovorin for metastatic colorectal cancer. N Engl J Med. 2004 Jun 3;350(23):2335-42. doi: 10.1056/NEJMoa032691."
+                },
+                {
+                    "pmid": "14657227",
+                    "type": "BACKGROUND",
+                    "citation": "Tournigand C, Andre T, Achille E, Lledo G, Flesh M, Mery-Mignard D, Quinaux E, Couteau C, Buyse M, Ganem G, Landi B, Colin P, Louvet C, de Gramont A. FOLFIRI followed by FOLFOX6 or the reverse sequence in advanced colorectal cancer: a randomized GERCOR study. J Clin Oncol. 2004 Jan 15;22(2):229-37. doi: 10.1200/JCO.2004.05.113. Epub 2003 Dec 2."
+                },
+                {
+                    "pmid": "10493478",
+                    "type": "BACKGROUND",
+                    "citation": "Fong Y, Fortner J, Sun RL, Brennan MF, Blumgart LH. Clinical score for predicting recurrence after hepatic resection for metastatic colorectal cancer: analysis of 1001 consecutive cases. Ann Surg. 1999 Sep;230(3):309-18; discussion 318-21. doi: 10.1097/00000658-199909000-00004."
+                },
+                {
+                    "pmid": "9060531",
+                    "type": "BACKGROUND",
+                    "citation": "Fong Y, Cohen AM, Fortner JG, Enker WE, Turnbull AD, Coit DG, Marrero AM, Prasad M, Blumgart LH, Brennan MF. Liver resection for colorectal metastases. J Clin Oncol. 1997 Mar;15(3):938-46. doi: 10.1200/JCO.1997.15.3.938."
+                },
+                {
+                    "pmid": "3344897",
+                    "type": "BACKGROUND",
+                    "citation": "Fortner JG. Recurrence of colorectal cancer after hepatic resection. Am J Surg. 1988 Mar;155(3):378-82. doi: 10.1016/s0002-9610(88)80086-2."
+                },
+                {
+                    "pmid": "2928902",
+                    "type": "BACKGROUND",
+                    "citation": "Hughes K, Scheele J, Sugarbaker PH. Surgery for colorectal cancer metastatic to the liver. Optimizing the results of treatment. Surg Clin North Am. 1989 Apr;69(2):339-59. doi: 10.1016/s0039-6109(16)44790-0."
+                },
+                {
+                    "pmid": "27602743",
+                    "type": "BACKGROUND",
+                    "citation": "Prasad V. Perspective: The precision-oncology illusion. Nature. 2016 Sep 8;537(7619):S63. doi: 10.1038/537S63a. No abstract available."
+                },
+                {
+                    "pmid": "29710180",
+                    "type": "BACKGROUND",
+                    "citation": "Marquart J, Chen EY, Prasad V. Estimation of the Percentage of US Patients With Cancer Who Benefit From Genome-Driven Oncology. JAMA Oncol. 2018 Aug 1;4(8):1093-1098. doi: 10.1001/jamaoncol.2018.1660."
+                },
+                {
+                    "pmid": "26014291",
+                    "type": "BACKGROUND",
+                    "citation": "Meric-Bernstam F, Brusco L, Shaw K, Horombe C, Kopetz S, Davies MA, Routbort M, Piha-Paul SA, Janku F, Ueno N, Hong D, De Groot J, Ravi V, Li Y, Luthra R, Patel K, Broaddus R, Mendelsohn J, Mills GB. Feasibility of Large-Scale Genomic Testing to Facilitate Enrollment Onto Genomically Matched Clinical Trials. J Clin Oncol. 2015 Sep 1;33(25):2753-62. doi: 10.1200/JCO.2014.60.4165. Epub 2015 May 26."
+                },
+                {
+                    "pmid": "27273579",
+                    "type": "BACKGROUND",
+                    "citation": "Schwaederle M, Zhao M, Lee JJ, Lazar V, Leyland-Jones B, Schilsky RL, Mendelsohn J, Kurzrock R. Association of Biomarker-Based Treatment Strategies With Response Rates and Progression-Free Survival in Refractory Malignant Neoplasms: A Meta-analysis. JAMA Oncol. 2016 Nov 1;2(11):1452-1459. doi: 10.1001/jamaoncol.2016.2129."
+                },
+                {
+                    "pmid": "29106415",
+                    "type": "BACKGROUND",
+                    "citation": "Blakely CM, Watkins TBK, Wu W, Gini B, Chabon JJ, McCoach CE, McGranahan N, Wilson GA, Birkbak NJ, Olivas VR, Rotow J, Maynard A, Wang V, Gubens MA, Banks KC, Lanman RB, Caulin AF, St John J, Cordero AR, Giannikopoulos P, Simmons AD, Mack PC, Gandara DR, Husain H, Doebele RC, Riess JW, Diehn M, Swanton C, Bivona TG. Evolution and clinical impact of co-occurring genetic alterations in advanced-stage EGFR-mutant lung cancers. Nat Genet. 2017 Dec;49(12):1693-1704. doi: 10.1038/ng.3990. Epub 2017 Nov 6."
+                },
+                {
+                    "pmid": "25301630",
+                    "type": "BACKGROUND",
+                    "citation": "de Bruin EC, McGranahan N, Mitter R, Salm M, Wedge DC, Yates L, Jamal-Hanjani M, Shafi S, Murugaesu N, Rowan AJ, Gronroos E, Muhammad MA, Horswell S, Gerlinger M, Varela I, Jones D, Marshall J, Voet T, Van Loo P, Rassl DM, Rintoul RC, Janes SM, Lee SM, Forster M, Ahmad T, Lawrence D, Falzon M, Capitanio A, Harkins TT, Lee CC, Tom W, Teefe E, Chen SC, Begum S, Rabinowitz A, Phillimore B, Spencer-Dene B, Stamp G, Szallasi Z, Matthews N, Stewart A, Campbell P, Swanton C. Spatial and temporal diversity in genomic instability processes defines lung cancer evolution. Science. 2014 Oct 10;346(6206):251-6. doi: 10.1126/science.1253462."
+                },
+                {
+                    "pmid": "28148839",
+                    "type": "BACKGROUND",
+                    "citation": "Sulkowski PL, Corso CD, Robinson ND, Scanlon SE, Purshouse KR, Bai H, Liu Y, Sundaram RK, Hegan DC, Fons NR, Breuer GA, Song Y, Mishra-Gorur K, De Feyter HM, de Graaf RA, Surovtseva YV, Kachman M, Halene S, Gunel M, Glazer PM, Bindra RS. 2-Hydroxyglutarate produced by neomorphic IDH mutations suppresses homologous recombination and induces PARP inhibitor sensitivity. Sci Transl Med. 2017 Feb 1;9(375):eaal2463. doi: 10.1126/scitranslmed.aal2463."
+                },
+                {
+                    "pmid": "21215704",
+                    "type": "BACKGROUND",
+                    "citation": "Chandarlapaty S, Sawai A, Scaltriti M, Rodrik-Outmezguine V, Grbovic-Huezo O, Serra V, Majumder PK, Baselga J, Rosen N. AKT inhibition relieves feedback suppression of receptor tyrosine kinase expression and activity. Cancer Cell. 2011 Jan 18;19(1):58-71. doi: 10.1016/j.ccr.2010.10.031. Epub 2011 Jan 6."
+                },
+                {
+                    "pmid": "27338794",
+                    "type": "BACKGROUND",
+                    "citation": "Manchado E, Weissmueller S, Morris JP 4th, Chen CC, Wullenkord R, Lujambio A, de Stanchina E, Poirier JT, Gainor JF, Corcoran RB, Engelman JA, Rudin CM, Rosen N, Lowe SW. A combinatorial strategy for treating KRAS-mutant lung cancer. Nature. 2016 Jun 30;534(7609):647-51. doi: 10.1038/nature18600. Epub 2016 Jun 22."
+                },
+                {
+                    "pmid": "20179705",
+                    "type": "BACKGROUND",
+                    "citation": "Poulikakos PI, Zhang C, Bollag G, Shokat KM, Rosen N. RAF inhibitors transactivate RAF dimers and ERK signalling in cells with wild-type BRAF. Nature. 2010 Mar 18;464(7287):427-30. doi: 10.1038/nature08902."
+                },
+                {
+                    "pmid": "22460905",
+                    "type": "BACKGROUND",
+                    "citation": "Barretina J, Caponigro G, Stransky N, Venkatesan K, Margolin AA, Kim S, Wilson CJ, Lehar J, Kryukov GV, Sonkin D, Reddy A, Liu M, Murray L, Berger MF, Monahan JE, Morais P, Meltzer J, Korejwa A, Jane-Valbuena J, Mapa FA, Thibault J, Bric-Furlong E, Raman P, Shipway A, Engels IH, Cheng J, Yu GK, Yu J, Aspesi P Jr, de Silva M, Jagtap K, Jones MD, Wang L, Hatton C, Palescandolo E, Gupta S, Mahan S, Sougnez C, Onofrio RC, Liefeld T, MacConaill L, Winckler W, Reich M, Li N, Mesirov JP, Gabriel SB, Getz G, Ardlie K, Chan V, Myer VE, Weber BL, Porter J, Warmuth M, Finan P, Harris JL, Meyerson M, Golub TR, Morrissey MP, Sellers WR, Schlegel R, Garraway LA. The Cancer Cell Line Encyclopedia enables predictive modelling of anticancer drug sensitivity. Nature. 2012 Mar 28;483(7391):603-7. doi: 10.1038/nature11003."
+                },
+                {
+                    "pmid": "26479923",
+                    "type": "BACKGROUND",
+                    "citation": "Gao H, Korn JM, Ferretti S, Monahan JE, Wang Y, Singh M, Zhang C, Schnell C, Yang G, Zhang Y, Balbin OA, Barbe S, Cai H, Casey F, Chatterjee S, Chiang DY, Chuai S, Cogan SM, Collins SD, Dammassa E, Ebel N, Embry M, Green J, Kauffmann A, Kowal C, Leary RJ, Lehar J, Liang Y, Loo A, Lorenzana E, Robert McDonald E 3rd, McLaughlin ME, Merkin J, Meyer R, Naylor TL, Patawaran M, Reddy A, Roelli C, Ruddy DA, Salangsang F, Santacroce F, Singh AP, Tang Y, Tinetto W, Tobler S, Velazquez R, Venkatesan K, Von Arx F, Wang HQ, Wang Z, Wiesmann M, Wyss D, Xu F, Bitter H, Atadja P, Lees E, Hofmann F, Li E, Keen N, Cozens R, Jensen MR, Pryer NK, Williams JA, Sellers WR. High-throughput screening using patient-derived tumor xenografts to predict clinical trial drug response. Nat Med. 2015 Nov;21(11):1318-25. doi: 10.1038/nm.3954. Epub 2015 Oct 19."
+                },
+                {
+                    "pmid": "28060954",
+                    "type": "BACKGROUND",
+                    "citation": "Lu M, Zessin AS, Glover W, Hsu DS. Activation of the mTOR Pathway by Oxaliplatin in the Treatment of Colorectal Cancer Liver Metastasis. PLoS One. 2017 Jan 6;12(1):e0169439. doi: 10.1371/journal.pone.0169439. eCollection 2017."
+                },
+                {
+                    "pmid": "29472484",
+                    "type": "BACKGROUND",
+                    "citation": "Vlachogiannis G, Hedayat S, Vatsiou A, Jamin Y, Fernandez-Mateos J, Khan K, Lampis A, Eason K, Huntingford I, Burke R, Rata M, Koh DM, Tunariu N, Collins D, Hulkki-Wilson S, Ragulan C, Spiteri I, Moorcraft SY, Chau I, Rao S, Watkins D, Fotiadis N, Bali M, Darvish-Damavandi M, Lote H, Eltahir Z, Smyth EC, Begum R, Clarke PA, Hahne JC, Dowsett M, de Bono J, Workman P, Sadanandam A, Fassan M, Sansom OJ, Eccles S, Starling N, Braconi C, Sottoriva A, Robinson SP, Cunningham D, Valeri N. Patient-derived organoids model treatment response of metastatic gastrointestinal cancers. Science. 2018 Feb 23;359(6378):920-926. doi: 10.1126/science.aao2774."
+                },
+                {
+                    "pmid": "28331002",
+                    "type": "BACKGROUND",
+                    "citation": "Pauli C, Hopkins BD, Prandi D, Shaw R, Fedrizzi T, Sboner A, Sailer V, Augello M, Puca L, Rosati R, McNary TJ, Churakova Y, Cheung C, Triscott J, Pisapia D, Rao R, Mosquera JM, Robinson B, Faltas BM, Emerling BE, Gadi VK, Bernard B, Elemento O, Beltran H, Demichelis F, Kemp CJ, Grandori C, Cantley LC, Rubin MA. Personalized In Vitro and In Vivo Cancer Models to Guide Precision Medicine. Cancer Discov. 2017 May;7(5):462-477. doi: 10.1158/2159-8290.CD-16-1154. Epub 2017 Mar 22."
+                },
+                {
+                    "pmid": "29853643",
+                    "type": "BACKGROUND",
+                    "citation": "Tiriac H, Belleau P, Engle DD, Plenker D, Deschenes A, Somerville TDD, Froeling FEM, Burkhart RA, Denroche RE, Jang GH, Miyabayashi K, Young CM, Patel H, Ma M, LaComb JF, Palmaira RLD, Javed AA, Huynh JC, Johnson M, Arora K, Robine N, Shah M, Sanghvi R, Goetz AB, Lowder CY, Martello L, Driehuis E, LeComte N, Askan G, Iacobuzio-Donahue CA, Clevers H, Wood LD, Hruban RH, Thompson E, Aguirre AJ, Wolpin BM, Sasson A, Kim J, Wu M, Bucobo JC, Allen P, Sejpal DV, Nealon W, Sullivan JD, Winter JM, Gimotty PA, Grem JL, DiMaio DJ, Buscaglia JM, Grandgenett PM, Brody JR, Hollingsworth MA, O'Kane GM, Notta F, Kim E, Crawford JM, Devoe C, Ocean A, Wolfgang CL, Yu KH, Li E, Vakoc CR, Hubert B, Fischer SE, Wilson JM, Moffitt R, Knox J, Krasnitz A, Gallinger S, Tuveson DA. Organoid Profiling Identifies Common Responders to Chemotherapy in Pancreatic Cancer. Cancer Discov. 2018 Sep;8(9):1112-1129. doi: 10.1158/2159-8290.CD-18-0349. Epub 2018 May 31."
+                },
+                {
+                    "pmid": "31597751",
+                    "type": "BACKGROUND",
+                    "citation": "Ooft SN, Weeber F, Dijkstra KK, McLean CM, Kaing S, van Werkhoven E, Schipper L, Hoes L, Vis DJ, van de Haar J, Prevoo W, Snaebjornsson P, van der Velden D, Klein M, Chalabi M, Boot H, van Leerdam M, Bloemendal HJ, Beerepoot LV, Wessels L, Cuppen E, Clevers H, Voest EE. Patient-derived organoids can predict response to chemotherapy in metastatic colorectal cancer patients. Sci Transl Med. 2019 Oct 9;11(513):eaay2574. doi: 10.1126/scitranslmed.aay2574."
+                },
+                {
+                    "pmid": "31712683",
+                    "type": "BACKGROUND",
+                    "citation": "Huang A, Garraway LA, Ashworth A, Weber B. Synthetic lethality as an engine for cancer drug target discovery. Nat Rev Drug Discov. 2020 Jan;19(1):23-38. doi: 10.1038/s41573-019-0046-z. Epub 2019 Nov 11."
+                },
+                {
+                    "pmid": "30022460",
+                    "type": "BACKGROUND",
+                    "citation": "Wang L, Bernards R. Taking advantage of drug resistance, a new approach in the war on cancer. Front Med. 2018 Aug;12(4):490-495. doi: 10.1007/s11684-018-0647-7. Epub 2018 Jul 18."
+                },
+                {
+                    "pmid": "25957691",
+                    "type": "BACKGROUND",
+                    "citation": "van de Wetering M, Francies HE, Francis JM, Bounova G, Iorio F, Pronk A, van Houdt W, van Gorp J, Taylor-Weiner A, Kester L, McLaren-Douglas A, Blokker J, Jaksani S, Bartfeld S, Volckman R, van Sluis P, Li VS, Seepo S, Sekhar Pedamallu C, Cibulskis K, Carter SL, McKenna A, Lawrence MS, Lichtenstein L, Stewart C, Koster J, Versteeg R, van Oudenaarden A, Saez-Rodriguez J, Vries RG, Getz G, Wessels L, Stratton MR, McDermott U, Meyerson M, Garnett MJ, Clevers H. Prospective derivation of a living organoid biobank of colorectal cancer patients. Cell. 2015 May 7;161(4):933-45. doi: 10.1016/j.cell.2015.03.053."
+                },
+                {
+                    "pmid": "29535134",
+                    "type": "BACKGROUND",
+                    "citation": "Organoids May Point to Best Therapy. Cancer Discov. 2018 May;8(5):524. doi: 10.1158/2159-8290.CD-NB2018-029. Epub 2018 Mar 13."
+                }
+            ]
+        },
+        "ipdSharingStatementModule": {
+            "ipdSharing": "NO"
+        }
+    },
+    "derivedSection": {
+        "miscInfoModule": {
+            "versionHolder": "2026-04-24"
+        },
+        "conditionBrowseModule": {
+            "meshes": [
+                {
+                    "id": "D015179",
+                    "term": "Colorectal Neoplasms"
+                },
+                {
+                    "id": "D003110",
+                    "term": "Colonic Neoplasms"
+                }
+            ],
+            "ancestors": [
+                {
+                    "id": "D007414",
+                    "term": "Intestinal Neoplasms"
+                },
+                {
+                    "id": "D005770",
+                    "term": "Gastrointestinal Neoplasms"
+                },
+                {
+                    "id": "D004067",
+                    "term": "Digestive System Neoplasms"
+                },
+                {
+                    "id": "D009371",
+                    "term": "Neoplasms by Site"
+                },
+                {
+                    "id": "D009369",
+                    "term": "Neoplasms"
+                },
+                {
+                    "id": "D004066",
+                    "term": "Digestive System Diseases"
+                },
+                {
+                    "id": "D005767",
+                    "term": "Gastrointestinal Diseases"
+                },
+                {
+                    "id": "D003108",
+                    "term": "Colonic Diseases"
+                },
+                {
+                    "id": "D007410",
+                    "term": "Intestinal Diseases"
+                },
+                {
+                    "id": "D012002",
+                    "term": "Rectal Diseases"
+                }
+            ]
+        },
+        "interventionBrowseModule": {
+            "meshes": [
+                {
+                    "id": "D004341",
+                    "term": "Drug Evaluation"
+                }
+            ],
+            "ancestors": [
+                {
+                    "id": "D000076722",
+                    "term": "Drug Development"
+                },
+                {
+                    "id": "D008919",
+                    "term": "Investigative Techniques"
+                },
+                {
+                    "id": "D005069",
+                    "term": "Evaluation Studies as Topic"
+                }
+            ]
+        }
+    },
+    "hasResults": false
+}

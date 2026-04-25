@@ -1,0 +1,430 @@
+{
+    "protocolSection": {
+        "identificationModule": {
+            "nctId": "NCT01205711",
+            "orgStudyIdInfo": {
+                "id": "CDR0000685062"
+            },
+            "secondaryIdInfos": [
+                {
+                    "id": "WCTU-FOLFERA"
+                },
+                {
+                    "id": "EUDRACT-2009-012151-23"
+                },
+                {
+                    "id": "ISRCTN-73199181"
+                },
+                {
+                    "id": "CRUK-09/023"
+                },
+                {
+                    "id": "WCTU-SPON-671-09"
+                },
+                {
+                    "id": "EU-21071"
+                },
+                {
+                    "id": "ZENECA-WCTU-FOLFERA"
+                }
+            ],
+            "organization": {
+                "fullName": "Cardiff University",
+                "class": "OTHER"
+            },
+            "briefTitle": "Irinotecan Hydrochloride, Fluorouracil, and Leucovorin Calcium With or Without Zibotentan in Treating Patients With Metastatic Colorectal Cancer",
+            "officialTitle": "A Randomized Phase II Study of Irinotecan, 5-Fluorouracil and Folinic Acid (FOLFIRI) With or Without the Addition of an Endothelin Receptor Antagonist in Patients With Metastatic Colorectal Cancer After Failure of Oxaliplatin-Containing Chemotherapy",
+            "acronym": "FOLFERA"
+        },
+        "statusModule": {
+            "statusVerifiedDate": "2014-07",
+            "overallStatus": "COMPLETED",
+            "expandedAccessInfo": {
+                "hasExpandedAccess": false
+            },
+            "startDateStruct": {
+                "date": "2010-04"
+            },
+            "primaryCompletionDateStruct": {
+                "date": "2011-07",
+                "type": "ACTUAL"
+            },
+            "completionDateStruct": {
+                "date": "2012-09",
+                "type": "ACTUAL"
+            },
+            "studyFirstSubmitDate": "2010-09-17",
+            "studyFirstSubmitQcDate": "2010-09-17",
+            "studyFirstPostDateStruct": {
+                "date": "2010-09-20",
+                "type": "ESTIMATED"
+            },
+            "lastUpdateSubmitDate": "2014-07-07",
+            "lastUpdatePostDateStruct": {
+                "date": "2014-07-08",
+                "type": "ESTIMATED"
+            }
+        },
+        "sponsorCollaboratorsModule": {
+            "responsibleParty": {
+                "type": "PRINCIPAL_INVESTIGATOR",
+                "investigatorFullName": "Dr Anne Thomas",
+                "investigatorTitle": "Dr",
+                "investigatorAffiliation": "Cardiff University"
+            },
+            "leadSponsor": {
+                "name": "Cardiff University",
+                "class": "OTHER"
+            }
+        },
+        "oversightModule": {
+            "oversightHasDmc": true
+        },
+        "descriptionModule": {
+            "briefSummary": "RATIONALE: Drugs used in chemotherapy, such as irinotecan hydrochloride, fluorouracil, and leucovorin calcium, work in different ways to stop the growth of tumor cells, either by killing the cells or by stopping them from dividing. Zibotentan may be effective in treating metastatic colorectal cancer that has not responded to oxaliplatin. It is not yet known whether combination chemotherapy is more effective when given with or without zibotentan in treating metastatic colorectal cancer.\n\nPURPOSE: This randomized phase II trial is studying giving irinotecan hydrochloride together with fluorouracil and leucovorin calcium to see how well it works when given with or without zibotentan in treating patients with metastatic colorectal cancer.",
+            "detailedDescription": "OBJECTIVES:\n\nPrimary\n\n* To establish the anti-tumor activity of the combination of irinotecan hydrochloride, fluorouracil, and leucovorin calcium (FOLFIRI) with zibotentan (FOLFERA) as measured by progression-free survival (time-to-event) in patients with metastatic colorectal cancer after failure of oxaliplatin-containing chemotherapy.\n\nSecondary\n\n* To determine the toxicity profile of FOLFERA and of maintenance zibotentan in these patients.\n* To determine the feasibility of use of this regimen in these patients.\n* To collect tumor and blood samples for future translational work, including investigating endothelian A receptor (ETAR) expression, k-RAS/b-RAF status and alterations in relevant pathways such as Akt, MAPK/ERK.\n\nOUTLINE: This is a multicenter study. Patients are stratified according to study site. Patients are randomized to 1 of 2 treatment arms.\n\n* Arm A: Patients receive irinotecan hydrochloride IV over 1 hour and leucovorin calcium IV over 2 hours on day 1; fluorouracil IV over 46 hours beginning on day 1; and an oral placebo tablet once daily on days 1-14. Treatment repeats every 14 days for 12 courses in the absence of disease progression or unacceptable toxicity. Patients achieving at least stable disease then receive oral placebo alone once daily in the absence of disease progression or unacceptable toxicity.\n* Arm B: Patients receive irinotecan hydrochloride IV over 2 hours, leucovorin calcium IV over 2 hours on day 1; fluorouracil IV over 46 hours beginning on day 1; and oral zibotentan once daily on days 1-14. Treatment repeats every 14 days for 12 courses in the absence of disease progression or unacceptable toxicity. Patients achieving at least stable disease then receive oral zibotentan alone once daily in the absence of disease progression or unacceptable toxicity.\n\nBlood and tissue samples are collected periodically for pharmacogenetic, translational, and biomarker correlative studies.\n\nAfter completion of study therapy, patients are followed up at 30 days and then every 12 weeks for up to 1 year.\n\nPeer Reviewed and Funded or Endorsed by Cancer Research UK"
+        },
+        "conditionsModule": {
+            "conditions": [
+                "Colorectal Cancer"
+            ],
+            "keywords": [
+                "recurrent colon cancer",
+                "stage IV colon cancer",
+                "recurrent rectal cancer",
+                "stage IV rectal cancer"
+            ]
+        },
+        "designModule": {
+            "studyType": "INTERVENTIONAL",
+            "phases": [
+                "PHASE2"
+            ],
+            "designInfo": {
+                "allocation": "RANDOMIZED",
+                "interventionModel": "PARALLEL",
+                "primaryPurpose": "TREATMENT",
+                "maskingInfo": {
+                    "masking": "DOUBLE"
+                }
+            },
+            "enrollmentInfo": {
+                "count": 111,
+                "type": "ACTUAL"
+            }
+        },
+        "armsInterventionsModule": {
+            "interventions": [
+                {
+                    "type": "DRUG",
+                    "name": "FOLFIRI regimen"
+                },
+                {
+                    "type": "DRUG",
+                    "name": "fluorouracil"
+                },
+                {
+                    "type": "DRUG",
+                    "name": "irinotecan hydrochloride"
+                },
+                {
+                    "type": "DRUG",
+                    "name": "leucovorin calcium"
+                },
+                {
+                    "type": "DRUG",
+                    "name": "zibotentan"
+                },
+                {
+                    "type": "OTHER",
+                    "name": "laboratory biomarker analysis"
+                },
+                {
+                    "type": "OTHER",
+                    "name": "pharmacogenomic studies"
+                }
+            ]
+        },
+        "outcomesModule": {
+            "primaryOutcomes": [
+                {
+                    "measure": "Progression-free survival"
+                }
+            ],
+            "secondaryOutcomes": [
+                {
+                    "measure": "Tolerability (side effects) and feasibility of use (number of participants requiring dose delays or reductions and/or treatment withdrawal)"
+                },
+                {
+                    "measure": "Objective response rate as assessed by RECIST criteria"
+                },
+                {
+                    "measure": "Overall survival"
+                }
+            ]
+        },
+        "eligibilityModule": {
+            "eligibilityCriteria": "DISEASE CHARACTERISTICS:\n\n* Histologically or cytologically confirmed colorectal cancer\n\n  * Metastatic disease with no bone metastases\n* Must have progressed within 6 months of adjuvant oxaliplatin-containing chemotherapy and have no significant ongoing toxicity (excluding grade 1 neurotoxicity)\n* Measurable disease by RECIST criteria\n* No known brain or leptomeningeal metastases\n\n  * Stable disease following surgical resection or radiosurgery of oligometastases allowed\n\nPATIENT CHARACTERISTICS:\n\n* ECOG performance status 0-1\n* Life expectancy \u2265 12 weeks\n* Hemoglobin \u2265 9.0 g/dL (no prior transfusion) OR \u2265 10.0 g/dL (transfusion within past 4 weeks)\n* Absolute neutrophil count \u2265 1.5 times 10\\^9/L\n* Platelet count \u2265 100 times 10\\^9/L\n* Total bilirubin \\< 1.5 times upper limit of normal (ULN)\n* AST and ALT \u2264 2.5 times ULN (\u2264 5 times ULN with liver metastases)\n* Creatinine clearance \u2265 50 mL/min\n* Negative pregnancy test\n* Not pregnant or nursing\n* Fertile patients must use effective double-method contraception during and for 3 months (female) or 2 months (male) after completion of study treatment\n* No active infection or serious concurrent medical condition\n* No significant cardiovascular disease including any of the following:\n\n  * History of NYHA class II-IV congestive heart failure requiring therapy\n  * History of unstable angina pectoris or myocardial infarction within the past 6 months\n  * Severe valvular heart disease\n  * Ventricular arrhythmia requiring treatment\n  * Prolonged QTc interval \\> 470 msec\n* No concurrent medical condition, that in the investigator's judgement, will substantially increase the risk associated with the patient's participation in the study, or potentially hamper compliance with the study protocol and follow-up schedule\n* No psychiatric disorders or altered mental status precluding understanding of the informed consent process and/or compliance with the study protocol\n* No gastrointestinal disorders likely to interfere with absorption of the study drug (e.g., partial bowel obstruction or malabsorption)\n* No known serological positivity for hepatitis B or hepatitis C\n* No immunocompromised patients (e.g., no known serological positivity for HIV)\n* No other prior or current malignant disease likely to interfere with protocol treatment or comparisons\n\nPRIOR CONCURRENT THERAPY:\n\n* See Disease Characteristics\n* No prior zibotentan or irinotecan hydrochloride\n* More than 4 weeks since prior chemotherapy, radiotherapy (except for palliative reasons), endocrine therapy, or immunotherapy\n* No more than 1 prior course of chemotherapy for metastatic disease\n* No prior extensive radiotherapy (i.e., likely to deplete bone marrow reserve)\n* At least 4 weeks since prior major surgery and recovered\n* Concurrent corticosteroids allowed provided the dose is stable for 4 weeks and not altered during the first 15 days of this study\n* No concurrent warfarin\n\n  * Low molecular weight heparin allowed",
+            "healthyVolunteers": false,
+            "sex": "ALL",
+            "minimumAge": "18 Years",
+            "stdAges": [
+                "ADULT",
+                "OLDER_ADULT"
+            ]
+        },
+        "contactsLocationsModule": {
+            "overallOfficials": [
+                {
+                    "name": "Anne Thomas, MD",
+                    "affiliation": "University Hospitals, Leicester",
+                    "role": "PRINCIPAL_INVESTIGATOR"
+                }
+            ],
+            "locations": [
+                {
+                    "facility": "Leicester Royal Infirmary",
+                    "city": "Leicester",
+                    "state": "England",
+                    "zip": "LE1 5WW",
+                    "country": "United Kingdom",
+                    "geoPoint": {
+                        "lat": 52.6386,
+                        "lon": -1.13169
+                    }
+                },
+                {
+                    "facility": "Centre for Cancer Research and Cell Biology at Queen's University Belfast",
+                    "city": "Belfast",
+                    "state": "Northern Ireland",
+                    "zip": "BT9 7AB",
+                    "country": "United Kingdom",
+                    "geoPoint": {
+                        "lat": 54.59682,
+                        "lon": -5.92541
+                    }
+                },
+                {
+                    "facility": "Wales Cancer Trials Unit",
+                    "city": "Cardiff",
+                    "state": "Wales",
+                    "zip": "CF11 9LJ",
+                    "country": "United Kingdom",
+                    "geoPoint": {
+                        "lat": 51.48,
+                        "lon": -3.18
+                    }
+                },
+                {
+                    "facility": "Velindre Cancer Center at Velindre Hospital",
+                    "city": "Cardiff",
+                    "state": "Wales",
+                    "zip": "CF14 2TL",
+                    "country": "United Kingdom",
+                    "geoPoint": {
+                        "lat": 51.48,
+                        "lon": -3.18
+                    }
+                }
+            ]
+        }
+    },
+    "derivedSection": {
+        "miscInfoModule": {
+            "versionHolder": "2026-04-24"
+        },
+        "conditionBrowseModule": {
+            "meshes": [
+                {
+                    "id": "D015179",
+                    "term": "Colorectal Neoplasms"
+                },
+                {
+                    "id": "D003110",
+                    "term": "Colonic Neoplasms"
+                },
+                {
+                    "id": "D012004",
+                    "term": "Rectal Neoplasms"
+                }
+            ],
+            "ancestors": [
+                {
+                    "id": "D007414",
+                    "term": "Intestinal Neoplasms"
+                },
+                {
+                    "id": "D005770",
+                    "term": "Gastrointestinal Neoplasms"
+                },
+                {
+                    "id": "D004067",
+                    "term": "Digestive System Neoplasms"
+                },
+                {
+                    "id": "D009371",
+                    "term": "Neoplasms by Site"
+                },
+                {
+                    "id": "D009369",
+                    "term": "Neoplasms"
+                },
+                {
+                    "id": "D004066",
+                    "term": "Digestive System Diseases"
+                },
+                {
+                    "id": "D005767",
+                    "term": "Gastrointestinal Diseases"
+                },
+                {
+                    "id": "D003108",
+                    "term": "Colonic Diseases"
+                },
+                {
+                    "id": "D007410",
+                    "term": "Intestinal Diseases"
+                },
+                {
+                    "id": "D012002",
+                    "term": "Rectal Diseases"
+                }
+            ]
+        },
+        "interventionBrowseModule": {
+            "meshes": [
+                {
+                    "id": "D005472",
+                    "term": "Fluorouracil"
+                },
+                {
+                    "id": "D000077146",
+                    "term": "Irinotecan"
+                },
+                {
+                    "id": "D002955",
+                    "term": "Leucovorin"
+                },
+                {
+                    "id": "C511404",
+                    "term": "ZD4054"
+                },
+                {
+                    "id": "D000071185",
+                    "term": "Pharmacogenomic Testing"
+                }
+            ],
+            "ancestors": [
+                {
+                    "id": "D014498",
+                    "term": "Uracil"
+                },
+                {
+                    "id": "D011744",
+                    "term": "Pyrimidinones"
+                },
+                {
+                    "id": "D011743",
+                    "term": "Pyrimidines"
+                },
+                {
+                    "id": "D006573",
+                    "term": "Heterocyclic Compounds, 1-Ring"
+                },
+                {
+                    "id": "D006571",
+                    "term": "Heterocyclic Compounds"
+                },
+                {
+                    "id": "D002166",
+                    "term": "Camptothecin"
+                },
+                {
+                    "id": "D000470",
+                    "term": "Alkaloids"
+                },
+                {
+                    "id": "D005575",
+                    "term": "Formyltetrahydrofolates"
+                },
+                {
+                    "id": "D013763",
+                    "term": "Tetrahydrofolates"
+                },
+                {
+                    "id": "D005492",
+                    "term": "Folic Acid"
+                },
+                {
+                    "id": "D011622",
+                    "term": "Pterins"
+                },
+                {
+                    "id": "D011621",
+                    "term": "Pteridines"
+                },
+                {
+                    "id": "D006574",
+                    "term": "Heterocyclic Compounds, 2-Ring"
+                },
+                {
+                    "id": "D000072471",
+                    "term": "Heterocyclic Compounds, Fused-Ring"
+                },
+                {
+                    "id": "D003067",
+                    "term": "Coenzymes"
+                },
+                {
+                    "id": "D045762",
+                    "term": "Enzymes and Coenzymes"
+                },
+                {
+                    "id": "D005820",
+                    "term": "Genetic Testing"
+                },
+                {
+                    "id": "D019411",
+                    "term": "Clinical Laboratory Techniques"
+                },
+                {
+                    "id": "D019937",
+                    "term": "Diagnostic Techniques and Procedures"
+                },
+                {
+                    "id": "D003933",
+                    "term": "Diagnosis"
+                },
+                {
+                    "id": "D008919",
+                    "term": "Investigative Techniques"
+                },
+                {
+                    "id": "D005821",
+                    "term": "Genetic Techniques"
+                },
+                {
+                    "id": "D033142",
+                    "term": "Genetic Services"
+                },
+                {
+                    "id": "D006296",
+                    "term": "Health Services"
+                },
+                {
+                    "id": "D005159",
+                    "term": "Health Care Facilities Workforce and Services"
+                },
+                {
+                    "id": "D003954",
+                    "term": "Diagnostic Services"
+                },
+                {
+                    "id": "D011314",
+                    "term": "Preventive Health Services"
+                }
+            ]
+        }
+    },
+    "hasResults": false
+}
