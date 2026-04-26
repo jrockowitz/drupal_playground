@@ -14,7 +14,8 @@ interface ClinicalTrialsGovBuilderInterface {
    *
    * @param array $study
    *   Flat array keyed by Index field paths, as returned by
-   *   ClinicalTrialsGovManagerInterface::getStudy().
+   *   ClinicalTrialsGovManagerInterface::getStudy(). This is NOT compatible
+   *   with the nested entries inside getStudies()['studies'].
    * @param string $nct_id
    *   The NCT ID used to build the upstream API URL.
    *

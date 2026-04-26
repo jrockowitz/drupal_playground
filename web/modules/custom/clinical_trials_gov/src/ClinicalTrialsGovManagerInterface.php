@@ -35,6 +35,13 @@ interface ClinicalTrialsGovManagerInterface {
    * Associative arrays (objects) in the response are recursed into using
    * dot-notation keys. Lists and scalar values are stored as-is.
    *
+   * Cached per service instance (keyed by NCT ID) so title() and view() share
+   * a single API call per request.
+   *
+   * NOTE: The returned format is incompatible with entries from getStudies().
+   * getStudies() returns nested raw API data; this method returns a flat
+   * dot-notation array. Do not pass a getStudies() entry to buildStudy().
+   *
    * @param string $nct_id
    *   The NCT ID, e.g. 'NCT04001699'.
    *
@@ -46,7 +53,7 @@ interface ClinicalTrialsGovManagerInterface {
   /**
    * Fetches and flattens the full study metadata tree.
    *
-   * Cached statically for the request lifetime.
+   * Cached per service instance for the request lifetime.
    *
    * @return array
    *   Flat array keyed by Index field path. Each value has keys:
@@ -68,7 +75,7 @@ interface ClinicalTrialsGovManagerInterface {
   /**
    * Fetches all enumeration types and their allowed values.
    *
-   * Cached statically for the request lifetime.
+   * Cached per service instance for the request lifetime.
    *
    * @return array
    *   Raw response from /studies/enums.

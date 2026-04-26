@@ -7,6 +7,7 @@ namespace Drupal\clinical_trials_gov_report\Controller;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Renders the detail page for a single ClinicalTrials.gov study.
@@ -17,6 +18,16 @@ class ClinicalTrialsGovReportStudyController extends ControllerBase {
     protected ClinicalTrialsGovManagerInterface $manager,
     protected ClinicalTrialsGovBuilderInterface $builder,
   ) {}
+
+  /**
+   * Creates the controller from the container.
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.builder'),
+    );
+  }
 
   /**
    * Renders the study detail page.

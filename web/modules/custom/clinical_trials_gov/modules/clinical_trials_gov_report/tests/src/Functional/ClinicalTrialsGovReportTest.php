@@ -115,6 +115,11 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->getSession()->getPage()->findButton('Reset')->click();
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->elementNotExists('css', 'input[type="submit"][value="Reset"]');
+
+    // Check that an unknown NCT ID renders the not-found message.
+    $this->drupalGet('admin/reports/status/clinical-trials-gov/NCT00000000');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Study NCT00000000 not found.');
   }
 
 }

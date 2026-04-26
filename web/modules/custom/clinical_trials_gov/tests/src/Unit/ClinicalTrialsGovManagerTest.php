@@ -211,4 +211,31 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
     $this->assertSame([], $this->manager->getEnum('UnknownType'));
   }
 
+  /**
+   * Tests that flattenStudy() keeps the first value when two paths collide.
+   *
+   * A literal dot in a key (e.g. 'a.b') and a nested structure ('a' => ['b'])
+   * both produce the same flattened key. The + operator means the first
+   * occurrence wins and the second is silently discarded.
+   *
+   * @covers ::getStudy
+   */
+  public function testGetStudyKeyCollisionFirstWins(): void {
+    $this->api
+      ->expects($this->once())
+      ->method('get')
+      ->with('/studies/NCT001')
+      ->willReturn([
+        'a.b' => 'first',
+        'a' => ['b' => 'second'],
+      ]);
+
+    $result = $this->manager->getStudy('NCT001');
+
+    // Check that the first-encountered value is kept when paths collide.
+    $this->assertSame('first', $result['a.b']);
+    // Check that no additional keys are present.
+    $this->assertCount(1, $result);
+  }
+
 }

@@ -60,6 +60,10 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
     ];
     $build['search_form'] = $this->formBuilder()->getForm('Drupal\clinical_trials_gov_report\Form\ClinicalTrialsGovReportStudiesSearchForm');
 
+    // pageOffset is a client-side display parameter (tracks cumulative row
+    // count across pages) and is never sent to the API. It is added to the
+    // next-page URL by this controller so the "Showing X to Y" label stays
+    // accurate across paginated requests.
     $page_offset = (int) ($parameters['pageOffset'] ?? 0);
     unset($parameters['pageOffset']);
     $api_parameters = $this->buildApiParameters($parameters);
@@ -174,16 +178,23 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
   }
 
   /**
-   * Normalizes the countTotal parameter to API-supported boolean strings.
+   * Normalizes the countTotal parameter to the API-supported strings 'true'/'false'.
+   *
+   * NULL or '' defaults to 'true' so the controller always requests a total
+   * count. Recognized falsy strings ('0', 'false', 'no') map to 'false'. Any
+   * other unrecognized value also maps to 'false'.
    */
   protected function normalizeCountTotal(mixed $value): string {
     if ($value === NULL || $value === '') {
       return 'true';
     }
 
-    $normalized_value = is_bool($value) ? ($value ? 'true' : 'false') : strtolower((string) $value);
+    $normalized = is_bool($value) ? ($value ? 'true' : 'false') : strtolower((string) $value);
 
-    return in_array($normalized_value, ['1', 'true', 'yes']) ? 'true' : 'false';
+    return match($normalized) {
+      '1', 'true', 'yes' => 'true',
+      default => 'false',
+    };
   }
 
   /**

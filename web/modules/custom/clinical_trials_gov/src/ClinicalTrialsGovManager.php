@@ -9,6 +9,21 @@ namespace Drupal\clinical_trials_gov;
  */
 class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
 
+  /**
+   * Per-instance cache of flattened study arrays, keyed by NCT ID.
+   */
+  protected array $studyCache = [];
+
+  /**
+   * Per-instance cache of the flattened metadata tree.
+   */
+  protected ?array $metadataCache = NULL;
+
+  /**
+   * Per-instance cache of the raw enums response.
+   */
+  protected ?array $enumsCache = NULL;
+
   public function __construct(
     protected ClinicalTrialsGovApiInterface $api,
   ) {}
@@ -24,28 +39,29 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
    * {@inheritdoc}
    */
   public function getVersion(): array {
-    $version = $this->api->get('/version');
-    return is_array($version) ? $version : [];
+    return $this->api->get('/version');
   }
 
   /**
    * {@inheritdoc}
    */
   public function getStudy(string $nct_id): array {
-    $data = $this->api->get('/studies/' . $nct_id);
-    return $this->flattenStudy($data);
+    if (!array_key_exists($nct_id, $this->studyCache)) {
+      $data = $this->api->get('/studies/' . $nct_id);
+      $this->studyCache[$nct_id] = $this->flattenStudy($data);
+    }
+    return $this->studyCache[$nct_id];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getStudyMetadata(): array {
-    static $metadata = NULL;
-    if ($metadata === NULL) {
+    if ($this->metadataCache === NULL) {
       $data = $this->api->get('/studies/metadata');
-      $metadata = $this->flattenMetadata($data);
+      $this->metadataCache = $this->flattenMetadata($data);
     }
-    return $metadata;
+    return $this->metadataCache;
   }
 
   /**
@@ -59,11 +75,10 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
    * {@inheritdoc}
    */
   public function getEnums(): array {
-    static $enums = NULL;
-    if ($enums === NULL) {
-      $enums = $this->api->get('/studies/enums');
+    if ($this->enumsCache === NULL) {
+      $this->enumsCache = $this->api->get('/studies/enums');
     }
-    return is_array($enums) ? $enums : [];
+    return $this->enumsCache;
   }
 
   /**
