@@ -21,7 +21,7 @@ class ClinicalTrialsGovReportStudiesSearchForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId(): string {
-    return 'clinical_trials_gov_studies_search';
+    return 'clinical_trials_gov_report_studies_search';
   }
 
   /**
@@ -39,7 +39,7 @@ class ClinicalTrialsGovReportStudiesSearchForm extends FormBase {
       '#type' => 'clinical_trials_gov_studies_query',
       '#default_value' => $query_string,
     ];
-    $form['actions'] = [
+    $form['parameters']['actions'] = [
       '#type' => 'actions',
       'submit' => [
         '#type' => 'submit',
@@ -47,7 +47,7 @@ class ClinicalTrialsGovReportStudiesSearchForm extends FormBase {
       ],
     ];
     if ($query_string !== '') {
-      $form['actions']['reset'] = [
+      $form['parameters']['actions']['reset'] = [
         '#type' => 'submit',
         '#value' => $this->t('Reset'),
         '#limit_validation_errors' => [],

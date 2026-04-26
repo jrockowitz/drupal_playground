@@ -18,8 +18,14 @@
 web/modules/custom/clinical_trials_gov/
 ├── README.md
 ├── clinical_trials_gov.info.yml
+├── clinical_trials_gov.libraries.yml
+├── clinical_trials_gov.module
 ├── clinical_trials_gov.services.yml
-├── test/                                              ← moved from clinicaltrialsgov/
+├── css/
+│   └── clinical_trials_gov_studies_query.css
+├── js/
+│   └── clinical_trials_gov_studies_query.js
+├── test/                                              ← POC PHP explorer (reference implementation)
 ├── src/
 │   ├── ClinicalTrialsGovApiInterface.php
 │   ├── ClinicalTrialsGovApi.php
@@ -29,39 +35,45 @@ web/modules/custom/clinical_trials_gov/
 │   ├── ClinicalTrialsGovBuilder.php
 │   └── Element/
 │       └── ClinicalTrialsGovStudiesQuery.php
-├── tests/src/
-│   ├── Unit/
-│   │   ├── ClinicalTrialsGovApiTest.php
-│   │   └── ClinicalTrialsGovManagerTest.php
-│   └── Kernel/
-│       ├── ClinicalTrialsGovBuilderTest.php
-│       └── ClinicalTrialsGovStudiesQueryTest.php
-└── modules/
-    ├── clinical_trials_gov_report/
-    │   ├── clinical_trials_gov_report.info.yml
-    │   ├── clinical_trials_gov_report.routing.yml
-    │   ├── clinical_trials_gov_report.links.menu.yml
-    │   ├── src/
-    │   │   ├── Form/
-    │   │   │   └── ClinicalTrialsGovStudiesSearchForm.php
-    │   │   └── Controller/
-    │   │       ├── ClinicalTrialsGovReportController.php
-    │   │       └── ClinicalTrialsGovStudyController.php
-    │   └── tests/src/Functional/
-    │       └── ClinicalTrialsGovReportTest.php
-    └── clinical_trials_gov_test/
-        ├── clinical_trials_gov_test.info.yml
-        ├── clinical_trials_gov_test.services.yml
-        ├── fixtures/
-        │   ├── studies.json
-        │   ├── study-NCT001.json        ← RECRUITING, full data
-        │   ├── study-NCT002.json        ← COMPLETED, hasResults true
-        │   ├── study-NCT003.json        ← sparse data, missing modules
-        │   ├── metadata.json
-        │   ├── enums.json
-        │   └── search-areas.json
-        └── src/
-            └── ClinicalTrialsGovManagerStub.php
+├── modules/
+│   └── clinical_trials_gov_report/
+│       ├── clinical_trials_gov_report.info.yml
+│       ├── clinical_trials_gov_report.libraries.yml
+│       ├── clinical_trials_gov_report.links.menu.yml
+│       ├── clinical_trials_gov_report.routing.yml
+│       ├── css/
+│       │   └── clinical_trials_gov_report.css
+│       ├── src/
+│       │   ├── Form/
+│       │   │   └── ClinicalTrialsGovReportStudiesSearchForm.php
+│       │   └── Controller/
+│       │       ├── ClinicalTrialsGovReportStudiesController.php
+│       │       └── ClinicalTrialsGovReportStudyController.php
+│       └── tests/src/Functional/
+│           └── ClinicalTrialsGovReportTest.php
+└── tests/
+    ├── modules/
+    │   └── clinical_trials_gov_test/
+    │       ├── clinical_trials_gov_test.info.yml
+    │       ├── clinical_trials_gov_test.services.yml
+    │       ├── fixtures/
+    │       │   ├── studies.json
+    │       │   ├── study-NCT01205711.json   ← RECRUITING, full data
+    │       │   ├── study-NCT05088187.json   ← COMPLETED, hasResults true
+    │       │   ├── study-NCT05189171.json   ← sparse data, missing modules
+    │       │   ├── metadata.json
+    │       │   ├── enums.json
+    │       │   ├── search-areas.json
+    │       │   └── version.json
+    │       └── src/
+    │           └── ClinicalTrialsGovManagerStub.php
+    └── src/
+        ├── Unit/
+        │   ├── ClinicalTrialsGovApiTest.php
+        │   └── ClinicalTrialsGovManagerTest.php
+        └── Kernel/
+            ├── ClinicalTrialsGovBuilderTest.php
+            └── ClinicalTrialsGovStudiesQueryTest.php
 ```
 
 ---
@@ -70,7 +82,11 @@ web/modules/custom/clinical_trials_gov/
 
 **Files:**
 - Create: `web/modules/custom/clinical_trials_gov/clinical_trials_gov.info.yml`
+- Create: `web/modules/custom/clinical_trials_gov/clinical_trials_gov.libraries.yml`
+- Create: `web/modules/custom/clinical_trials_gov/clinical_trials_gov.module`
 - Create: `web/modules/custom/clinical_trials_gov/clinical_trials_gov.services.yml`
+- Create: `web/modules/custom/clinical_trials_gov/css/clinical_trials_gov_studies_query.css`
+- Create: `web/modules/custom/clinical_trials_gov/js/clinical_trials_gov_studies_query.js`
 - Create: `web/modules/custom/clinical_trials_gov/README.md`
 - Move: `web/modules/custom/clinicaltrialsgov/test/` → `web/modules/custom/clinical_trials_gov/test/`
 
@@ -383,6 +399,15 @@ interface ClinicalTrialsGovManagerInterface {
   public function getStudies(array $parameters): array;
 
   /**
+   * Fetches version metadata for the ClinicalTrials.gov API dataset.
+   *
+   * @return array
+   *   Raw response from /version, typically including apiVersion and
+   *   dataTimestamp.
+   */
+  public function getVersion(): array;
+
+  /**
    * Fetches a single study by NCT ID and returns a flat Index-field array.
    *
    * Associative arrays (objects) in the response are recursed into using
@@ -652,6 +677,13 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
   /**
    * {@inheritdoc}
    */
+  public function getVersion(): array {
+    return $this->api->get('/version');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getStudy(string $nct_id): array {
     $data = $this->api->get('/studies/' . $nct_id);
     return $this->flattenStudy($data);
@@ -786,50 +818,52 @@ git commit -m "feat: add ClinicalTrialsGovManager service with unit tests"
 ## Task 4: Test module and fixture files
 
 **Files:**
-- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_test/clinical_trials_gov_test.info.yml`
-- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_test/clinical_trials_gov_test.services.yml`
-- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_test/src/ClinicalTrialsGovManagerStub.php`
-- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_test/fixtures/*.json` (7 files)
+- Create: `web/modules/custom/clinical_trials_gov/tests/modules/clinical_trials_gov_test/clinical_trials_gov_test.info.yml`
+- Create: `web/modules/custom/clinical_trials_gov/tests/modules/clinical_trials_gov_test/clinical_trials_gov_test.services.yml`
+- Create: `web/modules/custom/clinical_trials_gov/tests/modules/clinical_trials_gov_test/src/ClinicalTrialsGovManagerStub.php`
+- Create: `web/modules/custom/clinical_trials_gov/tests/modules/clinical_trials_gov_test/fixtures/*.json` (8 files)
 
 - [ ] **Step 1: Download fixture files from the live API**
 
 Run these curl commands and save the output. Replace the NCT IDs with three real studies from `https://clinicaltrials.gov` — pick one RECRUITING with full data, one COMPLETED with `hasResults: true`, and one with sparse data.
 
 ```bash
-FIXTURES=web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_test/fixtures
+FIXTURES=web/modules/custom/clinical_trials_gov/tests/modules/clinical_trials_gov_test/fixtures
 mkdir -p $FIXTURES
 
 # List page (pick 3 studies with different statuses)
 curl -s "https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&pageSize=3&countTotal=true" \
   | python3 -m json.tool > $FIXTURES/studies.json
 
-# Single study — RECRUITING (replace NCT_RECRUITING with an actual NCT ID from the list above)
-curl -s "https://clinicaltrials.gov/api/v2/studies/NCT_RECRUITING" \
-  | python3 -m json.tool > $FIXTURES/study-NCT001.json
+# Single study — RECRUITING (NCT01205711 or replace with a current RECRUITING study)
+curl -s "https://clinicaltrials.gov/api/v2/studies/NCT01205711" \
+  | python3 -m json.tool > $FIXTURES/study-NCT01205711.json
 
-# Single study — COMPLETED with hasResults (replace NCT_COMPLETED)
-curl -s "https://clinicaltrials.gov/api/v2/studies/NCT_COMPLETED" \
-  | python3 -m json.tool > $FIXTURES/study-NCT002.json
+# Single study — COMPLETED with hasResults (NCT05088187 or replace)
+curl -s "https://clinicaltrials.gov/api/v2/studies/NCT05088187" \
+  | python3 -m json.tool > $FIXTURES/study-NCT05088187.json
 
-# Single study — sparse data (replace NCT_SPARSE)
-curl -s "https://clinicaltrials.gov/api/v2/studies/NCT_SPARSE" \
-  | python3 -m json.tool > $FIXTURES/study-NCT003.json
+# Single study — sparse data (NCT05189171 or replace)
+curl -s "https://clinicaltrials.gov/api/v2/studies/NCT05189171" \
+  | python3 -m json.tool > $FIXTURES/study-NCT05189171.json
 
-# Metadata, enums, search-areas
+# Metadata, enums, search-areas, version
 curl -s "https://clinicaltrials.gov/api/v2/studies/metadata" \
   | python3 -m json.tool > $FIXTURES/metadata.json
 curl -s "https://clinicaltrials.gov/api/v2/studies/enums" \
   | python3 -m json.tool > $FIXTURES/enums.json
 curl -s "https://clinicaltrials.gov/api/v2/studies/search-areas" \
   | python3 -m json.tool > $FIXTURES/search-areas.json
+curl -s "https://clinicaltrials.gov/api/v2/version" \
+  | python3 -m json.tool > $FIXTURES/version.json
 ```
 
 After downloading, open `enums.json` and verify the structure of each enum entry. If it differs from `['type' => '...', 'values' => [...]]`, update `ClinicalTrialsGovManager::getEnum()` accordingly.
 
-**Important:** The three NCT IDs chosen for `study-NCT001.json`, `study-NCT002.json`, and `study-NCT003.json` must also appear in the `studies.json` list response. Either pick IDs that appear in the list you downloaded, or re-download `studies.json` filtered to those specific IDs:
+**Important:** The three NCT IDs chosen for the study fixtures must also appear in the `studies.json` list response. Either pick IDs that appear in the list you downloaded, or re-download `studies.json` filtered to those specific IDs:
 
 ```bash
-curl -s "https://clinicaltrials.gov/api/v2/studies?filter.ids=NCT001_ID|NCT002_ID|NCT003_ID&countTotal=true" \
+curl -s "https://clinicaltrials.gov/api/v2/studies?filter.ids=NCT01205711|NCT05088187|NCT05189171&countTotal=true" \
   | python3 -m json.tool > $FIXTURES/studies.json
 ```
 
@@ -858,7 +892,7 @@ services:
 
 - [ ] **Step 3: Create the stub**
 
-Replace `NCT001_ID`, `NCT002_ID`, `NCT003_ID` with the actual NCT IDs used in Step 1.
+Update `$studyFixtureMap` if different NCT IDs were used in Step 1.
 
 ```php
 <?php
@@ -881,9 +915,9 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
    * Map of NCT ID to fixture filename (without extension).
    */
   protected array $studyFixtureMap = [
-    'NCT001_ID' => 'study-NCT001',
-    'NCT002_ID' => 'study-NCT002',
-    'NCT003_ID' => 'study-NCT003',
+    'NCT01205711' => 'study-NCT01205711',
+    'NCT05088187' => 'study-NCT05088187',
+    'NCT05189171' => 'study-NCT05189171',
   ];
 
   /**
@@ -1024,7 +1058,7 @@ Expected: success, no errors.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_test/
+git add web/modules/custom/clinical_trials_gov/tests/modules/clinical_trials_gov_test/
 git commit -m "feat: add clinical_trials_gov_test module with stub and fixtures"
 ```
 
@@ -1054,18 +1088,17 @@ interface ClinicalTrialsGovBuilderInterface {
   /**
    * Converts a flat Index-field study array into a Drupal render array.
    *
-   * Fields with sourceType STRUCT in the metadata become #type => details.
-   * Leaf fields become #type => item. A collapsed Raw data details widget
-   * containing the full flat table is appended at the end.
-   *
    * @param array $study
    *   Flat array keyed by Index field paths, as returned by
    *   ClinicalTrialsGovManagerInterface::getStudy().
+   * @param string $nct_id
+   *   The NCT ID used to build the upstream API URL.
    *
    * @return array
-   *   Drupal render array using only native elements (no custom CSS).
+   *   Drupal render array containing a study summary, flattened data table,
+   *   and upstream API URL.
    */
-  public function buildStudy(array $study): array;
+  public function buildStudy(array $study, string $nct_id): array;
 
 }
 ```
@@ -1107,14 +1140,12 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
    * Tests that buildStudy() produces the expected render array structure.
    */
   public function testBuildStudy(): void {
-    // Replace 'NCT001_ID' with the actual NCT ID used in study-NCT001.json
-    // (set in Task 4).
-    $nct_id = 'NCT001_ID';
+    $nct_id = 'NCT01205711';
 
     $study = $this->container->get('clinical_trials_gov.manager')->getStudy($nct_id);
     $this->assertNotEmpty($study, 'Stub returned a non-empty study array.');
 
-    $build = $this->builder->buildStudy($study);
+    $build = $this->builder->buildStudy($study, $nct_id);
 
     // Check that the top-level element is a container.
     $this->assertSame('container', $build['#type']);
@@ -1185,7 +1216,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildStudy(array $study): array {
+  public function buildStudy(array $study, string $nct_id): array {
     $metadata = $this->manager->getStudyMetadata();
     $nested = $this->nestStudy($study);
 
@@ -1700,9 +1731,11 @@ git commit -m "feat: add ClinicalTrialsGovStudiesQuery form element with kernel 
 
 **Files:**
 - Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/clinical_trials_gov_report.info.yml`
+- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/clinical_trials_gov_report.libraries.yml`
 - Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/clinical_trials_gov_report.routing.yml`
 - Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/clinical_trials_gov_report.links.menu.yml`
-- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Form/ClinicalTrialsGovStudiesSearchForm.php`
+- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/css/clinical_trials_gov_report.css`
+- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Form/ClinicalTrialsGovReportStudiesSearchForm.php`
 
 - [ ] **Step 1: Create the module info file**
 
@@ -1724,7 +1757,7 @@ dependencies:
 clinical_trials_gov_report.studies:
   path: /admin/reports/status/clinical-trials-gov
   defaults:
-    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportController::index'
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStudiesController::index'
     _title: 'ClinicalTrials.gov'
   requirements:
     _permission: 'access administration pages'
@@ -1732,8 +1765,8 @@ clinical_trials_gov_report.studies:
 clinical_trials_gov_report.study:
   path: /admin/reports/status/clinical-trials-gov/{nctId}
   defaults:
-    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovStudyController::view'
-    _title_callback: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovStudyController::title'
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStudyController::view'
+    _title_callback: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStudyController::title'
   requirements:
     _permission: 'access administration pages'
     nctId: 'NCT\d+'
@@ -1769,7 +1802,7 @@ use Drupal\Core\Form\FormStateInterface;
  * redirects to the studies report route with the assembled query string
  * as URL parameters.
  */
-class ClinicalTrialsGovStudiesSearchForm extends FormBase {
+class ClinicalTrialsGovReportStudiesSearchForm extends FormBase {
 
   /**
    * {@inheritdoc}
@@ -1822,7 +1855,7 @@ ddev uli
 
 Open the one-time login link, then visit `/admin/reports/status/clinical-trials-gov`. Expected: a page titled "ClinicalTrials.gov" with no fatal errors (controllers not yet implemented — a 404 or empty page is fine at this stage).
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/
@@ -1831,10 +1864,10 @@ git commit -m "feat: scaffold clinical_trials_gov_report with routing and search
 
 ---
 
-## Task 8: ClinicalTrialsGovReportController
+## Task 8: ClinicalTrialsGovReportStudiesController
 
 **Files:**
-- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Controller/ClinicalTrialsGovReportController.php`
+- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Controller/ClinicalTrialsGovReportStudiesController.php`
 
 - [ ] **Step 1: Implement the controller**
 
@@ -1847,7 +1880,7 @@ namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
-use Drupal\clinical_trials_gov_report\Form\ClinicalTrialsGovStudiesSearchForm;
+use Drupal\clinical_trials_gov_report\Form\ClinicalTrialsGovReportStudiesSearchForm;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\Request;
@@ -1855,7 +1888,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Renders the ClinicalTrials.gov studies list report.
  */
-class ClinicalTrialsGovReportController extends ControllerBase {
+class ClinicalTrialsGovReportStudiesController extends ControllerBase {
 
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
@@ -1866,7 +1899,7 @@ class ClinicalTrialsGovReportController extends ControllerBase {
    */
   public function index(Request $request): array {
     $build = [];
-    $build['search_form'] = $this->formBuilder()->getForm(ClinicalTrialsGovStudiesSearchForm::class);
+    $build['search_form'] = $this->formBuilder()->getForm(ClinicalTrialsGovReportStudiesSearchForm::class);
 
     $query_string = $request->getQueryString() ?? '';
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query_string);
@@ -1963,16 +1996,16 @@ Visit `/admin/reports/status/clinical-trials-gov` while logged in as admin. Subm
 - [ ] **Step 3: Commit**
 
 ```bash
-git add web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Controller/ClinicalTrialsGovReportController.php
-git commit -m "feat: add ClinicalTrialsGovReportController"
+git add web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Controller/ClinicalTrialsGovReportStudiesController.php
+git commit -m "feat: add ClinicalTrialsGovReportStudiesController"
 ```
 
 ---
 
-## Task 9: ClinicalTrialsGovStudyController
+## Task 9: ClinicalTrialsGovReportStudyController
 
 **Files:**
-- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Controller/ClinicalTrialsGovStudyController.php`
+- Create: `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Controller/ClinicalTrialsGovReportStudyController.php`
 
 - [ ] **Step 1: Implement the controller**
 
@@ -1990,7 +2023,7 @@ use Drupal\Core\Controller\ControllerBase;
 /**
  * Renders the detail page for a single ClinicalTrials.gov study.
  */
-class ClinicalTrialsGovStudyController extends ControllerBase {
+class ClinicalTrialsGovReportStudyController extends ControllerBase {
 
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
@@ -2013,7 +2046,7 @@ class ClinicalTrialsGovStudyController extends ControllerBase {
       ];
     }
 
-    return $this->builder->buildStudy($study);
+    return $this->builder->buildStudy($study, $nctId);
   }
 
   /**
@@ -2041,8 +2074,8 @@ From the results table, click a linked NCT ID. Expected: a study detail page wit
 - [ ] **Step 3: Commit**
 
 ```bash
-git add web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Controller/ClinicalTrialsGovStudyController.php
-git commit -m "feat: add ClinicalTrialsGovStudyController"
+git add web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Controller/ClinicalTrialsGovReportStudyController.php
+git commit -m "feat: add ClinicalTrialsGovReportStudyController"
 ```
 
 ---

@@ -25,13 +25,19 @@ A Drupal integration for ClinicalTrials.gov built in two phases:
 web/modules/custom/clinical_trials_gov/
 ├── README.md
 ├── clinical_trials_gov.info.yml
+├── clinical_trials_gov.libraries.yml
+├── clinical_trials_gov.module
 ├── clinical_trials_gov.services.yml
+├── css/
+│   └── clinical_trials_gov_studies_query.css
+├── js/
+│   └── clinical_trials_gov_studies_query.js
 ├── test/                                             ← POC PHP explorer (reference implementation)
 │   ├── AGENTS.md
 │   ├── README.md
 │   ├── TODO.md
-│   ├── clinicaltrialsgov.inc
-│   └── clinicaltrialsgov.php
+│   ├── clinical_trials_gov.inc
+│   └── clinical_trials_gov.php
 ├── src/
 │   ├── ClinicalTrialsGovApiInterface.php
 │   ├── ClinicalTrialsGovApi.php
@@ -41,30 +47,43 @@ web/modules/custom/clinical_trials_gov/
 │   ├── ClinicalTrialsGovBuilder.php
 │   └── Element/
 │       └── ClinicalTrialsGovStudiesQuery.php
-└── modules/
-    ├── clinical_trials_gov_report/
-    │   ├── clinical_trials_gov_report.info.yml
-    │   ├── clinical_trials_gov_report.routing.yml
-    │   ├── clinical_trials_gov_report.links.menu.yml
-    │   └── src/
-    │       ├── Form/
-    │       │   └── ClinicalTrialsGovStudiesSearchForm.php
-    │       └── Controller/
-    │           ├── ClinicalTrialsGovReportController.php
-    │           └── ClinicalTrialsGovStudyController.php
-    └── clinical_trials_gov_test/
-        ├── clinical_trials_gov_test.info.yml
-        ├── clinical_trials_gov_test.services.yml
-        ├── fixtures/
-        │   ├── studies.json
-        │   ├── study-NCT001.json
-        │   ├── study-NCT002.json
-        │   ├── study-NCT003.json
-        │   ├── metadata.json
-        │   ├── enums.json
-        │   └── search-areas.json
-        └── src/
-            └── ClinicalTrialsGovManagerStub.php
+├── modules/
+│   └── clinical_trials_gov_report/
+│       ├── clinical_trials_gov_report.info.yml
+│       ├── clinical_trials_gov_report.libraries.yml
+│       ├── clinical_trials_gov_report.links.menu.yml
+│       ├── clinical_trials_gov_report.routing.yml
+│       ├── css/
+│       │   └── clinical_trials_gov_report.css
+│       └── src/
+│           ├── Form/
+│           │   └── ClinicalTrialsGovReportStudiesSearchForm.php
+│           └── Controller/
+│               ├── ClinicalTrialsGovReportStudiesController.php
+│               └── ClinicalTrialsGovReportStudyController.php
+└── tests/
+    ├── modules/
+    │   └── clinical_trials_gov_test/
+    │       ├── clinical_trials_gov_test.info.yml
+    │       ├── clinical_trials_gov_test.services.yml
+    │       ├── fixtures/
+    │       │   ├── studies.json
+    │       │   ├── study-NCT01205711.json
+    │       │   ├── study-NCT05088187.json
+    │       │   ├── study-NCT05189171.json
+    │       │   ├── metadata.json
+    │       │   ├── enums.json
+    │       │   ├── search-areas.json
+    │       │   └── version.json
+    │       └── src/
+    │           └── ClinicalTrialsGovManagerStub.php
+    └── src/
+        ├── Unit/
+        │   ├── ClinicalTrialsGovApiTest.php
+        │   └── ClinicalTrialsGovManagerTest.php
+        └── Kernel/
+            ├── ClinicalTrialsGovBuilderTest.php
+            └── ClinicalTrialsGovStudiesQueryTest.php
 ```
 
 ### Services (main module only)
@@ -88,6 +107,7 @@ Uses `ClinicalTrialsGovApi` to fetch and organize API data. Public interface:
 | Method | Returns | Description |
 |---|---|---|
 | `getStudies(array $parameters): array` | Raw API response | `['studies' => [...], 'nextPageToken' => '...', 'totalCount' => N]`. No massaging. |
+| `getVersion(): array` | Raw version response | Raw response from `/version`, typically including `apiVersion` and `dataTimestamp`. |
 | `getStudy(string $nct_id): array` | Flat Index-field array | Flat associative array keyed by dot-notation Index field paths (e.g. `protocolSection.identificationModule.nctId`). Assoc arrays recursed into; lists and scalars stored as-is. |
 | `getStudyMetadata(): array` | Flat metadata array | Keyed by Index field path. Each value: `[key, name, piece, title, type, sourceType, description, children]`. Mirrors `flatten_metadata()` from the POC. |
 | `getStudyFieldMetadata(string $index_field): ?array` | Metadata for one field | Returns the metadata array for a single Index field path, or NULL. |
@@ -101,28 +121,23 @@ Uses `ClinicalTrialsGovApi` to fetch and organize API data. Public interface:
 
 Converts API data into Drupal render arrays. Declared as a service because it requires `t()` for translated `#title` values. Designed to be reused in the Phase 2 review area.
 
-**`buildStudy(array $study): array`**
+**`buildStudy(array $study, string $nct_id): array`**
 
-**Input:** Flat Index-field keyed array from `getStudy()`.
+**Input:** Flat Index-field keyed array from `getStudy()`, plus the NCT ID (used to build upstream API and public study links).
 
-**Output:** A render array using native Drupal elements only (no custom CSS):
+**Output:** A render array using native Drupal elements only:
 
 ```
 container
-  └─ details (open) "protocolSection"
-       └─ details "identificationModule"            ← sourceType STRUCT → details
-            └─ item  nctId: NCT04001699             ← leaf field → item
-            └─ item  briefTitle: A Study of...
-       └─ details "statusModule"
-            └─ item  overallStatus: RECRUITING
-            └─ ...
-  └─ details "derivedSection"
-       └─ ...
-  └─ details (collapsed) "Raw data"
-       └─ table  [ Field path | Name | Piece | Title | Source Type | Value ]
+  └─ fieldset "Summary"
+       └─ label/value pairs: title, overall status, phases, conditions,
+          brief summary, interventions, outcomes, eligibility summary,
+          locations, dates, enrollment, sex, age range
+  └─ table  [ Field path | Value ]  (flat data table, all fields)
+  └─ item   Link to upstream ClinicalTrials.gov API URL
 ```
 
-**Branching logic:** Fields with `sourceType === 'STRUCT'` in the metadata are compound/object nodes and become `#type => details` elements. Leaf fields (scalars and lists) become `#type => item` elements. The builder calls `getStudyFieldMetadata()` on each node to determine the correct element type. The "Raw data" table at the bottom is enriched with metadata columns (Name, Piece, Title, Source Type) from `getStudyFieldMetadata()`.
+The builder calls `getStudyFieldMetadata()` per field to enrich display labels. Multi-value leaf fields (lists) render as `<ul>` lists; associative sub-objects render as label-value lists.
 
 ### Form Element: ClinicalTrialsGovStudiesQuery
 
@@ -133,8 +148,10 @@ container
 A reusable composite form element that encapsulates the full ClinicalTrials.gov `/studies` query interface. Used by the report search form and reusable in the Phase 2 review area.
 
 - **`#default_value`:** Raw query string (e.g. `query.cond=cancer&filter.overallStatus=RECRUITING`)
+- **Parent class:** `FormElementBase`
+- **`#attached`:** `clinical_trials_gov/studies_query` library (CSS + JS). The JS behavior adds a multivalue chip UI for parameters listed in `MULTI_VALUE_KEYS`, allowing comma-, pipe-, or newline-separated values to be entered and displayed as removable chips.
 - **`#process`:** Parses the query string using dot-notation-preserving parsing (manual split; no `parse_str()`), then builds one sub-element per parameter using data from the ClinicalTrials.gov API documentation (label, description, examples, allowed values). Fields with enum `allowed` values are populated via `getEnum()`. Related fields are grouped inside `details` elements ("Query parameters", "Filters", "Pagination").
-- **`#element_validate`:** Assembles sub-values back into a query string, skipping empty values, and sets it on `$form_state` via `setValueForElement()`. Uses a Symfony/Drupal query-string builder if one supports dot-notation keys; otherwise builds manually with `rawurlencode()`.
+- **`#element_validate`:** Assembles sub-values back into a query string, skipping empty values, and sets it on `$form_state` via `setValueForElement()`. Builds manually with `rawurlencode()` to preserve dot-notation keys.
 
 **Parameters** (replicating https://clinicaltrials.gov/data-api/api `/studies` endpoint):
 
@@ -167,35 +184,36 @@ Located at `clinical_trials_gov/modules/clinical_trials_gov_report/`. Depends on
 
 | Route | Path | Controller |
 |---|---|---|
-| `clinical_trials_gov_report.studies` | `/admin/reports/status/clinical-trials-gov` | `ClinicalTrialsGovReportController::index` |
-| `clinical_trials_gov_report.study` | `/admin/reports/status/clinical-trials-gov/{nctId}` | `ClinicalTrialsGovStudyController::view` |
+| `clinical_trials_gov_report.studies` | `/admin/reports/status/clinical-trials-gov` | `ClinicalTrialsGovReportStudiesController::index` |
+| `clinical_trials_gov_report.study` | `/admin/reports/status/clinical-trials-gov/{nctId}` | `ClinicalTrialsGovReportStudyController::view` |
 
 The `{nctId}` parameter is constrained to `NCT\d+`. Both routes require `access administration pages`. A menu link is registered under `system.admin_reports`.
 
-#### ClinicalTrialsGovStudiesSearchForm
+#### ClinicalTrialsGovReportStudiesSearchForm
 
 - **Base:** `FormBase`
 - Contains one `ClinicalTrialsGovStudiesQuery` element (`#type => clinical_trials_gov_studies_query`)
 - `#default_value` populated from the current request's query string
 - On submit: redirects to the `clinical_trials_gov_report.studies` route with the assembled query string as URL parameters
+- On reset: redirects back to the `clinical_trials_gov_report.studies` route with no parameters
 
-#### ClinicalTrialsGovReportController
+#### ClinicalTrialsGovReportStudiesController
 
-Renders the search form and results table at `/admin/reports/status/clinical-trials-gov`.
+Renders the search form and results table at `/admin/reports/status/clinical-trials-gov`. Injects `ClinicalTrialsGovManagerInterface` and `DateFormatterInterface`.
 
-1. Embeds `ClinicalTrialsGovStudiesSearchForm`
+1. Embeds `ClinicalTrialsGovReportStudiesSearchForm`
 2. Parses the request query string (preserving dot-notation keys)
 3. If parameters present, calls `getStudies($parameters)`
 4. Renders a `#type => table` with columns: NCT ID (linked to study route), Title, Overall Status, Phases, Conditions
 5. Renders a pager link if `nextPageToken` is present
 6. Renders a total count item if `totalCount` is present
 
-#### ClinicalTrialsGovStudyController
+#### ClinicalTrialsGovReportStudyController
 
 Renders a single study at `/admin/reports/status/clinical-trials-gov/{nctId}`.
 
 1. Calls `getStudy($nctId)`
-2. Passes result to `ClinicalTrialsGovBuilder::buildStudy()`
+2. Passes result to `ClinicalTrialsGovBuilder::buildStudy($study, $nctId)`
 3. Returns the render array; page title sourced from `protocolSection.identificationModule.briefTitle`
 
 ### Test Strategy
@@ -224,7 +242,7 @@ Tests live in `web/modules/custom/clinical_trials_gov/tests/` and follow the pro
 
 #### Test Module: `clinical_trials_gov_test`
 
-A submodule at `clinical_trials_gov/modules/clinical_trials_gov_test/` that provides a stub manager and fixture data for all test types. Installing it replaces the real `clinical_trials_gov.manager` service via `clinical_trials_gov_test.services.yml` — no per-test mocking boilerplate required.
+A test-only module at `clinical_trials_gov/tests/modules/clinical_trials_gov_test/` that provides a stub manager and fixture data for all test types. Installing it replaces the real `clinical_trials_gov.manager` service via `clinical_trials_gov_test.services.yml` — no per-test mocking boilerplate required.
 
 **`ClinicalTrialsGovManagerStub`** implements `ClinicalTrialsGovManagerInterface` and reads from `fixtures/`. Kernel and Functional tests install the test module:
 
@@ -244,13 +262,14 @@ Recorded API responses stored in `clinical_trials_gov_test/fixtures/`:
 
 | File | Source endpoint | Notes |
 |---|---|---|
-| `studies.json` | `/studies` | Response containing NCT001, NCT002, NCT003 |
-| `study-NCT001.json` | `/studies/{nctId}` | RECRUITING, all modules populated, multiple locations, eligibility with Inclusion/Exclusion split |
-| `study-NCT002.json` | `/studies/{nctId}` | COMPLETED, `hasResults: true`, minimal optional fields |
-| `study-NCT003.json` | `/studies/{nctId}` | Sparse data — several modules absent, tests builder null/missing field handling |
+| `studies.json` | `/studies` | Response containing NCT01205711, NCT05088187, NCT05189171 |
+| `study-NCT01205711.json` | `/studies/{nctId}` | RECRUITING, all modules populated, multiple locations, eligibility with Inclusion/Exclusion split |
+| `study-NCT05088187.json` | `/studies/{nctId}` | COMPLETED, `hasResults: true`, minimal optional fields |
+| `study-NCT05189171.json` | `/studies/{nctId}` | Sparse data — several modules absent, tests builder null/missing field handling |
 | `metadata.json` | `/studies/metadata` | Full field tree |
 | `enums.json` | `/studies/enums` | All enum types and allowed values |
 | `search-areas.json` | `/studies/search-areas` | Full-text search area definitions |
+| `version.json` | `/version` | API version and dataset timestamp |
 
 ---
 
