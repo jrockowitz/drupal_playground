@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov_report\Controller;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
-use Drupal\clinical_trials_gov_report\Form\ClinicalTrialsGovReportStudiesSearchForm;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -18,23 +20,45 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
 
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
+    protected DateFormatterInterface $dateFormatter,
   ) {}
+
+  /**
+   * Creates the controller from the container.
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('clinical_trials_gov.manager'),
+      $container->get('date.formatter'),
+    );
+  }
 
   /**
    * Renders the studies list page with the search form and results table.
    */
   public function index(Request $request): array {
     $build = [];
-    $build['search_form'] = $this->formBuilder()->getForm(ClinicalTrialsGovReportStudiesSearchForm::class);
+    $build['search_form'] = $this->formBuilder()->getForm('Drupal\clinical_trials_gov_report\Form\ClinicalTrialsGovReportStudiesSearchForm');
 
     $query_string = $request->getQueryString() ?? '';
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query_string);
+    $version = $this->manager->getVersion();
+
+    $build['intro'] = [
+      '#type' => 'item',
+      '#markup' => $this->t('This page displays ClinicalTrials.gov studies returned by the API for the current query-string parameters.'),
+    ];
+    $build['version'] = [
+      '#type' => 'item',
+      '#markup' => $this->buildVersionMarkup($version),
+    ];
 
     $page_offset = (int) ($parameters['pageOffset'] ?? 0);
     unset($parameters['pageOffset']);
 
     $response = $this->manager->getStudies($parameters);
     $studies = $response['studies'] ?? [];
+    $api_url = $this->buildApiUrl($parameters);
 
     if (!empty($studies) || isset($response['totalCount'])) {
       $count = count($studies);
@@ -56,10 +80,21 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
 
     $build['results'] = $this->buildResultsTable($studies);
 
+    if ($api_url !== NULL) {
+      $build['api_url'] = [
+        '#type' => 'item',
+        '#markup' => $this->t('API URL: <a href=":url" class="font-monospace">@url</a>', [
+          ':url' => $api_url,
+          '@url' => $api_url,
+        ]),
+      ];
+    }
+
     if (isset($response['nextPageToken'])) {
       $next_parameters = $parameters;
       $next_parameters['pageToken'] = $response['nextPageToken'];
       $next_parameters['pageOffset'] = $page_offset + count($studies);
+
       $build['pager'] = [
         '#type' => 'item',
         '#markup' => $this->t('<a href=":url" class="button">Next page &#8250;</a>', [
@@ -109,6 +144,38 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
       ],
       '#rows' => $rows,
     ];
+  }
+
+  /**
+   * Builds the upstream ClinicalTrials.gov API URL for the current query.
+   */
+  protected function buildApiUrl(array $parameters): ?string {
+    if ($parameters === []) {
+      return NULL;
+    }
+
+    return ClinicalTrialsGovApi::BASE_URL . '/studies?' . http_build_query($parameters, '', '&', PHP_QUERY_RFC3986);
+  }
+
+  /**
+   * Builds the version line markup.
+   */
+  protected function buildVersionMarkup(array $version): string {
+    $api_version = (string) ($version['apiVersion'] ?? '');
+    $timestamp = (string) ($version['dataTimestamp'] ?? '');
+    $formatted_timestamp = $timestamp;
+
+    if ($timestamp !== '') {
+      $date_time = strtotime($timestamp . ' UTC');
+      if ($date_time !== FALSE) {
+        $formatted_timestamp = $this->dateFormatter->format($date_time, 'custom', 'F j Y \a\t g:i a');
+      }
+    }
+
+    return (string) $this->t('Version: @version and Last Updated: @updated', [
+      '@version' => $api_version,
+      '@updated' => $formatted_timestamp,
+    ]);
   }
 
 }

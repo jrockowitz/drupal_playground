@@ -33,6 +33,13 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
   /**
    * {@inheritdoc}
    */
+  public function getVersion(): array {
+    return $this->loadFixture('version');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getStudy(string $nct_id): array {
     $fixture_name = $this->studyFixtureMap[$nct_id] ?? NULL;
     if ($fixture_name === NULL) {

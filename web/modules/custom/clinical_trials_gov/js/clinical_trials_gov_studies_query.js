@@ -84,6 +84,9 @@
         });
 
         textarea.classList.add('clinical-trials-gov-studies-query__source');
+        textarea.style.display = 'none';
+        textarea.setAttribute('aria-hidden', 'true');
+        textarea.setAttribute('tabindex', '-1');
         textarea.parentNode.insertBefore(wrapper, textarea.nextSibling);
         wrapper.appendChild(editor);
         renderChips(wrapper, textarea, state);

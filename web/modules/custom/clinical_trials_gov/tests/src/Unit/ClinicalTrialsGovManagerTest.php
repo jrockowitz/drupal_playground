@@ -60,6 +60,28 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
   }
 
   /**
+   * Tests that getVersion() returns the raw version response unchanged.
+   *
+   * @covers ::getVersion
+   */
+  public function testGetVersionReturnsRawResponse(): void {
+    $response = [
+      'apiVersion' => '2.0.5',
+      'dataTimestamp' => '2026-04-24T09:00:05',
+    ];
+    $this->api
+      ->expects($this->once())
+      ->method('get')
+      ->with('/version')
+      ->willReturn($response);
+
+    $result = $this->manager->getVersion();
+
+    // Check that the raw version response is returned with no transformation.
+    $this->assertSame($response, $result);
+  }
+
+  /**
    * Tests that getStudy() flattens nested objects to dot-notation keys.
    *
    * @covers ::getStudy

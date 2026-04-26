@@ -23,6 +23,14 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
   /**
    * {@inheritdoc}
    */
+  public function getVersion(): array {
+    $version = $this->api->get('/version');
+    return is_array($version) ? $version : [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getStudy(string $nct_id): array {
     $data = $this->api->get('/studies/' . $nct_id);
     return $this->flattenStudy($data);

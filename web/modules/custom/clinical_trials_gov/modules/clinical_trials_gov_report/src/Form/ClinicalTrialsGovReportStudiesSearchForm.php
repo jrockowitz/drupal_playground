@@ -28,9 +28,16 @@ class ClinicalTrialsGovReportStudiesSearchForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $form['studies_query'] = [
+    $query_string = $this->getRequest()->getQueryString() ?? '';
+
+    $form['parameters'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Query-string parameters'),
+      '#open' => ($query_string === ''),
+    ];
+    $form['parameters']['studies_query'] = [
       '#type' => 'clinical_trials_gov_studies_query',
-      '#default_value' => $this->getRequest()->getQueryString() ?? '',
+      '#default_value' => $query_string,
     ];
     $form['actions'] = [
       '#type' => 'actions',
@@ -39,6 +46,14 @@ class ClinicalTrialsGovReportStudiesSearchForm extends FormBase {
         '#value' => $this->t('Search'),
       ],
     ];
+    if ($query_string !== '') {
+      $form['actions']['reset'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Reset'),
+        '#limit_validation_errors' => [],
+        '#submit' => ['::resetForm'],
+      ];
+    }
     return $form;
   }
 
@@ -49,6 +64,13 @@ class ClinicalTrialsGovReportStudiesSearchForm extends FormBase {
     $query_string = (string) $form_state->getValue('studies_query');
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query_string);
     $form_state->setRedirect('clinical_trials_gov_report.studies', [], ['query' => $parameters]);
+  }
+
+  /**
+   * Resets the form back to the report route without query parameters.
+   */
+  public function resetForm(array &$form, FormStateInterface $form_state): void {
+    $form_state->setRedirect('clinical_trials_gov_report.studies');
   }
 
 }

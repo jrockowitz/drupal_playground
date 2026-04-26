@@ -42,47 +42,82 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
       $complete_form
     );
 
-    // Check that the search details wrapper and groups are built.
-    $this->assertArrayHasKey('search', $processed);
-    $this->assertArrayHasKey('query_parameters', $processed['search']);
-    $this->assertArrayHasKey('filters', $processed['search']);
-    $this->assertArrayHasKey('post_filters', $processed['search']);
-    $this->assertArrayHasKey('aggregation', $processed['search']);
-    $this->assertArrayHasKey('output', $processed['search']);
+    // Check that the element is a flat list in the live API parameter order.
+    $element_keys = array_values(array_filter(array_keys($processed), static fn(string $key): bool => !str_starts_with($key, '#')));
+    $this->assertSame([
+      'query__cond',
+      'query__term',
+      'query__locn',
+      'query__titles',
+      'query__intr',
+      'query__outc',
+      'query__spons',
+      'query__lead',
+      'query__id',
+      'query__patient',
+      'filter__overallStatus',
+      'filter__geo',
+      'filter__ids',
+      'filter__advanced',
+      'filter__synonyms',
+      'postFilter__overallStatus',
+      'postFilter__geo',
+      'postFilter__ids',
+      'postFilter__advanced',
+      'postFilter__synonyms',
+      'aggFilters',
+      'geoDecay',
+      'fields',
+      'sort',
+      'countTotal',
+      'pageSize',
+      'pageToken',
+    ], $element_keys);
 
     // Check that representative new fields exist and defaults are populated.
-    $this->assertArrayHasKey('query__patient', $processed['search']['query_parameters']);
-    $this->assertSame('heart disease', $processed['search']['query_parameters']['query__patient']['#default_value']);
-    $this->assertArrayHasKey('filter__synonyms', $processed['search']['filters']);
-    $this->assertSame('ConditionSearch:1651367|BasicSearch:2013558', $processed['search']['filters']['filter__synonyms']['#default_value']);
-    $this->assertArrayHasKey('postFilter__overallStatus', $processed['search']['post_filters']);
-    $this->assertArrayHasKey('geoDecay', $processed['search']['aggregation']);
-    $this->assertArrayHasKey('fields', $processed['search']['output']);
+    $this->assertArrayHasKey('query__patient', $processed);
+    $this->assertSame('heart disease', $processed['query__patient']['#default_value']);
+    $this->assertArrayHasKey('filter__synonyms', $processed);
+    $this->assertSame('ConditionSearch:1651367|BasicSearch:2013558', $processed['filter__synonyms']['#default_value']);
+    $this->assertArrayHasKey('postFilter__overallStatus', $processed);
+    $this->assertArrayHasKey('geoDecay', $processed);
+    $this->assertArrayHasKey('fields', $processed);
+    $this->assertSame('true', $processed['countTotal']['#default_value']);
 
     // Check that progressive enhancement assets are attached.
     $this->assertContains('clinical_trials_gov/studies_query', $processed['#attached']['library']);
 
     // Check that omitted API-default parameters are not rendered.
-    $this->assertArrayNotHasKey('format', $processed['search']['output']);
-    $this->assertArrayNotHasKey('markupFormat', $processed['search']['output']);
+    $this->assertArrayNotHasKey('format', $processed);
+    $this->assertArrayNotHasKey('markupFormat', $processed);
 
-    // Check that descriptions render ClinicalTrials.gov links.
-    $query_description = $this->container->get('renderer')->renderInIsolation($processed['search']['query_parameters']['query__cond']['#description']);
+    // Check that labels and field metadata render separately.
+    $this->assertSame('Condition or disease', (string) $processed['query__cond']['#title']);
+    $this->assertSame('Sort', (string) $processed['sort']['#title']);
+    $this->assertStringContainsString('filter.overallStatus', $processed['filter__overallStatus']['#field_prefix']);
+    $this->assertStringContainsString('(array of string)', $processed['filter__overallStatus']['#field_prefix']);
+
+    // Check that descriptions render ClinicalTrials.gov links and omit CSV text.
+    $query_description = $this->container->get('renderer')->renderInIsolation($processed['query__cond']['#description']);
     $this->assertStringContainsString('https://clinicaltrials.gov/data-api/about-api/search-areas#ConditionSearch', (string) $query_description);
-    $fields_description = $this->container->get('renderer')->renderInIsolation($processed['search']['output']['fields']['#description']);
+    $fields_description = $this->container->get('renderer')->renderInIsolation($processed['fields']['#description']);
     $this->assertStringContainsString('https://clinicaltrials.gov/data-api/about-api/study-data-structure', (string) $fields_description);
+    $this->assertStringNotContainsString('CSV', (string) $fields_description);
+    $page_token_description = $this->container->get('renderer')->renderInIsolation($processed['pageToken']['#description']);
+    $this->assertStringNotContainsString('x-next-page-token', (string) $page_token_description);
+    $this->assertStringNotContainsString('Do not specify it for first page', (string) $page_token_description);
 
     // Simulate submission with representative scalar and multivalue values.
-    $processed['search']['query_parameters']['query__cond']['#value'] = 'cancer';
-    $processed['search']['query_parameters']['query__patient']['#value'] = 'heart disease';
-    $processed['search']['filters']['filter__overallStatus']['#value'] = "RECRUITING,\nCOMPLETED";
-    $processed['search']['filters']['filter__synonyms']['#value'] = 'ConditionSearch:1651367|BasicSearch:2013558';
-    $processed['search']['post_filters']['postFilter__overallStatus']['#value'] = 'COMPLETED';
-    $processed['search']['aggregation']['geoDecay']['#value'] = 'func:linear,scale:100km,offset:10km,decay:0.1';
-    $processed['search']['output']['fields']['#value'] = "NCTId,\nBriefTitle";
-    $processed['search']['output']['sort']['#value'] = '@relevance|LastUpdatePostDate';
-    $processed['search']['output']['pageSize']['#value'] = '20';
-    $processed['search']['output']['countTotal']['#value'] = '';
+    $processed['query__cond']['#value'] = 'cancer';
+    $processed['query__patient']['#value'] = 'heart disease';
+    $processed['filter__overallStatus']['#value'] = "RECRUITING,\nCOMPLETED";
+    $processed['filter__synonyms']['#value'] = 'ConditionSearch:1651367|BasicSearch:2013558';
+    $processed['postFilter__overallStatus']['#value'] = 'COMPLETED';
+    $processed['geoDecay']['#value'] = 'func:linear,scale:100km,offset:10km,decay:0.1';
+    $processed['fields']['#value'] = "NCTId,\nBriefTitle";
+    $processed['sort']['#value'] = '@relevance|LastUpdatePostDate';
+    $processed['pageSize']['#value'] = '20';
+    $processed['countTotal']['#value'] = 'true';
 
     ClinicalTrialsGovStudiesQuery::validateStudiesQuery($processed, $form_state, $complete_form);
 
@@ -99,8 +134,8 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
     $this->assertStringContainsString('sort=%40relevance%7CLastUpdatePostDate', $assembled);
     $this->assertStringContainsString('pageSize=20', $assembled);
 
-    // Check that empty values and omitted parameters stay out of the query.
-    $this->assertStringNotContainsString('countTotal', $assembled);
+    // Check that the default total-count behavior is preserved in the query.
+    $this->assertStringContainsString('countTotal=true', $assembled);
     $this->assertStringNotContainsString('format', $assembled);
     $this->assertStringNotContainsString('markupFormat', $assembled);
   }

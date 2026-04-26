@@ -31,17 +31,6 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
   protected const DOCS_BASE_URL = 'https://clinicaltrials.gov';
 
   /**
-   * Query builder group labels keyed by machine name.
-   */
-  protected const GROUP_TITLES = [
-    'query_parameters' => 'Query parameters',
-    'filters' => 'Filters',
-    'post_filters' => 'Post-filters',
-    'aggregation' => 'Aggregation and ranking',
-    'output' => 'Output and pagination',
-  ];
-
-  /**
    * Keys that accept multiple values and serialize to pipe-delimited strings.
    */
   protected const MULTI_VALUE_KEYS = [
@@ -114,32 +103,15 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     $defaults = static::parseQueryString($element['#default_value'] ?? '');
     $manager = \Drupal::service('clinical_trials_gov.manager');
     $field_definitions = static::fieldDefinitions($manager->getEnum('Status'));
-    $group_map = static::groupDefinitions($field_definitions);
-    $has_defaults = !empty($defaults);
 
     $element['#attached']['library'][] = 'clinical_trials_gov/studies_query';
 
-    $element['search'] = [
-      '#type' => 'details',
-      '#title' => t('Search'),
-      '#open' => !$has_defaults,
-    ];
-
-    foreach (static::GROUP_TITLES as $group_name => $group_title) {
-      $group_keys = array_column($group_map[$group_name], 'key');
-      $element['search'][$group_name] = [
-        '#type' => 'details',
-        '#title' => t('@title', ['@title' => $group_title]),
-        '#open' => !$has_defaults || !empty(array_intersect_key($defaults, array_flip($group_keys))),
-      ];
-
-      foreach ($group_map[$group_name] as $definition) {
-        $name = static::apiKeyToElementName($definition['key']);
-        $element['search'][$group_name][$name] = static::buildFieldElement(
-          $definition,
-          $defaults[$definition['key']] ?? '',
-        );
-      }
+    foreach ($field_definitions as $definition) {
+      $name = static::apiKeyToElementName($definition['key']);
+      $element[$name] = static::buildFieldElement(
+        $definition,
+        $defaults[$definition['key']] ?? '',
+      );
     }
 
     return $element;
@@ -154,37 +126,18 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     array &$complete_form,
   ): void {
     $parts = [];
-    foreach (array_keys(static::GROUP_TITLES) as $group) {
-      if (!isset($element['search'][$group])) {
+    foreach ($element as $name => $child) {
+      if (!is_array($child) || !array_key_exists('#value', $child)) {
         continue;
       }
-      foreach ($element['search'][$group] as $name => $child) {
-        if (!is_array($child) || !array_key_exists('#value', $child)) {
-          continue;
-        }
-        $api_key = static::elementNameToApiKey($name);
-        $value = static::normalizeSubmittedValue($api_key, $child['#value']);
-        if ($value === '') {
-          continue;
-        }
-        $parts[] = rawurlencode($api_key) . '=' . rawurlencode($value);
+      $api_key = static::elementNameToApiKey($name);
+      $value = static::normalizeSubmittedValue($api_key, $child['#value']);
+      if ($value === '') {
+        continue;
       }
+      $parts[] = rawurlencode($api_key) . '=' . rawurlencode($value);
     }
     $form_state->setValueForElement($element, implode('&', $parts));
-  }
-
-  /**
-   * Returns all field definitions keyed by group.
-   */
-  protected static function groupDefinitions(array $overall_status_values): array {
-    $definitions = [];
-    foreach (array_keys(static::GROUP_TITLES) as $group_name) {
-      $definitions[$group_name] = [];
-    }
-    foreach (static::fieldDefinitions($overall_status_values) as $definition) {
-      $definitions[$definition['group']][] = $definition;
-    }
-    return $definitions;
   }
 
   /**
@@ -217,9 +170,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
 
     return [
       [
-        'group' => 'query_parameters',
         'key' => 'query.cond',
         'label' => 'Condition or disease (query.cond)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => '"Conditions or disease" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "ConditionSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#ConditionSearch') . '">Search Areas</a> for more details.',
         'examples' => [
@@ -228,9 +181,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'query_parameters',
         'key' => 'query.term',
         'label' => 'Other search terms (query.term)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => '"Other terms" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "BasicSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#BasicSearch') . '">Search Areas</a> for more details.',
         'examples' => [
@@ -238,65 +191,65 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'query_parameters',
         'key' => 'query.locn',
         'label' => 'Location terms (query.locn)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => '"Location terms" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "LocationSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#LocationSearch') . '">Search Areas</a> for more details.',
       ],
       [
-        'group' => 'query_parameters',
         'key' => 'query.titles',
         'label' => 'Title or acronym (query.titles)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => '"Title / acronym" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "TitleSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#TitleSearch') . '">Search Areas</a> for more details.',
       ],
       [
-        'group' => 'query_parameters',
         'key' => 'query.intr',
         'label' => 'Intervention or treatment (query.intr)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => '"Intervention / treatment" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "InterventionSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#InterventionSearch') . '">Search Areas</a> for more details.',
       ],
       [
-        'group' => 'query_parameters',
         'key' => 'query.outc',
         'label' => 'Outcome measure (query.outc)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => '"Outcome measure" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "OutcomeSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#OutcomeSearch') . '">Search Areas</a> for more details.',
       ],
       [
-        'group' => 'query_parameters',
         'key' => 'query.spons',
         'label' => 'Sponsor or collaborator (query.spons)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => '"Sponsor / collaborator" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "SponsorSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#SponsorSearch') . '">Search Areas</a> for more details.',
       ],
       [
-        'group' => 'query_parameters',
         'key' => 'query.lead',
         'label' => 'Lead sponsor (query.lead)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => 'Searches in "LeadSponsorName" field. See <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#LeadSponsorName') . '">Study Data Structure</a> for more details. The query is in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>.',
       ],
       [
-        'group' => 'query_parameters',
         'key' => 'query.id',
         'label' => 'NCT number or study ID (query.id)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => '"Study IDs" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "IdSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#IdSearch') . '">Search Areas</a> for more details.',
       ],
       [
-        'group' => 'query_parameters',
         'key' => 'query.patient',
         'label' => 'Patient query (query.patient)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => 'See "PatientSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#PatientSearch') . '">Search Areas</a> for more details.',
       ],
       [
-        'group' => 'filters',
         'key' => 'filter.overallStatus',
         'label' => 'Overall status (filter.overallStatus)',
+        'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
         'description' => 'Filter by comma- or pipe-separated list of statuses.',
@@ -304,9 +257,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         'examples' => $overall_status_examples,
       ],
       [
-        'group' => 'filters',
         'key' => 'filter.geo',
         'label' => 'Geographic filter (filter.geo)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => 'Filter by geo-function. Currently only distance function is supported. Format: <code>distance(latitude,longitude,distance)</code>.',
         'pattern' => '^distance\(-?\d+(\.\d+)?,-?\d+(\.\d+)?,\d+(\.\d+)?(km|mi)?\)$',
@@ -315,9 +268,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'filters',
         'key' => 'filter.ids',
         'label' => 'NCT ID filter (filter.ids)',
+        'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
         'description' => 'Filter by comma- or pipe-separated list of NCT IDs (a.k.a. ClinicalTrials.gov identifiers). The provided IDs will be searched in <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#NCTId') . '">NCTId</a> and <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#NCTIdAlias') . '">NCTIdAlias</a> fields.',
@@ -326,9 +279,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'filters',
         'key' => 'filter.advanced',
         'label' => 'Advanced filter (filter.advanced)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => 'Filter by query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>.',
         'examples' => [
@@ -337,9 +290,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'filters',
         'key' => 'filter.synonyms',
         'label' => 'Synonym filter (filter.synonyms)',
+        'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
         'description' => 'Filter by comma- or pipe-separated list of <code>area</code>:<code>synonym_id</code> pairs.',
@@ -348,9 +301,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'post_filters',
         'key' => 'postFilter.overallStatus',
         'label' => 'Post-filter overall status (postFilter.overallStatus)',
+        'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
         'description' => 'Filter by comma- or pipe-separated list of statuses.',
@@ -358,9 +311,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         'examples' => $overall_status_examples,
       ],
       [
-        'group' => 'post_filters',
         'key' => 'postFilter.geo',
         'label' => 'Post-filter geographic filter (postFilter.geo)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => 'Filter by geo-function. Currently only distance function is supported. Format: <code>distance(latitude,longitude,distance)</code>.',
         'pattern' => '^distance\(-?\d+(\.\d+)?,-?\d+(\.\d+)?,\d+(\.\d+)?(km|mi)?\)$',
@@ -369,9 +322,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'post_filters',
         'key' => 'postFilter.ids',
         'label' => 'Post-filter NCT IDs (postFilter.ids)',
+        'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
         'description' => 'Filter by comma- or pipe-separated list of NCT IDs (a.k.a. ClinicalTrials.gov identifiers). The provided IDs will be searched in <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#NCTId') . '">NCTId</a> and <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#NCTIdAlias') . '">NCTIdAlias</a> fields.',
@@ -380,9 +333,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'post_filters',
         'key' => 'postFilter.advanced',
         'label' => 'Post-filter advanced query (postFilter.advanced)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => 'Filter by query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>.',
         'examples' => [
@@ -391,9 +344,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'post_filters',
         'key' => 'postFilter.synonyms',
         'label' => 'Post-filter synonyms (postFilter.synonyms)',
+        'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
         'description' => 'Filter by comma- or pipe-separated list of <code>area</code>:<code>synonym_id</code> pairs.',
@@ -402,9 +355,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'aggregation',
         'key' => 'aggFilters',
         'label' => 'Aggregation filters (aggFilters)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => 'Apply aggregation filters, aggregation counts will not be provided. The value is comma- or pipe-separated list of pairs <code>filter_id</code>:<code>space-separated list of option keys</code> for the checked options.',
         'examples' => [
@@ -413,9 +366,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'aggregation',
         'key' => 'geoDecay',
         'label' => 'Geo decay (geoDecay)',
+        'data_type' => 'string',
         'type' => 'textfield',
         'description' => 'Set proximity factor by distance from <code>filter.geo</code> location to the closest <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#LocationGeoPoint') . '">LocationGeoPoint</a> of a study. Ignored, if <code>filter.geo</code> parameter is not set or response contains more than 10,000 studies.',
         'default' => 'func:exp,scale:300mi,offset:0mi,decay:0.5',
@@ -426,12 +379,12 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'output',
         'key' => 'fields',
         'label' => 'Fields (fields)',
+        'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
-        'description' => 'If specified, must be non-empty comma- or pipe-separated list of fields to return. If unspecified, all fields will be returned. Order of the fields does not matter.<br><br>For <code>csv</code> format, specify list of columns. The column names are available on <a href="' . static::docsUrl('/data-api/about-api/csv-download') . '">CSV Download</a>.<br><br>For <code>json</code> format, every list item is either area name, piece name, field name, or special name. If a piece or a field is a branch node, all descendant fields will be included. All area names are available on <a href="' . static::docsUrl('/data-api/about-api/search-areas') . '">Search Areas</a>, the piece and field names on <a href="' . static::docsUrl('/data-api/about-api/study-data-structure') . '">Data Structure</a> and also can be retrieved at <code>/studies/metadata</code> endpoint. There is a special name, <code>@query</code>, which expands to all fields queried by search.',
+        'description' => 'If specified, must be non-empty comma- or pipe-separated list of fields to return. If unspecified, all fields will be returned. Order of the fields does not matter.<br><br>For <code>json</code> format, every list item is either area name, piece name, field name, or special name. If a piece or a field is a branch node, all descendant fields will be included. All area names are available on <a href="' . static::docsUrl('/data-api/about-api/search-areas') . '">Search Areas</a>, the piece and field names on <a href="' . static::docsUrl('/data-api/about-api/study-data-structure') . '">Data Structure</a> and also can be retrieved at <code>/studies/metadata</code> endpoint. There is a special name, <code>@query</code>, which expands to all fields queried by search.',
         'min_items' => 1,
         'examples' => [
           ['values' => ['NCTId', 'BriefTitle', 'OverallStatus', 'HasResults'], 'label' => 'NCTId, BriefTitle, OverallStatus, HasResults'],
@@ -439,9 +392,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'output',
         'key' => 'sort',
         'label' => 'Sort (sort)',
+        'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
         'description' => 'Comma- or pipe-separated list of sorting options of the studies. The returning studies are not sorted by default for a performance reason. Every list item contains a field/piece name and an optional sort direction (<code>asc</code> for ascending or <code>desc</code> for descending) after colon character.<br><br>All piece and field names can be found on <a href="' . static::docsUrl('/data-api/about-api/study-data-structure') . '">Data Structure</a> and also can be retrieved at <code>/studies/metadata</code> endpoint. Currently, only date and numeric fields are allowed for sorting. There is a special "field" <code>@relevance</code> to sort by relevance to a search query.<br><br>Studies missing sort field are always last. Default sort direction: Date field <code>desc</code>, numeric field <code>asc</code>, and <code>@relevance</code> <code>desc</code>.',
@@ -453,11 +406,11 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'output',
         'key' => 'countTotal',
         'label' => 'Count total (countTotal)',
+        'data_type' => 'boolean',
         'type' => 'select',
-        'description' => 'Count total number of studies in all pages and return <code>totalCount</code> field with first page, if <code>true</code>. For CSV, the result can be found in <code>x-total-count</code> response header. The parameter is ignored for the subsequent pages.',
+        'description' => 'Count total number of studies in all pages and return <code>totalCount</code> field with first page, if <code>true</code>. The parameter is ignored for the subsequent pages.',
         'default' => 'false',
         'options' => [
           '' => '- Default -',
@@ -466,9 +419,9 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'output',
         'key' => 'pageSize',
         'label' => 'Page size (pageSize)',
+        'data_type' => 'int32',
         'type' => 'number',
         'description' => 'Page size is maximum number of studies to return in response. It does not have to be the same for every page. If not specified or set to 0, the default value will be used. It will be coerced down to 1,000, if greater than that.',
         'default' => '10',
@@ -480,11 +433,11 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         ],
       ],
       [
-        'group' => 'output',
         'key' => 'pageToken',
         'label' => 'Page token (pageToken)',
+        'data_type' => 'string',
         'type' => 'textfield',
-        'description' => 'Token to get next page. Set it to a <code>nextPageToken</code> value returned with the previous page in JSON format. For CSV, it can be found in <code>x-next-page-token</code> response header. Do not specify it for first page.',
+        'description' => 'Token to get next page. Set it to a <code>nextPageToken</code> value returned with the previous page in JSON format.',
       ],
     ];
   }
@@ -493,10 +446,17 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    * Builds a field element from a definition.
    */
   protected static function buildFieldElement(array $definition, string $default_value): array {
+    if (($definition['key'] === 'countTotal') && ($default_value === '')) {
+      $default_value = 'true';
+    }
+
     $element = [
-      '#title' => t('@label', ['@label' => $definition['label']]),
+      '#title' => t('@label', [
+        '@label' => static::displayLabel($definition),
+      ]),
       '#default_value' => $default_value,
       '#description' => static::buildDescription($definition),
+      '#field_prefix' => '<div class="clinical-trials-gov-studies-query__field-meta"><span class="clinical-trials-gov-studies-query__field-name">' . htmlspecialchars($definition['key']) . '</span> <span class="clinical-trials-gov-studies-query__field-type">(' . htmlspecialchars($definition['data_type']) . ')</span></div>',
     ];
 
     switch ($definition['type']) {
@@ -618,9 +578,23 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    */
   protected static function exampleValue(array $example): string {
     if (isset($example['value'])) {
+      if (is_array($example['value'])) {
+        return implode('|', $example['value']);
+      }
       return $example['value'];
     }
     return implode('|', $example['values']);
+  }
+
+  /**
+   * Returns the human-facing label without the raw parameter name.
+   */
+  protected static function displayLabel(array $definition): string {
+    $suffix = ' (' . $definition['key'] . ')';
+    if (str_ends_with($definition['label'], $suffix)) {
+      return substr($definition['label'], 0, -strlen($suffix));
+    }
+    return $definition['label'];
   }
 
 }

@@ -21,6 +21,15 @@ interface ClinicalTrialsGovManagerInterface {
   public function getStudies(array $parameters): array;
 
   /**
+   * Fetches version metadata for the ClinicalTrials.gov API dataset.
+   *
+   * @return array
+   *   Raw response from /version, typically including apiVersion and
+   *   dataTimestamp.
+   */
+  public function getVersion(): array;
+
+  /**
    * Fetches a single study by NCT ID and returns a flat Index-field array.
    *
    * Associative arrays (objects) in the response are recursed into using

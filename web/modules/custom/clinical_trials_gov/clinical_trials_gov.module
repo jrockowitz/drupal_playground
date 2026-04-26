@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Module hooks for the ClinicalTrials.gov module.
+ */
+
+/**
+ * Implements hook_gin_ignore_sticky_form_actions().
+ */
+function clinical_trials_gov_gin_ignore_sticky_form_actions(): array {
+  return [
+    'clinical_trials_gov_studies_search',
+  ];
+}

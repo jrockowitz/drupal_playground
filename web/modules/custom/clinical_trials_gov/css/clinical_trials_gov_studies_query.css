@@ -1,5 +1,14 @@
-.clinical-trials-gov-studies-query__source {
-  display: none;
+.clinical-trials-gov-studies-query__field-meta {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.clinical-trials-gov-studies-query__field-name {
+  font-size: 1em;
+}
+
+.clinical-trials-gov-studies-query__field-type {
+  font-size: 0.875em;
 }
 
 .clinical-trials-gov-studies-query__multivalue {
