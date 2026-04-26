@@ -53,13 +53,25 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->elementExists('css', 'form');
     $this->assertSession()->fieldExists('query__cond');
+    $this->assertSession()->fieldExists('query__patient');
+    $this->assertSession()->fieldExists('filter__synonyms');
+    $this->assertSession()->fieldExists('postFilter__overallStatus');
+    $this->assertSession()->fieldExists('geoDecay');
+    $this->assertSession()->fieldExists('fields');
 
     // Check that submitting the form shows a results table.
     $this->getSession()->getPage()->fillField('query__cond', 'cancer');
+    $this->getSession()->getPage()->fillField('query__patient', 'heart disease');
+    $this->getSession()->getPage()->fillField('filter__synonyms', 'ConditionSearch:1651367|BasicSearch:2013558');
+    $this->getSession()->getPage()->fillField('postFilter__overallStatus', 'RECRUITING|COMPLETED');
+    $this->getSession()->getPage()->fillField('geoDecay', 'func:linear,scale:100km,offset:10km,decay:0.1');
+    $this->getSession()->getPage()->fillField('fields', 'NCTId|BriefTitle');
     $this->assertSession()->elementExists('css', 'input[type="submit"][value="Search"]');
     $this->getSession()->getPage()->find('css', 'input[type="submit"][value="Search"]')->click();
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->elementExists('css', 'table');
+    $this->assertSession()->fieldValueEquals('query__patient', 'heart disease');
+    $this->assertSession()->fieldValueEquals('postFilter__overallStatus', 'RECRUITING|COMPLETED');
 
     // Check that an NCT ID link is present in the results.
     // The stub returns fixture studies — look for any NCT link.

@@ -26,6 +26,36 @@ use Drupal\Core\Render\Element\FormElementBase;
 class ClinicalTrialsGovStudiesQuery extends FormElementBase {
 
   /**
+   * Base URL for ClinicalTrials.gov documentation links.
+   */
+  protected const DOCS_BASE_URL = 'https://clinicaltrials.gov';
+
+  /**
+   * Query builder group labels keyed by machine name.
+   */
+  protected const GROUP_TITLES = [
+    'query_parameters' => 'Query parameters',
+    'filters' => 'Filters',
+    'post_filters' => 'Post-filters',
+    'aggregation' => 'Aggregation and ranking',
+    'output' => 'Output and pagination',
+  ];
+
+  /**
+   * Keys that accept multiple values and serialize to pipe-delimited strings.
+   */
+  protected const MULTI_VALUE_KEYS = [
+    'filter.overallStatus',
+    'filter.ids',
+    'filter.synonyms',
+    'postFilter.overallStatus',
+    'postFilter.ids',
+    'postFilter.synonyms',
+    'fields',
+    'sort',
+  ];
+
+  /**
    * {@inheritdoc}
    */
   public function getInfo(): array {
@@ -83,15 +113,11 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
   ): array {
     $defaults = static::parseQueryString($element['#default_value'] ?? '');
     $manager = \Drupal::service('clinical_trials_gov.manager');
-
-    $query_keys = [
-      'query.cond', 'query.term', 'query.locn', 'query.titles',
-      'query.intr', 'query.outc', 'query.spons', 'query.lead', 'query.id',
-    ];
-    $filter_keys = ['filter.overallStatus', 'filter.geo', 'filter.ids', 'filter.advanced', 'aggFilters'];
-    $pagination_keys = ['pageSize', 'pageToken', 'countTotal', 'sort'];
-
+    $field_definitions = static::fieldDefinitions($manager->getEnum('Status'));
+    $group_map = static::groupDefinitions($field_definitions);
     $has_defaults = !empty($defaults);
+
+    $element['#attached']['library'][] = 'clinical_trials_gov/studies_query';
 
     $element['search'] = [
       '#type' => 'details',
@@ -99,87 +125,22 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       '#open' => !$has_defaults,
     ];
 
-    $element['search']['query_parameters'] = [
-      '#type' => 'details',
-      '#title' => t('Query parameters'),
-      '#open' => !$has_defaults || !empty(array_intersect_key($defaults, array_flip($query_keys))),
-    ];
-    foreach (static::queryParameterDefinitions() as $definition) {
-      $name = static::apiKeyToElementName($definition['key']);
-      $element['search']['query_parameters'][$name] = static::buildTextField(
-        $definition['label'],
-        $definition['description'],
-        $defaults[$definition['key']] ?? '',
-      );
-    }
+    foreach (static::GROUP_TITLES as $group_name => $group_title) {
+      $group_keys = array_column($group_map[$group_name], 'key');
+      $element['search'][$group_name] = [
+        '#type' => 'details',
+        '#title' => t('@title', ['@title' => $group_title]),
+        '#open' => !$has_defaults || !empty(array_intersect_key($defaults, array_flip($group_keys))),
+      ];
 
-    $element['search']['filters'] = [
-      '#type' => 'details',
-      '#title' => t('Filters'),
-      '#open' => !$has_defaults || !empty(array_intersect_key($defaults, array_flip($filter_keys))),
-    ];
-    $overall_status_options = ['' => t('- Any -')];
-    foreach ($manager->getEnum('OverallStatus') as $status) {
-      $overall_status_options[$status] = $status;
+      foreach ($group_map[$group_name] as $definition) {
+        $name = static::apiKeyToElementName($definition['key']);
+        $element['search'][$group_name][$name] = static::buildFieldElement(
+          $definition,
+          $defaults[$definition['key']] ?? '',
+        );
+      }
     }
-    $element['search']['filters']['filter__overallStatus'] = [
-      '#type' => 'select',
-      '#title' => t('Overall status (filter.overallStatus)'),
-      '#description' => t('Filter by comma- or pipe-separated list of study statuses. Example: NOT_YET_RECRUITING|RECRUITING'),
-      '#options' => $overall_status_options,
-      '#default_value' => $defaults['filter.overallStatus'] ?? '',
-    ];
-    $element['search']['filters']['filter__geo'] = static::buildTextField(
-      'Geographic filter (filter.geo)',
-      'Filter by distance function from a geographic location. Example: distance(39.0035707,-77.1013313,50mi)',
-      $defaults['filter.geo'] ?? '',
-    );
-    $element['search']['filters']['filter__ids'] = static::buildTextField(
-      'NCT ID filter (filter.ids)',
-      'Filter by NCT IDs, searchable in NCTId and NCTIdAlias fields. Example: NCT04852770|NCT01728545|NCT02109302',
-      $defaults['filter.ids'] ?? '',
-    );
-    $element['search']['filters']['filter__advanced'] = static::buildTextField(
-      'Advanced filter (filter.advanced)',
-      'Filter using Essie expression syntax. Example: AREA[StartDate]2022',
-      $defaults['filter.advanced'] ?? '',
-    );
-    $element['search']['filters']['aggFilters'] = static::buildTextField(
-      'Aggregation filters (aggFilters)',
-      'Apply aggregation filters as comma/pipe-separated "filter_id:option_keys" pairs. Example: results:with,status:com',
-      $defaults['aggFilters'] ?? '',
-    );
-
-    $element['search']['pagination'] = [
-      '#type' => 'details',
-      '#title' => t('Pagination and sort'),
-      '#open' => !$has_defaults || !empty(array_intersect_key($defaults, array_flip($pagination_keys))),
-    ];
-    $element['search']['pagination']['pageSize'] = [
-      '#type' => 'number',
-      '#title' => t('Page size (pageSize)'),
-      '#description' => t('Maximum studies per response page; capped at 1,000. Default: 10.'),
-      '#min' => 1,
-      '#max' => 1000,
-      '#default_value' => $defaults['pageSize'] ?? '',
-    ];
-    $element['search']['pagination']['pageToken'] = static::buildTextField(
-      'Page token (pageToken)',
-      'Token for retrieving subsequent pages from previous response',
-      $defaults['pageToken'] ?? '',
-    );
-    $element['search']['pagination']['countTotal'] = [
-      '#type' => 'select',
-      '#title' => t('Count total (countTotal)'),
-      '#description' => t('When true, returns total study count in first page response.'),
-      '#options' => ['' => t('- Default -'), 'true' => t('Yes'), 'false' => t('No')],
-      '#default_value' => $defaults['countTotal'] ?? '',
-    ];
-    $element['search']['pagination']['sort'] = static::buildTextField(
-      'Sort (sort)',
-      'Comma- or pipe-separated list of sorting options with optional directions (asc/desc). Example: @relevance',
-      $defaults['sort'] ?? '',
-    );
 
     return $element;
   }
@@ -193,7 +154,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     array &$complete_form,
   ): void {
     $parts = [];
-    foreach (['query_parameters', 'filters', 'pagination'] as $group) {
+    foreach (array_keys(static::GROUP_TITLES) as $group) {
       if (!isset($element['search'][$group])) {
         continue;
       }
@@ -201,82 +162,465 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         if (!is_array($child) || !array_key_exists('#value', $child)) {
           continue;
         }
-        $value = trim((string) $child['#value']);
+        $api_key = static::elementNameToApiKey($name);
+        $value = static::normalizeSubmittedValue($api_key, $child['#value']);
         if ($value === '') {
           continue;
         }
-        $parts[] = rawurlencode(static::elementNameToApiKey($name)) . '=' . rawurlencode($value);
+        $parts[] = rawurlencode($api_key) . '=' . rawurlencode($value);
       }
     }
     $form_state->setValueForElement($element, implode('&', $parts));
   }
 
   /**
-   * Returns the ordered definitions for the query parameter group.
+   * Returns all field definitions keyed by group.
    */
-  protected static function queryParameterDefinitions(): array {
+  protected static function groupDefinitions(array $overall_status_values): array {
+    $definitions = [];
+    foreach (array_keys(static::GROUP_TITLES) as $group_name) {
+      $definitions[$group_name] = [];
+    }
+    foreach (static::fieldDefinitions($overall_status_values) as $definition) {
+      $definitions[$definition['group']][] = $definition;
+    }
+    return $definitions;
+  }
+
+  /**
+   * Returns the ordered field definitions for the query builder.
+   */
+  protected static function fieldDefinitions(array $overall_status_values): array {
+    $overall_status_values = array_values(array_filter(array_map(
+      static function (mixed $value): ?string {
+        if (is_string($value)) {
+          return $value;
+        }
+        if (is_array($value) && isset($value['value']) && is_string($value['value'])) {
+          return $value['value'];
+        }
+        return NULL;
+      },
+      $overall_status_values
+    )));
+    $overall_status_examples = [
+      ['values' => ['NOT_YET_RECRUITING', 'RECRUITING'], 'label' => 'NOT_YET_RECRUITING, RECRUITING'],
+      ['values' => ['COMPLETED'], 'label' => 'COMPLETED'],
+    ];
+    $overall_status_allowed = array_map(
+      static fn(string $value): array => [
+        'value' => [$value],
+        'label' => $value,
+      ],
+      $overall_status_values
+    );
+
     return [
       [
+        'group' => 'query_parameters',
         'key' => 'query.cond',
         'label' => 'Condition or disease (query.cond)',
-        'description' => '"Conditions or disease" query in Essie expression syntax for the Condition Search Area. Example: lung cancer',
+        'type' => 'textfield',
+        'description' => '"Conditions or disease" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "ConditionSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#ConditionSearch') . '">Search Areas</a> for more details.',
+        'examples' => [
+          ['value' => 'lung cancer', 'label' => 'lung cancer'],
+          ['value' => '(head OR neck) AND pain', 'label' => '(head OR neck) AND pain'],
+        ],
       ],
       [
+        'group' => 'query_parameters',
         'key' => 'query.term',
         'label' => 'Other search terms (query.term)',
-        'description' => '"Other terms" query in Essie expression syntax for the Basic Search Area. Example: AREA[LastUpdatePostDate]RANGE[2023-01-15,MAX]',
+        'type' => 'textfield',
+        'description' => '"Other terms" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "BasicSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#BasicSearch') . '">Search Areas</a> for more details.',
+        'examples' => [
+          ['value' => 'AREA[LastUpdatePostDate]RANGE[2023-01-15,MAX]', 'label' => 'AREA[LastUpdatePostDate]RANGE[2023-01-15,MAX]'],
+        ],
       ],
       [
+        'group' => 'query_parameters',
         'key' => 'query.locn',
         'label' => 'Location terms (query.locn)',
-        'description' => '"Location terms" query in Essie expression syntax for the Location Search Area.',
+        'type' => 'textfield',
+        'description' => '"Location terms" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "LocationSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#LocationSearch') . '">Search Areas</a> for more details.',
       ],
       [
+        'group' => 'query_parameters',
         'key' => 'query.titles',
         'label' => 'Title or acronym (query.titles)',
-        'description' => '"Title / acronym" query in Essie expression syntax for the Title Search Area.',
+        'type' => 'textfield',
+        'description' => '"Title / acronym" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "TitleSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#TitleSearch') . '">Search Areas</a> for more details.',
       ],
       [
+        'group' => 'query_parameters',
         'key' => 'query.intr',
         'label' => 'Intervention or treatment (query.intr)',
-        'description' => '"Intervention / treatment" query in Essie expression syntax for the Intervention Search Area.',
+        'type' => 'textfield',
+        'description' => '"Intervention / treatment" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "InterventionSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#InterventionSearch') . '">Search Areas</a> for more details.',
       ],
       [
+        'group' => 'query_parameters',
         'key' => 'query.outc',
         'label' => 'Outcome measure (query.outc)',
-        'description' => '"Outcome measure" query in Essie expression syntax for the Outcome Search Area.',
+        'type' => 'textfield',
+        'description' => '"Outcome measure" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "OutcomeSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#OutcomeSearch') . '">Search Areas</a> for more details.',
       ],
       [
+        'group' => 'query_parameters',
         'key' => 'query.spons',
         'label' => 'Sponsor or collaborator (query.spons)',
-        'description' => '"Sponsor / collaborator" query in Essie expression syntax for the Sponsor Search Area.',
+        'type' => 'textfield',
+        'description' => '"Sponsor / collaborator" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "SponsorSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#SponsorSearch') . '">Search Areas</a> for more details.',
       ],
       [
+        'group' => 'query_parameters',
         'key' => 'query.lead',
         'label' => 'Lead sponsor (query.lead)',
-        'description' => 'Searches the "LeadSponsorName" field using Essie expression syntax.',
+        'type' => 'textfield',
+        'description' => 'Searches in "LeadSponsorName" field. See <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#LeadSponsorName') . '">Study Data Structure</a> for more details. The query is in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>.',
       ],
       [
+        'group' => 'query_parameters',
         'key' => 'query.id',
         'label' => 'NCT number or study ID (query.id)',
-        'description' => '"Study IDs" query in Essie expression syntax for the ID Search Area.',
+        'type' => 'textfield',
+        'description' => '"Study IDs" query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>. See "IdSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#IdSearch') . '">Search Areas</a> for more details.',
+      ],
+      [
+        'group' => 'query_parameters',
+        'key' => 'query.patient',
+        'label' => 'Patient query (query.patient)',
+        'type' => 'textfield',
+        'description' => 'See "PatientSearch Area" on <a href="' . static::docsUrl('/data-api/about-api/search-areas#PatientSearch') . '">Search Areas</a> for more details.',
+      ],
+      [
+        'group' => 'filters',
+        'key' => 'filter.overallStatus',
+        'label' => 'Overall status (filter.overallStatus)',
+        'type' => 'textarea',
+        'multivalue' => TRUE,
+        'description' => 'Filter by comma- or pipe-separated list of statuses.',
+        'allowed_values' => $overall_status_allowed,
+        'examples' => $overall_status_examples,
+      ],
+      [
+        'group' => 'filters',
+        'key' => 'filter.geo',
+        'label' => 'Geographic filter (filter.geo)',
+        'type' => 'textfield',
+        'description' => 'Filter by geo-function. Currently only distance function is supported. Format: <code>distance(latitude,longitude,distance)</code>.',
+        'pattern' => '^distance\(-?\d+(\.\d+)?,-?\d+(\.\d+)?,\d+(\.\d+)?(km|mi)?\)$',
+        'examples' => [
+          ['value' => 'distance(39.0035707,-77.1013313,50mi)', 'label' => 'distance(39.0035707,-77.1013313,50mi)'],
+        ],
+      ],
+      [
+        'group' => 'filters',
+        'key' => 'filter.ids',
+        'label' => 'NCT ID filter (filter.ids)',
+        'type' => 'textarea',
+        'multivalue' => TRUE,
+        'description' => 'Filter by comma- or pipe-separated list of NCT IDs (a.k.a. ClinicalTrials.gov identifiers). The provided IDs will be searched in <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#NCTId') . '">NCTId</a> and <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#NCTIdAlias') . '">NCTIdAlias</a> fields.',
+        'examples' => [
+          ['values' => ['NCT04852770', 'NCT01728545', 'NCT02109302'], 'label' => 'NCT04852770, NCT01728545, NCT02109302'],
+        ],
+      ],
+      [
+        'group' => 'filters',
+        'key' => 'filter.advanced',
+        'label' => 'Advanced filter (filter.advanced)',
+        'type' => 'textfield',
+        'description' => 'Filter by query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>.',
+        'examples' => [
+          ['value' => 'AREA[StartDate]2022', 'label' => 'AREA[StartDate]2022'],
+          ['value' => 'AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]', 'label' => 'AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]'],
+        ],
+      ],
+      [
+        'group' => 'filters',
+        'key' => 'filter.synonyms',
+        'label' => 'Synonym filter (filter.synonyms)',
+        'type' => 'textarea',
+        'multivalue' => TRUE,
+        'description' => 'Filter by comma- or pipe-separated list of <code>area</code>:<code>synonym_id</code> pairs.',
+        'examples' => [
+          ['values' => ['ConditionSearch:1651367', 'BasicSearch:2013558'], 'label' => 'ConditionSearch:1651367, BasicSearch:2013558'],
+        ],
+      ],
+      [
+        'group' => 'post_filters',
+        'key' => 'postFilter.overallStatus',
+        'label' => 'Post-filter overall status (postFilter.overallStatus)',
+        'type' => 'textarea',
+        'multivalue' => TRUE,
+        'description' => 'Filter by comma- or pipe-separated list of statuses.',
+        'allowed_values' => $overall_status_allowed,
+        'examples' => $overall_status_examples,
+      ],
+      [
+        'group' => 'post_filters',
+        'key' => 'postFilter.geo',
+        'label' => 'Post-filter geographic filter (postFilter.geo)',
+        'type' => 'textfield',
+        'description' => 'Filter by geo-function. Currently only distance function is supported. Format: <code>distance(latitude,longitude,distance)</code>.',
+        'pattern' => '^distance\(-?\d+(\.\d+)?,-?\d+(\.\d+)?,\d+(\.\d+)?(km|mi)?\)$',
+        'examples' => [
+          ['value' => 'distance(39.0035707,-77.1013313,50mi)', 'label' => 'distance(39.0035707,-77.1013313,50mi)'],
+        ],
+      ],
+      [
+        'group' => 'post_filters',
+        'key' => 'postFilter.ids',
+        'label' => 'Post-filter NCT IDs (postFilter.ids)',
+        'type' => 'textarea',
+        'multivalue' => TRUE,
+        'description' => 'Filter by comma- or pipe-separated list of NCT IDs (a.k.a. ClinicalTrials.gov identifiers). The provided IDs will be searched in <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#NCTId') . '">NCTId</a> and <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#NCTIdAlias') . '">NCTIdAlias</a> fields.',
+        'examples' => [
+          ['values' => ['NCT04852770', 'NCT01728545', 'NCT02109302'], 'label' => 'NCT04852770, NCT01728545, NCT02109302'],
+        ],
+      ],
+      [
+        'group' => 'post_filters',
+        'key' => 'postFilter.advanced',
+        'label' => 'Post-filter advanced query (postFilter.advanced)',
+        'type' => 'textfield',
+        'description' => 'Filter by query in <a href="' . static::docsUrl('/find-studies/constructing-complex-search-queries') . '">Essie expression syntax</a>.',
+        'examples' => [
+          ['value' => 'AREA[StartDate]2022', 'label' => 'AREA[StartDate]2022'],
+          ['value' => 'AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]', 'label' => 'AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]'],
+        ],
+      ],
+      [
+        'group' => 'post_filters',
+        'key' => 'postFilter.synonyms',
+        'label' => 'Post-filter synonyms (postFilter.synonyms)',
+        'type' => 'textarea',
+        'multivalue' => TRUE,
+        'description' => 'Filter by comma- or pipe-separated list of <code>area</code>:<code>synonym_id</code> pairs.',
+        'examples' => [
+          ['values' => ['ConditionSearch:1651367', 'BasicSearch:2013558'], 'label' => 'ConditionSearch:1651367, BasicSearch:2013558'],
+        ],
+      ],
+      [
+        'group' => 'aggregation',
+        'key' => 'aggFilters',
+        'label' => 'Aggregation filters (aggFilters)',
+        'type' => 'textfield',
+        'description' => 'Apply aggregation filters, aggregation counts will not be provided. The value is comma- or pipe-separated list of pairs <code>filter_id</code>:<code>space-separated list of option keys</code> for the checked options.',
+        'examples' => [
+          ['value' => 'results:with,status:com', 'label' => 'results:with,status:com'],
+          ['value' => 'status:not rec,sex:f,healthy:y', 'label' => 'status:not rec,sex:f,healthy:y'],
+        ],
+      ],
+      [
+        'group' => 'aggregation',
+        'key' => 'geoDecay',
+        'label' => 'Geo decay (geoDecay)',
+        'type' => 'textfield',
+        'description' => 'Set proximity factor by distance from <code>filter.geo</code> location to the closest <a href="' . static::docsUrl('/data-api/about-api/study-data-structure#LocationGeoPoint') . '">LocationGeoPoint</a> of a study. Ignored, if <code>filter.geo</code> parameter is not set or response contains more than 10,000 studies.',
+        'default' => 'func:exp,scale:300mi,offset:0mi,decay:0.5',
+        'pattern' => '^func:(gauss|exp|linear),scale:(\d+(\.\d+)?(km|mi)),offset:(\d+(\.\d+)?(km|mi)),decay:(\d+(\.\d+)?)$',
+        'examples' => [
+          ['value' => 'func:linear,scale:100km,offset:10km,decay:0.1', 'label' => 'func:linear,scale:100km,offset:10km,decay:0.1'],
+          ['value' => 'func:gauss,scale:500mi,offset:0mi,decay:0.3', 'label' => 'func:gauss,scale:500mi,offset:0mi,decay:0.3'],
+        ],
+      ],
+      [
+        'group' => 'output',
+        'key' => 'fields',
+        'label' => 'Fields (fields)',
+        'type' => 'textarea',
+        'multivalue' => TRUE,
+        'description' => 'If specified, must be non-empty comma- or pipe-separated list of fields to return. If unspecified, all fields will be returned. Order of the fields does not matter.<br><br>For <code>csv</code> format, specify list of columns. The column names are available on <a href="' . static::docsUrl('/data-api/about-api/csv-download') . '">CSV Download</a>.<br><br>For <code>json</code> format, every list item is either area name, piece name, field name, or special name. If a piece or a field is a branch node, all descendant fields will be included. All area names are available on <a href="' . static::docsUrl('/data-api/about-api/search-areas') . '">Search Areas</a>, the piece and field names on <a href="' . static::docsUrl('/data-api/about-api/study-data-structure') . '">Data Structure</a> and also can be retrieved at <code>/studies/metadata</code> endpoint. There is a special name, <code>@query</code>, which expands to all fields queried by search.',
+        'min_items' => 1,
+        'examples' => [
+          ['values' => ['NCTId', 'BriefTitle', 'OverallStatus', 'HasResults'], 'label' => 'NCTId, BriefTitle, OverallStatus, HasResults'],
+          ['values' => ['ProtocolSection'], 'label' => 'ProtocolSection'],
+        ],
+      ],
+      [
+        'group' => 'output',
+        'key' => 'sort',
+        'label' => 'Sort (sort)',
+        'type' => 'textarea',
+        'multivalue' => TRUE,
+        'description' => 'Comma- or pipe-separated list of sorting options of the studies. The returning studies are not sorted by default for a performance reason. Every list item contains a field/piece name and an optional sort direction (<code>asc</code> for ascending or <code>desc</code> for descending) after colon character.<br><br>All piece and field names can be found on <a href="' . static::docsUrl('/data-api/about-api/study-data-structure') . '">Data Structure</a> and also can be retrieved at <code>/studies/metadata</code> endpoint. Currently, only date and numeric fields are allowed for sorting. There is a special "field" <code>@relevance</code> to sort by relevance to a search query.<br><br>Studies missing sort field are always last. Default sort direction: Date field <code>desc</code>, numeric field <code>asc</code>, and <code>@relevance</code> <code>desc</code>.',
+        'max_items' => 2,
+        'examples' => [
+          ['values' => ['@relevance'], 'label' => '@relevance'],
+          ['values' => ['LastUpdatePostDate'], 'label' => 'LastUpdatePostDate'],
+          ['values' => ['EnrollmentCount:desc', 'NumArmGroups'], 'label' => 'EnrollmentCount:desc, NumArmGroups'],
+        ],
+      ],
+      [
+        'group' => 'output',
+        'key' => 'countTotal',
+        'label' => 'Count total (countTotal)',
+        'type' => 'select',
+        'description' => 'Count total number of studies in all pages and return <code>totalCount</code> field with first page, if <code>true</code>. For CSV, the result can be found in <code>x-total-count</code> response header. The parameter is ignored for the subsequent pages.',
+        'default' => 'false',
+        'options' => [
+          '' => '- Default -',
+          'true' => 'Yes',
+          'false' => 'No',
+        ],
+      ],
+      [
+        'group' => 'output',
+        'key' => 'pageSize',
+        'label' => 'Page size (pageSize)',
+        'type' => 'number',
+        'description' => 'Page size is maximum number of studies to return in response. It does not have to be the same for every page. If not specified or set to 0, the default value will be used. It will be coerced down to 1,000, if greater than that.',
+        'default' => '10',
+        'min' => 0,
+        'max' => 1000,
+        'examples' => [
+          ['value' => '2', 'label' => '2'],
+          ['value' => '100', 'label' => '100'],
+        ],
+      ],
+      [
+        'group' => 'output',
+        'key' => 'pageToken',
+        'label' => 'Page token (pageToken)',
+        'type' => 'textfield',
+        'description' => 'Token to get next page. Set it to a <code>nextPageToken</code> value returned with the previous page in JSON format. For CSV, it can be found in <code>x-next-page-token</code> response header. Do not specify it for first page.',
       ],
     ];
   }
 
   /**
-   * Builds a textfield sub-element.
+   * Builds a field element from a definition.
    */
-  protected static function buildTextField(string $label, string $description, string $default_value): array {
+  protected static function buildFieldElement(array $definition, string $default_value): array {
     $element = [
-      '#type' => 'textfield',
-      '#title' => t('@label', ['@label' => $label]),
+      '#title' => t('@label', ['@label' => $definition['label']]),
       '#default_value' => $default_value,
+      '#description' => static::buildDescription($definition),
     ];
-    if ($description !== '') {
-      $element['#description'] = t('@description', ['@description' => $description]);
+
+    switch ($definition['type']) {
+      case 'number':
+        $element['#type'] = 'number';
+        if (isset($definition['min'])) {
+          $element['#min'] = $definition['min'];
+        }
+        if (isset($definition['max'])) {
+          $element['#max'] = $definition['max'];
+        }
+        break;
+
+      case 'select':
+        $element['#type'] = 'select';
+        $element['#options'] = array_map(
+          static fn(string $label): string => (string) t('@label', ['@label' => $label]),
+          $definition['options']
+        );
+        break;
+
+      case 'textarea':
+        $element['#type'] = 'textarea';
+        $element['#rows'] = 2;
+        if (!empty($definition['multivalue'])) {
+          $element['#attributes']['data-clinical-trials-gov-multi-value'] = 'true';
+          $element['#attributes']['data-clinical-trials-gov-separator'] = 'pipe';
+        }
+        break;
+
+      case 'textfield':
+      default:
+        $element['#type'] = 'textfield';
+        break;
     }
+
     return $element;
+  }
+
+  /**
+   * Builds the description markup for a field.
+   */
+  protected static function buildDescription(array $definition): array {
+    $parts = [];
+    $parts[] = '<div class="clinical-trials-gov-studies-query__description">' . $definition['description'] . '</div>';
+
+    $metadata_lines = [];
+    if (isset($definition['default'])) {
+      $metadata_lines[] = '<strong>Default:</strong> <code>' . htmlspecialchars($definition['default']) . '</code>';
+    }
+    if (isset($definition['pattern'])) {
+      $metadata_lines[] = '<strong>Pattern:</strong> <code>' . htmlspecialchars($definition['pattern']) . '</code>';
+    }
+    if (isset($definition['min_items'])) {
+      $metadata_lines[] = '<strong>Minimum:</strong> ' . (string) $definition['min_items'] . ' item';
+    }
+    if (isset($definition['max_items'])) {
+      $metadata_lines[] = '<strong>Maximum:</strong> ' . (string) $definition['max_items'] . ' items';
+    }
+    if (!empty($metadata_lines)) {
+      $parts[] = '<div class="clinical-trials-gov-studies-query__meta">' . implode('<br>', $metadata_lines) . '</div>';
+    }
+
+    if (!empty($definition['allowed_values'])) {
+      $allowed = [];
+      foreach ($definition['allowed_values'] as $allowed_value) {
+        $value = static::exampleValue($allowed_value);
+        $allowed[] = '<a href="#" class="clinical-trials-gov-studies-query__fill-value" data-clinical-trials-gov-value="' . htmlspecialchars($value, ENT_QUOTES) . '">' . htmlspecialchars($allowed_value['label']) . '</a>';
+      }
+      $parts[] = '<div class="clinical-trials-gov-studies-query__allowed"><strong>Allowed:</strong> ' . implode(' | ', $allowed) . '</div>';
+    }
+
+    if (!empty($definition['examples'])) {
+      $examples = [];
+      foreach ($definition['examples'] as $example) {
+        $value = static::exampleValue($example);
+        $examples[] = '<a href="#" class="clinical-trials-gov-studies-query__fill-value" data-clinical-trials-gov-value="' . htmlspecialchars($value, ENT_QUOTES) . '">' . htmlspecialchars($example['label']) . '</a>';
+      }
+      $parts[] = '<div class="clinical-trials-gov-studies-query__examples"><strong>Examples:</strong> ' . implode(' | ', $examples) . '</div>';
+    }
+
+    return [
+      '#type' => 'inline_template',
+      '#template' => '{{ description|raw }}',
+      '#context' => [
+        'description' => implode('', $parts),
+      ],
+    ];
+  }
+
+  /**
+   * Normalizes a submitted field value for serialization.
+   */
+  protected static function normalizeSubmittedValue(string $api_key, mixed $value): string {
+    $normalized = trim((string) $value);
+    if ($normalized === '') {
+      return '';
+    }
+
+    if (in_array($api_key, static::MULTI_VALUE_KEYS, TRUE)) {
+      $normalized = preg_replace('/[\r\n]+/', '|', $normalized) ?? $normalized;
+      $normalized = str_replace(',', '|', $normalized);
+      $parts = array_values(array_filter(array_map('trim', explode('|', $normalized))));
+      return implode('|', $parts);
+    }
+
+    return $normalized;
+  }
+
+  /**
+   * Returns a full ClinicalTrials.gov documentation URL.
+   */
+  protected static function docsUrl(string $path): string {
+    return static::DOCS_BASE_URL . $path;
+  }
+
+  /**
+   * Returns the serialized example value.
+   */
+  protected static function exampleValue(array $example): string {
+    if (isset($example['value'])) {
+      return $example['value'];
+    }
+    return implode('|', $example['values']);
   }
 
 }

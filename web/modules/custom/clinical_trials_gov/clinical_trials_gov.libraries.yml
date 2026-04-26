@@ -1,0 +1,10 @@
+studies_query:
+  version: 1.x
+  js:
+    js/clinical_trials_gov_studies_query.js: {}
+  css:
+    theme:
+      css/clinical_trials_gov_studies_query.css: {}
+  dependencies:
+    - core/drupal
+    - core/once
