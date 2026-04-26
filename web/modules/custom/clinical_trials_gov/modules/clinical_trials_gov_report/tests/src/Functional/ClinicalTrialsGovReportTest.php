@@ -96,11 +96,16 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $nct_link->click();
     $this->assertSession()->statusCodeEquals(200);
 
-    // Check that the study detail page contains at least one details element.
-    $this->assertSession()->elementExists('css', 'details');
-
-    // Check that the raw data details widget is present.
-    $this->assertSession()->pageTextContains('Raw data');
+    // Check that the study detail page shows summary content and a flat table.
+    $this->assertSession()->pageTextContains('Conditions');
+    $this->assertSession()->pageTextContains('Study overview');
+    $this->assertSession()->pageTextContains('Eligibility');
+    $this->assertSession()->pageTextContains('Study summary');
+    $this->assertSession()->pageTextContains('Study data');
+    $this->assertSession()->elementExists('css', 'details summary');
+    $this->assertSession()->elementExists('css', 'details[open] summary');
+    $this->assertSession()->pageTextNotContains('Raw data');
+    $this->assertSession()->pageTextContains('API URL:');
 
     // Check that the reset action returns to the unfiltered report page.
     $this->drupalGet('admin/reports/status/clinical-trials-gov');

@@ -34,7 +34,7 @@ class ClinicalTrialsGovReportStudyController extends ControllerBase {
       ];
     }
 
-    return $this->builder->buildStudy($study);
+    return $this->builder->buildStudy($study, $nctId);
   }
 
   /**

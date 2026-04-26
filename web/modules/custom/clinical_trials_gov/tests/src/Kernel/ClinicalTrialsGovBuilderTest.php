@@ -44,37 +44,43 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
     $study = $this->container->get('clinical_trials_gov.manager')->getStudy($nct_id);
     $this->assertNotEmpty($study, 'Stub returned a non-empty study array.');
 
-    $build = $this->builder->buildStudy($study);
+    $build = $this->builder->buildStudy($study, $nct_id);
 
     // Check that the top-level element is a container.
     $this->assertSame('container', $build['#type']);
 
-    // Check that at least one top-level section exists as a details element.
-    $has_details = FALSE;
-    foreach ($build as $value) {
-      if (is_array($value) && ($value['#type'] ?? '') === 'details') {
-        $has_details = TRUE;
-        break;
-      }
-    }
-    $this->assertTrue($has_details, 'At least one top-level details element expected.');
+    // Check that the summary section is present.
+    $this->assertArrayHasKey('summary', $build);
+    $this->assertSame('details', $build['summary']['#type']);
+    $this->assertTrue($build['summary']['#open']);
+    $this->assertSame('container', $build['summary']['content']['#type']);
 
-    // Check that the raw data details widget is appended.
-    $this->assertArrayHasKey('raw_data', $build);
-    $this->assertSame('details', $build['raw_data']['#type']);
-    $this->assertArrayHasKey('table', $build['raw_data']);
-    $this->assertSame('table', $build['raw_data']['table']['#type']);
+    // Check that the flattened data table is present inside a closed details.
+    $this->assertArrayHasKey('data_table', $build);
+    $this->assertSame('details', $build['data_table']['#type']);
+    $this->assertFalse($build['data_table']['#open']);
+    $this->assertSame('table', $build['data_table']['table']['#type']);
 
-    // Check that the raw data table has the expected column headers.
+    // Check that the flattened data table has the expected column headers.
     $header_labels = array_map(
       fn($header) => (string) $header,
-      $build['raw_data']['table']['#header']
+      $build['data_table']['table']['#header']
     );
-    $this->assertContains('Field path', $header_labels);
+    $this->assertContains('Field', $header_labels);
     $this->assertContains('Value', $header_labels);
 
-    // Check that the raw data table has one row per study field.
-    $this->assertCount(count($study), $build['raw_data']['table']['#rows']);
+    // Check that the flattened data table has one row per study field.
+    $this->assertCount(count($study), $build['data_table']['table']['#rows']);
+
+    // Check that the raw data details widget is no longer present.
+    $this->assertArrayNotHasKey('raw_data', $build);
+
+    // Check that the study API URL is present.
+    $this->assertArrayHasKey('api_url', $build);
+    $this->assertStringContainsString('/studies/' . $nct_id, (string) $build['api_url']['#markup']);
+
+    // Check that the study build attaches the report library.
+    $this->assertContains('clinical_trials_gov/study_report', $build['#attached']['library']);
   }
 
 }

@@ -12,17 +12,16 @@ interface ClinicalTrialsGovBuilderInterface {
   /**
    * Converts a flat Index-field study array into a Drupal render array.
    *
-   * Fields with sourceType STRUCT in the metadata become #type => details.
-   * Leaf fields become #type => item. A collapsed Raw data details widget
-   * containing the full flat table is appended at the end.
-   *
    * @param array $study
    *   Flat array keyed by Index field paths, as returned by
    *   ClinicalTrialsGovManagerInterface::getStudy().
+   * @param string $nct_id
+   *   The NCT ID used to build the upstream API URL.
    *
    * @return array
-   *   Drupal render array using only native elements (no custom CSS).
+   *   Drupal render array containing a study summary, flattened data table,
+   *   and upstream API URL.
    */
-  public function buildStudy(array $study): array;
+  public function buildStudy(array $study, string $nct_id): array;
 
 }
