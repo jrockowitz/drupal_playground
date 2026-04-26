@@ -27,10 +27,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
     return [
       '#type' => 'container',
       '#attributes' => [
-        'class' => ['clinical-trials-gov-study-report'],
-      ],
-      '#attached' => [
-        'library' => ['clinical_trials_gov/study_report'],
+        'class' => ['clinical-trials-gov-report-study'],
       ],
       'summary' => [
         '#type' => 'details',
@@ -39,6 +36,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
         'content' => $this->buildSummary($study),
       ],
       'data_table' => $this->buildDataTable($study, $metadata),
+      'study_link' => $this->buildStudyLink($nct_id),
       'api_url' => $this->buildApiUrl($nct_id),
     ];
   }
@@ -337,7 +335,22 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
 
     return [
       '#type' => 'item',
-      '#markup' => $this->t('API URL: <a href=":url">@url</a>', [
+      '#markup' => $this->t('ClinicalTrials.gov API: <a href=":url">@url</a>', [
+        ':url' => $url,
+        '@url' => $url,
+      ]),
+    ];
+  }
+
+  /**
+   * Builds the public ClinicalTrials.gov study link.
+   */
+  protected function buildStudyLink(string $nct_id): array {
+    $url = 'https://clinicaltrials.gov/study/' . rawurlencode($nct_id);
+
+    return [
+      '#type' => 'item',
+      '#markup' => $this->t('ClinicalTrials.gov URL: <a href=":url">@url</a>', [
         ':url' => $url,
         '@url' => $url,
       ]),

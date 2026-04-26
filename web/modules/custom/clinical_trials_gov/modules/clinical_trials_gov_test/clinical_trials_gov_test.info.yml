@@ -1,6 +1,6 @@
 name: "ClinicalTrials.gov Test"
 type: module
-description: "Stub manager and fixtures for ClinicalTrials.gov testing."
+description: "Shim module that loads the ClinicalTrials.gov test stub from tests/modules."
 package: Testing
 core_version_requirement: ^10.3 || ^11
 hidden: true

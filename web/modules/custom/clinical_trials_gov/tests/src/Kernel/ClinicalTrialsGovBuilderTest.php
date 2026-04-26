@@ -41,6 +41,9 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
   public function testBuildStudy(): void {
     $nct_id = 'NCT05088187';
 
+    // Check that the duplicate runtime fixture copy is not present.
+    $this->assertDirectoryDoesNotExist(DRUPAL_ROOT . '/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_test/fixtures');
+
     $study = $this->container->get('clinical_trials_gov.manager')->getStudy($nct_id);
     $this->assertNotEmpty($study, 'Stub returned a non-empty study array.');
 
@@ -50,6 +53,8 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
     $this->assertSame('container', $build['#type']);
 
     // Check that the summary section is present.
+    $this->assertArrayHasKey('study_link', $build);
+    $this->assertStringContainsString('https://clinicaltrials.gov/study/' . $nct_id, (string) $build['study_link']['#markup']);
     $this->assertArrayHasKey('summary', $build);
     $this->assertSame('details', $build['summary']['#type']);
     $this->assertTrue($build['summary']['#open']);
@@ -79,8 +84,8 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
     $this->assertArrayHasKey('api_url', $build);
     $this->assertStringContainsString('/studies/' . $nct_id, (string) $build['api_url']['#markup']);
 
-    // Check that the study build attaches the report library.
-    $this->assertContains('clinical_trials_gov/study_report', $build['#attached']['library']);
+    // Check that the study build uses the report-specific wrapper class.
+    $this->assertContains('clinical-trials-gov-report-study', $build['#attributes']['class']);
   }
 
 }

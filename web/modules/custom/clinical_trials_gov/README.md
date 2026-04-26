@@ -5,7 +5,10 @@ Drupal integration with the [ClinicalTrials.gov API v2](https://clinicaltrials.g
 ## Submodules
 
 - **clinical_trials_gov_report** — Admin report at `/admin/reports/status/clinical-trials-gov`
-- **clinical_trials_gov_test** — Stub manager and JSON fixtures for testing
+
+## Test Support
+
+- `tests/modules/clinical_trials_gov_test` — Stub manager and JSON fixtures used by Kernel and Functional tests
 
 ## Services
 

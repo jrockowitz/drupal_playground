@@ -8,9 +8,3 @@ studies_query:
   dependencies:
     - core/drupal
     - core/once
-
-study_report:
-  version: 1.x
-  css:
-    theme:
-      css/clinical_trials_gov_study_report.css: {}

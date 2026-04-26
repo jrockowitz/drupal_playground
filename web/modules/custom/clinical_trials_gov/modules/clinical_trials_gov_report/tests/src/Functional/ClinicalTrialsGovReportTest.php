@@ -67,7 +67,7 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->fieldExists('fields');
     $this->assertSession()->fieldValueEquals('countTotal', 'true');
     $this->assertSession()->elementNotExists('css', 'input[type="submit"][value="Reset"]');
-    $this->assertSession()->pageTextContains('countTotal=1');
+    $this->assertSession()->pageTextContains('countTotal=true');
 
     // Check that submitting the form shows a results table.
     $this->getSession()->getPage()->fillField('query__cond', 'cancer');
@@ -85,7 +85,7 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->elementNotExists('css', 'details[open] summary');
     $this->assertSession()->pageTextContains('Showing');
     $this->assertSession()->elementExists('css', 'input[type="submit"][value="Reset"]');
-    $this->assertSession()->pageTextContains('API URL:');
+    $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
 
     // Check that an NCT ID link is present in the results.
     // The stub returns fixture studies — look for any NCT link.
@@ -101,11 +101,12 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Study overview');
     $this->assertSession()->pageTextContains('Eligibility');
     $this->assertSession()->pageTextContains('Study summary');
+    $this->assertSession()->pageTextContains('ClinicalTrials.gov URL:');
     $this->assertSession()->pageTextContains('Study data');
     $this->assertSession()->elementExists('css', 'details summary');
     $this->assertSession()->elementExists('css', 'details[open] summary');
     $this->assertSession()->pageTextNotContains('Raw data');
-    $this->assertSession()->pageTextContains('API URL:');
+    $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
 
     // Check that the reset action returns to the unfiltered report page.
     $this->drupalGet('admin/reports/status/clinical-trials-gov');

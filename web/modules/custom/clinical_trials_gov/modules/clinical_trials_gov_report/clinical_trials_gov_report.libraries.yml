@@ -1,0 +1,5 @@
+report:
+  version: 1.x
+  css:
+    theme:
+      css/clinical_trials_gov_report.css: {}

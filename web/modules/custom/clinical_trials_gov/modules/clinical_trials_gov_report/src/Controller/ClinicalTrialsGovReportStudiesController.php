@@ -37,7 +37,15 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
    * Renders the studies list page with the search form and results table.
    */
   public function index(Request $request): array {
-    $build = [];
+    $build = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-report-studies'],
+      ],
+      '#attached' => [
+        'library' => ['clinical_trials_gov_report/report'],
+      ],
+    ];
     $query_string = $request->getQueryString() ?? '';
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query_string);
     $version = $this->manager->getVersion();
@@ -83,7 +91,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
     if ($api_url !== NULL) {
       $build['api_url'] = [
         '#type' => 'item',
-        '#markup' => $this->t('API URL: <a href=":url" class="font-monospace">@url</a>', [
+        '#markup' => $this->t('ClinicalTrials.gov API: <a href=":url" class="font-monospace">@url</a>', [
           ':url' => $api_url,
           '@url' => $api_url,
         ]),
@@ -161,10 +169,21 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
    * Applies controller defaults to the upstream API query parameters.
    */
   protected function buildApiParameters(array $parameters): array {
-    if (!isset($parameters['countTotal'])) {
-      $parameters['countTotal'] = '1';
-    }
+    $parameters['countTotal'] = $this->normalizeCountTotal($parameters['countTotal'] ?? NULL);
     return $parameters;
+  }
+
+  /**
+   * Normalizes the countTotal parameter to API-supported boolean strings.
+   */
+  protected function normalizeCountTotal(mixed $value): string {
+    if ($value === NULL || $value === '') {
+      return 'true';
+    }
+
+    $normalized_value = is_bool($value) ? ($value ? 'true' : 'false') : strtolower((string) $value);
+
+    return in_array($normalized_value, ['1', 'true', 'yes']) ? 'true' : 'false';
   }
 
   /**

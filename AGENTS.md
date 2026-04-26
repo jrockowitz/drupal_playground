@@ -101,7 +101,10 @@ $array = [
 
 - Only add returns after block tags. (<p>, <div>, <ul>, <li>, <br/>, etc...)
 
+## CSS
+
+- For Drupal, always namespace module-specific CSS selectors.
+
 ## Python
 
 - Use `python3` instead of `python` when invoking Python.
-
