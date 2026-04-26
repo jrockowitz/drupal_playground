@@ -55,6 +55,8 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('This page displays ClinicalTrials.gov studies returned by the API for the current query-string parameters.');
     $this->assertSession()->pageTextContains('Version: 2.0.5 and Last Updated:');
     $this->assertSession()->pageTextContains('April 24 2026');
+    $this->assertSession()->pageTextContains('Showing 1 to');
+    $this->assertSession()->pageTextContains('trials');
     $this->assertSession()->pageTextContains('Query-string parameters');
     $this->assertSession()->elementExists('css', 'details[open] summary');
     $this->assertSession()->fieldExists('query__cond');
@@ -65,6 +67,7 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->fieldExists('fields');
     $this->assertSession()->fieldValueEquals('countTotal', 'true');
     $this->assertSession()->elementNotExists('css', 'input[type="submit"][value="Reset"]');
+    $this->assertSession()->pageTextContains('countTotal=1');
 
     // Check that submitting the form shows a results table.
     $this->getSession()->getPage()->fillField('query__cond', 'cancer');

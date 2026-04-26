@@ -1,14 +1,6 @@
-.clinical-trials-gov-studies-query__field-meta {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.clinical-trials-gov-studies-query__field-name {
-  font-size: 1em;
-}
-
-.clinical-trials-gov-studies-query__field-type {
-  font-size: 0.875em;
+.form-type--clinical-trials-gov-studies-query .form-item__prefix {
+  font-size: var(--font-size-xs);
+  font-weight: normal;
 }
 
 .clinical-trials-gov-studies-query__multivalue {
@@ -41,10 +33,4 @@
 .clinical-trials-gov-studies-query__editor {
   min-width: 18rem;
   max-width: 100%;
-}
-
-.clinical-trials-gov-studies-query__meta,
-.clinical-trials-gov-studies-query__allowed,
-.clinical-trials-gov-studies-query__examples {
-  margin-top: 0.5rem;
 }

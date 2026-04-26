@@ -38,8 +38,6 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
    */
   public function index(Request $request): array {
     $build = [];
-    $build['search_form'] = $this->formBuilder()->getForm('Drupal\clinical_trials_gov_report\Form\ClinicalTrialsGovReportStudiesSearchForm');
-
     $query_string = $request->getQueryString() ?? '';
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query_string);
     $version = $this->manager->getVersion();
@@ -52,13 +50,15 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
       '#type' => 'item',
       '#markup' => $this->buildVersionMarkup($version),
     ];
+    $build['search_form'] = $this->formBuilder()->getForm('Drupal\clinical_trials_gov_report\Form\ClinicalTrialsGovReportStudiesSearchForm');
 
     $page_offset = (int) ($parameters['pageOffset'] ?? 0);
     unset($parameters['pageOffset']);
+    $api_parameters = $this->buildApiParameters($parameters);
 
-    $response = $this->manager->getStudies($parameters);
+    $response = $this->manager->getStudies($api_parameters);
     $studies = $response['studies'] ?? [];
-    $api_url = $this->buildApiUrl($parameters);
+    $api_url = $this->buildApiUrl($api_parameters);
 
     if (!empty($studies) || isset($response['totalCount'])) {
       $count = count($studies);
@@ -91,7 +91,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
     }
 
     if (isset($response['nextPageToken'])) {
-      $next_parameters = $parameters;
+      $next_parameters = $api_parameters;
       $next_parameters['pageToken'] = $response['nextPageToken'];
       $next_parameters['pageOffset'] = $page_offset + count($studies);
 
@@ -158,6 +158,16 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
   }
 
   /**
+   * Applies controller defaults to the upstream API query parameters.
+   */
+  protected function buildApiParameters(array $parameters): array {
+    if (!isset($parameters['countTotal'])) {
+      $parameters['countTotal'] = '1';
+    }
+    return $parameters;
+  }
+
+  /**
    * Builds the version line markup.
    */
   protected function buildVersionMarkup(array $version): string {
@@ -172,10 +182,10 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
       }
     }
 
-    return (string) $this->t('Version: @version and Last Updated: @updated', [
+    return '<small>' . $this->t('Version: @version and Last Updated: @updated', [
       '@version' => $api_version,
       '@updated' => $formatted_timestamp,
-    ]);
+    ]) . '</small>';
   }
 
 }

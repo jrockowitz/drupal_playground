@@ -456,7 +456,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       ]),
       '#default_value' => $default_value,
       '#description' => static::buildDescription($definition),
-      '#field_prefix' => '<div class="clinical-trials-gov-studies-query__field-meta"><span class="clinical-trials-gov-studies-query__field-name">' . htmlspecialchars($definition['key']) . '</span> <span class="clinical-trials-gov-studies-query__field-type">(' . htmlspecialchars($definition['data_type']) . ')</span></div>',
+      '#field_prefix' => '<div>' . htmlspecialchars($definition['key']) . ' (' . htmlspecialchars($definition['data_type']) . ')</div>',
     ];
 
     switch ($definition['type']) {
@@ -501,7 +501,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    */
   protected static function buildDescription(array $definition): array {
     $parts = [];
-    $parts[] = '<div class="clinical-trials-gov-studies-query__description">' . $definition['description'] . '</div>';
+    $parts[] = '<div>' . $definition['description'] . '</div>';
 
     $metadata_lines = [];
     if (isset($definition['default'])) {
@@ -517,7 +517,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       $metadata_lines[] = '<strong>Maximum:</strong> ' . (string) $definition['max_items'] . ' items';
     }
     if (!empty($metadata_lines)) {
-      $parts[] = '<div class="clinical-trials-gov-studies-query__meta">' . implode('<br>', $metadata_lines) . '</div>';
+      $parts[] = '<div><small>' . implode('<br>', $metadata_lines) . '</small></div>';
     }
 
     if (!empty($definition['allowed_values'])) {
@@ -526,7 +526,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         $value = static::exampleValue($allowed_value);
         $allowed[] = '<a href="#" class="clinical-trials-gov-studies-query__fill-value" data-clinical-trials-gov-value="' . htmlspecialchars($value, ENT_QUOTES) . '">' . htmlspecialchars($allowed_value['label']) . '</a>';
       }
-      $parts[] = '<div class="clinical-trials-gov-studies-query__allowed"><strong>Allowed:</strong> ' . implode(' | ', $allowed) . '</div>';
+      $parts[] = '<div><strong>Allowed:</strong> ' . implode(' | ', $allowed) . '</div>';
     }
 
     if (!empty($definition['examples'])) {
@@ -535,7 +535,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
         $value = static::exampleValue($example);
         $examples[] = '<a href="#" class="clinical-trials-gov-studies-query__fill-value" data-clinical-trials-gov-value="' . htmlspecialchars($value, ENT_QUOTES) . '">' . htmlspecialchars($example['label']) . '</a>';
       }
-      $parts[] = '<div class="clinical-trials-gov-studies-query__examples"><strong>Examples:</strong> ' . implode(' | ', $examples) . '</div>';
+      $parts[] = '<div><strong>Examples:</strong> ' . implode(' | ', $examples) . '</div>';
     }
 
     return [
