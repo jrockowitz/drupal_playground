@@ -11267,6 +11267,16 @@
             "time": "2025-08-27T21:33:23+00:00"
         },
         {
+            "name": "sandbox/ai_schemadotorg_jsonld_test",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupalcode.org:project/ai_schemadotorg_jsonld.git",
+                "reference": "1.0.x"
+            },
+            "type": "drupal-module-sandbox"
+        },
+        {
             "name": "sebastian/diff",
             "version": "6.0.2",
             "source": {
