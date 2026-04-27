@@ -126,6 +126,7 @@
                 "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
+                "web/modules/custom/clinical_trials_gov/composer.json",
                 "web/modules/sandbox/schemadotorg/composer.libraries.json",
                 "web/modules/sandbox/webform/composer.libraries.json"
             ],

@@ -3,3 +3,14 @@ type: module
 description: "Services and components for the ClinicalTrials.gov API v2 integration."
 package: ClinicalTrials.gov
 core_version_requirement: ^10.3 || ^11
+dependencies:
+  - drupal:node
+  - drupal:text
+  - drupal:options
+  - drupal:datetime
+  - drupal:migrate
+  - migrate_tools:migrate_tools
+  - migrate_plus:migrate_plus
+  - custom_field:custom_field
+  - json_field:json_field
+  - field_group:field_group

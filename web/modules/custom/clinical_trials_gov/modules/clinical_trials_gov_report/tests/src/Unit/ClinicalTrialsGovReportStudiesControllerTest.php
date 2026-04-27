@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov_report\Unit;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStudiesController;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -32,12 +33,13 @@ class ClinicalTrialsGovReportStudiesControllerTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
     $manager = $this->createMock(ClinicalTrialsGovManagerInterface::class);
+    $builder = $this->createMock(ClinicalTrialsGovBuilderInterface::class);
     $date_formatter = $this->createMock(DateFormatterInterface::class);
     $date_formatter->method('format')
       ->willReturnCallback(fn($timestamp) => date('F j Y', $timestamp));
 
     // Anonymous subclass exposes the two protected methods under test.
-    $this->controller = new class($manager, $date_formatter) extends ClinicalTrialsGovReportStudiesController {
+    $this->controller = new class($manager, $builder, $date_formatter) extends ClinicalTrialsGovReportStudiesController {
 
       /**
        * Exposes normalizeCountTotal() for testing.

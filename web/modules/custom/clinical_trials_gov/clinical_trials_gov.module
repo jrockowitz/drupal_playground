@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Module hooks for the ClinicalTrials.gov module.
+ */
+
+/**
+ * Implements hook_gin_ignore_sticky_form_actions().
+ */
+function clinical_trials_gov_gin_ignore_sticky_form_actions(): array {
+  return [
+    'clinical_trials_gov_find_form',
+    'clinical_trials_gov_config_form',
+    'clinical_trials_gov_import_form',
+  ];
+}

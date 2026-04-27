@@ -18,6 +18,7 @@ use Drupal\Core\Render\Element\FormElementBase;
  * $form['query'] = [
  *   '#type' => 'clinical_trials_gov_studies_query',
  *   '#default_value' => 'query.cond=cancer&filter.overallStatus=RECRUITING',
+ *   '#include_fields' => ['query.'],
  * ];
  * @endcode
  *
@@ -51,6 +52,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     return [
       '#input' => TRUE,
       '#default_value' => '',
+      '#include_fields' => [],
       '#process' => [[static::class, 'processStudiesQuery']],
       '#element_validate' => [[static::class, 'validateStudiesQuery']],
       '#theme_wrappers' => ['form_element'],
@@ -103,10 +105,14 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     $defaults = static::parseQueryString($element['#default_value'] ?? '');
     $manager = \Drupal::service('clinical_trials_gov.manager');
     $field_definitions = static::fieldDefinitions($manager->getEnum('Status'));
+    $include_fields = $element['#include_fields'] ?? [];
 
     $element['#attached']['library'][] = 'clinical_trials_gov/studies_query';
 
     foreach ($field_definitions as $definition) {
+      if (!static::isIncludedField($definition['key'], $include_fields)) {
+        continue;
+      }
       $name = static::apiKeyToElementName($definition['key']);
       $element[$name] = static::buildFieldElement(
         $definition,
@@ -115,6 +121,26 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     }
 
     return $element;
+  }
+
+  /**
+   * Determines whether a field key is included by the element configuration.
+   */
+  protected static function isIncludedField(string $field_key, array $include_fields): bool {
+    if ($include_fields === []) {
+      return TRUE;
+    }
+
+    foreach ($include_fields as $include_field) {
+      if (!is_string($include_field) || $include_field === '') {
+        continue;
+      }
+      if ($field_key === $include_field || str_starts_with($field_key, $include_field)) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
   /**

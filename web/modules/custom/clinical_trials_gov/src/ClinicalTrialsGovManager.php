@@ -149,6 +149,8 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
         'title' => (string) ($item['title'] ?? ''),
         'type' => (string) ($item['type'] ?? ''),
         'sourceType' => (string) ($item['sourceType'] ?? ''),
+        'maxChars' => isset($item['maxChars']) ? (int) $item['maxChars'] : NULL,
+        'isEnum' => !empty($item['isEnum']),
         'description' => (string) ($item['description'] ?? ''),
         'children' => $children,
       ];

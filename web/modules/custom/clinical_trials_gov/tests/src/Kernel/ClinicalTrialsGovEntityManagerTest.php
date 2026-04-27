@@ -1,0 +1,172 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\clinical_trials_gov\Kernel;
+
+use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\node\Entity\NodeType;
+use PHPUnit\Framework\Attributes\Group;
+
+/**
+ * Kernel tests for ClinicalTrialsGovEntityManager.
+ *
+ * @group clinical_trials_gov
+ */
+#[Group('clinical_trials_gov')]
+class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
+
+  protected static $modules = [
+    'clinical_trials_gov',
+    'clinical_trials_gov_test',
+    'node',
+    'field',
+    'text',
+    'options',
+    'datetime',
+    'filter',
+    'user',
+    'system',
+    'migrate',
+    'migrate_plus',
+    'migrate_tools',
+    'json_field',
+    'custom_field',
+    'field_group',
+  ];
+
+  /**
+   * The entity manager under test.
+   */
+  protected ClinicalTrialsGovEntityManagerInterface $entityManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installEntitySchema('node');
+    $this->installEntitySchema('user');
+    $this->installConfig(['field', 'filter', 'node', 'system']);
+    $this->installSchema('node', ['node_access']);
+    $this->entityManager = $this->container->get('clinical_trials_gov.entity_manager');
+  }
+
+  /**
+   * Tests content type and field creation plus field resolution.
+   */
+  public function testCreateContentTypeAndFields(): void {
+    $this->entityManager->createContentType('trial', 'Trial', 'Clinical trial content type');
+
+    // Check that the content type is created with the expected label.
+    $node_type = NodeType::load('trial');
+    $this->assertNotNull($node_type);
+    $this->assertSame('Trial', $node_type->label());
+
+    $this->entityManager->createFields('trial', [
+      'protocolSection.contactsLocationsModule.locations',
+      'protocolSection.contactsLocationsModule.locations.facility',
+      'protocolSection.contactsLocationsModule.locations.status',
+      'protocolSection.contactsLocationsModule.locations.contacts',
+      'protocolSection.sponsorCollaboratorsModule.responsibleParty',
+      'protocolSection.identificationModule.nctId',
+      'protocolSection.descriptionModule.briefSummary',
+      'protocolSection.statusModule.overallStatus',
+      'protocolSection.identificationModule.organization',
+    ]);
+
+    // Check that the scalar, enum, and custom fields were created.
+    $this->assertSame('string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'))?->getType());
+    $this->assertSame('text_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.descriptionModule.briefSummary'))?->getType());
+    $this->assertSame('list_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.statusModule.overallStatus'))?->getType());
+    $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.organization'))?->getType());
+    $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty'))?->getType());
+
+    // Check that the bundle field config exists for the created type.
+    $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
+
+    // Check that created fields are added to the default form and view displays.
+    $form_display = EntityFormDisplay::load('node.trial.default');
+    $this->assertNotNull($form_display);
+    $this->assertSame('string_textfield', $form_display?->getComponent('field_nct_id')['type'] ?? NULL);
+    $this->assertSame('custom_stacked', $form_display?->getComponent('field_responsible_party')['type'] ?? NULL);
+
+    $view_display = EntityViewDisplay::load('node.trial.default');
+    $this->assertNotNull($view_display);
+    $this->assertSame('string', $view_display?->getComponent('field_nct_id')['type'] ?? NULL);
+    $this->assertSame('custom_formatter', $view_display?->getComponent('field_responsible_party')['type'] ?? NULL);
+
+    // Check that nested structure selections create a field group on the form display.
+    $field_groups = $form_display?->getThirdPartySettings('field_group') ?? [];
+    $this->assertArrayHasKey('group_location', $field_groups);
+    $this->assertSame('details', $field_groups['group_location']['format_type']);
+    $this->assertTrue($field_groups['group_location']['format_settings']['open']);
+    $this->assertSame([
+      'field_location_facility',
+      'field_location_status',
+      'field_location_contact',
+    ], $field_groups['group_location']['children']);
+
+    // Check that nested structure selections create a fieldset on the view display.
+    $view_field_groups = $view_display?->getThirdPartySettings('field_group') ?? [];
+    $this->assertArrayHasKey('group_location', $view_field_groups);
+    $this->assertSame('fieldset', $view_field_groups['group_location']['format_type']);
+  }
+
+  /**
+   * Tests field-name generation and metadata-driven resolution.
+   */
+  public function testResolveFieldDefinition(): void {
+    $long_name = $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations.contacts.phoneExt');
+    $alias_name = $this->entityManager->generateFieldName('protocolSection.identificationModule.nctIdAliases');
+
+    // Check that generated field names are deterministic and 32 characters or less.
+    $this->assertSame($long_name, $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations.contacts.phoneExt'));
+    $this->assertLessThanOrEqual(32, strlen($long_name));
+    $this->assertSame('field_nct_id_alias', $alias_name);
+
+    $title_definition = $this->entityManager->resolveFieldDefinition('protocolSection.identificationModule.briefTitle');
+    $enum_definition = $this->entityManager->resolveFieldDefinition('protocolSection.statusModule.overallStatus');
+    $json_definition = $this->entityManager->resolveFieldDefinition('protocolSection.statusModule.startDateStruct');
+    $custom_definition = $this->entityManager->resolveFieldDefinition('protocolSection.identificationModule.organization');
+    $responsible_party_definition = $this->entityManager->resolveFieldDefinition('protocolSection.sponsorCollaboratorsModule.responsibleParty');
+    $group_definition = $this->entityManager->resolveFieldDefinition('protocolSection.contactsLocationsModule.locations');
+
+    // Check that title maps to the node title property.
+    $this->assertSame('title', $title_definition['destination_property']);
+
+    // Check that enums resolve to list_string with allowed values.
+    $this->assertSame('list_string', $enum_definition['field_type']);
+    $this->assertNotEmpty($enum_definition['storage_settings']['allowed_values']);
+
+    // Check that partial date structures resolve to json.
+    $this->assertSame('json', $json_definition['field_type']);
+
+    // Check that whitelisted structures resolve to custom fields with columns.
+    $this->assertSame('custom', $custom_definition['field_type']);
+    $this->assertArrayHasKey('fullName', $custom_definition['storage_settings']['columns']);
+    $this->assertArrayHasKey('class', $custom_definition['instance_settings']['field_settings']);
+
+    // Check that simple structs resolve to custom fields with display details.
+    $this->assertSame('custom', $responsible_party_definition['field_type']);
+    $this->assertSame('custom field', $responsible_party_definition['display_type_label']);
+    $this->assertSame([
+      'Type',
+      'Investigator_full_name',
+      'Investigator_title',
+      'Investigator_affiliation',
+      'Old_name_title',
+      'Old_organization',
+    ], $responsible_party_definition['details']);
+
+    // Check that nested structures can resolve to field groups.
+    $this->assertSame('field_group', $group_definition['field_type']);
+    $this->assertTrue($group_definition['group_only']);
+  }
+
+}

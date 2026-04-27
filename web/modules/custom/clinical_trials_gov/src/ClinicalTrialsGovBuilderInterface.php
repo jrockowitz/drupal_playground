@@ -10,6 +10,19 @@ namespace Drupal\clinical_trials_gov;
 interface ClinicalTrialsGovBuilderInterface {
 
   /**
+   * Builds a studies results table render array.
+   *
+   * @param array $studies
+   *   Raw studies array from ClinicalTrialsGovManagerInterface::getStudies().
+   * @param string|null $study_route
+   *   Route name for study detail links. NULL renders NCT IDs as plain text.
+   *
+   * @return array
+   *   Drupal render array representing a studies table.
+   */
+  public function buildStudiesList(array $studies, ?string $study_route = NULL): array;
+
+  /**
    * Converts a flat Index-field study array into a Drupal render array.
    *
    * @param array $study

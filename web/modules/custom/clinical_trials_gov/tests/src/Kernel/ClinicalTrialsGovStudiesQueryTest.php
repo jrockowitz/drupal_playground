@@ -141,6 +141,90 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
   }
 
   /**
+   * Tests that prefix-based include fields limit the rendered query inputs.
+   */
+  public function testIncludeFieldsPrefix(): void {
+    $element = [
+      '#type' => 'clinical_trials_gov_studies_query',
+      '#default_value' => 'query.cond=cancer&query.patient=heart disease&filter.overallStatus=RECRUITING&pageSize=20&fields=NCTId',
+      '#include_fields' => [
+        'query.',
+      ],
+      '#parents' => ['studies_query'],
+      '#array_parents' => ['studies_query'],
+    ];
+    $form_state = new FormState();
+    $complete_form = [];
+
+    $processed = ClinicalTrialsGovStudiesQuery::processStudiesQuery(
+      $element,
+      $form_state,
+      $complete_form
+    );
+
+    // Check that only query-prefixed fields are rendered.
+    $this->assertArrayHasKey('query__cond', $processed);
+    $this->assertArrayHasKey('query__patient', $processed);
+    $this->assertArrayNotHasKey('filter__overallStatus', $processed);
+    $this->assertArrayNotHasKey('pageSize', $processed);
+    $this->assertArrayNotHasKey('fields', $processed);
+
+    $processed['query__cond']['#value'] = 'cancer';
+    $processed['query__patient']['#value'] = 'heart disease';
+    ClinicalTrialsGovStudiesQuery::validateStudiesQuery($processed, $form_state, $complete_form);
+
+    $assembled = $form_state->getValue(['studies_query']);
+
+    // Check that only query-prefixed fields are reassembled into the query string.
+    $this->assertStringContainsString('query.cond=cancer', $assembled);
+    $this->assertStringContainsString('query.patient=heart%20disease', $assembled);
+    $this->assertStringNotContainsString('filter.overallStatus', $assembled);
+    $this->assertStringNotContainsString('pageSize', $assembled);
+    $this->assertStringNotContainsString('fields', $assembled);
+  }
+
+  /**
+   * Tests that exact include fields render only those keys.
+   */
+  public function testIncludeFieldsExactMatch(): void {
+    $element = [
+      '#type' => 'clinical_trials_gov_studies_query',
+      '#default_value' => 'query.cond=cancer&pageSize=20&query.patient=heart disease',
+      '#include_fields' => [
+        'query.cond',
+        'pageSize',
+      ],
+      '#parents' => ['studies_query'],
+      '#array_parents' => ['studies_query'],
+    ];
+    $form_state = new FormState();
+    $complete_form = [];
+
+    $processed = ClinicalTrialsGovStudiesQuery::processStudiesQuery(
+      $element,
+      $form_state,
+      $complete_form
+    );
+
+    // Check that exact includes render only the requested keys.
+    $this->assertArrayHasKey('query__cond', $processed);
+    $this->assertArrayHasKey('pageSize', $processed);
+    $this->assertArrayNotHasKey('query__patient', $processed);
+    $this->assertArrayNotHasKey('fields', $processed);
+
+    $processed['query__cond']['#value'] = 'cancer';
+    $processed['pageSize']['#value'] = '20';
+    ClinicalTrialsGovStudiesQuery::validateStudiesQuery($processed, $form_state, $complete_form);
+
+    $assembled = $form_state->getValue(['studies_query']);
+
+    // Check that only exact included keys are reassembled.
+    $this->assertStringContainsString('query.cond=cancer', $assembled);
+    $this->assertStringContainsString('pageSize=20', $assembled);
+    $this->assertStringNotContainsString('query.patient', $assembled);
+  }
+
+  /**
    * Tests that parseQueryString() preserves dot-notation keys.
    */
   public function testParseQueryStringPreservesDots(): void {

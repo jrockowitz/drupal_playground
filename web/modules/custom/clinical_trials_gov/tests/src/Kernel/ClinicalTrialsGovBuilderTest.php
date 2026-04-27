@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
+use Drupal\Core\Url;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -20,6 +21,7 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
   protected static $modules = [
     'clinical_trials_gov',
     'clinical_trials_gov_test',
+    'clinical_trials_gov_report',
   ];
 
   /**
@@ -86,6 +88,41 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
 
     // Check that the study build uses the report-specific wrapper class.
     $this->assertContains('clinical-trials-gov-report-study', $build['#attributes']['class']);
+  }
+
+  /**
+   * Tests that buildStudiesList() produces a reusable studies table.
+   */
+  public function testBuildStudiesList(): void {
+    $studies = $this->container->get('clinical_trials_gov.manager')->getStudies([
+      'query.cond' => 'cancer',
+    ])['studies'] ?? [];
+
+    $build = $this->builder->buildStudiesList($studies, 'clinical_trials_gov_report.study');
+
+    // Check that the top-level element is a table with the expected headers.
+    $this->assertSame('table', $build['#type']);
+    $header_labels = array_map(static fn($header): string => (string) $header, $build['#header']);
+    $this->assertSame([
+      'NCT ID',
+      'Title',
+      'Overall status',
+      'Phases',
+      'Conditions',
+    ], $header_labels);
+
+    // Check that one row is rendered per returned study.
+    $this->assertCount(count($studies), $build['#rows']);
+
+    // Check that the NCT ID is linked when a route name is provided.
+    $first_study = $studies[0];
+    $first_identification = $first_study['protocolSection']['identificationModule'] ?? [];
+    $expected_nct_id = $first_identification['nctId'] ?? '';
+    $expected_title = $first_identification['briefTitle'] ?? '';
+    $expected_url = Url::fromRoute('clinical_trials_gov_report.study', ['nctId' => $expected_nct_id])->toString();
+    $first_row = $build['#rows'][0];
+    $this->assertStringContainsString($expected_url, (string) $first_row[0]);
+    $this->assertSame($expected_title, (string) $first_row[1]);
   }
 
 }

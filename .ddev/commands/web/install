@@ -60,6 +60,9 @@ for PRESET in "$@"; do
     drush locale-update
   elif [ "$PRESET" = "modules" ]; then
     drush en -y telephone_filter entity_labels
+  elif [ "$PRESET" = "trials" ]; then
+    echo "Installing ClinicalTrials.gov module..."
+    drush en -y clinical_trials_gov_report
   fi
 done
 

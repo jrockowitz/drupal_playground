@@ -1,0 +1,121 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\clinical_trials_gov\Functional;
+
+use Drupal\Tests\BrowserTestBase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+
+/**
+ * Functional tests for the ClinicalTrials.gov import wizard.
+ *
+ * @group clinical_trials_gov
+ */
+#[Group('clinical_trials_gov')]
+#[RunTestsInSeparateProcesses]
+class ClinicalTrialsGovTest extends BrowserTestBase {
+
+  protected static $modules = [
+    'clinical_trials_gov',
+    'clinical_trials_gov_test',
+    'clinical_trials_gov_report',
+    'field_group',
+  ];
+
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->drupalLogin($this->drupalCreateUser([
+      'access administration pages',
+      'administer clinical_trials_gov',
+    ]));
+  }
+
+  /**
+   * Tests the basic wizard flow.
+   */
+  public function testWizardFlow(): void {
+    $this->drupalGet('admin/config/services/clinical-trials-gov');
+
+    // Check that the overview page renders the four tasks and next-step message.
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Please go to Find and build your query.');
+    $this->assertSession()->pageTextContains('1. Find');
+    $this->assertSession()->pageTextContains('2. Review');
+    $this->assertSession()->pageTextContains('3. Configure');
+    $this->assertSession()->pageTextContains('4. Import');
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/find');
+    $this->getSession()->getPage()->fillField('query__cond', 'cancer');
+    $this->getSession()->getPage()->pressButton('Save configuration');
+
+    // Check that submitting Find redirects to Review and shows studies.
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->linkExists('query');
+    $this->assertSession()->linkExists('configuring the destination content type');
+    $this->assertSession()->linkNotExists('Continue to Configure');
+    $this->assertSession()->linkExists('NCT05088187');
+    $this->assertSession()->elementExists('css', 'table');
+
+    $this->clickLink('NCT05088187');
+
+    // Check that review detail pages stay inside the wizard route space.
+    $this->assertSession()->addressEquals('admin/config/services/clinical-trials-gov/review/NCT05088187');
+    $this->assertSession()->pageTextContains('Study summary');
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/review/INVALID');
+
+    // Check that invalid identifiers fall back to the review list with a warning.
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('The study identifier');
+    $this->assertSession()->pageTextContains('INVALID');
+    $this->assertSession()->pageTextContains('is not valid.');
+    $this->assertSession()->pageTextContains('Showing 1 - 3 of 3 trials.');
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/configure');
+
+    // Check that the field mapping table uses the updated columns and values.
+    $this->assertSession()->pageTextContains('Study identifier');
+    $this->assertSession()->pageTextContains('Details');
+    $this->assertSession()->pageTextContains('Field type');
+    $this->assertSession()->pageTextContains('Protocol Section');
+    $this->assertSession()->pageTextContains('Responsible Party');
+    $this->assertSession()->pageTextContains('field group');
+    $this->assertSession()->pageTextContains('custom field');
+    $this->assertSession()->pageTextContains('ProtocolSection');
+    $this->assertSession()->pageTextContains('ResponsibleParty');
+    $this->assertSession()->pageTextContains('Investigator_full_name');
+    $this->assertSession()->elementExists('css', 'th.select-all');
+    $this->assertSession()->fieldExists('field_mapping[rows][' . md5('protocolSection.sponsorCollaboratorsModule.responsibleParty') . '][selected]');
+    $this->assertSession()->fieldNotExists('field_mapping[rows][' . md5('protocolSection') . '][selected]');
+    $this->assertSession()->pageTextNotContains('Responsible Party Investigator Full Name');
+    $this->assertSession()->pageTextNotContains('NCTIdAlias');
+    $this->assertSession()->pageTextNotContains('field_nct_id_alias');
+    $this->assertSession()->pageTextNotContains('protocolSection.identificationModule.nctIdAliases');
+    $this->assertSession()->pageTextNotContains('No description.');
+
+    if ($this->getSession()->getPage()->findField('Label') !== NULL) {
+      $this->getSession()->getPage()->fillField('Label', 'Trial');
+      $this->getSession()->getPage()->fillField('Machine name', 'trial');
+    }
+    if ($this->getSession()->getPage()->findButton('Save configuration') !== NULL) {
+      $this->getSession()->getPage()->pressButton('Save configuration');
+    }
+    else {
+      $this->getSession()->getPage()->pressButton('Save');
+    }
+
+    // Check that Configure redirects to Import and the summary is ready.
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Selected fields');
+    $this->assertSession()->pageTextContains('trial');
+    $this->assertSession()->buttonExists('Run Import');
+  }
+
+}

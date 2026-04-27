@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
@@ -17,6 +18,49 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
   ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildStudiesList(array $studies, ?string $study_route = NULL): array {
+    $rows = [];
+    foreach ($studies as $study) {
+      $identification = $study['protocolSection']['identificationModule'] ?? [];
+      $status_module = $study['protocolSection']['statusModule'] ?? [];
+      $design_module = $study['protocolSection']['designModule'] ?? [];
+      $conditions_module = $study['protocolSection']['conditionsModule'] ?? [];
+
+      $nct_id = $identification['nctId'] ?? '';
+      $title = $identification['briefTitle'] ?? '';
+      $status = $status_module['overallStatus'] ?? '';
+      $phases = implode(', ', $design_module['phases'] ?? []);
+      $conditions = implode(', ', $conditions_module['conditions'] ?? []);
+
+      if ($nct_id !== '' && $study_route !== NULL) {
+        $nct_cell = $this->t('<a href=":url">@nct</a>', [
+          ':url' => Url::fromRoute($study_route, ['nctId' => $nct_id])->toString(),
+          '@nct' => $nct_id,
+        ]);
+      }
+      else {
+        $nct_cell = $nct_id;
+      }
+
+      $rows[] = [$nct_cell, $title, $status, $phases, $conditions];
+    }
+
+    return [
+      '#type' => 'table',
+      '#header' => [
+        $this->t('NCT ID'),
+        $this->t('Title'),
+        $this->t('Overall status'),
+        $this->t('Phases'),
+        $this->t('Conditions'),
+      ],
+      '#rows' => $rows,
+    ];
+  }
 
   /**
    * {@inheritdoc}

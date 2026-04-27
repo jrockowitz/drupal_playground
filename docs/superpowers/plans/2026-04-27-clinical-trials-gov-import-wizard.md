@@ -4,7 +4,7 @@
 
 **Goal:** Build a four-step import wizard (Find → Review → Configure → Import) inside the `clinical_trials_gov` module that lets administrators query ClinicalTrials.gov, configure a destination content type, and run a full-sync Drupal migration.
 
-**Architecture:** Separate-route wizard; all state in `clinical_trials_gov.settings` config (`query`, `type`, `fields`). Two new services — `ClinicalTrialsGovEntityManager` (manages node type and fields) and `ClinicalTrialsGovMigrationManager` (builds the `migrate_plus` migration config entity) — own all business logic. A custom `ClinicalTrialsGovSource` migrate source plugin feeds paginated API results to the migration.
+**Architecture:** Separate-route wizard; all state in `clinical_trials_gov.settings` config (`query`, `type`, `fields`). Two new services — `ClinicalTrialsGovEntityManager` (manages node type, field types, and deterministic field-name generation) and `ClinicalTrialsGovMigrationManager` (builds the `migrate_plus` migration config entity) — own all business logic. A custom `ClinicalTrialsGovSource` migrate source plugin feeds paginated API results to the migration.
 
 **Tech Stack:** Drupal 10/11, Migrate (core), `migrate_tools` (MigrateBatchExecutable), `migrate_plus` (config-entity migrations), ClinicalTrials.gov API v2.
 
@@ -33,12 +33,95 @@
 - `web/modules/custom/clinical_trials_gov/tests/src/Functional/ClinicalTrialsGovTest.php`
 
 **Files to modify:**
-- `web/modules/custom/clinical_trials_gov/clinical_trials_gov.info.yml` — add `migrate`, `migrate_tools`, `migrate_plus` dependencies
+- `web/modules/custom/clinical_trials_gov/clinical_trials_gov.info.yml` — add `migrate`, `migrate_tools`, `migrate_plus`, `custom_field`, and `json_field` dependencies
 - `web/modules/custom/clinical_trials_gov/clinical_trials_gov.services.yml` — register two new services
 - `web/modules/custom/clinical_trials_gov/src/Element/ClinicalTrialsGovStudiesQuery.php` — add `#excluded_fields` support
 - `web/modules/custom/clinical_trials_gov/src/ClinicalTrialsGovBuilder.php` — add `buildStudiesList()`
 - `web/modules/custom/clinical_trials_gov/src/ClinicalTrialsGovBuilderInterface.php` — add `buildStudiesList()` signature
 - `web/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_report/src/Controller/ClinicalTrialsGovReportStudiesController.php` — delegate to `ClinicalTrialsGovBuilder::buildStudiesList()`
+
+---
+
+## Field Rules
+
+- Required fields:
+  - NCT Number — selected by default, disabled, stored as a custom field
+  - Title — selected by default, disabled, mapped to node `title`
+  - Description — selected by default, disabled, stored as a custom field
+- Existing fields on the destination content type are disabled and cannot be unselected.
+- Drupal field machine names must be deterministic and fit within 32 characters. Long names are truncated and suffixed with a stable hash.
+- Field creation must resolve a Drupal field type from the ClinicalTrials.gov metadata row before creating storage/config entities.
+
+### Field type mapping
+
+| ClinicalTrials.gov metadata | Drupal destination |
+|---|---|
+| `TEXT` / enum / identifier with `maxChars <= 255` | `string` |
+| `TEXT` / markup / long text with `maxChars > 255` or unknown long content | `text_long` |
+| `BOOLEAN` | `boolean` |
+| `NUMERIC` integer | `integer` |
+| `DATE` with normalized full date or datetime value | `datetime` |
+| `DATE` with `PartialDate`, or `STRUCT` with `PartialDateStruct` | `json` via `json_field` |
+| Whitelisted `STRUCT` / `STRUCT[]` values with explicit sub-columns | `custom` via `custom_field` |
+
+### Cardinality and enum rules
+
+- API metadata `type` defines cardinality:
+  - `foo` => single-value field
+  - `foo[]` => multi-value field
+- `isEnum: true` rows use Drupal `list_string` fields, not plain text fields
+- Enum allowed values come from `ClinicalTrialsGovManager::getEnums()`
+- Step 3 should show field type, cardinality, and enum status for every selectable row
+
+### Canonical mapping rules
+
+| API pattern | Drupal field | Cardinality | Notes |
+|---|---|---|---|
+| `protocolSection.identificationModule.briefTitle` | node `title` | 1 | Required |
+| `protocolSection.identificationModule.nctId` | `string` | 1 | Required |
+| `protocolSection.descriptionModule.briefSummary` | `text_long` | 1 | Required |
+| Enum without `[]` | `list_string` | 1 | Allowed values from enum definition |
+| Enum with `[]` | `list_string` | Unlimited | Allowed values from enum definition |
+| Text-like scalar without `[]` | `string` or `text_long` | 1 | Based on length/content |
+| Text-like type with `[]` | `string` or `text_long` | Unlimited | Multi-value |
+| Boolean scalar | `boolean` | 1 | Normalize source value |
+| Boolean with `[]` | `boolean` | Unlimited | Normalize each item |
+| Integer scalar | `integer` | 1 | Normalize source value |
+| Integer with `[]` | `integer` | Unlimited | Normalize each item |
+| `PartialDate` / `PartialDateStruct` | `json` via `json_field` | Based on `[]` | Preserve structured partial date |
+| Whitelisted `STRUCT` / `STRUCT[]` | `custom` via `custom_field` | Based on `[]` | Use explicit per-structure mapping |
+| Unsupported container / struct pattern | not selectable | n/a | Disabled in Step 3 |
+
+### Structured field whitelist
+
+Supported in Phase 2:
+
+- `Organization`
+- `ExpandedAccessInfo`
+- `EnrollmentInfo`
+- `Contact[]`
+- `Official[]`
+- `Reference[]`
+- `SeeAlsoLink[]`
+- `AvailIpd[]`
+
+Always handled by `json_field`, not `custom_field`:
+
+- `PartialDate`
+- `PartialDateStruct`
+
+Explicitly unsupported in Phase 2:
+
+- `resultsSection.*`
+- `derivedSection.*`
+- `documentSection.*`
+- `annotationSection.*`
+- `ArmGroup[]`
+- `Intervention[]`
+- `Outcome[]`
+- `Location[]`
+- `SecondaryIdInfo[]`
+- `Sponsor[]`
 
 ---
 
@@ -253,6 +336,8 @@ dependencies:
   - drupal:migrate
   - migrate_tools:migrate_tools
   - migrate_plus:migrate_plus
+  - custom_field:custom_field
+  - json_field:json_field
 ```
 
 - [ ] **Step 2: Add new services to `clinical_trials_gov.services.yml`**
@@ -490,6 +575,65 @@ Visit `https://drupal-playground.ddev.site/admin/config/services/clinical-trials
 git add web/modules/custom/clinical_trials_gov/src/Controller/ClinicalTrialsGovController.php
 git commit -m "feat: add ClinicalTrialsGovController index page for import wizard"
 ```
+
+---
+
+## Task 4.5: Field Type and Field Name Resolution
+
+**Files:**
+- Create: `web/modules/custom/clinical_trials_gov/src/ClinicalTrialsGovEntityManagerInterface.php`
+- Create: `web/modules/custom/clinical_trials_gov/src/ClinicalTrialsGovEntityManager.php`
+- Modify: `web/modules/custom/clinical_trials_gov/src/Form/ClinicalTrialsGovConfigForm.php`
+- Modify: `web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovEntityManagerTest.php`
+
+- [ ] **Step 1: Add deterministic field-name generation**
+
+Implement a helper in `ClinicalTrialsGovEntityManager` that:
+
+- normalizes a metadata key to a Drupal-safe field machine name
+- prefixes with `field_`
+- truncates names that exceed 32 characters
+- appends a stable hash suffix when truncation is required
+
+- [ ] **Step 2: Add field-type resolution from metadata**
+
+Implement a resolver that maps metadata rows to Drupal field types:
+
+- Title metadata key maps to node `title`
+- enum rows resolve to `list_string` with allowed values from `getEnums()`
+- `TEXT` / identifier values resolve to `string` or `text_long`
+- `BOOLEAN` resolves to `boolean`
+- `NUMERIC` resolves to `integer`
+- normalized full dates resolve to `datetime`
+- `PartialDate` and `PartialDateStruct` resolve to `json`
+- whitelisted `STRUCT` / `STRUCT[]` values resolve to `custom` field definitions
+- `type` values ending in `[]` resolve to unlimited cardinality
+
+- [ ] **Step 3: Surface field type information in Step 3**
+
+Update `ClinicalTrialsGovConfigForm` so each row shows the resolved Drupal field type, cardinality, and enum status, keeps required/existing fields disabled, and disables unsupported `STRUCT` patterns with an explanatory note.
+
+- [ ] **Step 4: Verify the resolver in kernel tests**
+
+Add coverage for:
+
+- generated field names shorter than 32 characters
+- generated field names longer than 32 characters
+- stable output for the same API key
+- field type resolution for text, enum, boolean, integer, normalized date, partial date, and struct rows
+- cardinality resolution for scalar and `[]` metadata types
+- allowed-value extraction for enum rows
+- whitelist handling for supported and unsupported structure keys
+
+- [ ] **Step 5: Add migration mapping coverage**
+
+Extend migration manager tests to verify:
+
+- title maps to node `title`
+- enum fields map to `list_string` destinations with allowed values configured at field creation time
+- multi-value source rows stay multi-value in process mappings
+- partial dates map to `json_field` destinations
+- whitelisted `STRUCT` / `STRUCT[]` rows map to `custom` field destinations with generated column definitions
 
 ---
 

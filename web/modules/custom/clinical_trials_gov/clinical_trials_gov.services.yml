@@ -14,3 +14,18 @@ services:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovBuilder
     autowire: true
   Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface: "@clinical_trials_gov.builder"
+
+  clinical_trials_gov.entity_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManager
+    autowire: true
+  Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface: "@clinical_trials_gov.entity_manager"
+
+  clinical_trials_gov.field_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManager
+    autowire: true
+  Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface: "@clinical_trials_gov.field_manager"
+
+  clinical_trials_gov.migration_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManager
+    autowire: true
+  Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface: "@clinical_trials_gov.migration_manager"

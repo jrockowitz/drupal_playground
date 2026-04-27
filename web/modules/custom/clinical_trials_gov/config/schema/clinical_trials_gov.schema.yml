@@ -1,0 +1,16 @@
+clinical_trials_gov.settings:
+  type: config_object
+  label: 'ClinicalTrials.gov settings'
+  mapping:
+    query:
+      type: string
+      label: 'Query string'
+    type:
+      type: string
+      label: 'Content type machine name'
+    fields:
+      type: sequence
+      label: 'Selected field keys'
+      sequence:
+        type: string
+        label: 'Field key'

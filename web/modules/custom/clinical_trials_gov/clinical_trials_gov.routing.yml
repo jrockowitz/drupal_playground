@@ -1,0 +1,40 @@
+clinical_trials_gov.index:
+  path: '/admin/config/services/clinical-trials-gov'
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.find:
+  path: '/admin/config/services/clinical-trials-gov/find'
+  defaults:
+    _form: '\Drupal\clinical_trials_gov\Form\ClinicalTrialsGovFindForm'
+    _title: 'Find'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.review:
+  path: '/admin/config/services/clinical-trials-gov/review/{nctId}'
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewController::index'
+    _title_callback: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewController::title'
+    nctId: ''
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.configure:
+  path: '/admin/config/services/clinical-trials-gov/configure'
+  defaults:
+    _form: '\Drupal\clinical_trials_gov\Form\ClinicalTrialsGovConfigForm'
+    _title: 'Configure'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.import:
+  path: '/admin/config/services/clinical-trials-gov/import'
+  defaults:
+    _form: '\Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm'
+    _title: 'Import'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
