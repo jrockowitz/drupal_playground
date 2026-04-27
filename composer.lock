@@ -2769,6 +2769,16 @@
             }
         },
         {
+            "name": "drupal/ai_schemadotorg_jsonld",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupalcode.org:project/ai_schemadotorg_jsonld.git",
+                "reference": "1.0.x"
+            },
+            "type": "drupal-module-sandbox"
+        },
+        {
             "name": "drupal/allowed_formats",
             "version": "3.0.1",
             "source": {
@@ -4554,7 +4564,7 @@
         },
         {
             "name": "drupal/drupal_playground_eca",
-            "version": "dev-feat-ai-jsonld-recipe-config-action",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_eca",
