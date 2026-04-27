@@ -125,6 +125,7 @@ yarn-error.log
 # =============================================================================
 
 # /web/modules/sandbox/
+/web/modules/sandbox/ai_schemadotorg_jsonld
 /web/modules/sandbox/eca_report
 /web/modules/sandbox/entity_labels
 /web/modules/sandbox/field_data

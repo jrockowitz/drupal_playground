@@ -1,8 +1,0 @@
-services:
-  _defaults:
-    autowire: true
-
-  ai_schemadotorg_jsonld_breadcrumb.manager:
-    class: Drupal\ai_schemadotorg_jsonld_breadcrumb\AiSchemaDotOrgJsonLdBreadcrumbManager
-  Drupal\ai_schemadotorg_jsonld_breadcrumb\AiSchemaDotOrgJsonLdBreadcrumbManagerInterface:
-    alias: ai_schemadotorg_jsonld_breadcrumb.manager

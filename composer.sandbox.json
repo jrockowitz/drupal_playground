@@ -197,7 +197,6 @@
         }
     ],
     "require": {
-        "drupal/ai_schemadotorg_jsonld": "*",
         "drupal/eca_report": "*",
         "drupal/entity_labels": "*",
         "drupal/field_data": "*",
