@@ -170,6 +170,42 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
   }
 
   /**
+   * Tests that getMetadataByPath() can return one metadata row.
+   *
+   * @covers ::getMetadataByPath
+   */
+  public function testGetMetadataByPathReturnsOneMetadataRow(): void {
+    $this->api
+      ->method('get')
+      ->with('/studies/metadata')
+      ->willReturn([
+        [
+          'name' => 'protocolSection',
+          'piece' => 'ProtocolSection',
+          'title' => 'Protocol Section',
+          'type' => 'StdStudy',
+          'sourceType' => 'STRUCT',
+          'children' => [
+            [
+              'name' => 'identificationModule',
+              'piece' => 'Identification',
+              'title' => 'Identification Module',
+              'type' => 'IdModule',
+              'sourceType' => 'STRUCT',
+              'children' => [],
+            ],
+          ],
+        ],
+      ]);
+
+    $result = $this->manager->getMetadataByPath('protocolSection.identificationModule');
+
+    // Check that a single metadata row can be loaded by path.
+    $this->assertSame('Identification', $result['piece']);
+    $this->assertSame('protocolSection', $result['parent']);
+  }
+
+  /**
    * Tests that getMetadataByPiece() returns metadata rows keyed by piece.
    *
    * @covers ::getMetadataByPiece
@@ -205,6 +241,42 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
     $this->assertSame('protocolSection', $result['ProtocolSection']['path']);
     $this->assertArrayHasKey('Identification', $result);
     $this->assertSame('protocolSection.identificationModule', $result['Identification']['path']);
+  }
+
+  /**
+   * Tests that getMetadataByPiece() can return one metadata row.
+   *
+   * @covers ::getMetadataByPiece
+   */
+  public function testGetMetadataByPieceReturnsOneMetadataRow(): void {
+    $this->api
+      ->method('get')
+      ->with('/studies/metadata')
+      ->willReturn([
+        [
+          'name' => 'protocolSection',
+          'piece' => 'ProtocolSection',
+          'title' => 'Protocol Section',
+          'type' => 'StdStudy',
+          'sourceType' => 'STRUCT',
+          'children' => [
+            [
+              'name' => 'identificationModule',
+              'piece' => 'Identification',
+              'title' => 'Identification Module',
+              'type' => 'IdModule',
+              'sourceType' => 'STRUCT',
+              'children' => [],
+            ],
+          ],
+        ],
+      ]);
+
+    $result = $this->manager->getMetadataByPiece('Identification');
+
+    // Check that a single metadata row can be loaded by piece.
+    $this->assertSame('protocolSection.identificationModule', $result['path']);
+    $this->assertSame('Identification Module', $result['title']);
   }
 
   /**

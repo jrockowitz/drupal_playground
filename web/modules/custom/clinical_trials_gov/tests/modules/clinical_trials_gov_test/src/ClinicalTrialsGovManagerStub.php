@@ -82,18 +82,21 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
   /**
    * {@inheritdoc}
    */
-  public function getMetadataByPath(): array {
+  public function getMetadataByPath(?string $path = NULL): array {
     static $metadata_by_path = NULL;
     if ($metadata_by_path === NULL) {
       $metadata_by_path = $this->flattenMetadata($this->loadFixture('metadata'));
     }
-    return $metadata_by_path;
+    if ($path === NULL) {
+      return $metadata_by_path;
+    }
+    return $metadata_by_path[$path] ?? [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getMetadataByPiece(): array {
+  public function getMetadataByPiece(?string $piece = NULL): array {
     static $metadata_by_piece = NULL;
     if ($metadata_by_piece === NULL) {
       $metadata_by_piece = [];
@@ -101,14 +104,17 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
         if (!is_array($metadata)) {
           continue;
         }
-        $piece = (string) ($metadata['piece'] ?? '');
-        if ($piece === '') {
+        $metadata_piece = (string) ($metadata['piece'] ?? '');
+        if ($metadata_piece === '') {
           continue;
         }
-        $metadata_by_piece[$piece] = $metadata;
+        $metadata_by_piece[$metadata_piece] = $metadata;
       }
     }
-    return $metadata_by_piece;
+    if ($piece === NULL) {
+      return $metadata_by_piece;
+    }
+    return $metadata_by_piece[$piece] ?? [];
   }
 
   /**

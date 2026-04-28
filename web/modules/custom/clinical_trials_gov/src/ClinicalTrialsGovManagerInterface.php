@@ -60,12 +60,12 @@ interface ClinicalTrialsGovManagerInterface {
    *   path, parent, name, piece, title, type, sourceType, description,
    *   and children.
    */
-  public function getMetadataByPath(): array;
+  public function getMetadataByPath(?string $path = NULL): array;
 
   /**
    * Returns metadata rows keyed by ClinicalTrials.gov piece.
    */
-  public function getMetadataByPiece(): array;
+  public function getMetadataByPiece(?string $piece = NULL): array;
 
   /**
    * Fetches all enumeration types and their allowed values.

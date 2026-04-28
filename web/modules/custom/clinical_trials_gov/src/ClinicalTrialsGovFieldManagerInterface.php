@@ -25,6 +25,16 @@ interface ClinicalTrialsGovFieldManagerInterface {
   public function getAvailableFieldDefinitionsFromQuery(string $query): array;
 
   /**
+   * Resolves a metadata path into a normalized field definition.
+   */
+  public function resolveFieldDefinition(string $path): array;
+
+  /**
+   * Resolves a whitelisted structured path into a custom field definition.
+   */
+  public function resolveStructuredFieldDefinition(string $path): ?array;
+
+  /**
    * Returns a decorated field definition for one metadata path.
    */
   public function getFieldDefinition(string $path): array;

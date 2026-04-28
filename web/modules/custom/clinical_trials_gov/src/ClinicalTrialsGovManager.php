@@ -61,32 +61,38 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getMetadataByPath(): array {
+  public function getMetadataByPath(?string $path = NULL): array {
     if ($this->metadataByPathCache === NULL) {
       $data = $this->api->get('/studies/metadata');
       $this->metadataByPathCache = $this->flattenMetadata($data);
     }
-    return $this->metadataByPathCache;
+    if ($path === NULL) {
+      return $this->metadataByPathCache;
+    }
+    return $this->metadataByPathCache[$path] ?? [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getMetadataByPiece(): array {
+  public function getMetadataByPiece(?string $piece = NULL): array {
     if ($this->metadataByPieceCache === NULL) {
       $this->metadataByPieceCache = [];
       foreach ($this->getMetadataByPath() as $metadata) {
         if (!is_array($metadata)) {
           continue;
         }
-        $piece = (string) ($metadata['piece'] ?? '');
-        if ($piece === '') {
+        $metadata_piece = (string) ($metadata['piece'] ?? '');
+        if ($metadata_piece === '') {
           continue;
         }
-        $this->metadataByPieceCache[$piece] = $metadata;
+        $this->metadataByPieceCache[$metadata_piece] = $metadata;
       }
     }
-    return $this->metadataByPieceCache;
+    if ($piece === NULL) {
+      return $this->metadataByPieceCache;
+    }
+    return $this->metadataByPieceCache[$piece] ?? [];
   }
 
   /**

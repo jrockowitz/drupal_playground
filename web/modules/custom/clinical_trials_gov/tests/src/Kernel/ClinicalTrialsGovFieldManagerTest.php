@@ -63,6 +63,7 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
   public function testAvailableFieldDefinitions(): void {
     $available_field_keys = $this->fieldManager->getAvailableFieldKeysFromQuery('query.cond=cancer');
     $available_definitions = $this->fieldManager->getAvailableFieldDefinitionsFromQuery('query.cond=cancer');
+    $resolved_responsible_party_definition = $this->fieldManager->resolveFieldDefinition('protocolSection.sponsorCollaboratorsModule.responsibleParty');
     $responsible_party_definition = $this->fieldManager->getFieldDefinition('protocolSection.sponsorCollaboratorsModule.responsibleParty');
     $protocol_section_definition = $this->fieldManager->getFieldDefinition('protocolSection');
     $alias_definition = $this->fieldManager->getFieldDefinition('protocolSection.identificationModule.nctIdAliases');
@@ -81,6 +82,8 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     // Check that simple structs remain custom fields with detail rows.
     $this->assertTrue($responsible_party_definition['available']);
     $this->assertSame('custom', $responsible_party_definition['field_type']);
+    $this->assertArrayNotHasKey('available', $resolved_responsible_party_definition);
+    $this->assertSame('custom', $resolved_responsible_party_definition['field_type']);
     $this->assertSame([
       'type',
       'investigator_full_name',

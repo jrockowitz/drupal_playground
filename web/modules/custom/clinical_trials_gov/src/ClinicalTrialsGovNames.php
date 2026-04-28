@@ -81,7 +81,7 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
    * {@inheritdoc}
    */
   public function getDisplayLabel(string $piece): string {
-    $metadata = $this->manager->getMetadataByPiece()[$piece] ?? [];
+    $metadata = $this->manager->getMetadataByPiece($piece);
     $title = (string) ($metadata['title'] ?? '');
     if ($title !== '') {
       return $title;
