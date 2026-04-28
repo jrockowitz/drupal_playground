@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\Core\Entity\Entity\EntityFormDisplay;
-use Drupal\node\Entity\NodeType;
 
 /**
  * Manages wizard-created content types and fields.
@@ -62,11 +59,12 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    * {@inheritdoc}
    */
   public function createContentType(string $type, string $label, string $description): void {
-    if (NodeType::load($type) !== NULL) {
+    $node_type_storage = $this->entityTypeManager->getStorage('node_type');
+    if ($node_type_storage->load($type) !== NULL) {
       return;
     }
 
-    NodeType::create([
+    $node_type_storage->create([
       'type' => $type,
       'name' => $label,
       'description' => $description,
@@ -449,9 +447,10 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     $form_display_id = 'node.' . $type . '.default';
-    $form_display = EntityFormDisplay::load($form_display_id);
+    $form_display_storage = $this->entityTypeManager->getStorage('entity_form_display');
+    $form_display = $form_display_storage->load($form_display_id);
     if ($form_display === NULL) {
-      $form_display = EntityFormDisplay::create([
+      $form_display = $form_display_storage->create([
         'targetEntityType' => 'node',
         'bundle' => $type,
         'mode' => 'default',
@@ -460,9 +459,10 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     $view_display_id = 'node.' . $type . '.default';
-    $view_display = EntityViewDisplay::load($view_display_id);
+    $view_display_storage = $this->entityTypeManager->getStorage('entity_view_display');
+    $view_display = $view_display_storage->load($view_display_id);
     if ($view_display === NULL) {
-      $view_display = EntityViewDisplay::create([
+      $view_display = $view_display_storage->create([
         'targetEntityType' => 'node',
         'bundle' => $type,
         'mode' => 'default',
@@ -524,9 +524,10 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    */
   protected function createFieldDisplayComponents(string $type, array $field_definitions): void {
     $form_display_id = 'node.' . $type . '.default';
-    $form_display = EntityFormDisplay::load($form_display_id);
+    $form_display_storage = $this->entityTypeManager->getStorage('entity_form_display');
+    $form_display = $form_display_storage->load($form_display_id);
     if ($form_display === NULL) {
-      $form_display = EntityFormDisplay::create([
+      $form_display = $form_display_storage->create([
         'targetEntityType' => 'node',
         'bundle' => $type,
         'mode' => 'default',
@@ -535,9 +536,10 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     $view_display_id = 'node.' . $type . '.default';
-    $view_display = EntityViewDisplay::load($view_display_id);
+    $view_display_storage = $this->entityTypeManager->getStorage('entity_view_display');
+    $view_display = $view_display_storage->load($view_display_id);
     if ($view_display === NULL) {
-      $view_display = EntityViewDisplay::create([
+      $view_display = $view_display_storage->create([
         'targetEntityType' => 'node',
         'bundle' => $type,
         'mode' => 'default',

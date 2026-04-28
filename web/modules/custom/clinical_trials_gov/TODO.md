@@ -1,8 +1,0 @@
-- Add Preview the Find form
-  - Add 'Preview' details widget to the bottom of the form
-  - In details add 'Update preview' button which submits the form but does not save the query
-  - Use the default query is when 'Update preview' button is clicked use update query to generate a preview
-  - Use Ajax to update the preview
-  - Update the studies view to open the study in a modal dialog.
-  - Update \Drupal\clinical_trials_gov\ClinicalTrialsGovBuilder::buildStudiesList to support $options = ['modal' => FALSE]
-  - For this preview and review open modal for the report do NOT open the modal for the report

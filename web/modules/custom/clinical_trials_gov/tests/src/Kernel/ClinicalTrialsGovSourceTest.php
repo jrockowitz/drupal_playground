@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
+use Drupal\clinical_trials_gov_test\ClinicalTrialsGovManagerStub;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -15,6 +16,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('clinical_trials_gov')]
 class ClinicalTrialsGovSourceTest extends KernelTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'clinical_trials_gov',
     'clinical_trials_gov_test',
@@ -48,6 +52,9 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
     $source = $migration->getSourcePlugin();
     $source->rewind();
     $row = $source->current();
+    $source->rewind();
+    $rows = array_values(iterator_to_array($source));
+    $manager = $this->container->get('clinical_trials_gov.manager');
 
     // Check that the first source row contains both flattened values and preserved structured parents.
     $this->assertNotNull($row);
@@ -60,6 +67,24 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
       'Survivorship',
       'Symptoms, Cognitive',
     ], $row->getSourceProperty('protocolSection.conditionsModule.conditions'));
+
+    // Check that the source plugin paginates through all studies.
+    $this->assertCount(3, $rows);
+    $this->assertSame('NCT01205711', $rows[2]->getSourceProperty('protocolSection.identificationModule.nctId'));
+
+    // Check that paginated requests use pageSize and nextPageToken.
+    $this->assertInstanceOf(ClinicalTrialsGovManagerStub::class, $manager);
+    $this->assertSame([
+      [
+        'query.cond' => 'cancer',
+        'pageSize' => '1000',
+      ],
+      [
+        'query.cond' => 'cancer',
+        'pageSize' => '1000',
+        'pageToken' => 'page-2',
+      ],
+    ], $manager->getStudiesRequests());
   }
 
 }

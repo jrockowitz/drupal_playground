@@ -6,8 +6,8 @@ namespace Drupal\clinical_trials_gov\Form;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
-use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
+use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

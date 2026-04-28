@@ -6,8 +6,8 @@ namespace Drupal\clinical_trials_gov;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
 
 /**
  * Converts ClinicalTrials.gov API study data into Drupal render arrays.

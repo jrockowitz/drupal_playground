@@ -15,6 +15,11 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('clinical_trials_gov')]
 class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
 
+  /**
+   * Modules required for these kernel tests.
+   *
+   * @var array
+   */
   protected static $modules = [
     'clinical_trials_gov',
     'clinical_trials_gov_test',

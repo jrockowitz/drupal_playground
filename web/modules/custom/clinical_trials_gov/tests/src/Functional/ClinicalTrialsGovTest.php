@@ -17,6 +17,9 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 class ClinicalTrialsGovTest extends BrowserTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = [
     'clinical_trials_gov',
     'clinical_trials_gov_test',
@@ -24,6 +27,9 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     'field_group',
   ];
 
+  /**
+   * {@inheritdoc}
+   */
   protected $defaultTheme = 'stark';
 
   /**
@@ -80,12 +86,12 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('The study identifier');
     $this->assertSession()->pageTextContains('INVALID');
     $this->assertSession()->pageTextContains('is not valid.');
-    $this->assertSession()->pageTextContains('Showing 1 - 3 of 3 trials.');
+    $this->assertSession()->pageTextContains('Showing 1 - 2 of 3 trials.');
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/find');
 
     // Check that Find auto-loads preview results when a saved query exists.
-    $this->assertSession()->pageTextContains('Showing 1 - 3 of 3 trials.');
+    $this->assertSession()->pageTextContains('Showing 1 - 2 of 3 trials.');
     $this->assertSession()->linkExists('NCT05088187');
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/configure');

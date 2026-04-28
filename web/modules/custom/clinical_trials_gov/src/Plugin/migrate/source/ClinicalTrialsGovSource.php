@@ -20,6 +20,11 @@ use Drupal\migrate\Row;
 class ClinicalTrialsGovSource extends SourcePluginBase {
 
   /**
+   * Maximum number of studies to fetch per API request.
+   */
+  protected const PAGE_SIZE = '1000';
+
+  /**
    * {@inheritdoc}
    */
   public function __toString(): string {
@@ -57,14 +62,27 @@ class ClinicalTrialsGovSource extends SourcePluginBase {
   protected function initializeIterator(): \Traversable {
     /** @var \Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface $manager */
     $manager = \Drupal::service('clinical_trials_gov.manager');
-    $response = $manager->getStudies(ClinicalTrialsGovStudiesQuery::parseQueryString((string) ($this->configuration['query'] ?? '')));
+    $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString((string) ($this->configuration['query'] ?? ''));
+    $parameters['pageSize'] = self::PAGE_SIZE;
     $rows = [];
-    foreach (($response['studies'] ?? []) as $study) {
-      if (!is_array($study)) {
-        continue;
+
+    do {
+      $response = $manager->getStudies($parameters);
+      foreach (($response['studies'] ?? []) as $study) {
+        if (!is_array($study)) {
+          continue;
+        }
+        $rows[] = $this->flattenStudy($study);
       }
-      $rows[] = $this->flattenStudy($study);
-    }
+
+      if (!empty($response['nextPageToken']) && is_string($response['nextPageToken'])) {
+        $parameters['pageToken'] = $response['nextPageToken'];
+      }
+      else {
+        unset($parameters['pageToken']);
+      }
+    } while (!empty($response['nextPageToken']));
+
     return new \ArrayIterator($rows);
   }
 

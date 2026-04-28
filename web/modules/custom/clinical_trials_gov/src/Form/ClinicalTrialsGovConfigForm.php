@@ -8,10 +8,10 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\Entity\FieldConfig;
-use Drupal\node\Entity\NodeType;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,6 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ClinicalTrialsGovConfigForm extends ConfigFormBase {
 
   public function __construct(
+    protected EntityTypeManagerInterface $entityTypeManager,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
     protected ClinicalTrialsGovEntityManagerInterface $entityManager,
     protected ClinicalTrialsGovMigrationManagerInterface $migrationManager,
@@ -30,6 +31,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
+      $container->get('entity_type.manager'),
       $container->get('clinical_trials_gov.field_manager'),
       $container->get('clinical_trials_gov.entity_manager'),
       $container->get('clinical_trials_gov.migration_manager'),
@@ -61,7 +63,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $saved_query = (string) ($config->get('query') ?? '');
     $saved_type = (string) ($config->get('type') ?? ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE);
     $saved_fields = array_values(array_filter($config->get('fields') ?? [], 'is_string'));
-    $node_type = NodeType::load($saved_type);
+    $node_type = $this->entityTypeManager->getStorage('node_type')->load($saved_type);
 
     $form['content_type'] = [
       '#type' => 'details',

@@ -6,6 +6,7 @@ namespace Drupal\clinical_trials_gov\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\clinical_trials_gov\Traits\ClinicalTrialsGovMessageTrait;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
@@ -81,13 +82,14 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
       ];
     }
 
-    $parameters = \Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery::parseQueryString($saved_query);
+    $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($saved_query);
     $page_token = (string) $request->query->get('pageToken', '');
     $page_offset = (int) $request->query->get('pageOffset', 0);
     if ($page_token !== '') {
       $parameters['pageToken'] = $page_token;
     }
     $parameters['countTotal'] = 'true';
+    $parameters['pageSize'] = 50;
 
     $response = $this->manager->getStudies($parameters);
     $studies = $response['studies'] ?? [];

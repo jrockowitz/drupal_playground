@@ -7,12 +7,17 @@ namespace Drupal\clinical_trials_gov_test;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 
 /**
- * Stub manager that returns fixture data for testing.
+ * Stub ClinicalTrials.gov manager that returns fixture data for testing.
  *
  * Installed by clinical_trials_gov_test to replace clinical_trials_gov.manager
  * in the service container, eliminating live API calls in all test types.
  */
 class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface {
+
+  /**
+   * Records the study-search parameters passed to getStudies().
+   */
+  protected array $studiesRequests = [];
 
   /**
    * Map of NCT ID to fixture filename (without extension).
@@ -27,7 +32,32 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
    * {@inheritdoc}
    */
   public function getStudies(array $parameters): array {
-    return $this->loadFixture('studies');
+    $this->studiesRequests[] = $parameters;
+    $fixture = $this->loadFixture('studies');
+    $studies = array_values(array_filter($fixture['studies'] ?? [], 'is_array'));
+    $page_token = (string) ($parameters['pageToken'] ?? '');
+    $page_size = (int) ($parameters['pageSize'] ?? 10);
+
+    if ($page_token === 'page-2') {
+      return [
+        'studies' => array_slice($studies, 2),
+        'nextPageToken' => NULL,
+        'totalCount' => $fixture['totalCount'] ?? count($studies),
+      ];
+    }
+
+    return [
+      'studies' => array_slice($studies, 0, min($page_size, 2)),
+      'nextPageToken' => (count($studies) > 2) ? 'page-2' : NULL,
+      'totalCount' => $fixture['totalCount'] ?? count($studies),
+    ];
+  }
+
+  /**
+   * Returns the recorded getStudies() requests.
+   */
+  public function getStudiesRequests(): array {
+    return $this->studiesRequests;
   }
 
   /**
