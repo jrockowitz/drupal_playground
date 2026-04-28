@@ -36,6 +36,7 @@ Routes:
 - `clinical_trials_gov.review.study` — Study detail (`ClinicalTrialsGovReviewController::study`, `_title_callback: ::title`)
 - `clinical_trials_gov.configure` — Step 3: Configure (`ClinicalTrialsGovConfigForm`)
 - `clinical_trials_gov.import` — Step 4: Import (`ClinicalTrialsGovImportForm`)
+- `clinical_trials_gov.manage` — Step 5: Manage (`ClinicalTrialsGovManageController::index`)
 
 Step behaviour:
 
@@ -47,9 +48,12 @@ Step behaviour:
 
 **4. Import** — shows migration summary and id-map stats; runs a full sync via `MigrateBatchExecutable`.
 
+**5. Manage** — redirects to the node listing filtered to the configured content type. If the configured type is missing or has not been created yet, it redirects back to Configure with a status message.
+
 ## Configuration
 
 Primary config: `clinical_trials_gov.settings` — keys: `query`, `paths`, `type`, `fields`.
+Install defaults live in `config/install/clinical_trials_gov.settings.yml`.
 
 Generated migration: `migrate_plus.migration.clinical_trials_gov`. Deleted when query/paths/type/fields are incomplete.
 
@@ -79,10 +83,11 @@ Field resolution lives in `ClinicalTrialsGovFieldManager::resolveFieldDefinition
 
 `ClinicalTrialsGovSource` (migrate source plugin `clinical_trials_gov`):
 - parses the saved raw query string with `ClinicalTrialsGovStudiesQuery::parseQueryString()`
-- forces `pageSize=1000` and follows `nextPageToken` to fetch all pages
+- uses `/studies` only to collect lightweight `nctId` rows (`fields=NCTId`, `pageSize=1000`, follows `nextPageToken`)
+- loads each full study in `prepareRow()` via `/studies/{nctId}`
 - flattens rows via a modified `flattenStudy()` that **also preserves parent structured objects on their parent key** — this is intentional: it lets `custom_field` destinations map from a struct key rather than reconstructing values field-by-field in migrate
 - row IDs use the top-level `nctId` source property
-- does **not** use `fields=NCTId` — that would strip the full payload the migration needs
+- keeps the full payload out of `initializeIterator()`, which is the main memory-saving behavior for large imports
 
 UI preview/review fetches only one page at a time; the migration source fetches all pages. These are intentionally different.
 
@@ -122,6 +127,7 @@ ddev drush migrate:status clinical_trials_gov
 - Update tests when changing: field curation, struct resolution, migration generation, source pagination, or Configure table behaviour.
 - Curated field-list changes ripple into the Functional test — check `ClinicalTrialsGovTest::testWizardFlow` assertions against the Configure table.
 - If a field seems "missing", check `clinical_trials_gov.settings:paths` and the Find discovery batch before touching the resolver.
+- If Configure is blocked, check whether `clinical_trials_gov.settings:paths` is empty; there is no fallback allow-list anymore.
 - If a struct seems wrong, inspect: metadata `type`, `sourceType`, `children`, and which outcome (`custom_field`, `field_group`, unsupported) is intended.
 - Preserve the distinction between UI preview/review (one page) and migration source (all pages).
 - Do not use `0` for unlimited cardinality — use `-1`.

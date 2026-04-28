@@ -158,7 +158,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     $this->migrationManager->updateMigration();
 
     $batch = (new BatchBuilder())
-      ->setTitle($this->t('Discovering study fields'))
+      ->setTitle($this->t('Discovering study query fields on ClinicalTrials.gov'))
       ->setProgressMessage($this->t('Discovering available study fields...'))
       ->addOperation([ClinicalTrialsGovPathDiscoveryBatch::class, 'discover'], [$query])
       ->setFinishCallback([ClinicalTrialsGovPathDiscoveryBatch::class, 'finish']);
