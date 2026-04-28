@@ -74,6 +74,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
       'protocolSection.contactsLocationsModule.locations.status',
       'protocolSection.contactsLocationsModule.locations.contacts',
       'protocolSection.sponsorCollaboratorsModule.responsibleParty',
+      'protocolSection.conditionsModule.conditions',
       'protocolSection.identificationModule.nctId',
       'protocolSection.descriptionModule.briefSummary',
       'protocolSection.statusModule.overallStatus',
@@ -83,6 +84,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that the scalar, enum, and custom fields were created.
     $this->assertSame('string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'))?->getType());
     $this->assertSame('text_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.descriptionModule.briefSummary'))?->getType());
+    $this->assertSame(-1, FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.conditionsModule.conditions'))?->getCardinality());
     $this->assertSame('list_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.statusModule.overallStatus'))?->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.organization'))?->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty'))?->getType());
@@ -132,7 +134,9 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
 
     $title_definition = $this->entityManager->resolveFieldDefinition('protocolSection.identificationModule.briefTitle');
     $enum_definition = $this->entityManager->resolveFieldDefinition('protocolSection.statusModule.overallStatus');
-    $json_definition = $this->entityManager->resolveFieldDefinition('protocolSection.statusModule.startDateStruct');
+    $partial_date_definition = $this->entityManager->resolveFieldDefinition('protocolSection.statusModule.startDateStruct.date');
+    $partial_date_struct_definition = $this->entityManager->resolveFieldDefinition('protocolSection.statusModule.startDateStruct');
+    $conditions_definition = $this->entityManager->resolveFieldDefinition('protocolSection.conditionsModule.conditions');
     $custom_definition = $this->entityManager->resolveFieldDefinition('protocolSection.identificationModule.organization');
     $responsible_party_definition = $this->entityManager->resolveFieldDefinition('protocolSection.sponsorCollaboratorsModule.responsibleParty');
     $group_definition = $this->entityManager->resolveFieldDefinition('protocolSection.contactsLocationsModule.locations');
@@ -144,8 +148,21 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertSame('list_string', $enum_definition['field_type']);
     $this->assertNotEmpty($enum_definition['storage_settings']['allowed_values']);
 
-    // Check that partial date structures resolve to json.
-    $this->assertSame('json', $json_definition['field_type']);
+    // Check that partial date leaves resolve to date fields.
+    $this->assertSame('datetime', $partial_date_definition['field_type']);
+    $this->assertSame('date', $partial_date_definition['display_type_label']);
+
+    // Check that partial date structures resolve to custom fields.
+    $this->assertSame('custom', $partial_date_struct_definition['field_type']);
+    $this->assertSame([
+      'start_date',
+      'start_date_type',
+    ], $partial_date_struct_definition['details']);
+
+    // Check that text array fields resolve to unlimited multi-value scalar fields.
+    $this->assertSame('string', $conditions_definition['field_type']);
+    $this->assertSame(-1, $conditions_definition['cardinality']);
+    $this->assertSame('string (multiple)', $conditions_definition['display_type_label']);
 
     // Check that whitelisted structures resolve to custom fields with columns.
     $this->assertSame('custom', $custom_definition['field_type']);
@@ -156,12 +173,12 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertSame('custom', $responsible_party_definition['field_type']);
     $this->assertSame('custom field', $responsible_party_definition['display_type_label']);
     $this->assertSame([
-      'Type',
-      'Investigator_full_name',
-      'Investigator_title',
-      'Investigator_affiliation',
-      'Old_name_title',
-      'Old_organization',
+      'type',
+      'investigator_full_name',
+      'investigator_title',
+      'investigator_affiliation',
+      'old_name_title',
+      'old_organization',
     ], $responsible_party_definition['details']);
 
     // Check that nested structures can resolve to field groups.

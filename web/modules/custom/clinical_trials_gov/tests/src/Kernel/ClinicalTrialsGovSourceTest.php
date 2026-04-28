@@ -53,6 +53,13 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
     $this->assertNotNull($row);
     $this->assertSame('NCT05088187', $row->getSourceProperty('protocolSection.identificationModule.nctId'));
     $this->assertIsArray($row->getSourceProperty('protocolSection.identificationModule.organization'));
+    $this->assertSame([
+      'Thyroid Nodule',
+      'Thyroid Cancer',
+      'Cognitive Decline',
+      'Survivorship',
+      'Symptoms, Cognitive',
+    ], $row->getSourceProperty('protocolSection.conditionsModule.conditions'));
   }
 
 }

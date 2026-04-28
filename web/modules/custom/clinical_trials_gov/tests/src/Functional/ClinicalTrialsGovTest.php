@@ -52,6 +52,10 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('4. Import');
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/find');
+
+    // Check that Find starts without preview results when no query is saved.
+    $this->assertSession()->pageTextContains('Use Update preview to preview the current query without saving it.');
+
     $this->getSession()->getPage()->fillField('query__cond', 'cancer');
     $this->getSession()->getPage()->pressButton('Save configuration');
 
@@ -78,19 +82,27 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('is not valid.');
     $this->assertSession()->pageTextContains('Showing 1 - 3 of 3 trials.');
 
+    $this->drupalGet('admin/config/services/clinical-trials-gov/find');
+
+    // Check that Find auto-loads preview results when a saved query exists.
+    $this->assertSession()->pageTextContains('Showing 1 - 3 of 3 trials.');
+    $this->assertSession()->linkExists('NCT05088187');
+
     $this->drupalGet('admin/config/services/clinical-trials-gov/configure');
 
     // Check that the field mapping table uses the updated columns and values.
     $this->assertSession()->pageTextContains('Study identifier');
-    $this->assertSession()->pageTextContains('Details');
     $this->assertSession()->pageTextContains('Field type');
     $this->assertSession()->pageTextContains('Protocol Section');
     $this->assertSession()->pageTextContains('Responsible Party');
+    $this->assertSession()->pageTextContains('Design Masking Info');
+    $this->assertSession()->pageTextContains('string (multiple)');
     $this->assertSession()->pageTextContains('field group');
     $this->assertSession()->pageTextContains('custom field');
     $this->assertSession()->pageTextContains('ProtocolSection');
     $this->assertSession()->pageTextContains('ResponsibleParty');
-    $this->assertSession()->pageTextContains('Investigator_full_name');
+    $this->assertSession()->pageTextContains('investigator_full_name');
+    $this->assertSession()->pageTextNotContains('Details');
     $this->assertSession()->elementExists('css', 'th.select-all');
     $this->assertSession()->fieldExists('field_mapping[rows][' . md5('protocolSection.sponsorCollaboratorsModule.responsibleParty') . '][selected]');
     $this->assertSession()->fieldNotExists('field_mapping[rows][' . md5('protocolSection') . '][selected]');
@@ -99,6 +111,8 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextNotContains('field_nct_id_alias');
     $this->assertSession()->pageTextNotContains('protocolSection.identificationModule.nctIdAliases');
     $this->assertSession()->pageTextNotContains('No description.');
+    $this->assertSession()->fieldValueEquals('Description', 'Imported ClinicalTrials.gov studies.');
+    $this->assertSession()->elementAttributeContains('css', 'textarea[name="description"]', 'rows', '3');
 
     if ($this->getSession()->getPage()->findField('Label') !== NULL) {
       $this->getSession()->getPage()->fillField('Label', 'Trial');

@@ -123,6 +123,15 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
     $first_row = $build['#rows'][0];
     $this->assertStringContainsString($expected_url, (string) $first_row[0]);
     $this->assertSame($expected_title, (string) $first_row[1]);
+
+    $modal_build = $this->builder->buildStudiesList($studies, 'clinical_trials_gov_report.study', ['modal' => TRUE]);
+    $modal_first_row = $modal_build['#rows'][0];
+
+    // Check that modal option attaches dialog Ajax behavior to the NCT ID link.
+    $this->assertContains('core/drupal.dialog.ajax', $modal_build['#attached']['library']);
+    $this->assertSame('link', $modal_first_row[0]['data']['#type']);
+    $this->assertContains('use-ajax', $modal_first_row[0]['data']['#attributes']['class']);
+    $this->assertSame('modal', $modal_first_row[0]['data']['#attributes']['data-dialog-type']);
   }
 
 }

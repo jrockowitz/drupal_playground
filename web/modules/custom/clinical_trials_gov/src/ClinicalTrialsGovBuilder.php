@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -22,7 +23,8 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function buildStudiesList(array $studies, ?string $study_route = NULL): array {
+  public function buildStudiesList(array $studies, ?string $study_route = NULL, array $options = []): array {
+    $modal = !empty($options['modal']);
     $rows = [];
     foreach ($studies as $study) {
       $identification = $study['protocolSection']['identificationModule'] ?? [];
@@ -37,10 +39,29 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       $conditions = implode(', ', $conditions_module['conditions'] ?? []);
 
       if ($nct_id !== '' && $study_route !== NULL) {
-        $nct_cell = $this->t('<a href=":url">@nct</a>', [
-          ':url' => Url::fromRoute($study_route, ['nctId' => $nct_id])->toString(),
-          '@nct' => $nct_id,
-        ]);
+        $url = Url::fromRoute($study_route, ['nctId' => $nct_id]);
+        if ($modal) {
+          $nct_cell = [
+            'data' => [
+              '#type' => 'link',
+              '#title' => $nct_id,
+              '#url' => $url,
+              '#attributes' => [
+                'class' => ['use-ajax'],
+                'data-dialog-type' => 'modal',
+                'data-dialog-options' => Json::encode([
+                  'width' => 960,
+                ]),
+              ],
+            ],
+          ];
+        }
+        else {
+          $nct_cell = $this->t('<a href=":url">@nct</a>', [
+            ':url' => $url->toString(),
+            '@nct' => $nct_id,
+          ]);
+        }
       }
       else {
         $nct_cell = $nct_id;
@@ -49,7 +70,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       $rows[] = [$nct_cell, $title, $status, $phases, $conditions];
     }
 
-    return [
+    $build = [
       '#type' => 'table',
       '#header' => [
         $this->t('NCT ID'),
@@ -60,6 +81,12 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       ],
       '#rows' => $rows,
     ];
+
+    if ($modal) {
+      $build['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    }
+
+    return $build;
   }
 
   /**

@@ -56,6 +56,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
       ->set('fields', [
         'protocolSection.contactsLocationsModule.locations',
         'protocolSection.sponsorCollaboratorsModule.responsibleParty',
+        'protocolSection.conditionsModule.conditions',
         'protocolSection.identificationModule.briefTitle',
         'protocolSection.identificationModule.nctId',
         'protocolSection.identificationModule.nctIdAliases',
@@ -76,6 +77,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->assertSame('protocolSection.identificationModule.briefTitle', $config->get('process.title'));
     $entity_manager = $this->container->get('clinical_trials_gov.entity_manager');
     $this->assertSame('protocolSection.identificationModule.nctId', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctId')));
+    $this->assertSame('protocolSection.conditionsModule.conditions', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.conditionsModule.conditions')));
     $this->assertNull($config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctIdAliases')));
     $this->assertNull($config->get('process.group_location'));
     $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.field_responsible_party'));

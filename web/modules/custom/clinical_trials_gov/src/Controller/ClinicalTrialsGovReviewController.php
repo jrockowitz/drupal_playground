@@ -97,6 +97,12 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
     $total = $response['totalCount'] ?? NULL;
 
     $build = [
+      '#attributes' => [
+        'class' => ['clinical-trials-gov'],
+      ],
+      '#attached' => [
+        'library' => ['clinical_trials_gov/clinical_trials_gov'],
+      ],
       'intro' => [
         '#markup' => '<p>' . $this->t('Review the studies returned by the saved <a href=":find_url">query</a> before <a href=":configure_url">configuring the destination content type</a>.', [
           ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
@@ -115,7 +121,7 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
             '@end' => $end,
           ])) . '</p>',
       ],
-      'results' => $this->builder->buildStudiesList($studies, 'clinical_trials_gov.review'),
+      'results' => $this->builder->buildStudiesList($studies, 'clinical_trials_gov.review', ['modal' => TRUE]),
     ];
 
     if ($message !== NULL) {

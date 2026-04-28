@@ -38,14 +38,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   ];
 
   /**
-   * Metadata types that are always stored in json_field.
-   */
-  protected const JSON_TYPES = [
-    'PartialDate',
-    'PartialDateStruct',
-  ];
-
-  /**
    * Friendly field-name stems keyed by ClinicalTrials.gov piece identifier.
    */
   protected const FIELD_NAMES = [
@@ -171,7 +163,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     $cardinality = $is_multi ? -1 : 1;
     $definition = [
       'api_key' => $api_key,
-      'label' => $title !== '' ? $title : $study_identifier,
+      'label' => $this->buildDisplayLabel($title !== '' ? $title : $study_identifier),
       'field_name' => $this->generateFieldName($api_key),
       'description' => (string) ($metadata['description'] ?? ''),
       'piece' => (string) ($metadata['piece'] ?? ''),
@@ -198,7 +190,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       return $definition;
     }
 
-    if ($source_type === 'STRUCT' && !in_array($type, self::JSON_TYPES, TRUE)) {
+    if ($source_type === 'STRUCT') {
       $structured_definition = $this->resolveStructuredFieldDefinition($api_key);
       if ($structured_definition !== NULL) {
         return array_merge($definition, $structured_definition);
@@ -217,13 +209,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
         $definition['selectable'] = TRUE;
         $definition['reason'] = '';
       }
-      return $definition;
-    }
-
-    if (in_array($type, self::JSON_TYPES, TRUE)) {
-      $definition['field_type'] = 'json';
-      $definition['type_label'] = 'json';
-      $definition['display_type_label'] = $this->buildDisplayTypeLabel('json', $cardinality);
       return $definition;
     }
 
@@ -255,8 +240,8 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     if ($source_type === 'DATE') {
       $definition['field_type'] = 'datetime';
       $definition['storage_settings'] = ['datetime_type' => 'date'];
-      $definition['type_label'] = 'datetime';
-      $definition['display_type_label'] = $this->buildDisplayTypeLabel('datetime', $cardinality);
+      $definition['type_label'] = 'date';
+      $definition['display_type_label'] = $this->buildDisplayTypeLabel('date', $cardinality);
       return $definition;
     }
 
@@ -415,7 +400,25 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       $piece = substr($piece, strlen($parent_piece)) ?: $piece;
     }
 
-    return ucfirst($this->normalizeFieldStem($piece));
+    return $this->normalizeFieldStem($piece);
+  }
+
+  /**
+   * Builds a human-readable label from metadata titles and identifiers.
+   */
+  protected function buildDisplayLabel(string $label): string {
+    if ($label === '') {
+      return '';
+    }
+
+    if (str_contains($label, ' ') || str_contains($label, '-')) {
+      return $label;
+    }
+
+    $label = preg_replace('/(?<=[A-Z])(?=[A-Z][a-z])/', ' ', $label) ?? $label;
+    $label = preg_replace('/(?<=[a-z0-9])(?=[A-Z])/', ' ', $label) ?? $label;
+
+    return trim($label);
   }
 
   /**
@@ -739,6 +742,20 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
           'type' => 'boolean',
         ],
         'instance' => $instance,
+      ];
+    }
+
+    if ($source_type === 'DATE') {
+      return [
+        'column_name' => $column_name,
+        'storage' => [
+          'name' => $column_name,
+          'type' => 'datetime',
+          'datetime_type' => 'date',
+        ],
+        'instance' => $instance + [
+          'timezone_enabled' => FALSE,
+        ],
       ];
     }
 

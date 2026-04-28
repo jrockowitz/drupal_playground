@@ -16,11 +16,14 @@ interface ClinicalTrialsGovBuilderInterface {
    *   Raw studies array from ClinicalTrialsGovManagerInterface::getStudies().
    * @param string|null $study_route
    *   Route name for study detail links. NULL renders NCT IDs as plain text.
+   * @param array $options
+   *   Supported options:
+   *   - modal: Whether study links should open in a modal dialog.
    *
    * @return array
    *   Drupal render array representing a studies table.
    */
-  public function buildStudiesList(array $studies, ?string $study_route = NULL): array;
+  public function buildStudiesList(array $studies, ?string $study_route = NULL, array $options = []): array;
 
   /**
    * Converts a flat Index-field study array into a Drupal render array.
