@@ -67,6 +67,7 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $responsible_party_definition = $this->fieldManager->getFieldDefinition('protocolSection.sponsorCollaboratorsModule.responsibleParty');
     $protocol_section_definition = $this->fieldManager->getFieldDefinition('protocolSection');
     $alias_definition = $this->fieldManager->getFieldDefinition('protocolSection.identificationModule.nctIdAliases');
+    $title_definition = $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.briefTitle');
 
     // Check that the curated key list keeps required and structural parents.
     $this->assertContains('protocolSection', $available_field_keys);
@@ -97,6 +98,11 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $this->assertTrue($protocol_section_definition['available']);
     $this->assertSame('field_group', $protocol_section_definition['field_type']);
     $this->assertTrue($protocol_section_definition['group_only']);
+
+    // Check that brief title still maps to node title and keeps a generated field.
+    $this->assertSame('title', $title_definition['destination_property']);
+    $this->assertSame('field_brief_title', $title_definition['field_name']);
+    $this->assertSame('text_long', $title_definition['field_type']);
   }
 
 }

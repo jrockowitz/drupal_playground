@@ -107,6 +107,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('custom field');
     $this->assertSession()->pageTextContains('ProtocolSection');
     $this->assertSession()->pageTextContains('ResponsibleParty');
+    $this->assertSession()->elementExists('css', 'td ul li');
     $this->assertSession()->pageTextContains('investigator_full_name');
     $this->assertSession()->pageTextNotContains('Details');
     $this->assertSession()->elementExists('css', 'th.select-all');

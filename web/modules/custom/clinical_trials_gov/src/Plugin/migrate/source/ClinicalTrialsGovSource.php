@@ -43,7 +43,7 @@ class ClinicalTrialsGovSource extends SourcePluginBase {
    */
   public function getIds(): array {
     return [
-      'protocolSection.identificationModule.nctId' => [
+      'nctId' => [
         'type' => 'string',
       ],
     ];
@@ -72,7 +72,9 @@ class ClinicalTrialsGovSource extends SourcePluginBase {
         if (!is_array($study)) {
           continue;
         }
-        $rows[] = $this->flattenStudy($study);
+        $row = $this->flattenStudy($study);
+        $row['nctId'] = (string) ($study['protocolSection']['identificationModule']['nctId'] ?? '');
+        $rows[] = $row;
       }
 
       if (!empty($response['nextPageToken']) && is_string($response['nextPageToken'])) {

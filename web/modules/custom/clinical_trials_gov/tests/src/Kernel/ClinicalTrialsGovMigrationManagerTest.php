@@ -78,14 +78,32 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->assertSame('query.cond=cancer&filter.overallStatus=RECRUITING', $config->get('source.query'));
     $this->assertSame('trial', $config->get('destination.default_bundle'));
 
-    // Check that title mapping and generated field mapping are present.
-    $this->assertSame('protocolSection.identificationModule.briefTitle', $config->get('process.title'));
+    // Check that title mapping truncates the source value for the node title.
+    $this->assertSame([
+      [
+        'plugin' => 'callback',
+        'callable' => '\\Drupal\\Component\\Utility\\Unicode::truncate',
+        'unpack_source' => TRUE,
+        'source' => [
+          'protocolSection.identificationModule.briefTitle',
+          'constants/title_max_length',
+          'constants/title_wordsafe',
+          'constants/title_add_ellipsis',
+        ],
+      ],
+    ], $config->get('process.title'));
     $entity_manager = $this->container->get('clinical_trials_gov.entity_manager');
+    $this->assertSame('protocolSection.identificationModule.briefTitle', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.briefTitle')));
     $this->assertSame('protocolSection.identificationModule.nctId', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctId')));
     $this->assertSame('protocolSection.conditionsModule.conditions', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.conditionsModule.conditions')));
     $this->assertNull($config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctIdAliases')));
     $this->assertNull($config->get('process.group_location'));
     $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.field_responsible_party'));
+
+    // Check that title truncation constants are available to the migration.
+    $this->assertSame(255, $config->get('source.constants.title_max_length'));
+    $this->assertFalse($config->get('source.constants.title_wordsafe'));
+    $this->assertTrue($config->get('source.constants.title_add_ellipsis'));
   }
 
 }

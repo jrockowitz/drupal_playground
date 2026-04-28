@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\migrate\MigrateMessage;
 use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
 use Drupal\migrate_tools\MigrateBatchExecutable;
@@ -58,23 +59,65 @@ class ClinicalTrialsGovImportForm extends FormBase {
     $fields = array_values(array_filter($config->get('fields') ?? [], 'is_string'));
     $ready = ($query !== '' && $type !== '' && $fields !== []);
 
-    $form['summary'] = [
+    $form['studies_query'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Studies query'),
+    ];
+    $form['studies_query']['summary'] = [
+      '#type' => 'clinical_trials_gov_studies_query_summary',
+      '#query' => $query,
+    ];
+    $form['studies_query']['links'] = $this->buildActionLinks([
+      'find' => [
+        'title' => $this->t('Find'),
+        'url' => Url::fromRoute('clinical_trials_gov.find'),
+      ],
+      'review' => [
+        'title' => $this->t('Review'),
+        'url' => Url::fromRoute('clinical_trials_gov.review'),
+      ],
+    ]);
+
+    $form['content_type'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Content type'),
+    ];
+    $form['content_type']['summary'] = [
       '#type' => 'table',
       '#header' => [
-        $this->t('Setting'),
-        $this->t('Value'),
+        [
+          'data' => $this->t('Setting'),
+          'style' => 'width: 50%',
+        ],
+        [
+          'data' => $this->t('Value'),
+          'style' => 'width: 50%',
+        ],
       ],
       '#rows' => [
-        [$this->t('Query'), $query !== '' ? $query : $this->t('Not configured')],
         [$this->t('Content type'), $type !== '' ? $type : $this->t('Not configured')],
         [$this->t('Selected fields'), (string) count($fields)],
       ],
+    ];
+    $form['content_type']['links'] = $this->buildActionLinks([
+      'configure' => [
+        'title' => $this->t('Configure'),
+        'url' => Url::fromRoute('clinical_trials_gov.configure'),
+      ],
+    ]);
+
+    $form['migration_status'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Migration status'),
     ];
 
     $migration = NULL;
     if ($ready) {
       try {
         $migration = $this->migrationPluginManager->createInstance('clinical_trials_gov');
+        if (!is_object($migration)) {
+          $migration = NULL;
+        }
       }
       catch (\Throwable) {
         $migration = NULL;
@@ -83,11 +126,17 @@ class ClinicalTrialsGovImportForm extends FormBase {
 
     if ($migration !== NULL) {
       $id_map = $migration->getIdMap();
-      $form['stats'] = [
+      $form['migration_status']['stats'] = [
         '#type' => 'table',
         '#header' => [
-          $this->t('Metric'),
-          $this->t('Count'),
+          [
+            'data' => $this->t('Metric'),
+            'style' => 'width: 50%',
+          ],
+          [
+            'data' => $this->t('Count'),
+            'style' => 'width: 50%',
+          ],
         ],
         '#rows' => [
           [$this->t('Processed'), (string) $id_map->processedCount()],
@@ -98,8 +147,14 @@ class ClinicalTrialsGovImportForm extends FormBase {
       ];
     }
     elseif (!$ready) {
-      $form['message'] = $this->buildMessages('Complete the Find and Configure steps before running the import.', 'warning');
+      $form['migration_status']['message'] = $this->buildMessages('Complete the Find and Configure steps before running the import.', 'warning');
     }
+    $form['migration_status']['links'] = $this->buildActionLinks([
+      'overview' => [
+        'title' => $this->t('Migration overview'),
+        'url' => Url::fromUri('https://drupal-playground.ddev.site/admin/structure/migrate/manage/default/migrations/clinical_trials_gov'),
+      ],
+    ]);
 
     $form['actions'] = [
       '#type' => 'actions',
@@ -131,6 +186,31 @@ class ClinicalTrialsGovImportForm extends FormBase {
       ],
     );
     $executable->batchImport();
+  }
+
+  /**
+   * Builds a row of button-style action links.
+   */
+  protected function buildActionLinks(array $links): array {
+    $build = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov__section-links'],
+      ],
+    ];
+
+    foreach ($links as $key => $link) {
+      $build[$key] = [
+        '#type' => 'link',
+        '#title' => $link['title'],
+        '#url' => $link['url'],
+        '#attributes' => [
+          'class' => ['button'],
+        ],
+      ];
+    }
+
+    return $build;
   }
 
 }

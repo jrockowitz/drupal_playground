@@ -127,7 +127,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
           'class' => ['select-all'],
         ],
         $this->t('Field'),
-        $this->t('Piece'),
+        $this->t('Piece / Path'),
         $this->t('Field name'),
         $this->t('Field type'),
       ],
@@ -193,7 +193,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         '#wrapper_attributes' => $row_attributes,
       ];
       $form['field_mapping']['rows'][$row_key]['identifier'] = [
-        '#markup' => Html::escape((string) ($definition['piece'] ?? '')) . '<br/><small>' . Html::escape($path) . '</small>',
+        '#markup' => $this->buildPieceMarkup($definition, $path),
         '#wrapper_attributes' => $row_attributes,
       ];
       $field_name_markup = '<div' . $this->buildIndentStyle($depth) . '>' . Html::escape((string) ($definition['field_name'] ?? ''));
@@ -282,6 +282,27 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     }
 
     return ' style="padding-left: ' . (string) ($depth * 1.25) . 'rem;"';
+  }
+
+  /**
+   * Builds the markup for the piece column.
+   */
+  protected function buildPieceMarkup(array $definition, string $path): string {
+    $markup = Html::escape((string) ($definition['piece'] ?? ''));
+    $markup .= '<br/><small>' . Html::escape($path) . '</small>';
+
+    if (!empty($definition['details'])) {
+      $properties = array_map(function (string $detail): string {
+        $last_dot = strrpos($detail, '.');
+        return ($last_dot === FALSE) ? $detail : substr($detail, $last_dot + 1);
+      }, array_filter($definition['details'], 'is_string'));
+
+      if ($properties !== []) {
+        $markup .= '<ul><li><small>' . implode('</small></li><li><small>', array_map([Html::class, 'escape'], $properties)) . '</small></li></ul>';
+      }
+    }
+
+    return $markup;
   }
 
   /**

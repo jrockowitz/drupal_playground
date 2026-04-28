@@ -58,6 +58,12 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
 
     // Check that the first source row contains both flattened values and preserved structured parents.
     $this->assertNotNull($row);
+    $this->assertSame([
+      'nctId' => [
+        'type' => 'string',
+      ],
+    ], $source->getIds());
+    $this->assertSame('NCT05088187', $row->getSourceProperty('nctId'));
     $this->assertSame('NCT05088187', $row->getSourceProperty('protocolSection.identificationModule.nctId'));
     $this->assertIsArray($row->getSourceProperty('protocolSection.identificationModule.organization'));
     $this->assertSame([
@@ -70,6 +76,7 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
 
     // Check that the source plugin paginates through all studies.
     $this->assertCount(3, $rows);
+    $this->assertSame('NCT01205711', $rows[2]->getSourceProperty('nctId'));
     $this->assertSame('NCT01205711', $rows[2]->getSourceProperty('protocolSection.identificationModule.nctId'));
 
     // Check that paginated requests use pageSize and nextPageToken.

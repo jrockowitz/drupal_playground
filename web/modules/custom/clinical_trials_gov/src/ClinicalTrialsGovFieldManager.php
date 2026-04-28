@@ -220,7 +220,6 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
       $definition['destination_property'] = 'title';
       $definition['type_label'] = 'title';
       $definition['display_type_label'] = 'title';
-      return $definition;
     }
 
     if ($source_type === 'STRUCT') {

@@ -16,6 +16,11 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
    */
   protected const MIGRATION_CONFIG_NAME = 'migrate_plus.migration.clinical_trials_gov';
 
+  /**
+   * Maximum node title length.
+   */
+  protected const TITLE_MAX_LENGTH = 255;
+
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
@@ -46,8 +51,19 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
         continue;
       }
       if (($definition['destination_property'] ?? NULL) === 'title') {
-        $process['title'] = $path;
-        continue;
+        $process['title'] = [
+          [
+            'plugin' => 'callback',
+            'callable' => '\\Drupal\\Component\\Utility\\Unicode::truncate',
+            'unpack_source' => TRUE,
+            'source' => [
+              $path,
+              'constants/title_max_length',
+              'constants/title_wordsafe',
+              'constants/title_add_ellipsis',
+            ],
+          ],
+        ];
       }
 
       $process[$definition['field_name']] = $path;
@@ -62,6 +78,11 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
       'source' => [
         'plugin' => 'clinical_trials_gov',
         'query' => $query,
+        'constants' => [
+          'title_max_length' => self::TITLE_MAX_LENGTH,
+          'title_wordsafe' => FALSE,
+          'title_add_ellipsis' => TRUE,
+        ],
       ],
       'process' => $process,
       'destination' => [

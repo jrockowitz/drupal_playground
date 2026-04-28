@@ -15,3 +15,12 @@ function clinical_trials_gov_gin_ignore_sticky_form_actions(): array {
     'clinical_trials_gov_import_form',
   ];
 }
+
+/**
+ * Implements hook_element_info().
+ */
+function clinical_trials_gov_element_info(): array {
+  return [
+    'clinical_trials_gov_studies_query_summary' => (new \Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuerySummary())->getInfo(),
+  ];
+}

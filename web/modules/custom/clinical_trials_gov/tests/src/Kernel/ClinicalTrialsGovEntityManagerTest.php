@@ -80,6 +80,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
       'protocolSection.contactsLocationsModule.locations.contacts',
       'protocolSection.sponsorCollaboratorsModule.responsibleParty',
       'protocolSection.conditionsModule.conditions',
+      'protocolSection.identificationModule.briefTitle',
       'protocolSection.identificationModule.nctId',
       'protocolSection.descriptionModule.briefSummary',
       'protocolSection.statusModule.overallStatus',
@@ -88,6 +89,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
 
     // Check that the scalar, enum, and custom fields were created.
     $this->assertSame('string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'))?->getType());
+    $this->assertSame('text_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle'))?->getType());
     $this->assertSame('text_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.descriptionModule.briefSummary'))?->getType());
     $this->assertSame(-1, FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.conditionsModule.conditions'))?->getCardinality());
     $this->assertSame('list_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.statusModule.overallStatus'))?->getType());
@@ -96,6 +98,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
 
     // Check that the bundle field config exists for the created type.
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
+    $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle')));
 
     // Check that created fields are added to the default form and view displays.
     $form_display = EntityFormDisplay::load('node.trial.default');
@@ -148,6 +151,8 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
 
     // Check that title maps to the node title property.
     $this->assertSame('title', $title_definition['destination_property']);
+    $this->assertSame('field_brief_title', $title_definition['field_name']);
+    $this->assertSame('text_long', $title_definition['field_type']);
 
     // Check that enums resolve to list_string with allowed values.
     $this->assertSame('list_string', $enum_definition['field_type']);

@@ -50,7 +50,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
 
       $definition = $this->fieldManager->resolveFieldDefinition($path);
       $field_definitions[$path] = $definition;
-      if (empty($definition['selectable']) || !empty($definition['destination_property']) || !empty($definition['group_only'])) {
+      if (empty($definition['selectable']) || !empty($definition['group_only'])) {
         continue;
       }
 
@@ -236,7 +236,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
 
     $weight = 0;
     foreach ($field_definitions as $definition) {
-      if (empty($definition['selectable']) || !empty($definition['destination_property']) || !empty($definition['group_only']) || empty($definition['field_name'])) {
+      if (empty($definition['selectable']) || !empty($definition['group_only']) || empty($definition['field_name'])) {
         continue;
       }
 

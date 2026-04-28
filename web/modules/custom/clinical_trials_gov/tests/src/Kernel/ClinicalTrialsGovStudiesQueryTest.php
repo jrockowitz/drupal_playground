@@ -6,6 +6,7 @@ namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -92,20 +93,24 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
     $this->assertArrayNotHasKey('markupFormat', $processed);
 
     // Check that labels and field metadata render separately.
-    $this->assertSame('Condition or disease', (string) $processed['query__cond']['#title']);
-    $this->assertSame('Sort', (string) $processed['sort']['#title']);
+    $this->assertInstanceOf(TranslatableMarkup::class, $processed['query__cond']['#title']);
+    $this->assertSame('Condition or disease (query.cond)', (string) $processed['query__cond']['#title']);
+    $this->assertSame('Sort (sort)', (string) $processed['sort']['#title']);
     $this->assertStringContainsString('filter.overallStatus', $processed['filter__overallStatus']['#field_prefix']);
     $this->assertStringContainsString('(array of string)', $processed['filter__overallStatus']['#field_prefix']);
 
     // Check that descriptions render ClinicalTrials.gov links and omit CSV text.
     $query_description = $this->container->get('renderer')->renderInIsolation($processed['query__cond']['#description']);
     $this->assertStringContainsString('https://clinicaltrials.gov/data-api/about-api/search-areas#ConditionSearch', (string) $query_description);
+    $this->assertStringContainsString('Examples:', (string) $query_description);
     $fields_description = $this->container->get('renderer')->renderInIsolation($processed['fields']['#description']);
     $this->assertStringContainsString('https://clinicaltrials.gov/data-api/about-api/study-data-structure', (string) $fields_description);
     $this->assertStringNotContainsString('CSV', (string) $fields_description);
     $page_token_description = $this->container->get('renderer')->renderInIsolation($processed['pageToken']['#description']);
     $this->assertStringNotContainsString('x-next-page-token', (string) $page_token_description);
     $this->assertStringNotContainsString('Do not specify it for first page', (string) $page_token_description);
+    $this->assertInstanceOf(TranslatableMarkup::class, $processed['countTotal']['#options']['true']);
+    $this->assertSame('Yes', (string) $processed['countTotal']['#options']['true']);
 
     // Simulate submission with representative scalar and multivalue values.
     $processed['query__cond']['#value'] = 'cancer';

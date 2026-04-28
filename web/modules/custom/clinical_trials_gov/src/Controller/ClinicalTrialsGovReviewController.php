@@ -7,9 +7,9 @@ namespace Drupal\clinical_trials_gov\Controller;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
-use Drupal\clinical_trials_gov\Traits\ClinicalTrialsGovMessageTrait;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
+use Drupal\clinical_trials_gov\Traits\ClinicalTrialsGovMessageTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -111,6 +111,25 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
           ':configure_url' => Url::fromRoute('clinical_trials_gov.configure')->toString(),
         ]) . '</p>',
       ],
+      'studies_query' => [
+        '#type' => 'details',
+        '#title' => $this->t('Studies query'),
+        '#open' => FALSE,
+        'links' => $this->buildActionLinks([
+          'find' => [
+            'title' => $this->t('Find'),
+            'url' => Url::fromRoute('clinical_trials_gov.find'),
+          ],
+          'review' => [
+            'title' => $this->t('Review'),
+            'url' => Url::fromRoute('clinical_trials_gov.review'),
+          ],
+        ]),
+        'summary' => [
+          '#type' => 'clinical_trials_gov_studies_query_summary',
+          '#query' => $saved_query,
+        ],
+      ],
       'summary' => [
         '#markup' => '<p>' . (($total !== NULL)
           ? $this->t('Showing @start - @end of @total trials.', [
@@ -140,6 +159,31 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
             'pageOffset' => $page_offset + $count,
           ],
         ]),
+        '#attributes' => [
+          'class' => ['button'],
+        ],
+      ];
+    }
+
+    return $build;
+  }
+
+  /**
+   * Builds a row of button-style action links.
+   */
+  protected function buildActionLinks(array $links): array {
+    $build = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov__section-links'],
+      ],
+    ];
+
+    foreach ($links as $key => $link) {
+      $build[$key] = [
+        '#type' => 'link',
+        '#title' => $link['title'],
+        '#url' => $link['url'],
         '#attributes' => [
           'class' => ['button'],
         ],
