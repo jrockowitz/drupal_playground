@@ -7,8 +7,11 @@ namespace Drupal\Tests\clinical_trials_gov\Unit;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
 use Drupal\Tests\UnitTestCase;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\Attributes\Group;
+use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for ClinicalTrialsGovApi.
@@ -30,12 +33,18 @@ class ClinicalTrialsGovApiTest extends UnitTestCase {
   protected ClientInterface $httpClient;
 
   /**
+   * The mocked logger.
+   */
+  protected LoggerInterface $logger;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
     $this->httpClient = $this->createMock(ClientInterface::class);
-    $this->api = new ClinicalTrialsGovApi($this->httpClient);
+    $this->logger = $this->createMock(LoggerInterface::class);
+    $this->api = new ClinicalTrialsGovApi($this->httpClient, $this->logger);
   }
 
   /**
@@ -95,6 +104,26 @@ class ClinicalTrialsGovApiTest extends UnitTestCase {
 
     // Check that the decoded response is returned.
     $this->assertSame(['dataTimestamp' => '2024-01-01'], $result);
+  }
+
+  /**
+   * Tests that get() returns an empty array and logs on HTTP error.
+   *
+   * @covers ::get
+   */
+  public function testGetReturnsEmptyArrayOnHttpError(): void {
+    $this->httpClient
+      ->method('request')
+      ->willThrowException(new RequestException('Service unavailable', new Request('GET', '/studies')));
+
+    $this->logger
+      ->expects($this->once())
+      ->method('error');
+
+    $result = $this->api->get('/studies', ['query.cond' => 'cancer']);
+
+    // Check that an HTTP error degrades gracefully to an empty array.
+    $this->assertSame([], $result);
   }
 
 }

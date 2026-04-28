@@ -104,6 +104,11 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
   ];
 
   /**
+   * Generic link type for custom_field url columns (LinkItemInterface::LINK_GENERIC).
+   */
+  protected const LINK_TYPE_GENERIC = 17;
+
+  /**
    * Supported structure keys mapped to their metadata type.
    */
   protected const STRUCTURE_WHITELIST = [
@@ -139,7 +144,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
   /**
    * {@inheritdoc}
    */
-  public function getAvailableFieldKeysFromQuery(string $query): array {
+  public function getAvailableFieldKeys(): array {
     if ($this->availableFieldKeys !== NULL) {
       return $this->availableFieldKeys;
     }
@@ -173,10 +178,10 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
   /**
    * {@inheritdoc}
    */
-  public function getAvailableFieldDefinitionsFromQuery(string $query): array {
+  public function getAvailableFieldDefinitions(): array {
     $definitions = [];
 
-    foreach ($this->getAvailableFieldKeysFromQuery($query) as $path) {
+    foreach ($this->getAvailableFieldKeys() as $path) {
       $definitions[$path] = $this->getFieldDefinition($path);
     }
 
@@ -308,7 +313,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    */
   public function getFieldDefinition(string $path): array {
     $definition = $this->resolveFieldDefinition($path);
-    $available = in_array($path, $this->getAvailableFieldKeysFromQuery(''));
+    $available = in_array($path, $this->getAvailableFieldKeys());
 
     $definition['available'] = $available;
     if (!$available) {
@@ -457,6 +462,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
     $source_type = (string) ($metadata['sourceType'] ?? '');
     $is_enum = !empty($metadata['isEnum']);
     $max_chars = $metadata['maxChars'] ?? NULL;
+    $is_multi = str_ends_with($type, '[]');
 
     $storage = [
       'name' => $column_name,
@@ -471,6 +477,21 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
       'description' => '',
       'description_display' => 'after',
     ];
+
+    if ($is_multi && $this->supportsCustomFieldStringArray($source_type, $type, $is_enum)) {
+      $instance += [
+        'table_empty' => '',
+      ];
+
+      return [
+        'column_name' => $column_name,
+        'storage' => [
+          'name' => $column_name,
+          'type' => 'map_string',
+        ],
+        'instance' => $instance,
+      ];
+    }
 
     if ($is_enum) {
       $storage['type'] = 'string';
@@ -556,7 +577,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
         'type' => 'uri',
       ];
       $instance += [
-        'link_type' => 17,
+        'link_type' => self::LINK_TYPE_GENERIC,
         'field_prefix' => 'default',
         'field_prefix_custom' => '',
       ];
@@ -583,6 +604,17 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
       'storage' => $storage,
       'instance' => $instance,
     ];
+  }
+
+  /**
+   * Determines whether an array-valued child can use a map_string column.
+   */
+  protected function supportsCustomFieldStringArray(string $source_type, string $type, bool $is_enum): bool {
+    if ($is_enum) {
+      return TRUE;
+    }
+
+    return in_array($source_type, ['TEXT', 'MARKUP']);
   }
 
   /**

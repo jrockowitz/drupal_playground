@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov\Element;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Attribute\FormElement;
 use Drupal\Core\Render\Element\FormElementBase;
 
 /**
@@ -22,8 +23,8 @@ use Drupal\Core\Render\Element\FormElementBase;
  * ];
  * @endcode
  *
- * @FormElement("clinical_trials_gov_studies_query")
  */
+#[FormElement('clinical_trials_gov_studies_query')]
 class ClinicalTrialsGovStudiesQuery extends FormElementBase {
 
   /**

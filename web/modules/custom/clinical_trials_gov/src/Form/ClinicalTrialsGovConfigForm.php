@@ -60,7 +60,6 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $form['#attached']['library'][] = 'clinical_trials_gov/clinical_trials_gov';
 
     $config = $this->config('clinical_trials_gov.settings');
-    $saved_query = (string) ($config->get('query') ?? '');
     $saved_type = (string) ($config->get('type') ?? ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE);
     $saved_fields = array_values(array_filter($config->get('fields') ?? [], 'is_string'));
     $node_type = $this->entityTypeManager->getStorage('node_type')->load($saved_type);
@@ -137,7 +136,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       ],
     ];
 
-    $definitions = $this->fieldManager->getAvailableFieldDefinitionsFromQuery($saved_query);
+    $definitions = $this->fieldManager->getAvailableFieldDefinitions();
 
     foreach ($definitions as $path => $definition) {
       if ($this->shouldHideFieldRow($path, $definitions) || $this->shouldHideEmptyGroupRow($path, $definitions)) {
@@ -162,7 +161,6 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
 
       $row_attributes = ['class' => []];
       if (!empty($definition['group_only'])) {
-        $row_attributes['style'] = 'background-color: #f3f4f6;';
         $row_attributes['class'][] = 'clinical-trials-gov-field-group';
       }
 

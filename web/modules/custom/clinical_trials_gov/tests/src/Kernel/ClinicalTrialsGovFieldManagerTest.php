@@ -61,8 +61,8 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
    * Tests curated field selection and definition decoration.
    */
   public function testAvailableFieldDefinitions(): void {
-    $available_field_keys = $this->fieldManager->getAvailableFieldKeysFromQuery('query.cond=cancer');
-    $available_definitions = $this->fieldManager->getAvailableFieldDefinitionsFromQuery('query.cond=cancer');
+    $available_field_keys = $this->fieldManager->getAvailableFieldKeys();
+    $available_definitions = $this->fieldManager->getAvailableFieldDefinitions();
     $resolved_responsible_party_definition = $this->fieldManager->resolveFieldDefinition('protocolSection.sponsorCollaboratorsModule.responsibleParty');
     $responsible_party_definition = $this->fieldManager->getFieldDefinition('protocolSection.sponsorCollaboratorsModule.responsibleParty');
     $protocol_section_definition = $this->fieldManager->getFieldDefinition('protocolSection');
@@ -111,6 +111,8 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $this->assertSame('string_long', $eligibility_definition['storage_settings']['columns']['eligibilityCriteria']['type']);
     $this->assertTrue($eligibility_definition['instance_settings']['field_settings']['eligibilityCriteria']['formatted']);
     $this->assertSame('plain_text', $eligibility_definition['instance_settings']['field_settings']['eligibilityCriteria']['default_format']);
+    $this->assertSame('map_string', $eligibility_definition['storage_settings']['columns']['stdAges']['type']);
+    $this->assertSame('', $eligibility_definition['instance_settings']['field_settings']['stdAges']['table_empty']);
   }
 
 }

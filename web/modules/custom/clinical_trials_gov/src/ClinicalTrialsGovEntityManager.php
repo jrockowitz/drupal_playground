@@ -15,10 +15,10 @@ use Drupal\field\Entity\FieldStorageConfig;
 class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerInterface {
 
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
-    protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
     protected ModuleHandlerInterface $moduleHandler,
     protected EntityTypeManagerInterface $entityTypeManager,
+    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
   ) {}
 
   /**
@@ -133,29 +133,8 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       return;
     }
 
-    $form_display_id = 'node.' . $type . '.default';
-    $form_display_storage = $this->entityTypeManager->getStorage('entity_form_display');
-    $form_display = $form_display_storage->load($form_display_id);
-    if ($form_display === NULL) {
-      $form_display = $form_display_storage->create([
-        'targetEntityType' => 'node',
-        'bundle' => $type,
-        'mode' => 'default',
-        'status' => TRUE,
-      ]);
-    }
-
-    $view_display_id = 'node.' . $type . '.default';
-    $view_display_storage = $this->entityTypeManager->getStorage('entity_view_display');
-    $view_display = $view_display_storage->load($view_display_id);
-    if ($view_display === NULL) {
-      $view_display = $view_display_storage->create([
-        'targetEntityType' => 'node',
-        'bundle' => $type,
-        'mode' => 'default',
-        'status' => TRUE,
-      ]);
-    }
+    $form_display = $this->loadOrCreateFormDisplay($type);
+    $view_display = $this->loadOrCreateViewDisplay($type);
 
     foreach ($group_definitions as $path => $definition) {
       $children = $this->resolveFieldGroupChildren($path, $selected_fields);
@@ -200,39 +179,19 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       ]);
     }
 
+    $display_id = 'node.' . $type . '.default';
     $form_display->save();
     $view_display->save();
-    $this->entityTypeManager->getStorage('entity_form_display')->resetCache([$form_display_id]);
-    $this->entityTypeManager->getStorage('entity_view_display')->resetCache([$view_display_id]);
+    $this->entityTypeManager->getStorage('entity_form_display')->resetCache([$display_id]);
+    $this->entityTypeManager->getStorage('entity_view_display')->resetCache([$display_id]);
   }
 
   /**
    * Creates default form and view display components for generated fields.
    */
   protected function createFieldDisplayComponents(string $type, array $field_definitions): void {
-    $form_display_id = 'node.' . $type . '.default';
-    $form_display_storage = $this->entityTypeManager->getStorage('entity_form_display');
-    $form_display = $form_display_storage->load($form_display_id);
-    if ($form_display === NULL) {
-      $form_display = $form_display_storage->create([
-        'targetEntityType' => 'node',
-        'bundle' => $type,
-        'mode' => 'default',
-        'status' => TRUE,
-      ]);
-    }
-
-    $view_display_id = 'node.' . $type . '.default';
-    $view_display_storage = $this->entityTypeManager->getStorage('entity_view_display');
-    $view_display = $view_display_storage->load($view_display_id);
-    if ($view_display === NULL) {
-      $view_display = $view_display_storage->create([
-        'targetEntityType' => 'node',
-        'bundle' => $type,
-        'mode' => 'default',
-        'status' => TRUE,
-      ]);
-    }
+    $form_display = $this->loadOrCreateFormDisplay($type);
+    $view_display = $this->loadOrCreateViewDisplay($type);
 
     $weight = 0;
     foreach ($field_definitions as $definition) {
@@ -261,10 +220,39 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       $weight++;
     }
 
+    $display_id = 'node.' . $type . '.default';
     $form_display->save();
     $view_display->save();
-    $this->entityTypeManager->getStorage('entity_form_display')->resetCache([$form_display_id]);
-    $this->entityTypeManager->getStorage('entity_view_display')->resetCache([$view_display_id]);
+    $this->entityTypeManager->getStorage('entity_form_display')->resetCache([$display_id]);
+    $this->entityTypeManager->getStorage('entity_view_display')->resetCache([$display_id]);
+  }
+
+  /**
+   * Loads or creates the default entity form display for a node bundle.
+   */
+  protected function loadOrCreateFormDisplay(string $type): object {
+    $display_id = 'node.' . $type . '.default';
+    $storage = $this->entityTypeManager->getStorage('entity_form_display');
+    return $storage->load($display_id) ?? $storage->create([
+      'targetEntityType' => 'node',
+      'bundle' => $type,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  /**
+   * Loads or creates the default entity view display for a node bundle.
+   */
+  protected function loadOrCreateViewDisplay(string $type): object {
+    $display_id = 'node.' . $type . '.default';
+    $storage = $this->entityTypeManager->getStorage('entity_view_display');
+    return $storage->load($display_id) ?? $storage->create([
+      'targetEntityType' => 'node',
+      'bundle' => $type,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
   }
 
   /**

@@ -38,37 +38,40 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
   /**
    * Returns the review page.
    */
-  public function index(Request $request, string $nctId = ''): array {
-    if ($nctId !== '') {
-      if (!preg_match('/^NCT\d+$/', $nctId)) {
-        return $this->buildListPage($request, $this->buildMessages($this->t('The study identifier %nct_id is not valid.', [
-          '%nct_id' => $nctId,
-        ]), 'warning'));
-      }
-
-      $study = $this->manager->getStudy($nctId);
-      if ($study === []) {
-        return $this->buildListPage($request, $this->buildMessages($this->t('Study %nct_id was not found. Review the saved query results below.', [
-          '%nct_id' => $nctId,
-        ]), 'warning'));
-      }
-
-      return $this->builder->buildStudy($study, $nctId);
-    }
-
+  public function index(Request $request): array {
     return $this->buildListPage($request);
   }
 
   /**
-   * Returns the page title for the review route.
+   * Returns the review study detail page.
    */
-  public function title(string $nctId = ''): string {
-    if ($nctId === '' || !preg_match('/^NCT\d+$/', $nctId)) {
-      return (string) $this->t('Review');
+  public function study(Request $request, string $nctId): array {
+    if (!preg_match('/^NCT\d+$/', $nctId)) {
+      return $this->buildListPage($request, $this->buildMessages($this->t('The study identifier %nct_id is not valid.', [
+        '%nct_id' => $nctId,
+      ]), 'warning'));
     }
 
     $study = $this->manager->getStudy($nctId);
-    return (string) ($study['protocolSection.identificationModule.briefTitle'] ?? $this->t('Review'));
+    if ($study === []) {
+      return $this->buildListPage($request, $this->buildMessages($this->t('Study %nct_id was not found. Review the saved query results below.', [
+        '%nct_id' => $nctId,
+      ]), 'warning'));
+    }
+
+    return $this->builder->buildStudy($study, $nctId);
+  }
+
+  /**
+   * Returns the page title for the study detail route.
+   */
+  public function title(string $nctId): string {
+    if (!preg_match('/^NCT\d+$/', $nctId)) {
+      return (string) $this->t('ClinicalTrials.gov');
+    }
+
+    $study = $this->manager->getStudy($nctId);
+    return (string) ($study['protocolSection.identificationModule.briefTitle'] ?? $this->t('ClinicalTrials.gov'));
   }
 
   /**
@@ -138,7 +141,7 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
             '@end' => $end,
           ])) . '</p>',
       ],
-      'results' => $this->builder->buildStudiesList($studies, 'clinical_trials_gov.review', ['modal' => TRUE]),
+      'results' => $this->builder->buildStudiesList($studies, 'clinical_trials_gov.review.study', ['modal' => TRUE]),
     ];
 
     if ($message !== NULL) {

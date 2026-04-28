@@ -15,14 +15,14 @@ interface ClinicalTrialsGovFieldManagerInterface {
   public function getRequiredFieldKeys(): array;
 
   /**
-   * Returns available API keys for the saved query context.
+   * Returns available API keys from the curated allow-list.
    */
-  public function getAvailableFieldKeysFromQuery(string $query): array;
+  public function getAvailableFieldKeys(): array;
 
   /**
-   * Returns available field definitions for the saved query context.
+   * Returns available field definitions from the curated allow-list.
    */
-  public function getAvailableFieldDefinitionsFromQuery(string $query): array;
+  public function getAvailableFieldDefinitions(): array;
 
   /**
    * Resolves a metadata path into a normalized field definition.

@@ -54,6 +54,7 @@ class ClinicalTrialsGovImportFormTest extends KernelTestBase {
       ->set('type', 'trial')
       ->set('fields', ['protocolSection.identificationModule.nctId'])
       ->save();
+    $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
 
     $form = $this->container->get('form_builder')->buildForm('Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm', new FormState());
 
@@ -72,8 +73,42 @@ class ClinicalTrialsGovImportFormTest extends KernelTestBase {
     $this->assertArrayHasKey('configure', $form['content_type']['links']);
     $this->assertSame(['summary', 'links'], array_values(array_filter(array_keys($form['content_type']), static fn(string $key): bool => !str_starts_with($key, '#'))));
 
+    // Check that the content type table uses label/value rows without a header.
+    $this->assertSame([], $form['content_type']['summary']['#header']);
+    $content_type_rows = $form['content_type']['summary']['#rows'];
+    $content_type_labels = array_map(static function (array $row): string {
+      return (string) strip_tags((string) $row[0]['data']['#markup']);
+    }, $content_type_rows);
+
+    // Check that the content type table includes the expected rows.
+    $this->assertSame([
+      'Content type',
+      'Selected fields',
+    ], $content_type_labels);
+
     // Check that the migration status fieldset contains the overview link.
     $this->assertArrayHasKey('overview', $form['migration_status']['links']);
+
+    // Check that the migration status table uses label/value rows without a header.
+    $this->assertArrayHasKey('stats', $form['migration_status']);
+    $this->assertSame([], $form['migration_status']['stats']['#header']);
+
+    $rows = $form['migration_status']['stats']['#rows'];
+    $labels = array_map(static function (array $row): string {
+      return (string) strip_tags((string) $row[0]['data']['#markup']);
+    }, $rows);
+
+    // Check that the migration status table includes the expected migration rows.
+    $this->assertSame([
+      'Migration',
+      'Machine Name',
+      'Status',
+      'Total',
+      'Imported',
+      'Unprocessed',
+      'Messages',
+      'Last Imported',
+    ], $labels);
   }
 
 }

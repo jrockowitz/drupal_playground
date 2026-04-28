@@ -51,6 +51,9 @@ class ClinicalTrialsGovReviewControllerTest extends KernelTestBase {
     // Check that the details section sits between the intro and results summary.
     $keys = array_values(array_filter(array_keys($build), static fn(string $key): bool => !str_starts_with($key, '#')));
     $this->assertSame(['intro', 'studies_query', 'summary'], array_slice($keys, 0, 3));
+
+    // Check that the study route title callback uses the study brief title.
+    $this->assertSame('Cognition and QoL After Thyroid Surgery', $controller->title('NCT05088187'));
   }
 
 }

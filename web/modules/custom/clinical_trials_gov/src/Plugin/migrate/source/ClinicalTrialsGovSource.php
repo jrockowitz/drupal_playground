@@ -4,25 +4,47 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Plugin\migrate\source;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\migrate\Attribute\MigrateSource;
 use Drupal\migrate\Plugin\migrate\source\SourcePluginBase;
-use Drupal\migrate\Row;
+use Drupal\migrate\Plugin\MigrationInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a ClinicalTrials.gov migrate source.
- *
- * @MigrateSource(
- *   id = "clinical_trials_gov"
- * )
  */
 #[MigrateSource(id: 'clinical_trials_gov')]
-class ClinicalTrialsGovSource extends SourcePluginBase {
+class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFactoryPluginInterface {
 
   /**
    * Maximum number of studies to fetch per API request.
    */
   protected const PAGE_SIZE = '1000';
+
+  public function __construct(
+    array $configuration,
+    string $plugin_id,
+    mixed $plugin_definition,
+    MigrationInterface $migration,
+    protected ClinicalTrialsGovManagerInterface $manager,
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?MigrationInterface $migration = NULL): static {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $migration,
+      $container->get('clinical_trials_gov.manager'),
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -52,22 +74,13 @@ class ClinicalTrialsGovSource extends SourcePluginBase {
   /**
    * {@inheritdoc}
    */
-  public function prepareRow(Row $row): bool {
-    return parent::prepareRow($row);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function initializeIterator(): \Traversable {
-    /** @var \Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface $manager */
-    $manager = \Drupal::service('clinical_trials_gov.manager');
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString((string) ($this->configuration['query'] ?? ''));
     $parameters['pageSize'] = self::PAGE_SIZE;
     $rows = [];
 
     do {
-      $response = $manager->getStudies($parameters);
+      $response = $this->manager->getStudies($parameters);
       foreach (($response['studies'] ?? []) as $study) {
         if (!is_array($study)) {
           continue;

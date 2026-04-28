@@ -2,9 +2,7 @@
 
 ## Purpose
 
-`clinical_trials_gov` is a custom Drupal module that integrates with the ClinicalTrials.gov API v2.
-
-It currently provides:
+`clinical_trials_gov` is a custom Drupal module that integrates with the ClinicalTrials.gov API v2. It provides:
 
 - shared API, manager, render-builder, field-resolution, entity-creation, and migration services
 - an admin import wizard at `/admin/config/services/clinical-trials-gov`
@@ -12,363 +10,119 @@ It currently provides:
 - a report submodule, `clinical_trials_gov_report`
 - test fixtures and service overrides for Kernel and Functional tests
 
-This file is meant to help future agents or engineers quickly understand how the module works today.
+## Architecture
 
-## High-Level Architecture
+Core services:
 
-Core runtime pieces:
-
-- `ClinicalTrialsGovApi`
-  - low-level HTTP client for `/studies`, `/studies/{nctId}`, `/studies/metadata`, `/studies/enums`, and `/version`
-- `ClinicalTrialsGovManager`
-  - main data-fetching service
-  - flattens study data and metadata into dot-notation keys
-  - exposes metadata indexes keyed by `path` and by `piece`
-  - caches study metadata and enums in-memory per request
-- `ClinicalTrialsGovNames`
-  - converts ClinicalTrials.gov `piece` values into Drupal machine names and labels
-  - owns field/group machine-name generation and display/detail labels
-- `ClinicalTrialsGovBuilder`
-  - converts study arrays into render arrays
-  - builds study list tables and study detail output
-  - supports modal study links when requested
-- `ClinicalTrialsGovFieldManager`
-  - curates which metadata keys appear in the Configure step
-  - resolves metadata rows into Drupal field definitions
-  - currently uses a hard-coded allow-list based on vetted example studies plus required and ancestor keys
-- `ClinicalTrialsGovEntityManager`
-  - creates content types, field storage/config, field display components, and field groups
-- `ClinicalTrialsGovMigrationManager`
-  - generates the active config for `migrate_plus.migration.clinical_trials_gov`
-- `ClinicalTrialsGovSource`
-  - migrate source plugin
-  - paginates through `/studies` with `pageSize=1000` and follows `nextPageToken`
-  - flattens rows while preserving parent structured values on parent keys
+| Service | Responsibility |
+|---|---|
+| `ClinicalTrialsGovApi` | HTTP client for `/studies`, `/studies/{nctId}`, `/studies/metadata`, `/studies/enums`, `/version` |
+| `ClinicalTrialsGovManager` | Fetches and flattens study data and metadata into dot-notation keys; in-memory cache per request |
+| `ClinicalTrialsGovNames` | Converts API `piece` values to Drupal machine names and labels |
+| `ClinicalTrialsGovBuilder` | Converts study arrays into render arrays (list tables and study detail) |
+| `ClinicalTrialsGovFieldManager` | Curates which metadata keys appear in Configure; resolves metadata into Drupal field definitions |
+| `ClinicalTrialsGovEntityManager` | Creates content types, field storage/config, display components, and field groups |
+| `ClinicalTrialsGovMigrationManager` | Generates and updates the active `migrate_plus.migration.clinical_trials_gov` config |
 
 ## Wizard Flow
 
+All wizard pages use `_title: 'ClinicalTrials.gov'` — the local task tabs provide step context.
+
 Routes:
 
-- `clinical_trials_gov.index`
-- `clinical_trials_gov.find`
-- `clinical_trials_gov.review`
-- `clinical_trials_gov.configure`
-- `clinical_trials_gov.import`
-
-Local tasks:
-
-- `Overview`
-- `1. Find`
-- `2. Review`
-- `3. Configure`
-- `4. Import`
-
-Permissions:
-
-- all wizard pages require `administer clinical_trials_gov`
-
-Step behavior:
-
-1. `Find`
-- implemented by `ClinicalTrialsGovFindForm`
-- stores the raw saved query string in `clinical_trials_gov.settings:query`
-- uses the custom form element `clinical_trials_gov_studies_query`
-- currently limits query controls to:
-  - `query.*`
-  - `filter.overallStatus`
-  - `filter.ids`
-- includes an Ajax `Preview` section
-- preview uses unsaved form values and modal study links
-- if a saved query already has parameters, preview auto-loads on first render
-
-2. `Review`
-- implemented by `ClinicalTrialsGovReviewController`
-- lists studies returned by the saved query
-- uses modal links for study detail
-- direct navigation to `/review/{nctId}` still works
-- pagination in Review is UI-only and based on the API response `nextPageToken`
-
-3. `Configure`
-- implemented by `ClinicalTrialsGovConfigForm`
-- creates or reuses a destination content type
-- shows curated field definitions from `ClinicalTrialsGovFieldManager`
-- uses a plain Drupal table with core `drupal.tableselect` behavior
-- when the content type does not exist yet, all selectable fields start checked
-- field-group rows are structural only and have no checkbox
-- the `Piece / Path` column shows the piece, the full path, and custom-field child properties
-- custom-field child properties are also shown under `Field name`
-- empty field-group rows are hidden
-
-4. `Import`
-- implemented by `ClinicalTrialsGovImportForm`
-- shows summary and migration id-map stats
-- runs a full sync import using `MigrateBatchExecutable`
+- `clinical_trials_gov.index` — Overview (`ClinicalTrialsGovController::index`)
+- `clinical_trials_gov.find` — Step 1: Find (`ClinicalTrialsGovFindForm`)
+- `clinical_trials_gov.review` — Step 2: Review list (`ClinicalTrialsGovReviewController::index`)
+- `clinical_trials_gov.review.study` — Study detail (`ClinicalTrialsGovReviewController::study`, `_title_callback: ::title`)
+- `clinical_trials_gov.configure` — Step 3: Configure (`ClinicalTrialsGovConfigForm`)
+- `clinical_trials_gov.import` — Step 4: Import (`ClinicalTrialsGovImportForm`)
 
-## Config and Generated Migration
+Step behaviour:
 
-Primary config:
+**1. Find** — stores the raw query string in `clinical_trials_gov.settings:query`. Limited to `query.*`, `filter.overallStatus`, `filter.ids`. Includes an Ajax preview section; auto-loads preview on first render if a saved query exists.
 
-- `clinical_trials_gov.settings`
+**2. Review** — lists studies from the saved query; uses `clinical_trials_gov.review.study` for modal study links. Pagination is UI-only via `nextPageToken`. The study detail title callback returns the study's `briefTitle`, falling back to `'ClinicalTrials.gov'`.
 
-Expected keys:
+**3. Configure** — creates or reuses a destination content type; shows curated field definitions from `ClinicalTrialsGovFieldManager`. Field-group rows are structural only. Empty group-only rows are hidden. Child rows beneath a promoted `custom` field are hidden.
 
-- `query`
-- `type`
-- `fields`
+**4. Import** — shows migration summary and id-map stats; runs a full sync via `MigrateBatchExecutable`.
 
-Generated migration config:
+## Configuration
 
-- `migrate_plus.migration.clinical_trials_gov`
+Primary config: `clinical_trials_gov.settings` — keys: `query`, `type`, `fields`.
 
-Important migration behavior:
+Generated migration: `migrate_plus.migration.clinical_trials_gov`. Deleted when query/type/fields are empty.
 
-- source plugin is `clinical_trials_gov`
-- destination plugin is `entity:node`
-- `title` is mapped from `protocolSection.identificationModule.briefTitle`
-- `field_brief_title` is also mapped from `protocolSection.identificationModule.briefTitle`
-- `title` is truncated with `Unicode::truncate()` in generated migration config
-- all other selected fields map by Drupal field machine name to source dot-notation keys
-- group-only rows are not added to `process`
+## Field Resolution
 
-## Field Resolution Rules
+Field resolution lives in `ClinicalTrialsGovFieldManager::resolveFieldDefinition()`.
 
-Field resolution lives mainly in `ClinicalTrialsGovFieldManager::resolveFieldDefinition()`.
+**Key rules:**
+- `briefTitle` maps to node `title` (via `callback` plugin with `Unicode::truncate`) **and** generates a `field_brief_title` string field (max_length 300). Both mappings are written to the migration.
+- Required fields (always included): `nctId`, `briefTitle`, `briefSummary`
+- `STRUCT` source type → resolved to `custom_field`, `field_group`, or unsupported (in that priority order)
+- `MARKUP` source type → `text_long` field; inside `custom_field` → `string_long` column with `formatted: true`
+- `isEnum: true` → `list_string` with allowed values from the API
+- Array types (`type[]`) → cardinality `-1`; everything else → cardinality `1` (never use `0`)
+- `PartialDateStruct` → `custom_field`; `PartialDate` leaf → `datetime` field with `datetime_type: date`. Do not simplify back to JSON.
 
-Current important rules:
+**Struct resolution:**
+1. `custom_field` — simple non-repeatable structs with scalar children, plus the explicit `STRUCTURE_WHITELIST`
+2. `field_group` — nested container structs when `field_group` module is available; `group_only: true`, not directly saved as a field
+3. unsupported — everything else; hidden from Configure
 
-- `briefTitle` maps to node `title`
-- `briefTitle` also resolves to a generated Drupal field, `field_brief_title`
-- required wizard fields are:
-  - `protocolSection.identificationModule.nctId`
-  - `protocolSection.identificationModule.briefTitle`
-  - `protocolSection.descriptionModule.briefSummary`
-- scalar `TEXT` becomes:
-  - `string`
-  - if `maxChars` is present, it becomes `storage_settings.max_length`
-  - this includes `briefTitle`, which currently resolves as `string` with max length `300`
-- only `MARKUP` becomes `text_long`
-- enum fields become `list_string`
-- numeric fields become `integer`
-- boolean fields become `boolean`
-- `DATE` source values become Drupal `datetime` storage with `datetime_type: date`
-  - Configure labels these as `date`
-- `type[]` becomes unlimited cardinality `-1`
-  - this is used for true multi-value fields like `conditions`
+**Curated field list:** `ClinicalTrialsGovFieldManager::AVAILABLE_FIELD_KEYS` is a static allow-list. If a metadata path exists in the API but is not in this list, it does not appear in Configure even if the resolver supports it. Changes to supported fields require updating both `AVAILABLE_FIELD_KEYS` and tests that assert the curated table contents.
 
-### Structured fields
+**Field names** are generated from the metadata `piece`, normalised to snake_case, prefixed with `field_`, capped at 32 characters. Long names are truncated and suffixed with an 8-character SHA-256 hash. Overrides live in `ClinicalTrialsGovNames::FIELD_NAMES`.
 
-There are three main structured outcomes:
+## Source Plugin
 
-1. `custom_field`
-- used for simple non-repeatable structs with scalar children
-- also used for the explicit structure whitelist
-- examples:
-  - `organization`
-  - `responsibleParty`
-  - `startDateStruct`
+`ClinicalTrialsGovSource` (migrate source plugin `clinical_trials_gov`):
+- parses the saved raw query string with `ClinicalTrialsGovStudiesQuery::parseQueryString()`
+- forces `pageSize=1000` and follows `nextPageToken` to fetch all pages
+- flattens rows via a modified `flattenStudy()` that **also preserves parent structured objects on their parent key** — this is intentional: it lets `custom_field` destinations map from a struct key rather than reconstructing values field-by-field in migrate
+- row IDs use the top-level `nctId` source property
+- does **not** use `fields=NCTId` — that would strip the full payload the migration needs
 
-2. `field_group`
-- used for nested container/grouping structs when `field_group` is available
-- these rows are structural, selectable only indirectly, and create form/view group wrappers
+UI preview/review fetches only one page at a time; the migration source fetches all pages. These are intentionally different.
 
-3. unsupported
-- if a struct is neither simple enough for `custom_field` nor promoted to `field_group`, it is shown as unsupported or hidden by curation
+## Testing
 
-### Partial date rules
+Test support:
 
-Current behavior:
+- `tests/modules/clinical_trials_gov_test/` — stub service (`ClinicalTrialsGovManagerStub`) and JSON fixtures; this is the real test logic
+- `modules/clinical_trials_gov_test/` — lightweight service-substitution wrapper
 
-- `PartialDate` leaf fields resolve to Drupal date fields
-- `PartialDateStruct` resolves to `custom_field`
+The stub simulates paginated `/studies` responses (two studies on page 1, one on page 2) and exposes `getStudiesRequests()` to assert pagination behaviour.
 
-This is a recent design decision and should not be “simplified” back to JSON without checking the latest expectations.
-
-### Cardinality
-
-- single-value fields use cardinality `1`
-- array-valued scalar fields use cardinality `-1`
-- do not use `0` for unlimited cardinality in Drupal
-
-### Field names
-
-Field machine names are deterministic and capped at 32 characters.
-
-Rules:
-
-- generated from metadata `piece` where possible
-- normalized to snake_case
-- special overrides live in `ClinicalTrialsGovNames::FIELD_NAMES`
-- long names are truncated and suffixed with a hash
-
-## Curated Field List
-
-The Configure step does not show all metadata rows from the API.
-
-Instead:
-
-- `ClinicalTrialsGovFieldManager` uses `AVAILABLE_FIELD_KEYS`
-- this is a curated allow-list based on vetted example studies
-- required fields are always added
-- ancestor keys are also added so parent structures can appear
-
-Implication:
-
-- if a metadata row exists in the API but is not in the curated list, it will not appear in Configure even if the resolver could technically support it
-- changes to supported fields usually require updating both:
-  - `AVAILABLE_FIELD_KEYS`
-  - tests that assume the curated table contents
-
-## Source Plugin Behavior
-
-`ClinicalTrialsGovSource` is important:
-
-- it parses the saved raw query string with `ClinicalTrialsGovStudiesQuery::parseQueryString()`
-- it forces `pageSize=1000`
-- it loops over `nextPageToken`
-- it fetches all pages, not just the first page
-
-Important implementation detail:
-
-- migration row ids use the top-level `nctId` source property
-- flattened scalar leaves are exposed on dotted source keys
-- structured parent objects are also preserved on the parent key
-
-That preserved parent data is what allows `custom_field` destinations to map from a struct parent key instead of reconstructing values field-by-field in migrate.
-
-## UI and Styling
-
-Shared module styling:
-
-- library: `clinical_trials_gov/clinical_trials_gov`
-- stylesheet: `css/clinical_trials_gov.css`
-- used to top-align table cells on Find, Review, and Configure
-
-Studies query form element:
-
-- `ClinicalTrialsGovStudiesQuery`
-- supports `#include_fields`
-- accepts exact keys and prefixes like `query.`
-- blank `#include_fields` means include everything
-
-Modal study links:
-
-- supported by `ClinicalTrialsGovBuilder::buildStudiesList(..., ['modal' => TRUE])`
-- wizard Find preview and Review use modal links
-- report submodule should remain non-modal unless intentionally changed
-
-Gin integration:
-
-- form sticky actions are intentionally ignored for wizard forms via `hook_gin_ignore_sticky_form_actions()`
-
-## Display and Grouping
-
-When fields are created:
-
-- default form display components are created
-- default view display components are created
-- field groups are created on both displays when needed
-
-Current field-group display behavior:
-
-- form display uses `details`
-- form `details` are `open: true`
-- view display uses `fieldset`
-- destination-property fields like node `title` are not grouped directly
-- generated fields for those same metadata rows can still appear inside groups
-
-## Testing Setup
-
-Test support is split into two locations:
-
-- `tests/modules/clinical_trials_gov_test`
-  - real stub service and JSON fixtures for tests
-- `modules/clinical_trials_gov_test`
-  - lightweight wrapper module for service substitution
-
-Main test classes:
-
-- `ClinicalTrialsGovApiTest`
-- `ClinicalTrialsGovManagerTest`
-- `ClinicalTrialsGovBuilderTest`
-- `ClinicalTrialsGovFieldManagerTest`
-- `ClinicalTrialsGovEntityManagerTest`
-- `ClinicalTrialsGovMigrationManagerTest`
-- `ClinicalTrialsGovSourceTest`
-- `ClinicalTrialsGovStudiesQueryTest`
-- `ClinicalTrialsGovTest`
-
-The stub manager now simulates paginated `/studies` responses so source-plugin tests can verify pagination behavior.
-
-## Important Current Constraints and Gotchas
-
-1. The module is intentionally opinionated.
-- It is not a generic “import every possible ClinicalTrials.gov field” system.
-- Field curation is a product decision, not just a technical limitation.
-
-2. `custom_field` is not generic JSON storage.
-- Every custom field struct needs explicit column definitions.
-- Struct support depends on what `buildCustomFieldColumnDefinition()` can express.
-- MARKUP children inside custom fields use the existing `custom_field` formatted long-text behavior with `plain_text`
-
-3. `field_group` rows are structural.
-- They should not act like normal selected fields.
-- Empty group-only rows should stay hidden.
-
-4. The import source now paginates.
-- If import totals seem wrong, check source pagination and `nextPageToken` behavior first.
-
-5. `fields=NCTId` is not currently used in the source plugin.
-- It would be too aggressive because the migration needs the full selected field payload, not just ids.
-
-6. Review and Find preview may show only the current page.
-- Import is now “all pages”.
-- UI preview/review and migration source do not have identical fetch behavior.
-
-7. There are two manager stub files.
-- The real test logic lives under `tests/modules/...`
-- the module-level wrapper under `modules/...` can still affect PHPCS and service wiring
+Test classes: `ClinicalTrialsGovApiTest`, `ClinicalTrialsGovManagerTest`, `ClinicalTrialsGovNamesTest`, `ClinicalTrialsGovBuilderTest`, `ClinicalTrialsGovFieldManagerTest`, `ClinicalTrialsGovEntityManagerTest`, `ClinicalTrialsGovMigrationManagerTest`, `ClinicalTrialsGovSourceTest`, `ClinicalTrialsGovStudiesQueryTest`, `ClinicalTrialsGovTest` (functional).
 
 ## Useful Commands
 
-Module checks:
-
 ```bash
-ddev phpcs /Users/rockowij/Sites/drupal_playground/web/modules/custom/clinical_trials_gov
-```
+# All tests
+ddev phpunit web/modules/custom/clinical_trials_gov
 
-Focused tests:
-
-```bash
+# Focused tests
 ddev phpunit web/modules/custom/clinical_trials_gov/tests/src/Functional/ClinicalTrialsGovTest.php
 ddev phpunit web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovSourceTest.php
 ddev phpunit web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovEntityManagerTest.php
 ddev phpunit web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovMigrationManagerTest.php
-```
 
-Migration and cache:
+# Linting
+ddev code-review web/modules/custom/clinical_trials_gov
 
-```bash
+# Migration
 ddev drush cr
 ddev drush migrate:status clinical_trials_gov
 ```
 
 ## When Editing This Module
 
-Prefer these habits:
-
-- update tests when changing:
-  - field curation
-  - struct resolution
-  - migration generation
-  - source pagination
-  - Configure table behavior
-- be careful with curated field-list changes because they ripple into Functional tests
-- preserve the distinction between:
-  - UI preview/review behavior
-  - migration source behavior
-- if a field seems “missing”, check the field manager allow-list before changing the resolver
-- if a struct seems “wrong”, inspect:
-  - metadata `type`
-  - metadata `sourceType`
-  - `children`
-  - whether it is intended to be `custom_field`, `field_group`, or unsupported
+- Update tests when changing: field curation, struct resolution, migration generation, source pagination, or Configure table behaviour.
+- Curated field-list changes ripple into the Functional test — check `ClinicalTrialsGovTest::testWizardFlow` assertions against the Configure table.
+- If a field seems "missing", check `AVAILABLE_FIELD_KEYS` before touching the resolver.
+- If a struct seems wrong, inspect: metadata `type`, `sourceType`, `children`, and which outcome (`custom_field`, `field_group`, unsupported) is intended.
+- Preserve the distinction between UI preview/review (one page) and migration source (all pages).
+- Do not use `0` for unlimited cardinality — use `-1`.
+- Do not revert `PartialDateStruct` to JSON storage — the `custom_field` approach is intentional.

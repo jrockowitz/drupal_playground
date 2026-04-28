@@ -92,6 +92,7 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
         'pageToken' => 'page-2',
       ],
     ], $manager->getStudiesRequests());
+
   }
 
 }

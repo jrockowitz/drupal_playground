@@ -1,36 +1,36 @@
 services:
+  _defaults:
+    autowire: true
+
   clinical_trials_gov.api:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovApi
-    autowire: true
-    arguments: ["@http_client"]
+    arguments: ["@http_client", "@logger.channel.clinical_trials_gov"]
+
+  logger.channel.clinical_trials_gov:
+    parent: logger.channel_base
+    arguments: ["clinical_trials_gov"]
   Drupal\clinical_trials_gov\ClinicalTrialsGovApiInterface: "@clinical_trials_gov.api"
 
   clinical_trials_gov.manager:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovManager
-    autowire: true
   Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface: "@clinical_trials_gov.manager"
 
   clinical_trials_gov.names:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovNames
-    autowire: true
   Drupal\clinical_trials_gov\ClinicalTrialsGovNamesInterface: "@clinical_trials_gov.names"
 
   clinical_trials_gov.builder:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovBuilder
-    autowire: true
   Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface: "@clinical_trials_gov.builder"
 
   clinical_trials_gov.entity_manager:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManager
-    autowire: true
   Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface: "@clinical_trials_gov.entity_manager"
 
   clinical_trials_gov.field_manager:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManager
-    autowire: true
   Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface: "@clinical_trials_gov.field_manager"
 
   clinical_trials_gov.migration_manager:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManager
-    autowire: true
   Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface: "@clinical_trials_gov.migration_manager"

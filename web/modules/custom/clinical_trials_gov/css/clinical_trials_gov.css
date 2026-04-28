@@ -2,3 +2,7 @@
 .clinical-trials-gov table td {
   vertical-align: top;
 }
+
+.clinical-trials-gov-field-group {
+  background-color: #f3f4f6;
+}

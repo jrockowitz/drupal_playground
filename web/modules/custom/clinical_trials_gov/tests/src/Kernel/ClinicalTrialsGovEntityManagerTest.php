@@ -84,6 +84,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
       'protocolSection.identificationModule.briefTitle',
       'protocolSection.identificationModule.nctId',
       'protocolSection.descriptionModule.briefSummary',
+      'protocolSection.eligibilityModule',
       'protocolSection.statusModule.overallStatus',
       'protocolSection.identificationModule.organization',
     ]);
@@ -97,6 +98,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertSame('list_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.statusModule.overallStatus'))?->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.organization'))?->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty'))?->getType());
+    $this->assertSame('map_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.eligibilityModule'))?->getSetting('columns')['stdAges']['type'] ?? NULL);
 
     // Check that the bundle field config exists for the created type.
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
@@ -206,6 +208,8 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertSame('string_long', $eligibility_module_definition['storage_settings']['columns']['eligibilityCriteria']['type']);
     $this->assertTrue($eligibility_module_definition['instance_settings']['field_settings']['eligibilityCriteria']['formatted']);
     $this->assertSame('plain_text', $eligibility_module_definition['instance_settings']['field_settings']['eligibilityCriteria']['default_format']);
+    $this->assertSame('map_string', $eligibility_module_definition['storage_settings']['columns']['stdAges']['type']);
+    $this->assertSame('', $eligibility_module_definition['instance_settings']['field_settings']['stdAges']['table_empty']);
 
     // Check that nested structures can resolve to field groups.
     $this->assertSame('field_group', $group_definition['field_type']);

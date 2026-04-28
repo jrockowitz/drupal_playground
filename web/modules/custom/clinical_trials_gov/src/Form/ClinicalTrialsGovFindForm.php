@@ -17,6 +17,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ClinicalTrialsGovFindForm extends ConfigFormBase {
 
+  /**
+   * Preview page size.
+   */
+  protected const PREVIEW_PAGE_SIZE = 10;
+
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
     protected ClinicalTrialsGovBuilderInterface $builder,
@@ -112,6 +117,22 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
    */
   public function updatePreviewSubmit(array &$form, FormStateInterface $form_state): void {
     $form_state->set('preview_query', (string) ($form_state->getValue('query') ?? ''));
+    $form_state->set('preview_page_token', '');
+    $form_state->set('preview_page_offset', 0);
+    $form_state->set('preview_next_page_token', '');
+    $form_state->set('preview_page_advanced', FALSE);
+    $form_state->set('preview_total_count', NULL);
+    $form_state->setRebuild(TRUE);
+  }
+
+  /**
+   * Ajax submit handler for preview paging.
+   */
+  public function nextPreviewPageSubmit(array &$form, FormStateInterface $form_state): void {
+    $form_state->set('preview_query', (string) ($form_state->getValue('query') ?? ''));
+    $form_state->set('preview_page_token', (string) $form_state->get('preview_next_page_token'));
+    $form_state->set('preview_page_offset', (int) $form_state->get('preview_next_page_offset'));
+    $form_state->set('preview_page_advanced', TRUE);
     $form_state->setRebuild(TRUE);
   }
 
@@ -156,25 +177,38 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
       ];
     }
 
+    $page_token = $this->getPreviewPageToken($form_state);
+    $page_offset = $this->getPreviewPageOffset($form_state);
+    if ($page_token !== '') {
+      $parameters['pageToken'] = $page_token;
+    }
     $parameters['countTotal'] = 'true';
+    $parameters['pageSize'] = self::PREVIEW_PAGE_SIZE;
     $response = $this->manager->getStudies($parameters);
     $studies = $response['studies'] ?? [];
-    $total = $response['totalCount'] ?? NULL;
+    $total = $response['totalCount'] ?? $form_state->get('preview_total_count');
+    if (isset($response['totalCount'])) {
+      $form_state->set('preview_total_count', $response['totalCount']);
+    }
     $count = count($studies);
+    $start = ($count > 0) ? ($page_offset + 1) : 0;
+    $end = $page_offset + $count;
 
     $build = [];
     if ($total !== NULL) {
       $build['summary'] = [
-        '#markup' => '<p>' . $this->t('Showing 1 - @end of @total trials.', [
-          '@end' => $count,
+        '#markup' => '<p>' . $this->t('Showing @start - @end of @total trials.', [
+          '@start' => $start,
+          '@end' => $end,
           '@total' => $total,
         ]) . '</p>',
       ];
     }
     elseif ($count > 0) {
       $build['summary'] = [
-        '#markup' => '<p>' . $this->t('Showing 1 - @end trials.', [
-          '@end' => $count,
+        '#markup' => '<p>' . $this->t('Showing @start - @end trials.', [
+          '@start' => $start,
+          '@end' => $end,
         ]) . '</p>',
       ];
     }
@@ -185,7 +219,25 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     }
 
     if ($studies !== []) {
-      $build['results'] = $this->builder->buildStudiesList($studies, 'clinical_trials_gov.review', ['modal' => TRUE]);
+      $build['results'] = $this->builder->buildStudiesList($studies, 'clinical_trials_gov.review.study', ['modal' => TRUE]);
+    }
+
+    if (!empty($response['nextPageToken']) && is_string($response['nextPageToken'])) {
+      $form_state->set('preview_next_page_token', $response['nextPageToken']);
+      $form_state->set('preview_next_page_offset', $page_offset + $count);
+      $build['next_page'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Next page'),
+        '#submit' => ['::nextPreviewPageSubmit'],
+        '#ajax' => [
+          'callback' => '::updatePreviewAjax',
+          'wrapper' => 'clinical-trials-gov-find-preview',
+        ],
+      ];
+    }
+    else {
+      $form_state->set('preview_next_page_token', '');
+      $form_state->set('preview_next_page_offset', 0);
     }
 
     return $build;
@@ -200,6 +252,28 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     }
 
     return (ClinicalTrialsGovStudiesQuery::parseQueryString($saved_query) !== []) ? $saved_query : '';
+  }
+
+  /**
+   * Gets the stored preview page token.
+   */
+  protected function getPreviewPageToken(FormStateInterface $form_state): string {
+    if ($form_state->get('preview_page_advanced')) {
+      return (string) $form_state->get('preview_page_token');
+    }
+
+    return '';
+  }
+
+  /**
+   * Gets the stored preview page offset.
+   */
+  protected function getPreviewPageOffset(FormStateInterface $form_state): int {
+    if ($form_state->get('preview_page_advanced')) {
+      return (int) $form_state->get('preview_page_offset');
+    }
+
+    return 0;
   }
 
 }
