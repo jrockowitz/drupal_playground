@@ -39,6 +39,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     parent::setUp();
     $this->drupalLogin($this->drupalCreateUser([
       'access administration pages',
+      'access content overview',
       'administer clinical_trials_gov',
     ]));
   }
@@ -49,7 +50,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
   public function testWizardFlow(): void {
     $this->drupalGet('admin/config/services/clinical-trials-gov');
 
-    // Check that the overview page renders the four tasks and next-step message.
+    // Check that the overview page renders the five tasks and next-step message.
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Please go to Find and build your query.');
     $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/find');
@@ -58,6 +59,13 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('2. Review');
     $this->assertSession()->pageTextContains('3. Configure');
     $this->assertSession()->pageTextContains('4. Import');
+    $this->assertSession()->pageTextContains('5. Manage');
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/manage');
+
+    // Check that Manage redirects to Configure with a message when no type exists.
+    $this->assertSession()->addressEquals('admin/config/services/clinical-trials-gov/configure');
+    $this->assertSession()->pageTextContains('Create the destination content type before managing imported studies.');
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/find');
 
@@ -155,6 +163,11 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Your query and field mapping are ready. Continue to Import when you are ready to sync studies.');
     $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/import');
     $this->assertSession()->linkExists('Import');
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/manage');
+
+    // Check that Manage redirects to the filtered content overview once the type exists.
+    $this->assertStringContainsString('/admin/content?title=&type=trial', $this->getSession()->getCurrentUrl());
   }
 
 }

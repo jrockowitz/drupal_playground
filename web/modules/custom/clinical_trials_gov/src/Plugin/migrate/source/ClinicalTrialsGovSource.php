@@ -19,11 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 #[MigrateSource(id: 'clinical_trials_gov')]
 class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFactoryPluginInterface {
 
-  /**
-   * Maximum number of studies to fetch per API request.
-   */
-  protected const PAGE_SIZE = '1000';
-
   public function __construct(
     array $configuration,
     string $plugin_id,
@@ -77,7 +72,8 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
    */
   protected function initializeIterator(): \Traversable {
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString((string) ($this->configuration['query'] ?? ''));
-    $parameters['pageSize'] = self::PAGE_SIZE;
+    $parameters['fields'] = 'NCTId';
+    $parameters['pageSize'] = '1000';
     $rows = [];
 
     do {

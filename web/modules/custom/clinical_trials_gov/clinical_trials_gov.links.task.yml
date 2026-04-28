@@ -22,3 +22,8 @@ clinical_trials_gov.import:
   route_name: clinical_trials_gov.import
   base_route: clinical_trials_gov.index
   title: '4. Import'
+
+clinical_trials_gov.manage:
+  route_name: clinical_trials_gov.manage
+  base_route: clinical_trials_gov.index
+  title: '5. Manage'

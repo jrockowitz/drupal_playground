@@ -87,6 +87,7 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
         'path' => '/studies',
         'parameters' => [
           'query.cond' => 'cancer',
+          'fields' => 'NCTId',
           'pageSize' => '1000',
         ],
       ],
@@ -94,6 +95,7 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
         'path' => '/studies',
         'parameters' => [
           'query.cond' => 'cancer',
+          'fields' => 'NCTId',
           'pageSize' => '1000',
           'pageToken' => 'page-2',
         ],

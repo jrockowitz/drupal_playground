@@ -45,3 +45,11 @@ clinical_trials_gov.import:
     _title: 'ClinicalTrials.gov'
   requirements:
     _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.manage:
+  path: '/admin/config/services/clinical-trials-gov/manage'
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovManageController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'

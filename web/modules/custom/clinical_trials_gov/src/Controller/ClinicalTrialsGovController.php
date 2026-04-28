@@ -42,7 +42,7 @@ class ClinicalTrialsGovController extends ControllerBase {
     return [
       'message' => $message,
       'introduction' => [
-        '#markup' => '<p>' . $this->t('Use the tasks below to find ClinicalTrials.gov studies, review results, configure a destination content type, and run a full-sync import.') . '</p>',
+        '#markup' => '<p>' . $this->t('Use the tasks below to find ClinicalTrials.gov studies, review results, configure a destination content type, run a full-sync import, and manage imported content.') . '</p>',
       ],
       'content' => [
         '#theme' => 'admin_block_content',
@@ -68,6 +68,11 @@ class ClinicalTrialsGovController extends ControllerBase {
               ? $this->t('Review the import summary and run the migration.')
               : Markup::create((string) $this->t('Review the import summary and run the migration. Complete the Find and Configure steps first.')),
             'url' => Url::fromRoute('clinical_trials_gov.import'),
+          ],
+          'manage' => [
+            'title' => $this->t('5. Manage'),
+            'description' => $this->t('Manage imported content for the configured content type.'),
+            'url' => Url::fromRoute('clinical_trials_gov.manage'),
           ],
         ],
       ],

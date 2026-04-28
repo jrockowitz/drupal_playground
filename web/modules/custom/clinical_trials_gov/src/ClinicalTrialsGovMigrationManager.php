@@ -97,4 +97,11 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
     $this->migrationPluginManager->clearCachedDefinitions();
   }
 
+  /**
+   * Clears cached migration plugin definitions after config changes.
+   */
+  protected function clearMigrationPluginDefinitions(): void {
+    $this->migrationPluginManager->clearCachedDefinitions();
+  }
+
 }
