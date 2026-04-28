@@ -25,13 +25,13 @@ interface ClinicalTrialsGovFieldManagerInterface {
   public function getAvailableFieldDefinitionsFromQuery(string $query): array;
 
   /**
-   * Returns a decorated field definition for one API key.
+   * Returns a decorated field definition for one metadata path.
    */
-  public function getFieldDefinition(string $api_key): array;
+  public function getFieldDefinition(string $path): array;
 
   /**
    * Returns decorated field definitions for multiple API keys.
    */
-  public function getFieldDefinitions(array $api_keys): array;
+  public function getFieldDefinitions(array $paths): array;
 
 }

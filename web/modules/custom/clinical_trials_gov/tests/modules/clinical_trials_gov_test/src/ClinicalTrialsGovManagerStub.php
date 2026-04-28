@@ -82,19 +82,33 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
   /**
    * {@inheritdoc}
    */
-  public function getStudyMetadata(): array {
-    static $metadata = NULL;
-    if ($metadata === NULL) {
-      $metadata = $this->flattenMetadata($this->loadFixture('metadata'));
+  public function getMetadataByPath(): array {
+    static $metadata_by_path = NULL;
+    if ($metadata_by_path === NULL) {
+      $metadata_by_path = $this->flattenMetadata($this->loadFixture('metadata'));
     }
-    return $metadata;
+    return $metadata_by_path;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getStudyFieldMetadata(string $index_field): ?array {
-    return $this->getStudyMetadata()[$index_field] ?? NULL;
+  public function getMetadataByPiece(): array {
+    static $metadata_by_piece = NULL;
+    if ($metadata_by_piece === NULL) {
+      $metadata_by_piece = [];
+      foreach ($this->getMetadataByPath() as $metadata) {
+        if (!is_array($metadata)) {
+          continue;
+        }
+        $piece = (string) ($metadata['piece'] ?? '');
+        if ($piece === '') {
+          continue;
+        }
+        $metadata_by_piece[$piece] = $metadata;
+      }
+    }
+    return $metadata_by_piece;
   }
 
   /**
@@ -122,6 +136,41 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
         ));
       }
     }
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEnumAsAllowedValues(string $enum_type, bool $key_label = FALSE): array {
+    foreach ($this->getEnums() as $enum_definition) {
+      if (!is_array($enum_definition) || ($enum_definition['type'] ?? '') !== $enum_type) {
+        continue;
+      }
+
+      $allowed_values = [];
+      foreach (($enum_definition['values'] ?? []) as $value) {
+        if (!is_array($value) || !isset($value['value'])) {
+          continue;
+        }
+
+        $allowed_values[(string) $value['value']] = (string) ($value['legacyValue'] ?? $value['value']);
+      }
+
+      if (!$key_label) {
+        return $allowed_values;
+      }
+
+      $normalized = [];
+      foreach ($allowed_values as $key => $label) {
+        $normalized[] = [
+          'key' => $key,
+          'label' => $label,
+        ];
+      }
+      return $normalized;
+    }
+
     return [];
   }
 
@@ -154,14 +203,14 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
   /**
    * Mirrors ClinicalTrialsGovManager::flattenMetadata().
    */
-  protected function flattenMetadata(array $items, string $prefix = ''): array {
+  protected function flattenMetadata(array $items, string $parent = ''): array {
     $rows = [];
     foreach ($items as $item) {
       if (!is_array($item)) {
         continue;
       }
       $name = (string) ($item['name'] ?? '');
-      $key = ($prefix !== '' && $name !== '') ? $prefix . '.' . $name : $name;
+      $path = ($parent !== '' && $name !== '') ? $parent . '.' . $name : $name;
       $children = [];
       foreach (($item['children'] ?? []) as $child) {
         if (!is_array($child)) {
@@ -171,10 +220,11 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
         if ($child_name === '') {
           continue;
         }
-        $children[] = ($key !== '') ? $key . '.' . $child_name : $child_name;
+        $children[] = ($path !== '') ? $path . '.' . $child_name : $child_name;
       }
-      $rows[$key] = [
-        'key' => $key,
+      $rows[$path] = [
+        'path' => $path,
+        'parent' => $parent,
         'name' => $name,
         'piece' => (string) ($item['piece'] ?? ''),
         'title' => (string) ($item['title'] ?? ''),
@@ -186,7 +236,7 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
         'children' => $children,
       ];
       if (!empty($item['children']) && is_array($item['children'])) {
-        $rows += $this->flattenMetadata($item['children'], $key);
+        $rows += $this->flattenMetadata($item['children'], $path);
       }
     }
     return $rows;

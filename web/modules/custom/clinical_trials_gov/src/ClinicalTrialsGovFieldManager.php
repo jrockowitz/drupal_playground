@@ -121,26 +121,26 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
       return $this->availableFieldKeys;
     }
 
-    $metadata = $this->manager->getStudyMetadata();
+    $metadata = $this->manager->getMetadataByPath();
     $available_keys = [];
 
-    foreach (array_merge(self::AVAILABLE_FIELD_KEYS, self::REQUIRED_FIELD_KEYS) as $api_key) {
-      if (!isset($metadata[$api_key])) {
+    foreach (array_merge(self::AVAILABLE_FIELD_KEYS, self::REQUIRED_FIELD_KEYS) as $path) {
+      if (!isset($metadata[$path])) {
         continue;
       }
-      $available_keys[$api_key] = TRUE;
+      $available_keys[$path] = TRUE;
 
-      foreach ($this->getAncestorFieldKeys($api_key, $metadata) as $ancestor_key) {
+      foreach ($this->getAncestorFieldKeys($path, $metadata) as $ancestor_key) {
         $available_keys[$ancestor_key] = TRUE;
       }
     }
 
     $ordered_keys = [];
-    foreach (array_keys($metadata) as $api_key) {
-      if (!isset($available_keys[$api_key])) {
+    foreach (array_keys($metadata) as $path) {
+      if (!isset($available_keys[$path])) {
         continue;
       }
-      $ordered_keys[] = $api_key;
+      $ordered_keys[] = $path;
     }
 
     $this->availableFieldKeys = $ordered_keys;
@@ -153,8 +153,8 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
   public function getAvailableFieldDefinitionsFromQuery(string $query): array {
     $definitions = [];
 
-    foreach ($this->getAvailableFieldKeysFromQuery($query) as $api_key) {
-      $definitions[$api_key] = $this->getFieldDefinition($api_key);
+    foreach ($this->getAvailableFieldKeysFromQuery($query) as $path) {
+      $definitions[$path] = $this->getFieldDefinition($path);
     }
 
     return $definitions;
@@ -163,9 +163,9 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
   /**
    * {@inheritdoc}
    */
-  public function getFieldDefinition(string $api_key): array {
-    $definition = $this->entityManager->resolveFieldDefinition($api_key);
-    $available = in_array($api_key, $this->getAvailableFieldKeysFromQuery(''));
+  public function getFieldDefinition(string $path): array {
+    $definition = $this->entityManager->resolveFieldDefinition($path);
+    $available = in_array($path, $this->getAvailableFieldKeysFromQuery(''));
 
     $definition['available'] = $available;
     if (!$available) {
@@ -179,32 +179,32 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
   /**
    * {@inheritdoc}
    */
-  public function getFieldDefinitions(array $api_keys): array {
+  public function getFieldDefinitions(array $paths): array {
     $definitions = [];
 
-    foreach ($api_keys as $api_key) {
-      if (!is_string($api_key) || $api_key === '') {
+    foreach ($paths as $path) {
+      if (!is_string($path) || $path === '') {
         continue;
       }
-      $definitions[$api_key] = $this->getFieldDefinition($api_key);
+      $definitions[$path] = $this->getFieldDefinition($path);
     }
 
     return $definitions;
   }
 
   /**
-   * Returns ancestor keys for one API key.
+   * Returns ancestor keys for one identifier path.
    */
-  protected function getAncestorFieldKeys(string $api_key, array $metadata): array {
+  protected function getAncestorFieldKeys(string $path, array $metadata): array {
     $ancestor_keys = [];
-    $last_dot = strrpos($api_key, '.');
+    $last_dot = strrpos($path, '.');
 
     while ($last_dot !== FALSE) {
-      $api_key = substr($api_key, 0, $last_dot);
-      if (isset($metadata[$api_key])) {
-        $ancestor_keys[] = $api_key;
+      $path = substr($path, 0, $last_dot);
+      if (isset($metadata[$path])) {
+        $ancestor_keys[] = $path;
       }
-      $last_dot = strrpos($api_key, '.');
+      $last_dot = strrpos($path, '.');
     }
 
     return array_reverse($ancestor_keys);

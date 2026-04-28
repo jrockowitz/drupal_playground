@@ -30,17 +30,17 @@ interface ClinicalTrialsGovEntityManagerInterface {
   public function supportsFieldGroups(): bool;
 
   /**
-   * Generates a deterministic Drupal field machine name for an API key.
+   * Generates a deterministic Drupal field machine name for a metadata path.
    */
-  public function generateFieldName(string $api_key): string;
+  public function generateFieldName(string $path): string;
 
   /**
-   * Resolves a selectable API key into Drupal field metadata.
+   * Resolves a selectable metadata path into Drupal field metadata.
    *
    * @return array
    *   A normalized field definition.
    */
-  public function resolveFieldDefinition(string $api_key): array;
+  public function resolveFieldDefinition(string $path): array;
 
   /**
    * Resolves a whitelisted structured key into custom-field column settings.
@@ -48,6 +48,6 @@ interface ClinicalTrialsGovEntityManagerInterface {
    * @return array|null
    *   The custom field definition, or NULL if unsupported.
    */
-  public function resolveStructuredFieldDefinition(string $api_key): ?array;
+  public function resolveStructuredFieldDefinition(string $path): ?array;
 
 }

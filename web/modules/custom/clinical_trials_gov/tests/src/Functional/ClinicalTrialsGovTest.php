@@ -97,7 +97,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->drupalGet('admin/config/services/clinical-trials-gov/configure');
 
     // Check that the field mapping table uses the updated columns and values.
-    $this->assertSession()->pageTextContains('Study identifier');
+    $this->assertSession()->pageTextContains('Piece');
     $this->assertSession()->pageTextContains('Field type');
     $this->assertSession()->pageTextContains('Protocol Section');
     $this->assertSession()->pageTextContains('Responsible Party');

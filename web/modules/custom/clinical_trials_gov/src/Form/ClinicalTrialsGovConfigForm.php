@@ -127,7 +127,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
           'class' => ['select-all'],
         ],
         $this->t('Field'),
-        $this->t('Study identifier'),
+        $this->t('Piece'),
         $this->t('Field name'),
         $this->t('Field type'),
       ],
@@ -139,12 +139,12 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
 
     $definitions = $this->fieldManager->getAvailableFieldDefinitionsFromQuery($saved_query);
 
-    foreach ($definitions as $api_key => $definition) {
-      if ($this->shouldHideFieldRow($api_key, $definitions) || $this->shouldHideEmptyGroupRow($api_key, $definitions)) {
+    foreach ($definitions as $path => $definition) {
+      if ($this->shouldHideFieldRow($path, $definitions) || $this->shouldHideEmptyGroupRow($path, $definitions)) {
         continue;
       }
 
-      $row_key = md5($api_key);
+      $row_key = md5($path);
       $existing = FALSE;
       if (($definition['destination_property'] ?? NULL) === 'title') {
         $existing = TRUE;
@@ -153,9 +153,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         $existing = FieldConfig::loadByName('node', $saved_type, $definition['field_name']) !== NULL;
       }
 
-      $selected = in_array($api_key, $saved_fields, TRUE) || !empty($definition['required']) || $existing;
+      $selected = in_array($path, $saved_fields, TRUE) || !empty($definition['required']) || $existing;
       $disabled = !empty($definition['required']) || $existing || empty($definition['selectable']);
-      $depth = $this->calculateHierarchyDepth($api_key);
+      $depth = $this->calculateHierarchyDepth($path);
 
       $row_attributes = ['class' => []];
       if (!empty($definition['group_only'])) {
@@ -165,7 +165,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
 
       $label = (string) ($definition['label'] ?? '');
       if ($label === '') {
-        $label = (string) ($definition['study_identifier'] ?? $api_key);
+        $label = (string) ($definition['piece'] ?? $path);
       }
 
       if (!empty($definition['group_only'])) {
@@ -193,7 +193,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         '#wrapper_attributes' => $row_attributes,
       ];
       $form['field_mapping']['rows'][$row_key]['identifier'] = [
-        '#markup' => Html::escape((string) ($definition['study_identifier'] ?? '')) . '<br/><small>' . Html::escape($api_key) . '</small>',
+        '#markup' => Html::escape((string) ($definition['piece'] ?? '')) . '<br/><small>' . Html::escape($path) . '</small>',
         '#wrapper_attributes' => $row_attributes,
       ];
       $field_name_markup = '<div' . $this->buildIndentStyle($depth) . '>' . Html::escape((string) ($definition['field_name'] ?? ''));
@@ -209,9 +209,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         '#plain_text' => (string) ($definition['display_type_label'] ?? ''),
         '#wrapper_attributes' => $row_attributes,
       ];
-      $form['field_mapping']['rows'][$row_key]['api_key'] = [
+      $form['field_mapping']['rows'][$row_key]['path'] = [
         '#type' => 'value',
-        '#value' => $api_key,
+        '#value' => $path,
       ];
       $form['field_mapping']['rows'][$row_key]['#attributes'] = $row_attributes;
     }
@@ -230,27 +230,27 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
 
     $selected_rows = [];
     foreach (($form_state->getValue(['field_mapping', 'rows']) ?? []) as $row) {
-      if (!is_array($row) || empty($row['api_key'])) {
+      if (!is_array($row) || empty($row['path'])) {
         continue;
       }
-      $api_key = (string) $row['api_key'];
-      $definition = $this->fieldManager->getFieldDefinition($api_key);
+      $path = (string) $row['path'];
+      $definition = $this->fieldManager->getFieldDefinition($path);
       $existing = (($definition['destination_property'] ?? NULL) === 'title')
         || (!empty($definition['field_name']) && FieldConfig::loadByName('node', $type, $definition['field_name']) !== NULL);
-      $selected_rows[$api_key] = !empty($definition['required']) || $existing || !empty($row['selected']);
+      $selected_rows[$path] = !empty($definition['required']) || $existing || !empty($row['selected']);
     }
 
     $selected_fields = [];
-    foreach (array_keys($selected_rows) as $api_key) {
-      $definition = $this->fieldManager->getFieldDefinition($api_key);
+    foreach (array_keys($selected_rows) as $path) {
+      $definition = $this->fieldManager->getFieldDefinition($path);
       if (!empty($definition['group_only'])) {
-        if ($this->hasSelectedDescendant($api_key, $selected_rows)) {
-          $selected_fields[] = $api_key;
+        if ($this->hasSelectedDescendant($path, $selected_rows)) {
+          $selected_fields[] = $path;
         }
         continue;
       }
-      if (!empty($selected_rows[$api_key])) {
-        $selected_fields[] = $api_key;
+      if (!empty($selected_rows[$path])) {
+        $selected_fields[] = $path;
       }
     }
 
@@ -269,8 +269,8 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
   /**
    * Calculates the display depth for a metadata key.
    */
-  protected function calculateHierarchyDepth(string $api_key): int {
-    return max(0, substr_count($api_key, '.') - 2);
+  protected function calculateHierarchyDepth(string $path): int {
+    return max(0, substr_count($path, '.') - 2);
   }
 
   /**
@@ -287,8 +287,8 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
   /**
    * Determines whether a metadata row has any selected descendants.
    */
-  protected function hasSelectedDescendant(string $api_key, array $selected_rows): bool {
-    $prefix = $api_key . '.';
+  protected function hasSelectedDescendant(string $path, array $selected_rows): bool {
+    $prefix = $path . '.';
     foreach ($selected_rows as $candidate_key => $selected) {
       if ($selected && str_starts_with($candidate_key, $prefix)) {
         return TRUE;
@@ -301,15 +301,15 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
   /**
    * Determines whether a row should be hidden beneath a promoted custom field.
    */
-  protected function shouldHideFieldRow(string $api_key, array $definitions): bool {
-    $last_dot = strrpos($api_key, '.');
+  protected function shouldHideFieldRow(string $path, array $definitions): bool {
+    $last_dot = strrpos($path, '.');
     while ($last_dot !== FALSE) {
-      $parent_api_key = substr($api_key, 0, $last_dot);
-      $parent_definition = $definitions[$parent_api_key] ?? $this->fieldManager->getFieldDefinition($parent_api_key);
+      $parent_path = substr($path, 0, $last_dot);
+      $parent_definition = $definitions[$parent_path] ?? $this->fieldManager->getFieldDefinition($parent_path);
       if (!empty($parent_definition['available']) && ($parent_definition['field_type'] ?? '') === 'custom' && empty($parent_definition['group_only'])) {
         return TRUE;
       }
-      $last_dot = strrpos($parent_api_key, '.');
+      $last_dot = strrpos($parent_path, '.');
     }
 
     return FALSE;
@@ -318,21 +318,21 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
   /**
    * Determines whether a group-only row has any visible children.
    */
-  protected function shouldHideEmptyGroupRow(string $api_key, array $definitions): bool {
-    $definition = $definitions[$api_key] ?? NULL;
+  protected function shouldHideEmptyGroupRow(string $path, array $definitions): bool {
+    $definition = $definitions[$path] ?? NULL;
     if (empty($definition['group_only'])) {
       return FALSE;
     }
 
-    $prefix = $api_key . '.';
-    foreach (array_keys($definitions) as $candidate_api_key) {
-      if (!str_starts_with($candidate_api_key, $prefix)) {
+    $prefix = $path . '.';
+    foreach (array_keys($definitions) as $candidate_path) {
+      if (!str_starts_with($candidate_path, $prefix)) {
         continue;
       }
-      if ($this->shouldHideFieldRow($candidate_api_key, $definitions)) {
+      if ($this->shouldHideFieldRow($candidate_path, $definitions)) {
         continue;
       }
-      if ($this->shouldHideEmptyGroupRow($candidate_api_key, $definitions)) {
+      if ($this->shouldHideEmptyGroupRow($candidate_path, $definitions)) {
         continue;
       }
       return FALSE;

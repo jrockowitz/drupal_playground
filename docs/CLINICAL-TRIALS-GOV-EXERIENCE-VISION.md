@@ -12,9 +12,12 @@ This chat experience should feel like calling a compassionate, knowledgeable exp
 
 ## What This Chat Is Not
 
-*This chat is not a replacement for human connection. It is designed to guide you toward the right person who can help.*
+This chat is not...
 
-This chat is not a medical diagnosis tool. It cannot and should not replace conversations with your healthcare team. This chat is not a guarantee of trial enrollment—matching you to a trial is complex, and final eligibility is determined by the trial's medical team. This chat is not a substitute for human judgment. Medical professionals, patients, and caregivers all need real people involved in these decisions.
+- *A replacement for human connection. It is designed to guide you toward the right person who can help.*
+- A medical diagnosis tool. It cannot and should not replace conversations with your healthcare team.
+- A guarantee of trial enrollment—matching you to a trial is complex, and final eligibility is determined by the trial's medical team.
+- A substitute for human judgment. Medical professionals, patients, and caregivers all need real people involved in these decisions.
 
 **What it is:** A compassionate guide to help you understand and explore clinical trials at this organization, and to connect you with the right person to help you move forward.
 

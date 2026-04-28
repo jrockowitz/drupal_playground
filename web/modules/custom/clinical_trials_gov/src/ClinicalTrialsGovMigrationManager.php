@@ -37,8 +37,8 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
     }
 
     $process = [];
-    foreach ($fields as $api_key) {
-      $definition = $this->fieldManager->getFieldDefinition($api_key);
+    foreach ($fields as $path) {
+      $definition = $this->fieldManager->getFieldDefinition($path);
       if (empty($definition['selectable'])) {
         continue;
       }
@@ -46,11 +46,11 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
         continue;
       }
       if (($definition['destination_property'] ?? NULL) === 'title') {
-        $process['title'] = $api_key;
+        $process['title'] = $path;
         continue;
       }
 
-      $process[$definition['field_name']] = $api_key;
+      $process[$definition['field_name']] = $path;
     }
 
     $migration_config->setData([

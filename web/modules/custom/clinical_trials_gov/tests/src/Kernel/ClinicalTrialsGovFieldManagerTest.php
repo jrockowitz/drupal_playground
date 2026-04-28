@@ -82,12 +82,12 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $this->assertTrue($responsible_party_definition['available']);
     $this->assertSame('custom', $responsible_party_definition['field_type']);
     $this->assertSame([
-      'Type',
-      'Investigator_full_name',
-      'Investigator_title',
-      'Investigator_affiliation',
-      'Old_name_title',
-      'Old_organization',
+      'type',
+      'investigator_full_name',
+      'investigator_title',
+      'investigator_affiliation',
+      'old_name_title',
+      'old_organization',
     ], $responsible_party_definition['details']);
 
     // Check that structural parents remain field groups.

@@ -56,21 +56,16 @@ interface ClinicalTrialsGovManagerInterface {
    * Cached per service instance for the request lifetime.
    *
    * @return array
-   *   Flat array keyed by Index field path. Each value has keys:
-   *   key, name, piece, title, type, sourceType, description, children.
+   *   Flat array keyed by metadata path. Each value has keys:
+   *   path, parent, name, piece, title, type, sourceType, description,
+   *   and children.
    */
-  public function getStudyMetadata(): array;
+  public function getMetadataByPath(): array;
 
   /**
-   * Returns metadata for a single Index field path.
-   *
-   * @param string $index_field
-   *   Dot-notation Index field path.
-   *
-   * @return array|null
-   *   Metadata array, or NULL if not found.
+   * Returns metadata rows keyed by ClinicalTrials.gov piece.
    */
-  public function getStudyFieldMetadata(string $index_field): ?array;
+  public function getMetadataByPiece(): array;
 
   /**
    * Fetches all enumeration types and their allowed values.
@@ -92,5 +87,19 @@ interface ClinicalTrialsGovManagerInterface {
    *   List of allowed string values, or an empty array if not found.
    */
   public function getEnum(string $enum_type): array;
+
+  /**
+   * Returns allowed values for a single enum type in consumer-ready formats.
+   *
+   * @param string $enum_type
+   *   The enum type name, e.g. 'OverallStatus'.
+   * @param bool $key_label
+   *   TRUE to return custom-field rows with key/label pairs. FALSE to return
+   *   Drupal core-style allowed values keyed by the enum value.
+   *
+   * @return array
+   *   Allowed values for the enum type, or an empty array if not found.
+   */
+  public function getEnumAsAllowedValues(string $enum_type, bool $key_label = FALSE): array;
 
 }

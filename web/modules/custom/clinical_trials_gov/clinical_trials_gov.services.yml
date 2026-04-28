@@ -10,6 +10,11 @@ services:
     autowire: true
   Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface: "@clinical_trials_gov.manager"
 
+  clinical_trials_gov.names:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovNames
+    autowire: true
+  Drupal\clinical_trials_gov\ClinicalTrialsGovNamesInterface: "@clinical_trials_gov.names"
+
   clinical_trials_gov.builder:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovBuilder
     autowire: true

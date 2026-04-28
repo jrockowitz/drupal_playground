@@ -156,12 +156,12 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       if (!is_array($child) || !array_key_exists('#value', $child)) {
         continue;
       }
-      $api_key = static::elementNameToApiKey($name);
-      $value = static::normalizeSubmittedValue($api_key, $child['#value']);
+      $path = static::elementNameToApiKey($name);
+      $value = static::normalizeSubmittedValue($path, $child['#value']);
       if ($value === '') {
         continue;
       }
-      $parts[] = rawurlencode($api_key) . '=' . rawurlencode($value);
+      $parts[] = rawurlencode($path) . '=' . rawurlencode($value);
     }
     $form_state->setValueForElement($element, implode('&', $parts));
   }
@@ -576,13 +576,13 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
   /**
    * Normalizes a submitted field value for serialization.
    */
-  protected static function normalizeSubmittedValue(string $api_key, mixed $value): string {
+  protected static function normalizeSubmittedValue(string $path, mixed $value): string {
     $normalized = trim((string) $value);
     if ($normalized === '') {
       return '';
     }
 
-    if (in_array($api_key, static::MULTI_VALUE_KEYS, TRUE)) {
+    if (in_array($path, static::MULTI_VALUE_KEYS, TRUE)) {
       $normalized = preg_replace('/[\r\n]+/', '|', $normalized) ?? $normalized;
       $normalized = str_replace(',', '|', $normalized);
       $parts = array_values(array_filter(array_map('trim', explode('|', $normalized))));

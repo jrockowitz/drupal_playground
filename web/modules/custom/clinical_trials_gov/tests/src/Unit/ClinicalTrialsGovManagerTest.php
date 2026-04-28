@@ -122,11 +122,11 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
   }
 
   /**
-   * Tests that getStudyMetadata() flattens the metadata tree.
+   * Tests that getMetadataByPath() flattens the metadata tree.
    *
-   * @covers ::getStudyMetadata
+   * @covers ::getMetadataByPath
    */
-  public function testGetStudyMetadataFlattensTree(): void {
+  public function testGetMetadataByPathFlattensTree(): void {
     $this->api
       ->method('get')
       ->with('/studies/metadata')
@@ -152,18 +152,59 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getStudyMetadata();
+    $result = $this->manager->getMetadataByPath();
 
     // Check that the top-level section is keyed by its name.
     $this->assertArrayHasKey('protocolSection', $result);
     $this->assertSame('STRUCT', $result['protocolSection']['sourceType']);
+    $this->assertSame('protocolSection', $result['protocolSection']['path']);
+    $this->assertSame('', $result['protocolSection']['parent']);
 
     // Check that a nested module is keyed by its dotted path.
     $this->assertArrayHasKey('protocolSection.identificationModule', $result);
     $this->assertSame('Identification Module', $result['protocolSection.identificationModule']['title']);
+    $this->assertSame('protocolSection', $result['protocolSection.identificationModule']['parent']);
 
     // Check that children are recorded as dotted paths.
     $this->assertContains('protocolSection.identificationModule', $result['protocolSection']['children']);
+  }
+
+  /**
+   * Tests that getMetadataByPiece() returns metadata rows keyed by piece.
+   *
+   * @covers ::getMetadataByPiece
+   */
+  public function testGetMetadataByPieceReturnsMetadataRowsByPiece(): void {
+    $this->api
+      ->method('get')
+      ->with('/studies/metadata')
+      ->willReturn([
+        [
+          'name' => 'protocolSection',
+          'piece' => 'ProtocolSection',
+          'title' => 'Protocol Section',
+          'type' => 'StdStudy',
+          'sourceType' => 'STRUCT',
+          'children' => [
+            [
+              'name' => 'identificationModule',
+              'piece' => 'Identification',
+              'title' => 'Identification Module',
+              'type' => 'IdModule',
+              'sourceType' => 'STRUCT',
+              'children' => [],
+            ],
+          ],
+        ],
+      ]);
+
+    $result = $this->manager->getMetadataByPiece();
+
+    // Check that the metadata can be looked up by piece.
+    $this->assertArrayHasKey('ProtocolSection', $result);
+    $this->assertSame('protocolSection', $result['ProtocolSection']['path']);
+    $this->assertArrayHasKey('Identification', $result);
+    $this->assertSame('protocolSection.identificationModule', $result['Identification']['path']);
   }
 
   /**
@@ -209,6 +250,70 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
 
     // Check that an empty array is returned when the type is not found.
     $this->assertSame([], $this->manager->getEnum('UnknownType'));
+  }
+
+  /**
+   * Tests that getEnumAsAllowedValues() returns core-style allowed values.
+   *
+   * @covers ::getEnumAsAllowedValues
+   */
+  public function testGetEnumAsAllowedValuesReturnsCoreStyleMap(): void {
+    $this->api
+      ->method('get')
+      ->with('/studies/enums')
+      ->willReturn([
+        [
+          'type' => 'OverallStatus',
+          'values' => [
+            ['value' => 'RECRUITING', 'legacyValue' => 'Recruiting'],
+            ['value' => 'COMPLETED', 'legacyValue' => 'Completed'],
+            ['value' => 'UNKNOWN'],
+          ],
+        ],
+      ]);
+
+    $result = $this->manager->getEnumAsAllowedValues('OverallStatus');
+
+    // Check that allowed values use the API value as the key and legacy label.
+    $this->assertSame([
+      'RECRUITING' => 'Recruiting',
+      'COMPLETED' => 'Completed',
+      'UNKNOWN' => 'UNKNOWN',
+    ], $result);
+  }
+
+  /**
+   * Tests that getEnumAsAllowedValues() returns custom-field row format.
+   *
+   * @covers ::getEnumAsAllowedValues
+   */
+  public function testGetEnumAsAllowedValuesReturnsKeyLabelRows(): void {
+    $this->api
+      ->method('get')
+      ->with('/studies/enums')
+      ->willReturn([
+        [
+          'type' => 'Phase',
+          'values' => [
+            ['value' => 'PHASE1', 'legacyValue' => 'Phase 1'],
+            ['value' => 'PHASE2', 'legacyValue' => 'Phase 2'],
+          ],
+        ],
+      ]);
+
+    $result = $this->manager->getEnumAsAllowedValues('Phase', TRUE);
+
+    // Check that custom field rows are normalized to key/label pairs.
+    $this->assertSame([
+      [
+        'key' => 'PHASE1',
+        'label' => 'Phase 1',
+      ],
+      [
+        'key' => 'PHASE2',
+        'label' => 'Phase 2',
+      ],
+    ], $result);
   }
 
   /**

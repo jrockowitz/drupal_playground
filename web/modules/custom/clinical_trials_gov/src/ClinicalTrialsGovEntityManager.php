@@ -34,23 +34,9 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     'protocolSection.referencesModule.availIpds' => 'AvailIpd[]',
   ];
 
-  /**
-   * Friendly field-name stems keyed by ClinicalTrials.gov piece identifier.
-   */
-  protected const FIELD_NAMES = [
-    'NCTId' => 'nct_id',
-    'NCTIdAlias' => 'nct_id_alias',
-    'BriefTitle' => 'brief_title',
-    'BriefSummary' => 'brief_summary',
-    'OfficialTitle' => 'official_title',
-    'OrgStudyIdInfo' => 'org_study_id_info',
-    'IPDSharingStatement' => 'ipd_sharing_statement',
-    'IPDSharingTimeFrame' => 'ipd_sharing_time_frame',
-    'IPDSharingAccessCriteria' => 'ipd_sharing_access_criteria',
-  ];
-
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovNamesInterface $names,
     protected ModuleHandlerInterface $moduleHandler,
     protected EntityTypeManagerInterface $entityTypeManager,
   ) {}
@@ -77,13 +63,13 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   public function createFields(string $type, array $fields): void {
     $field_definitions = [];
 
-    foreach ($fields as $api_key) {
-      if (!is_string($api_key) || $api_key === '') {
+    foreach ($fields as $path) {
+      if (!is_string($path) || $path === '') {
         continue;
       }
 
-      $definition = $this->resolveFieldDefinition($api_key);
-      $field_definitions[$api_key] = $definition;
+      $definition = $this->resolveFieldDefinition($path);
+      $field_definitions[$path] = $definition;
       if (empty($definition['selectable']) || !empty($definition['destination_property']) || !empty($definition['group_only'])) {
         continue;
       }
@@ -129,30 +115,16 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * {@inheritdoc}
    */
-  public function generateFieldName(string $api_key): string {
-    $metadata = $this->manager->getStudyFieldMetadata($api_key) ?? [];
-    $source_name = $this->resolveStudyIdentifier($api_key, $metadata);
-    $normalized = $this->normalizeFieldStem($source_name);
-    $field_name = 'field_' . $normalized;
-
-    if (strlen($field_name) <= 32) {
-      return $field_name;
-    }
-
-    $hash = substr(hash('sha256', $api_key), 0, 8);
-    $prefix_length = 32 - 1 - strlen($hash);
-    $prefix = substr($field_name, 0, $prefix_length);
-
-    return rtrim($prefix, '_') . '_' . $hash;
+  public function generateFieldName(string $path): string {
+    return $this->names->getFieldName($this->getPiece($path));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function resolveFieldDefinition(string $api_key): array {
-    $metadata = $this->manager->getStudyFieldMetadata($api_key) ?? [];
-    $study_identifier = $this->resolveStudyIdentifier($api_key, $metadata);
-    $title = (string) ($metadata['title'] ?? '');
+  public function resolveFieldDefinition(string $path): array {
+    $metadata = $this->getMetadata($path);
+    $piece = $this->getPiece($path, $metadata);
     $type = $metadata['type'] ?? '';
     $source_type = $metadata['sourceType'] ?? '';
     $is_enum = !empty($metadata['isEnum']);
@@ -160,18 +132,17 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     $is_multi = str_ends_with($type, '[]');
     $cardinality = $is_multi ? -1 : 1;
     $definition = [
-      'api_key' => $api_key,
-      'label' => $this->buildDisplayLabel($title !== '' ? $title : $study_identifier),
-      'field_name' => $this->generateFieldName($api_key),
+      'path' => $path,
+      'label' => $this->names->getDisplayLabel($piece),
+      'field_name' => $this->generateFieldName($path),
       'description' => (string) ($metadata['description'] ?? ''),
-      'piece' => (string) ($metadata['piece'] ?? ''),
-      'study_identifier' => $study_identifier,
+      'piece' => $piece,
       'field_type' => '',
       'storage_settings' => [],
       'instance_settings' => [],
       'cardinality' => $cardinality,
       'destination_property' => NULL,
-      'required' => $this->isRequiredField($api_key),
+      'required' => $this->isRequiredField($path),
       'selectable' => TRUE,
       'reason' => '',
       'is_enum' => $is_enum,
@@ -181,7 +152,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       'details' => [],
     ];
 
-    if ($api_key === self::TITLE_FIELD_KEY) {
+    if ($path === self::TITLE_FIELD_KEY) {
       $definition['destination_property'] = 'title';
       $definition['type_label'] = 'title';
       $definition['display_type_label'] = 'title';
@@ -189,7 +160,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     if ($source_type === 'STRUCT') {
-      $structured_definition = $this->resolveStructuredFieldDefinition($api_key);
+      $structured_definition = $this->resolveStructuredFieldDefinition($path);
       if ($structured_definition !== NULL) {
         return array_merge($definition, $structured_definition);
       }
@@ -199,7 +170,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       $definition['type_label'] = 'unsupported';
       $definition['display_type_label'] = 'unsupported';
       if ($this->supportsFieldGroups() && $this->supportsNestedFieldGroup($metadata)) {
-        $definition['field_name'] = $this->generateGroupName($api_key);
+        $definition['field_name'] = $this->names->getGroupName($piece);
         $definition['field_type'] = 'field_group';
         $definition['type_label'] = 'field_group';
         $definition['display_type_label'] = 'field group';
@@ -213,7 +184,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     if ($is_enum) {
       $definition['field_type'] = 'list_string';
       $definition['storage_settings'] = [
-        'allowed_values' => $this->resolveAllowedValues($type),
+        'allowed_values' => $this->manager->getEnumAsAllowedValues($type),
         'allowed_values_function' => '',
       ];
       $definition['type_label'] = 'list_string';
@@ -254,23 +225,23 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * {@inheritdoc}
    */
-  public function resolveStructuredFieldDefinition(string $api_key): ?array {
-    $metadata = $this->manager->getStudyFieldMetadata($api_key) ?? [];
+  public function resolveStructuredFieldDefinition(string $path): ?array {
+    $metadata = $this->getMetadata($path);
     if ($this->isSimpleCustomFieldStruct($metadata)) {
-      return $this->buildCustomFieldDefinition($api_key, $metadata);
+      return $this->buildCustomFieldDefinition($path, $metadata);
     }
 
-    if (!array_key_exists($api_key, self::STRUCTURE_WHITELIST)) {
+    if (!array_key_exists($path, self::STRUCTURE_WHITELIST)) {
       return NULL;
     }
 
-    return $this->buildCustomFieldDefinition($api_key, $metadata);
+    return $this->buildCustomFieldDefinition($path, $metadata);
   }
 
   /**
    * Resolves a custom-field definition from a struct metadata row.
    */
-  protected function buildCustomFieldDefinition(string $api_key, array $metadata): ?array {
+  protected function buildCustomFieldDefinition(string $path, array $metadata): ?array {
     $children = $metadata['children'] ?? [];
     $columns = [];
     $field_settings = [];
@@ -281,7 +252,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       if (!is_string($child_key)) {
         continue;
       }
-      $child_metadata = $this->manager->getStudyFieldMetadata($child_key) ?? [];
+      $child_metadata = $this->getMetadata($child_key);
       if (($child_metadata['sourceType'] ?? '') === 'STRUCT') {
         continue;
       }
@@ -292,7 +263,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       $column_name = $column_definition['column_name'];
       $columns[$column_name] = $column_definition['storage'];
       $field_settings[$column_name] = $column_definition['instance'];
-      $details[] = $this->buildCustomFieldDetailLabel($child_metadata, $parent_piece);
+      $details[] = $this->names->getDetailLabel((string) ($child_metadata['piece'] ?? $child_metadata['name'] ?? ''), $parent_piece);
     }
 
     if ($columns === []) {
@@ -316,14 +287,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * Resolves the preferred study identifier for UI display and field names.
    */
-  protected function resolveStudyIdentifier(string $api_key, array $metadata): string {
-    $piece = (string) ($metadata['piece'] ?? '');
-    return ($piece !== '') ? $piece : $api_key;
-  }
-
-  /**
-   * Determines whether a struct can be represented as a simple custom field.
-   */
   protected function isSimpleCustomFieldStruct(array $metadata): bool {
     $type = (string) ($metadata['type'] ?? '');
     $children = $metadata['children'] ?? [];
@@ -336,7 +299,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       if (!is_string($child_key)) {
         return FALSE;
       }
-      $child_metadata = $this->manager->getStudyFieldMetadata($child_key) ?? [];
+      $child_metadata = $this->getMetadata($child_key);
       if (($child_metadata['sourceType'] ?? '') === 'STRUCT') {
         return FALSE;
       }
@@ -353,70 +316,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    */
   protected function supportsNestedFieldGroup(array $metadata): bool {
     return !empty($metadata['children']) && is_array($metadata['children']);
-  }
-
-  /**
-   * Generates a deterministic field-group machine name for an API key.
-   */
-  protected function generateGroupName(string $api_key): string {
-    $metadata = $this->manager->getStudyFieldMetadata($api_key) ?? [];
-    $identifier = $this->resolveStudyIdentifier($api_key, $metadata);
-    $group_name = 'group_' . $this->normalizeFieldStem($identifier);
-
-    if (strlen($group_name) <= 64) {
-      return $group_name;
-    }
-
-    $hash = substr(hash('sha256', $api_key), 0, 8);
-    $prefix_length = 64 - 1 - strlen($hash);
-    $prefix = substr($group_name, 0, $prefix_length);
-
-    return rtrim($prefix, '_') . '_' . $hash;
-  }
-
-  /**
-   * Normalizes an identifier into a Drupal field-name stem.
-   */
-  protected function normalizeFieldStem(string $identifier): string {
-    if (isset(self::FIELD_NAMES[$identifier])) {
-      return self::FIELD_NAMES[$identifier];
-    }
-
-    $identifier = preg_replace('/(?<=[A-Z])(?=[A-Z][a-z])/', '_', $identifier) ?? $identifier;
-    $identifier = preg_replace('/(?<=[a-z0-9])(?=[A-Z])/', '_', $identifier) ?? $identifier;
-    $identifier = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '_', $identifier) ?? '');
-
-    return trim($identifier, '_');
-  }
-
-  /**
-   * Builds a display label for a custom-field child property.
-   */
-  protected function buildCustomFieldDetailLabel(array $metadata, string $parent_piece): string {
-    $piece = (string) ($metadata['piece'] ?? $metadata['name'] ?? '');
-    if ($parent_piece !== '' && str_starts_with($piece, $parent_piece)) {
-      $piece = substr($piece, strlen($parent_piece)) ?: $piece;
-    }
-
-    return $this->normalizeFieldStem($piece);
-  }
-
-  /**
-   * Builds a human-readable label from metadata titles and identifiers.
-   */
-  protected function buildDisplayLabel(string $label): string {
-    if ($label === '') {
-      return '';
-    }
-
-    if (str_contains($label, ' ') || str_contains($label, '-')) {
-      return $label;
-    }
-
-    $label = preg_replace('/(?<=[A-Z])(?=[A-Z][a-z])/', ' ', $label) ?? $label;
-    $label = preg_replace('/(?<=[a-z0-9])(?=[A-Z])/', ' ', $label) ?? $label;
-
-    return trim($label);
   }
 
   /**
@@ -470,8 +369,8 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       ]);
     }
 
-    foreach ($group_definitions as $api_key => $definition) {
-      $children = $this->resolveFieldGroupChildren($api_key, $selected_fields);
+    foreach ($group_definitions as $path => $definition) {
+      $children = $this->resolveFieldGroupChildren($path, $selected_fields);
       if ($children === []) {
         continue;
       }
@@ -479,7 +378,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       $form_display->setThirdPartySetting('field_group', $definition['field_name'], [
         'children' => $children,
         'label' => $definition['label'],
-        'parent_name' => $this->resolveParentGroupName($api_key, $selected_fields),
+        'parent_name' => $this->resolveParentGroupName($path, $selected_fields),
         'weight' => 0,
         'format_type' => 'details',
         'format_settings' => [
@@ -498,7 +397,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       $view_display->setThirdPartySetting('field_group', $definition['field_name'], [
         'children' => $children,
         'label' => $definition['label'],
-        'parent_name' => $this->resolveParentGroupName($api_key, $selected_fields),
+        'parent_name' => $this->resolveParentGroupName($path, $selected_fields),
         'weight' => 0,
         'format_type' => 'fieldset',
         'format_settings' => [
@@ -615,16 +514,16 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * Resolves the direct children for a field group.
    */
-  protected function resolveFieldGroupChildren(string $api_key, array $selected_fields): array {
-    $metadata = $this->manager->getStudyFieldMetadata($api_key) ?? [];
+  protected function resolveFieldGroupChildren(string $path, array $selected_fields): array {
+    $metadata = $this->getMetadata($path);
     $children = [];
 
-    foreach (($metadata['children'] ?? []) as $child_api_key) {
-      if (!is_string($child_api_key) || !isset($selected_fields[$child_api_key])) {
+    foreach (($metadata['children'] ?? []) as $child_path) {
+      if (!is_string($child_path) || !isset($selected_fields[$child_path])) {
         continue;
       }
 
-      $child_definition = $selected_fields[$child_api_key];
+      $child_definition = $selected_fields[$child_path];
       if (!empty($child_definition['group_only'])) {
         $children[] = $child_definition['field_name'];
         continue;
@@ -644,18 +543,14 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * Resolves the parent field-group name for a nested group.
    */
-  protected function resolveParentGroupName(string $api_key, array $selected_fields): string {
-    $last_dot = strrpos($api_key, '.');
-    if ($last_dot === FALSE) {
+  protected function resolveParentGroupName(string $path, array $selected_fields): string {
+    $metadata = $this->getMetadata($path);
+    $parent = (string) ($metadata['parent'] ?? '');
+    if ($parent === '' || !isset($selected_fields[$parent]) || empty($selected_fields[$parent]['group_only'])) {
       return '';
     }
 
-    $parent_api_key = substr($api_key, 0, $last_dot);
-    if (!isset($selected_fields[$parent_api_key]) || empty($selected_fields[$parent_api_key]['group_only'])) {
-      return '';
-    }
-
-    return (string) $selected_fields[$parent_api_key]['field_name'];
+    return (string) $selected_fields[$parent]['field_name'];
   }
 
   /**
@@ -688,7 +583,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       $instance += [
         'prefix' => '',
         'suffix' => '',
-        'allowed_values' => $this->normalizeCustomFieldAllowedValues($this->resolveAllowedValues($type)),
+        'allowed_values' => $this->manager->getEnumAsAllowedValues($type, TRUE),
       ];
       return [
         'column_name' => $column_name,
@@ -799,8 +694,8 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * Determines whether a field is required in the wizard UI.
    */
-  protected function isRequiredField(string $api_key): bool {
-    return in_array($api_key, [
+  protected function isRequiredField(string $path): bool {
+    return in_array($path, [
       'protocolSection.identificationModule.nctId',
       self::TITLE_FIELD_KEY,
       'protocolSection.descriptionModule.briefSummary',
@@ -808,39 +703,21 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   }
 
   /**
-   * Resolves enum values from the ClinicalTrials.gov enum fixtures.
+   * Returns metadata for one path.
    */
-  protected function resolveAllowedValues(string $enum_type): array {
-    foreach ($this->manager->getEnums() as $enum_definition) {
-      if (!is_array($enum_definition) || ($enum_definition['type'] ?? '') !== $enum_type) {
-        continue;
-      }
-
-      $allowed_values = [];
-      foreach (($enum_definition['values'] ?? []) as $value) {
-        if (!is_array($value) || !isset($value['value'])) {
-          continue;
-        }
-        $allowed_values[(string) $value['value']] = (string) ($value['legacyValue'] ?? $value['value']);
-      }
-      return $allowed_values;
-    }
-
-    return [];
+  protected function getMetadata(string $path): array {
+    return $this->manager->getMetadataByPath()[$path] ?? [];
   }
 
   /**
-   * Converts core-style allowed values into custom_field row format.
+   * Returns the preferred piece for one metadata path.
    */
-  protected function normalizeCustomFieldAllowedValues(array $allowed_values): array {
-    $normalized = [];
-    foreach ($allowed_values as $key => $label) {
-      $normalized[] = [
-        'key' => $key,
-        'label' => $label,
-      ];
+  protected function getPiece(string $path, array $metadata = []): string {
+    if ($metadata === []) {
+      $metadata = $this->getMetadata($path);
     }
-    return $normalized;
+    $piece = (string) ($metadata['piece'] ?? '');
+    return ($piece !== '') ? $piece : $path;
   }
 
 }

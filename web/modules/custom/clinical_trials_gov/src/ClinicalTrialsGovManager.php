@@ -17,7 +17,12 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
   /**
    * Per-instance cache of the flattened metadata tree.
    */
-  protected ?array $metadataCache = NULL;
+  protected ?array $metadataByPathCache = NULL;
+
+  /**
+   * Per-instance cache of metadata rows keyed by piece.
+   */
+  protected ?array $metadataByPieceCache = NULL;
 
   /**
    * Per-instance cache of the raw enums response.
@@ -56,19 +61,32 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function getStudyMetadata(): array {
-    if ($this->metadataCache === NULL) {
+  public function getMetadataByPath(): array {
+    if ($this->metadataByPathCache === NULL) {
       $data = $this->api->get('/studies/metadata');
-      $this->metadataCache = $this->flattenMetadata($data);
+      $this->metadataByPathCache = $this->flattenMetadata($data);
     }
-    return $this->metadataCache;
+    return $this->metadataByPathCache;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getStudyFieldMetadata(string $index_field): ?array {
-    return $this->getStudyMetadata()[$index_field] ?? NULL;
+  public function getMetadataByPiece(): array {
+    if ($this->metadataByPieceCache === NULL) {
+      $this->metadataByPieceCache = [];
+      foreach ($this->getMetadataByPath() as $metadata) {
+        if (!is_array($metadata)) {
+          continue;
+        }
+        $piece = (string) ($metadata['piece'] ?? '');
+        if ($piece === '') {
+          continue;
+        }
+        $this->metadataByPieceCache[$piece] = $metadata;
+      }
+    }
+    return $this->metadataByPieceCache;
   }
 
   /**
@@ -103,6 +121,41 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getEnumAsAllowedValues(string $enum_type, bool $key_label = FALSE): array {
+    foreach ($this->getEnums() as $enum_definition) {
+      if (!is_array($enum_definition) || ($enum_definition['type'] ?? '') !== $enum_type) {
+        continue;
+      }
+
+      $allowed_values = [];
+      foreach (($enum_definition['values'] ?? []) as $value) {
+        if (!is_array($value) || !isset($value['value'])) {
+          continue;
+        }
+
+        $allowed_values[(string) $value['value']] = (string) ($value['legacyValue'] ?? $value['value']);
+      }
+
+      if (!$key_label) {
+        return $allowed_values;
+      }
+
+      $normalized = [];
+      foreach ($allowed_values as $key => $label) {
+        $normalized[] = [
+          'key' => $key,
+          'label' => $label,
+        ];
+      }
+      return $normalized;
+    }
+
+    return [];
+  }
+
+  /**
    * Recursively flattens nested study data to dot-notation Index field keys.
    *
    * Associative arrays (objects) are recursed into. Lists and scalar values
@@ -123,14 +176,14 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
   /**
    * Recursively flattens the metadata tree to dot-notation name-path rows.
    */
-  protected function flattenMetadata(array $items, string $prefix = ''): array {
+  protected function flattenMetadata(array $items, string $parent = ''): array {
     $rows = [];
     foreach ($items as $item) {
       if (!is_array($item)) {
         continue;
       }
       $name = (string) ($item['name'] ?? '');
-      $key = ($prefix !== '' && $name !== '') ? $prefix . '.' . $name : $name;
+      $path = ($parent !== '' && $name !== '') ? $parent . '.' . $name : $name;
       $children = [];
       foreach (($item['children'] ?? []) as $child) {
         if (!is_array($child)) {
@@ -140,10 +193,11 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
         if ($child_name === '') {
           continue;
         }
-        $children[] = ($key !== '') ? $key . '.' . $child_name : $child_name;
+        $children[] = ($path !== '') ? $path . '.' . $child_name : $child_name;
       }
-      $rows[$key] = [
-        'key' => $key,
+      $rows[$path] = [
+        'path' => $path,
+        'parent' => $parent,
         'name' => $name,
         'piece' => (string) ($item['piece'] ?? ''),
         'title' => (string) ($item['title'] ?? ''),
@@ -155,7 +209,7 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
         'children' => $children,
       ];
       if (!empty($item['children']) && is_array($item['children'])) {
-        $rows += $this->flattenMetadata($item['children'], $key);
+        $rows += $this->flattenMetadata($item['children'], $path);
       }
     }
     return $rows;
