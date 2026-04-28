@@ -15,12 +15,12 @@ interface ClinicalTrialsGovFieldManagerInterface {
   public function getRequiredFieldKeys(): array;
 
   /**
-   * Returns available API keys from the curated allow-list.
+   * Returns available API keys from the configured allow-list.
    */
   public function getAvailableFieldKeys(): array;
 
   /**
-   * Returns available field definitions from the curated allow-list.
+   * Returns available field definitions from the configured allow-list.
    */
   public function getAvailableFieldDefinitions(): array;
 

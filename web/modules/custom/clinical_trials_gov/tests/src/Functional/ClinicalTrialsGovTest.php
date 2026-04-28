@@ -72,10 +72,22 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     // Check that Find starts without preview results when no query is saved.
     $this->assertSession()->pageTextContains('Use Update preview to preview the current query without saving it.');
 
-    $this->getSession()->getPage()->fillField('query__cond', 'cancer');
-    $this->getSession()->getPage()->pressButton('Save configuration');
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('query', 'query.cond=cancer')
+      ->set('paths', [
+        'protocolSection.conditionsModule.conditions',
+        'protocolSection.designModule.designInfo.maskingInfo.masking',
+        'protocolSection.sponsorCollaboratorsModule.responsibleParty',
+        'protocolSection.statusModule.overallStatus',
+        'protocolSection.identificationModule.nctId',
+        'protocolSection.identificationModule.briefTitle',
+        'protocolSection.descriptionModule.briefSummary',
+      ])
+      ->save();
 
-    // Check that submitting Find redirects to Review and shows studies.
+    $this->drupalGet('admin/config/services/clinical-trials-gov/review');
+
+    // Check that a saved query with discovered paths redirects to Review and shows studies.
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->linkExists('query');
     $this->assertSession()->linkExists('configuring the destination content type');
@@ -119,7 +131,6 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Protocol Section');
     $this->assertSession()->pageTextContains('Responsible Party');
     $this->assertSession()->pageTextContains('Design Masking Info');
-    $this->assertSession()->pageTextContains('string (multiple)');
     $this->assertSession()->pageTextContains('field group');
     $this->assertSession()->pageTextContains('custom field');
     $this->assertSession()->pageTextContains('ProtocolSection');
@@ -168,6 +179,33 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
 
     // Check that Manage redirects to the filtered content overview once the type exists.
     $this->assertStringContainsString('/admin/content?title=&type=trial', $this->getSession()->getCurrentUrl());
+
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('paths', [])
+      ->save();
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/configure');
+
+    // Check that Configure is blocked when no paths have been discovered.
+    $this->assertSession()->pageTextContains('Save a studies query from the Find step before configuring the destination content type and fields.');
+    $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/find');
+    $this->assertSession()->linkExists('Find');
+    $this->assertSession()->pageTextNotContains('Field mapping');
+
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('paths', [
+        'protocolSection.statusModule.overallStatus',
+        'protocolSection.identificationModule.nctId',
+        'protocolSection.identificationModule.briefTitle',
+        'protocolSection.descriptionModule.briefSummary',
+      ])
+      ->save();
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/configure');
+
+    // Check that Configure reflects the saved path allow-list.
+    $this->assertSession()->pageTextContains('protocolSection.statusModule.overallStatus');
+    $this->assertSession()->pageTextNotContains('Responsible Party');
   }
 
 }

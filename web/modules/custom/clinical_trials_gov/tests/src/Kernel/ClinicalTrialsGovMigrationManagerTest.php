@@ -57,6 +57,15 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->config('clinical_trials_gov.settings');
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer&filter.overallStatus=RECRUITING')
+      ->set('paths', [
+        'protocolSection.contactsLocationsModule.locations',
+        'protocolSection.sponsorCollaboratorsModule.responsibleParty',
+        'protocolSection.conditionsModule.conditions',
+        'protocolSection.identificationModule.briefTitle',
+        'protocolSection.identificationModule.nctId',
+        'protocolSection.identificationModule.nctIdAliases',
+        'protocolSection.statusModule.overallStatus',
+      ])
       ->set('type', 'trial')
       ->set('fields', [
         'protocolSection.contactsLocationsModule.locations',
@@ -96,7 +105,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->assertSame('protocolSection.identificationModule.briefTitle', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.briefTitle')));
     $this->assertSame('protocolSection.identificationModule.nctId', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctId')));
     $this->assertSame('protocolSection.conditionsModule.conditions', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.conditionsModule.conditions')));
-    $this->assertNull($config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctIdAliases')));
+    $this->assertSame('protocolSection.identificationModule.nctIdAliases', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctIdAliases')));
     $this->assertNull($config->get('process.group_location'));
     $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.field_responsible_party'));
 
@@ -113,6 +122,13 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
     $migration = $this->container->get('plugin.manager.migration')->createInstance('clinical_trials_gov');
     $this->assertSame('query.cond=diabetes', $migration->getSourceConfiguration()['query']);
+
+    // Check that clearing discovered paths removes the generated migration.
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('paths', [])
+      ->save();
+    $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
+    $this->assertNull($this->container->get('config.factory')->get('migrate_plus.migration.clinical_trials_gov')->get('id'));
   }
 
 }

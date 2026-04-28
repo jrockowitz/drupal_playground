@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Form;
 
-use Drupal\clinical_trials_gov\Traits\ClinicalTrialsGovMessageTrait;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\migrate\MigrateMessage;
@@ -21,8 +21,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Step 4 of the import wizard.
  */
 class ClinicalTrialsGovImportForm extends FormBase {
-
-  use ClinicalTrialsGovMessageTrait;
 
   public function __construct(
     protected MigrationPluginManagerInterface $migrationPluginManager,
@@ -58,9 +56,10 @@ class ClinicalTrialsGovImportForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('clinical_trials_gov.settings');
     $query = (string) ($config->get('query') ?? '');
+    $paths = array_values(array_filter($config->get('paths') ?? [], 'is_string'));
     $type = (string) ($config->get('type') ?? '');
     $fields = array_values(array_filter($config->get('fields') ?? [], 'is_string'));
-    $ready = ($query !== '' && $type !== '' && $fields !== []);
+    $ready = ($query !== '' && $paths !== [] && $type !== '' && $fields !== []);
 
     $form['studies_query'] = [
       '#type' => 'fieldset',
@@ -248,7 +247,10 @@ class ClinicalTrialsGovImportForm extends FormBase {
       ];
     }
     elseif (!$ready) {
-      $form['migration_status']['message'] = $this->buildMessages('Complete the Find and Configure steps before running the import.', 'warning');
+      $this->messenger()->addWarning($this->t('Complete the <a href=":find_url">Find</a> and <a href=":configure_url">Configure</a> steps before running the import.', [
+        ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
+        ':configure_url' => Url::fromRoute('clinical_trials_gov.configure')->toString(),
+      ]));
     }
     $form['migration_status']['links'] = $this->buildActionLinks([
       'overview' => [

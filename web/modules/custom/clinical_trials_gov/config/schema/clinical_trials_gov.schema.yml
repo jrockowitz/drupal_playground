@@ -5,6 +5,12 @@ clinical_trials_gov.settings:
     query:
       type: string
       label: 'Query string'
+    paths:
+      type: sequence
+      label: 'Allowed metadata paths'
+      sequence:
+        type: string
+        label: 'Metadata path'
     type:
       type: string
       label: 'Content type machine name'

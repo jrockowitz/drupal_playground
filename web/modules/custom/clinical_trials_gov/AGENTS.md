@@ -39,7 +39,7 @@ Routes:
 
 Step behaviour:
 
-**1. Find** — stores the raw query string in `clinical_trials_gov.settings:query`. Limited to `query.*`, `filter.overallStatus`, `filter.ids`. Includes an Ajax preview section; auto-loads preview on first render if a saved query exists.
+**1. Find** — stores the raw query string in `clinical_trials_gov.settings:query`. On save, it starts a batch that scans up to 500 studies, fetches each study individually, and writes the discovered metadata paths to `clinical_trials_gov.settings:paths`. Limited to `query.*`, `filter.overallStatus`, `filter.ids`. Includes an Ajax preview section that auto-loads on first render if a saved query exists.
 
 **2. Review** — lists studies from the saved query; uses `clinical_trials_gov.review.study` for modal study links. Pagination is UI-only via `nextPageToken`. The study detail title callback returns the study's `briefTitle`, falling back to `'ClinicalTrials.gov'`.
 
@@ -49,9 +49,9 @@ Step behaviour:
 
 ## Configuration
 
-Primary config: `clinical_trials_gov.settings` — keys: `query`, `type`, `fields`.
+Primary config: `clinical_trials_gov.settings` — keys: `query`, `paths`, `type`, `fields`.
 
-Generated migration: `migrate_plus.migration.clinical_trials_gov`. Deleted when query/type/fields are empty.
+Generated migration: `migrate_plus.migration.clinical_trials_gov`. Deleted when query/paths/type/fields are incomplete.
 
 ## Field Resolution
 
@@ -71,7 +71,7 @@ Field resolution lives in `ClinicalTrialsGovFieldManager::resolveFieldDefinition
 2. `field_group` — nested container structs when `field_group` module is available; `group_only: true`, not directly saved as a field
 3. unsupported — everything else; hidden from Configure
 
-**Curated field list:** `ClinicalTrialsGovFieldManager::AVAILABLE_FIELD_KEYS` is a static allow-list. If a metadata path exists in the API but is not in this list, it does not appear in Configure even if the resolver supports it. Changes to supported fields require updating both `AVAILABLE_FIELD_KEYS` and tests that assert the curated table contents.
+**Available field list:** `ClinicalTrialsGovFieldManager::getAvailableFieldKeys()` reads the saved `clinical_trials_gov.settings:paths` allow-list, always unions in required paths, and then adds ancestor paths so group structures still resolve correctly. There is no legacy fallback list anymore; if `paths` is empty, Configure is blocked until Find discovers fields.
 
 **Field names** are generated from the metadata `piece`, normalised to snake_case, prefixed with `field_`, capped at 32 characters. Long names are truncated and suffixed with an 8-character SHA-256 hash. Overrides live in `ClinicalTrialsGovNames::FIELD_NAMES`.
 
@@ -121,7 +121,7 @@ ddev drush migrate:status clinical_trials_gov
 
 - Update tests when changing: field curation, struct resolution, migration generation, source pagination, or Configure table behaviour.
 - Curated field-list changes ripple into the Functional test — check `ClinicalTrialsGovTest::testWizardFlow` assertions against the Configure table.
-- If a field seems "missing", check `AVAILABLE_FIELD_KEYS` before touching the resolver.
+- If a field seems "missing", check `clinical_trials_gov.settings:paths` and the Find discovery batch before touching the resolver.
 - If a struct seems wrong, inspect: metadata `type`, `sourceType`, `children`, and which outcome (`custom_field`, `field_group`, unsupported) is intended.
 - Preserve the distinction between UI preview/review (one page) and migration source (all pages).
 - Do not use `0` for unlimited cardinality — use `-1`.

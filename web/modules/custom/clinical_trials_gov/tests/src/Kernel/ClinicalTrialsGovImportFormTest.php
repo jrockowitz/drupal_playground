@@ -19,7 +19,7 @@ class ClinicalTrialsGovImportFormTest extends KernelTestBase {
   /**
    * Modules required for these kernel tests.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = [
     'clinical_trials_gov',
@@ -51,6 +51,7 @@ class ClinicalTrialsGovImportFormTest extends KernelTestBase {
 
     $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer&filter.overallStatus=RECRUITING')
+      ->set('paths', ['protocolSection.identificationModule.nctId'])
       ->set('type', 'trial')
       ->set('fields', ['protocolSection.identificationModule.nctId'])
       ->save();
@@ -109,6 +110,23 @@ class ClinicalTrialsGovImportFormTest extends KernelTestBase {
       'Messages',
       'Last Imported',
     ], $labels);
+
+    $this->container->get('messenger')->deleteAll();
+    $this->config('clinical_trials_gov.settings')
+      ->set('query', '')
+      ->set('paths', [])
+      ->set('type', '')
+      ->set('fields', [])
+      ->save();
+    $not_ready_form = $this->container->get('form_builder')->buildForm('Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm', new FormState());
+    $warning_messages = $this->container->get('messenger')->messagesByType('warning');
+
+    // Check that the not-ready warning is displayed through the page messenger.
+    $this->assertArrayNotHasKey('message', $not_ready_form['migration_status']);
+    $this->assertCount(1, $warning_messages);
+    $this->assertStringContainsString('Complete the', (string) $warning_messages[0]);
+    $this->assertStringContainsString('Find', (string) $warning_messages[0]);
+    $this->assertStringContainsString('Configure', (string) $warning_messages[0]);
   }
 
 }

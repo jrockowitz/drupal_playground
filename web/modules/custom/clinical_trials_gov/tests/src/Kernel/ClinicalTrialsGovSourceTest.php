@@ -43,6 +43,7 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
   public function testSourceRows(): void {
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
+      ->set('paths', ['protocolSection.identificationModule.nctId'])
       ->set('type', 'trial')
       ->set('fields', ['protocolSection.identificationModule.nctId'])
       ->save();

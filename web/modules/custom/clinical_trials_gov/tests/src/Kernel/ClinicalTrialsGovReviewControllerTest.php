@@ -20,7 +20,7 @@ class ClinicalTrialsGovReviewControllerTest extends KernelTestBase {
   /**
    * Modules required for these kernel tests.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = [
     'clinical_trials_gov',
@@ -55,6 +55,18 @@ class ClinicalTrialsGovReviewControllerTest extends KernelTestBase {
 
     // Check that the study route title callback uses the study brief title.
     $this->assertSame('Cognition and QoL After Thyroid Surgery', $controller->title('NCT05088187'));
+
+    $this->container->get('messenger')->deleteAll();
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('query', '')
+      ->save();
+    $empty_build = $controller->index(new Request());
+    $warning_messages = $this->container->get('messenger')->messagesByType('warning');
+
+    // Check that a missing saved query uses the page messenger instead of an inline render message.
+    $this->assertSame([], $empty_build);
+    $this->assertCount(1, $warning_messages);
+    $this->assertStringContainsString('No saved query was found.', (string) $warning_messages[0]);
   }
 
 }

@@ -20,6 +20,11 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
   protected array $studiesRequests = [];
 
   /**
+   * Records the NCT IDs passed to getStudy().
+   */
+  protected array $studyRequests = [];
+
+  /**
    * Map of NCT ID to fixture filename (without extension).
    */
   protected array $studyFixtureMap = [
@@ -71,12 +76,20 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
    * {@inheritdoc}
    */
   public function getStudy(string $nct_id): array {
+    $this->studyRequests[] = $nct_id;
     $fixture_name = $this->studyFixtureMap[$nct_id] ?? NULL;
     if ($fixture_name === NULL) {
       return [];
     }
     $data = $this->loadFixture($fixture_name);
     return $this->flattenStudy($data);
+  }
+
+  /**
+   * Returns the recorded getStudy() requests.
+   */
+  public function getStudyRequests(): array {
+    return $this->studyRequests;
   }
 
   /**

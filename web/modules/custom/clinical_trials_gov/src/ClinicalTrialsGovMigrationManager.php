@@ -34,11 +34,12 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
   public function updateMigration(): void {
     $settings = $this->configFactory->get('clinical_trials_gov.settings');
     $query = (string) ($settings->get('query') ?? '');
+    $paths = array_values(array_filter($settings->get('paths') ?? [], 'is_string'));
     $type = (string) ($settings->get('type') ?? '');
     $fields = array_values(array_filter($settings->get('fields') ?? [], 'is_string'));
     $migration_config = $this->configFactory->getEditable(self::MIGRATION_CONFIG_NAME);
 
-    if ($query === '' || $type === '' || $fields === []) {
+    if ($query === '' || $paths === [] || $type === '' || $fields === []) {
       $migration_config->delete();
       $this->clearMigrationPluginDefinitions();
       return;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
@@ -15,84 +16,6 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    * ClinicalTrials.gov field key mapped to the node title property.
    */
   protected const TITLE_FIELD_PATH = 'protocolSection.identificationModule.briefTitle';
-
-  /**
-   * Field indexes observed in the two reference studies.
-   */
-  protected const AVAILABLE_FIELD_KEYS = [
-    'annotationSection.annotationModule.unpostedAnnotation.unpostedEvents',
-    'annotationSection.annotationModule.unpostedAnnotation.unpostedResponsibleParty',
-    'derivedSection.conditionBrowseModule.ancestors',
-    'derivedSection.conditionBrowseModule.meshes',
-    'derivedSection.interventionBrowseModule.ancestors',
-    'derivedSection.interventionBrowseModule.meshes',
-    'derivedSection.miscInfoModule.submissionTracking.estimatedResultsFirstSubmitDate',
-    'derivedSection.miscInfoModule.submissionTracking.submissionInfos',
-    'derivedSection.miscInfoModule.versionHolder',
-    'hasResults',
-    'protocolSection.armsInterventionsModule.armGroups',
-    'protocolSection.armsInterventionsModule.interventions',
-    'protocolSection.conditionsModule.conditions',
-    'protocolSection.conditionsModule.keywords',
-    'protocolSection.contactsLocationsModule.centralContacts',
-    'protocolSection.contactsLocationsModule.locations',
-    'protocolSection.contactsLocationsModule.overallOfficials',
-    'protocolSection.descriptionModule.briefSummary',
-    'protocolSection.descriptionModule.detailedDescription',
-    'protocolSection.designModule.designInfo.allocation',
-    'protocolSection.designModule.designInfo.interventionModel',
-    'protocolSection.designModule.designInfo.maskingInfo.masking',
-    'protocolSection.designModule.designInfo.maskingInfo.whoMasked',
-    'protocolSection.designModule.designInfo.observationalModel',
-    'protocolSection.designModule.designInfo.primaryPurpose',
-    'protocolSection.designModule.designInfo.timePerspective',
-    'protocolSection.designModule.enrollmentInfo.count',
-    'protocolSection.designModule.enrollmentInfo.type',
-    'protocolSection.designModule.patientRegistry',
-    'protocolSection.designModule.phases',
-    'protocolSection.designModule.studyType',
-    'protocolSection.eligibilityModule.eligibilityCriteria',
-    'protocolSection.eligibilityModule.healthyVolunteers',
-    'protocolSection.eligibilityModule.maximumAge',
-    'protocolSection.eligibilityModule.minimumAge',
-    'protocolSection.eligibilityModule.samplingMethod',
-    'protocolSection.eligibilityModule.sex',
-    'protocolSection.eligibilityModule.stdAges',
-    'protocolSection.eligibilityModule.studyPopulation',
-    'protocolSection.identificationModule.acronym',
-    'protocolSection.identificationModule.briefTitle',
-    'protocolSection.identificationModule.nctId',
-    'protocolSection.identificationModule.officialTitle',
-    'protocolSection.identificationModule.orgStudyIdInfo.id',
-    'protocolSection.identificationModule.organization.class',
-    'protocolSection.identificationModule.organization.fullName',
-    'protocolSection.ipdSharingStatementModule.ipdSharing',
-    'protocolSection.outcomesModule.primaryOutcomes',
-    'protocolSection.oversightModule.isFdaRegulatedDevice',
-    'protocolSection.oversightModule.isFdaRegulatedDrug',
-    'protocolSection.oversightModule.oversightHasDmc',
-    'protocolSection.sponsorCollaboratorsModule.collaborators',
-    'protocolSection.sponsorCollaboratorsModule.leadSponsor.class',
-    'protocolSection.sponsorCollaboratorsModule.leadSponsor.name',
-    'protocolSection.sponsorCollaboratorsModule.responsibleParty.type',
-    'protocolSection.statusModule.completionDateStruct.date',
-    'protocolSection.statusModule.completionDateStruct.type',
-    'protocolSection.statusModule.expandedAccessInfo.hasExpandedAccess',
-    'protocolSection.statusModule.lastKnownStatus',
-    'protocolSection.statusModule.lastUpdatePostDateStruct.date',
-    'protocolSection.statusModule.lastUpdatePostDateStruct.type',
-    'protocolSection.statusModule.lastUpdateSubmitDate',
-    'protocolSection.statusModule.overallStatus',
-    'protocolSection.statusModule.primaryCompletionDateStruct.date',
-    'protocolSection.statusModule.primaryCompletionDateStruct.type',
-    'protocolSection.statusModule.startDateStruct.date',
-    'protocolSection.statusModule.startDateStruct.type',
-    'protocolSection.statusModule.statusVerifiedDate',
-    'protocolSection.statusModule.studyFirstPostDateStruct.date',
-    'protocolSection.statusModule.studyFirstPostDateStruct.type',
-    'protocolSection.statusModule.studyFirstSubmitDate',
-    'protocolSection.statusModule.studyFirstSubmitQcDate',
-  ];
 
   /**
    * Required fields for every import configuration.
@@ -107,6 +30,13 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    * Generic link type for custom_field url columns (LinkItemInterface::LINK_GENERIC).
    */
   protected const LINK_TYPE_GENERIC = 17;
+
+  /**
+   * Policy-backed max character overrides missing from study metadata.
+   */
+  protected const MAX_CHAR_OVERRIDES = [
+    'protocolSection.referencesModule.references.citation' => 2000,
+  ];
 
   /**
    * Supported structure keys mapped to their metadata type.
@@ -124,11 +54,12 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
   ];
 
   /**
-   * Cached ordered list of curated field keys.
+   * Cached ordered list of configured field keys.
    */
   protected ?array $availableFieldKeys = NULL;
 
   public function __construct(
+    protected ConfigFactoryInterface $configFactory,
     protected ClinicalTrialsGovManagerInterface $manager,
     protected ClinicalTrialsGovNamesInterface $names,
     protected ModuleHandlerInterface $moduleHandler,
@@ -152,7 +83,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
     $metadata = $this->manager->getMetadataByPath();
     $available_keys = [];
 
-    foreach (array_merge(self::AVAILABLE_FIELD_KEYS, self::REQUIRED_FIELD_KEYS) as $path) {
+    foreach ($this->getConfiguredAvailableFieldKeys() as $path) {
       if (!isset($metadata[$path])) {
         continue;
       }
@@ -197,7 +128,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
     $type = $metadata['type'] ?? '';
     $source_type = $metadata['sourceType'] ?? '';
     $is_enum = !empty($metadata['isEnum']);
-    $max_chars = $metadata['maxChars'] ?? NULL;
+    $max_chars = $this->getEffectiveMaxChars($path, $metadata);
     $is_multi = str_ends_with($type, '[]');
     $cardinality = $is_multi ? -1 : 1;
     $definition = [
@@ -359,6 +290,22 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
   }
 
   /**
+   * Returns configured metadata paths.
+   */
+  protected function getConfiguredAvailableFieldKeys(): array {
+    $paths = array_values(array_filter(
+      $this->configFactory->get('clinical_trials_gov.settings')->get('paths') ?? [],
+      'is_string'
+    ));
+
+    if ($paths === []) {
+      return [];
+    }
+
+    return array_values(array_unique(array_merge($paths, self::REQUIRED_FIELD_KEYS)));
+  }
+
+  /**
    * Resolves a custom-field definition from a struct metadata row.
    */
   protected function buildCustomFieldDefinition(array $metadata): ?array {
@@ -461,7 +408,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
     $type = (string) ($metadata['type'] ?? '');
     $source_type = (string) ($metadata['sourceType'] ?? '');
     $is_enum = !empty($metadata['isEnum']);
-    $max_chars = $metadata['maxChars'] ?? NULL;
+    $max_chars = $this->getEffectiveMaxChars($child_key, $metadata);
     $is_multi = str_ends_with($type, '[]');
 
     $storage = [
@@ -507,7 +454,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
       ];
     }
 
-    if ($source_type === 'MARKUP' || ($max_chars !== NULL && $max_chars > 255)) {
+    if ($source_type === 'MARKUP') {
       $storage = [
         'name' => $column_name,
         'type' => 'string_long',
@@ -523,6 +470,17 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
       return [
         'column_name' => $column_name,
         'storage' => $storage,
+        'instance' => $instance,
+      ];
+    }
+
+    if ($max_chars !== NULL && $max_chars > 255) {
+      return [
+        'column_name' => $column_name,
+        'storage' => [
+          'name' => $column_name,
+          'type' => 'string_long',
+        ],
         'instance' => $instance,
       ];
     }
@@ -622,6 +580,17 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    */
   protected function isRequiredField(string $path): bool {
     return in_array($path, self::REQUIRED_FIELD_KEYS);
+  }
+
+  /**
+   * Returns the effective max character limit for one metadata row.
+   */
+  protected function getEffectiveMaxChars(string $path, array $metadata): ?int {
+    if (isset(self::MAX_CHAR_OVERRIDES[$path])) {
+      return self::MAX_CHAR_OVERRIDES[$path];
+    }
+
+    return isset($metadata['maxChars']) ? (int) $metadata['maxChars'] : NULL;
   }
 
 }

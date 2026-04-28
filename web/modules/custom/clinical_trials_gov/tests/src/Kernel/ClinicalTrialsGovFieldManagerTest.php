@@ -19,7 +19,7 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
   /**
    * Modules required for these kernel tests.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = [
     'clinical_trials_gov',
@@ -69,20 +69,16 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $alias_definition = $this->fieldManager->getFieldDefinition('protocolSection.identificationModule.nctIdAliases');
     $title_definition = $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.briefTitle');
     $eligibility_definition = $this->fieldManager->resolveFieldDefinition('protocolSection.eligibilityModule');
+    $references_definition = $this->fieldManager->resolveFieldDefinition('protocolSection.referencesModule.references');
 
-    // Check that the curated key list keeps required and structural parents.
-    $this->assertContains('protocolSection', $available_field_keys);
-    $this->assertContains('protocolSection.sponsorCollaboratorsModule.responsibleParty', $available_field_keys);
-    $this->assertContains('protocolSection.identificationModule.nctId', $available_field_keys);
-
-    // Check that metadata-only rows outside the curated list are excluded.
-    $this->assertNotContains('protocolSection.identificationModule.nctIdAliases', $available_field_keys);
-    $this->assertArrayNotHasKey('protocolSection.identificationModule.nctIdAliases', $available_definitions);
+    // Check that no paths are available until discovery has populated the allow-list.
+    $this->assertSame([], $available_field_keys);
+    $this->assertSame([], $available_definitions);
     $this->assertFalse($alias_definition['available']);
     $this->assertFalse($alias_definition['selectable']);
 
-    // Check that simple structs remain custom fields with detail rows.
-    $this->assertTrue($responsible_party_definition['available']);
+    // Check that simple structs still resolve as custom fields even before paths are discovered.
+    $this->assertFalse($responsible_party_definition['available']);
     $this->assertSame('custom', $responsible_party_definition['field_type']);
     $this->assertArrayNotHasKey('available', $resolved_responsible_party_definition);
     $this->assertSame('custom', $resolved_responsible_party_definition['field_type']);
@@ -95,8 +91,8 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
       'old_organization',
     ], $responsible_party_definition['details']);
 
-    // Check that structural parents remain field groups.
-    $this->assertTrue($protocol_section_definition['available']);
+    // Check that structural parents still resolve as field groups even before paths are discovered.
+    $this->assertFalse($protocol_section_definition['available']);
     $this->assertSame('field_group', $protocol_section_definition['field_type']);
     $this->assertTrue($protocol_section_definition['group_only']);
 
@@ -113,6 +109,32 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $this->assertSame('plain_text', $eligibility_definition['instance_settings']['field_settings']['eligibilityCriteria']['default_format']);
     $this->assertSame('map_string', $eligibility_definition['storage_settings']['columns']['stdAges']['type']);
     $this->assertSame('', $eligibility_definition['instance_settings']['field_settings']['stdAges']['table_empty']);
+
+    // Check that reference citations use long plain text even without maxChars in the metadata.
+    $this->assertSame('custom', $references_definition['field_type']);
+    $this->assertSame('string_long', $references_definition['storage_settings']['columns']['citation']['type']);
+    $this->assertArrayNotHasKey('formatted', $references_definition['instance_settings']['field_settings']['citation']);
+
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('paths', [
+        'protocolSection.statusModule.overallStatus',
+      ])
+      ->save();
+    $this->container->get('kernel')->rebuildContainer();
+    $field_manager = $this->container->get('clinical_trials_gov.field_manager');
+    $configured_available_field_keys = $field_manager->getAvailableFieldKeys();
+    $configured_available_definitions = $field_manager->getAvailableFieldDefinitions();
+
+    // Check that saved paths become the authoritative allow-list with required and ancestors added.
+    $this->assertContains('protocolSection', $configured_available_field_keys);
+    $this->assertContains('protocolSection.statusModule', $configured_available_field_keys);
+    $this->assertContains('protocolSection.statusModule.overallStatus', $configured_available_field_keys);
+    $this->assertContains('protocolSection.identificationModule.nctId', $configured_available_field_keys);
+    $this->assertContains('protocolSection.identificationModule.briefTitle', $configured_available_field_keys);
+    $this->assertContains('protocolSection.descriptionModule.briefSummary', $configured_available_field_keys);
+    $this->assertNotContains('protocolSection.sponsorCollaboratorsModule.responsibleParty', $configured_available_field_keys);
+    $this->assertArrayHasKey('protocolSection.statusModule.overallStatus', $configured_available_definitions);
+    $this->assertArrayNotHasKey('protocolSection.sponsorCollaboratorsModule.responsibleParty', $configured_available_definitions);
   }
 
 }

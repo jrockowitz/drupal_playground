@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Form;
 
+use Drupal\clinical_trials_gov\Batch\ClinicalTrialsGovPathDiscoveryBatch;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
+use Drupal\Core\Batch\BatchBuilder;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -60,7 +62,8 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     $form['#attributes']['class'][] = 'clinical-trials-gov';
     $form['#attached']['library'][] = 'clinical_trials_gov/clinical_trials_gov';
 
-    $saved_query = (string) ($this->config('clinical_trials_gov.settings')->get('query') ?? '');
+    $config = $this->config('clinical_trials_gov.settings');
+    $saved_query = (string) ($config->get('query') ?? '');
     $form['query_wrapper'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Studies query'),
@@ -147,12 +150,22 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $query = (string) $form_state->getValue('query');
     $this->configFactory()->getEditable('clinical_trials_gov.settings')
-      ->set('query', (string) $form_state->getValue('query'))
+      ->set('query', $query)
+      ->set('paths', [])
       ->save();
     $this->migrationManager->updateMigration();
-    parent::submitForm($form, $form_state);
+
+    $batch = (new BatchBuilder())
+      ->setTitle($this->t('Discovering study fields'))
+      ->setProgressMessage($this->t('Discovering available study fields...'))
+      ->addOperation([ClinicalTrialsGovPathDiscoveryBatch::class, 'discover'], [$query])
+      ->setFinishCallback([ClinicalTrialsGovPathDiscoveryBatch::class, 'finish']);
+    batch_set($batch->toArray());
+
     $form_state->setRedirect('clinical_trials_gov.review');
+    parent::submitForm($form, $form_state);
   }
 
   /**
@@ -275,5 +288,4 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
 
     return 0;
   }
-
 }

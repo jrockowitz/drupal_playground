@@ -85,6 +85,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
       'protocolSection.identificationModule.nctId',
       'protocolSection.descriptionModule.briefSummary',
       'protocolSection.eligibilityModule',
+      'protocolSection.referencesModule.references',
       'protocolSection.statusModule.overallStatus',
       'protocolSection.identificationModule.organization',
     ]);
@@ -99,6 +100,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.organization'))?->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty'))?->getType());
     $this->assertSame('map_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.eligibilityModule'))?->getSetting('columns')['stdAges']['type'] ?? NULL);
+    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.referencesModule.references'))?->getSetting('columns')['citation']['type'] ?? NULL);
 
     // Check that the bundle field config exists for the created type.
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
@@ -158,6 +160,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $custom_definition = $this->entityManager->resolveFieldDefinition('protocolSection.identificationModule.organization');
     $responsible_party_definition = $this->entityManager->resolveFieldDefinition('protocolSection.sponsorCollaboratorsModule.responsibleParty');
     $eligibility_module_definition = $this->entityManager->resolveFieldDefinition('protocolSection.eligibilityModule');
+    $references_definition = $this->entityManager->resolveFieldDefinition('protocolSection.referencesModule.references');
     $group_definition = $this->entityManager->resolveFieldDefinition('protocolSection.contactsLocationsModule.locations');
 
     // Check that title maps to the node title property.
@@ -210,6 +213,11 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertSame('plain_text', $eligibility_module_definition['instance_settings']['field_settings']['eligibilityCriteria']['default_format']);
     $this->assertSame('map_string', $eligibility_module_definition['storage_settings']['columns']['stdAges']['type']);
     $this->assertSame('', $eligibility_module_definition['instance_settings']['field_settings']['stdAges']['table_empty']);
+
+    // Check that reference citations use long plain text even without maxChars in the metadata.
+    $this->assertSame('custom', $references_definition['field_type']);
+    $this->assertSame('string_long', $references_definition['storage_settings']['columns']['citation']['type']);
+    $this->assertArrayNotHasKey('formatted', $references_definition['instance_settings']['field_settings']['citation']);
 
     // Check that nested structures can resolve to field groups.
     $this->assertSame('field_group', $group_definition['field_type']);

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
+use Drupal\clinical_trials_gov\Batch\ClinicalTrialsGovPathDiscoveryBatch;
 use Drupal\clinical_trials_gov\Form\ClinicalTrialsGovFindForm;
-use Drupal\clinical_trials_gov_test\ClinicalTrialsGovManagerStub;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -21,7 +21,7 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
   /**
    * Modules required for these kernel tests.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = [
     'clinical_trials_gov',
@@ -40,11 +40,14 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
       ->save();
 
     $form_object = ClinicalTrialsGovFindForm::create($this->container);
+    /** @var \Drupal\clinical_trials_gov_test\ClinicalTrialsGovManagerStub $manager */
     $manager = $this->container->get('clinical_trials_gov.manager');
-    $this->assertInstanceOf(ClinicalTrialsGovManagerStub::class, $manager);
 
-    // Check that an empty saved query shows the instructional preview message.
+    // Check that Find no longer exposes manual path settings.
     $empty_form = $form_object->buildForm([], new FormState());
+    $this->assertArrayNotHasKey('advanced', $empty_form);
+
+    // Check that a saved query still auto-loads preview results.
     $this->assertStringContainsString('Showing 1 - 2 of 3 trials.', $empty_form['preview']['results']['summary']['#markup']);
     $this->assertArrayHasKey('next_page', $empty_form['preview']['results']);
 
@@ -90,6 +93,46 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
       'countTotal' => 'true',
       'pageSize' => 10,
     ], $manager->getStudiesRequests()[count($manager->getStudiesRequests()) - 1]);
+
+    $submit_form_state = new FormState();
+    $submit_form_state->setValue('query', 'query.cond=lung');
+    $submit_form = $form_object->buildForm([], $submit_form_state);
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('paths', ['protocolSection.statusModule.overallStatus'])
+      ->save();
+    $form_object->submitForm($submit_form, $submit_form_state);
+    $saved_config = $this->container->get('config.factory')->get('clinical_trials_gov.settings');
+    $batch = batch_get();
+
+    // Check that submitting Find clears stale paths and registers a discovery batch.
+    $this->assertSame('query.cond=lung', $saved_config->get('query'));
+    $this->assertSame([], $saved_config->get('paths'));
+    $this->assertArrayHasKey('sets', $batch);
+    $this->assertSame([ClinicalTrialsGovPathDiscoveryBatch::class, 'discover'], $batch['sets'][0]['operations'][0][0]);
+
+    $context = [];
+    do {
+      ClinicalTrialsGovPathDiscoveryBatch::discover('query.cond=lung', $context);
+    } while (($context['finished'] ?? 0) < 1);
+    ClinicalTrialsGovPathDiscoveryBatch::finish(TRUE, $context['results'], []);
+    $saved_config = $this->container->get('config.factory')->get('clinical_trials_gov.settings');
+
+    // Check that the discovery batch scans studies and saves discovered paths.
+    $this->assertContains('protocolSection.identificationModule.nctId', $saved_config->get('paths'));
+    $this->assertContains('protocolSection.identificationModule.briefTitle', $saved_config->get('paths'));
+    $this->assertContains('protocolSection.descriptionModule.briefSummary', $saved_config->get('paths'));
+    $this->assertContains('protocolSection.statusModule.overallStatus', $saved_config->get('paths'));
+    $this->assertSame([
+      'query.cond' => 'lung',
+      'fields' => 'NCTId',
+      'pageSize' => '100',
+      'pageToken' => 'page-2',
+    ], $manager->getStudiesRequests()[count($manager->getStudiesRequests()) - 1]);
+    $this->assertSame([
+      'NCT05088187',
+      'NCT05189171',
+      'NCT01205711',
+    ], $manager->getStudyRequests());
   }
 
 }

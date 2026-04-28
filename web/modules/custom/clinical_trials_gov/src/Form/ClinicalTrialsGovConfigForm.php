@@ -11,6 +11,8 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -60,9 +62,19 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $form['#attached']['library'][] = 'clinical_trials_gov/clinical_trials_gov';
 
     $config = $this->config('clinical_trials_gov.settings');
+    $paths = array_values(array_filter($config->get('paths') ?? [], 'is_string'));
     $saved_type = (string) ($config->get('type') ?? ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE);
     $saved_fields = array_values(array_filter($config->get('fields') ?? [], 'is_string'));
     $node_type = $this->entityTypeManager->getStorage('node_type')->load($saved_type);
+
+    if ($paths === []) {
+      $this->messenger()->addWarning(Markup::create((string) $this->t('Save a studies query from the <a href=":find_url">Find</a> step before configuring the destination content type and fields.', [
+        ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
+      ])));
+      $form = parent::buildForm($form, $form_state);
+      unset($form['actions']);
+      return $form;
+    }
 
     $form['content_type'] = [
       '#type' => 'details',
@@ -224,6 +236,15 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $paths = array_values(array_filter($this->config('clinical_trials_gov.settings')->get('paths') ?? [], 'is_string'));
+    if ($paths === []) {
+      $this->messenger()->addWarning(Markup::create((string) $this->t('Save a studies query from the <a href=":find_url">Find</a> step before configuring the destination content type and fields.', [
+        ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
+      ])));
+      $form_state->setRedirect('clinical_trials_gov.find');
+      return;
+    }
+
     $config = $this->configFactory()->getEditable('clinical_trials_gov.settings');
     $type = (string) ($form_state->getValue('existing_type') ?: $form_state->getValue('type'));
     $label = (string) ($form_state->getValue('label') ?: 'Trial');

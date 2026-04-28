@@ -19,12 +19,18 @@ class ClinicalTrialsGovController extends ControllerBase {
   public function index(): array {
     $config = $this->config('clinical_trials_gov.settings');
     $query = (string) ($config->get('query') ?? '');
+    $paths = array_values(array_filter($config->get('paths') ?? [], 'is_string'));
     $type = (string) ($config->get('type') ?? '');
     $fields = array_values(array_filter($config->get('fields') ?? [], 'is_string'));
-    $import_ready = ($query !== '' && $type !== '' && !empty($fields));
+    $import_ready = ($query !== '' && $paths !== [] && $type !== '' && !empty($fields));
 
     if ($query === '') {
       $message = $this->buildMessage(Markup::create((string) $this->t('Please go to <a href=":url">Find</a> and build your query.', [
+        ':url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
+      ])));
+    }
+    elseif ($paths === []) {
+      $message = $this->buildMessage(Markup::create((string) $this->t('Your query is saved, but no fields were discovered. Go back to <a href=":url">Find</a> and save a query that returns studies.', [
         ':url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ])));
     }

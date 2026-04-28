@@ -8,8 +8,8 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
-use Drupal\clinical_trials_gov\Traits\ClinicalTrialsGovMessageTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -17,8 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
  * Displays the review step for the import wizard.
  */
 class ClinicalTrialsGovReviewController extends ControllerBase {
-
-  use ClinicalTrialsGovMessageTrait;
 
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
@@ -47,16 +45,18 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
    */
   public function study(Request $request, string $nctId): array {
     if (!preg_match('/^NCT\d+$/', $nctId)) {
-      return $this->buildListPage($request, $this->buildMessages($this->t('The study identifier %nct_id is not valid.', [
+      $this->messenger()->addWarning($this->t('The study identifier %nct_id is not valid.', [
         '%nct_id' => $nctId,
-      ]), 'warning'));
+      ]));
+      return $this->buildListPage($request);
     }
 
     $study = $this->manager->getStudy($nctId);
     if ($study === []) {
-      return $this->buildListPage($request, $this->buildMessages($this->t('Study %nct_id was not found. Review the saved query results below.', [
+      $this->messenger()->addWarning($this->t('Study %nct_id was not found. Review the saved query results below.', [
         '%nct_id' => $nctId,
-      ]), 'warning'));
+      ]));
+      return $this->buildListPage($request);
     }
 
     return $this->builder->buildStudy($study, $nctId);
@@ -77,12 +77,13 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
   /**
    * Builds the saved-query studies list page.
    */
-  protected function buildListPage(Request $request, ?array $message = NULL): array {
+  protected function buildListPage(Request $request): array {
     $saved_query = (string) ($this->config('clinical_trials_gov.settings')->get('query') ?? '');
     if ($saved_query === '') {
-      return [
-        'message' => $this->buildMessages('No saved query was found. Start with the Find step.', 'warning'),
-      ];
+      $this->messenger()->addWarning(Markup::create((string) $this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
+        ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
+      ])));
+      return [];
     }
 
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($saved_query);
@@ -143,10 +144,6 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
       ],
       'results' => $this->builder->buildStudiesList($studies, 'clinical_trials_gov.review.study', ['modal' => TRUE]),
     ];
-
-    if ($message !== NULL) {
-      $build = ['message' => $message] + $build;
-    }
 
     if (isset($response['nextPageToken'])) {
       $build['pager'] = [
