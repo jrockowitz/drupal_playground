@@ -69,11 +69,11 @@ class ClinicalTrialsGovImportForm extends FormBase {
     ];
     $form['studies_query']['links'] = $this->buildActionLinks([
       'find' => [
-        'title' => $this->t('Find'),
+        'title' => $this->t('Edit studies query'),
         'url' => Url::fromRoute('clinical_trials_gov.find'),
       ],
       'review' => [
-        'title' => $this->t('Review'),
+        'title' => $this->t('Review trials'),
         'url' => Url::fromRoute('clinical_trials_gov.review'),
       ],
     ]);
@@ -101,7 +101,7 @@ class ClinicalTrialsGovImportForm extends FormBase {
     ];
     $form['content_type']['links'] = $this->buildActionLinks([
       'configure' => [
-        'title' => $this->t('Configure'),
+        'title' => $this->t('Configure content type and fields'),
         'url' => Url::fromRoute('clinical_trials_gov.configure'),
       ],
     ]);
@@ -151,7 +151,7 @@ class ClinicalTrialsGovImportForm extends FormBase {
     }
     $form['migration_status']['links'] = $this->buildActionLinks([
       'overview' => [
-        'title' => $this->t('Migration overview'),
+        'title' => $this->t('View migration overview'),
         'url' => Url::fromUri('https://drupal-playground.ddev.site/admin/structure/migrate/manage/default/migrations/clinical_trials_gov'),
       ],
     ]);

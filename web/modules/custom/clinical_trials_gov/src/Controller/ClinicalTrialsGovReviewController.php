@@ -106,7 +106,7 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
         'library' => ['clinical_trials_gov/clinical_trials_gov'],
       ],
       'intro' => [
-        '#markup' => '<p>' . $this->t('Review the studies returned by the saved <a href=":find_url">query</a> before <a href=":configure_url">configuring the destination content type</a>.', [
+        '#markup' => '<p>' . $this->t('Review the trials returned by the saved <a href=":find_url">studies query</a> before <a href=":configure_url">configuring the destination content type</a>.', [
           ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
           ':configure_url' => Url::fromRoute('clinical_trials_gov.configure')->toString(),
         ]) . '</p>',
@@ -115,20 +115,16 @@ class ClinicalTrialsGovReviewController extends ControllerBase {
         '#type' => 'details',
         '#title' => $this->t('Studies query'),
         '#open' => FALSE,
-        'links' => $this->buildActionLinks([
-          'find' => [
-            'title' => $this->t('Find'),
-            'url' => Url::fromRoute('clinical_trials_gov.find'),
-          ],
-          'review' => [
-            'title' => $this->t('Review'),
-            'url' => Url::fromRoute('clinical_trials_gov.review'),
-          ],
-        ]),
         'summary' => [
           '#type' => 'clinical_trials_gov_studies_query_summary',
           '#query' => $saved_query,
         ],
+        'links' => $this->buildActionLinks([
+          'find' => [
+            'title' => $this->t('Edit studies query'),
+            'url' => Url::fromRoute('clinical_trials_gov.find'),
+          ],
+        ]),
       ],
       'summary' => [
         '#markup' => '<p>' . (($total !== NULL)

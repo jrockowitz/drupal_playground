@@ -46,7 +46,7 @@ class ClinicalTrialsGovReviewControllerTest extends KernelTestBase {
     // Check that the summary element and action links are included.
     $this->assertSame('clinical_trials_gov_studies_query_summary', $build['studies_query']['summary']['#type']);
     $this->assertArrayHasKey('find', $build['studies_query']['links']);
-    $this->assertArrayHasKey('review', $build['studies_query']['links']);
+    $this->assertArrayNotHasKey('review', $build['studies_query']['links']);
 
     // Check that the details section sits between the intro and results summary.
     $keys = array_values(array_filter(array_keys($build), static fn(string $key): bool => !str_starts_with($key, '#')));
