@@ -23,16 +23,20 @@ Core runtime pieces:
 - `ClinicalTrialsGovManager`
   - main data-fetching service
   - flattens study data and metadata into dot-notation keys
+  - exposes metadata indexes keyed by `path` and by `piece`
   - caches study metadata and enums in-memory per request
+- `ClinicalTrialsGovNames`
+  - converts ClinicalTrials.gov `piece` values into Drupal machine names and labels
+  - owns field/group machine-name generation and display/detail labels
 - `ClinicalTrialsGovBuilder`
   - converts study arrays into render arrays
   - builds study list tables and study detail output
   - supports modal study links when requested
 - `ClinicalTrialsGovFieldManager`
   - curates which metadata keys appear in the Configure step
+  - resolves metadata rows into Drupal field definitions
   - currently uses a hard-coded allow-list based on vetted example studies plus required and ancestor keys
 - `ClinicalTrialsGovEntityManager`
-  - resolves ClinicalTrials.gov metadata rows into Drupal field definitions
   - creates content types, field storage/config, field display components, and field groups
 - `ClinicalTrialsGovMigrationManager`
   - generates the active config for `migrate_plus.migration.clinical_trials_gov`
@@ -89,8 +93,10 @@ Step behavior:
 - creates or reuses a destination content type
 - shows curated field definitions from `ClinicalTrialsGovFieldManager`
 - uses a plain Drupal table with core `drupal.tableselect` behavior
+- when the content type does not exist yet, all selectable fields start checked
 - field-group rows are structural only and have no checkbox
-- custom-field child properties are shown under `Field name`
+- the `Piece / Path` column shows the piece, the full path, and custom-field child properties
+- custom-field child properties are also shown under `Field name`
 - empty field-group rows are hidden
 
 4. `Import`
@@ -119,23 +125,28 @@ Important migration behavior:
 - source plugin is `clinical_trials_gov`
 - destination plugin is `entity:node`
 - `title` is mapped from `protocolSection.identificationModule.briefTitle`
+- `field_brief_title` is also mapped from `protocolSection.identificationModule.briefTitle`
+- `title` is truncated with `Unicode::truncate()` in generated migration config
 - all other selected fields map by Drupal field machine name to source dot-notation keys
 - group-only rows are not added to `process`
 
 ## Field Resolution Rules
 
-Field resolution lives mainly in `ClinicalTrialsGovEntityManager::resolveFieldDefinition()`.
+Field resolution lives mainly in `ClinicalTrialsGovFieldManager::resolveFieldDefinition()`.
 
 Current important rules:
 
 - `briefTitle` maps to node `title`
+- `briefTitle` also resolves to a generated Drupal field, `field_brief_title`
 - required wizard fields are:
   - `protocolSection.identificationModule.nctId`
   - `protocolSection.identificationModule.briefTitle`
   - `protocolSection.descriptionModule.briefSummary`
 - scalar `TEXT` becomes:
-  - `string` by default
-  - `text_long` for markup or long text
+  - `string`
+  - if `maxChars` is present, it becomes `storage_settings.max_length`
+  - this includes `briefTitle`, which currently resolves as `string` with max length `300`
+- only `MARKUP` becomes `text_long`
 - enum fields become `list_string`
 - numeric fields become `integer`
 - boolean fields become `boolean`
@@ -186,7 +197,7 @@ Rules:
 
 - generated from metadata `piece` where possible
 - normalized to snake_case
-- special overrides live in `ClinicalTrialsGovEntityManager::FIELD_NAMES`
+- special overrides live in `ClinicalTrialsGovNames::FIELD_NAMES`
 - long names are truncated and suffixed with a hash
 
 ## Curated Field List
@@ -218,6 +229,7 @@ Implication:
 
 Important implementation detail:
 
+- migration row ids use the top-level `nctId` source property
 - flattened scalar leaves are exposed on dotted source keys
 - structured parent objects are also preserved on the parent key
 
@@ -261,6 +273,8 @@ Current field-group display behavior:
 - form display uses `details`
 - form `details` are `open: true`
 - view display uses `fieldset`
+- destination-property fields like node `title` are not grouped directly
+- generated fields for those same metadata rows can still appear inside groups
 
 ## Testing Setup
 
@@ -294,6 +308,7 @@ The stub manager now simulates paginated `/studies` responses so source-plugin t
 2. `custom_field` is not generic JSON storage.
 - Every custom field struct needs explicit column definitions.
 - Struct support depends on what `buildCustomFieldColumnDefinition()` can express.
+- MARKUP children inside custom fields use the existing `custom_field` formatted long-text behavior with `plain_text`
 
 3. `field_group` rows are structural.
 - They should not act like normal selected fields.

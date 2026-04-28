@@ -277,8 +277,10 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
       return $definition;
     }
 
-    $is_long_text = ($source_type === 'MARKUP') || ($max_chars !== NULL && $max_chars > 255);
-    $definition['field_type'] = $is_long_text ? 'text_long' : 'string';
+    $definition['field_type'] = ($source_type === 'MARKUP') ? 'text_long' : 'string';
+    if ($definition['field_type'] === 'string' && $max_chars !== NULL) {
+      $definition['storage_settings']['max_length'] = (int) $max_chars;
+    }
     $definition['type_label'] = $definition['field_type'];
     $definition['display_type_label'] = $this->buildDisplayTypeLabel($definition['field_type'], $cardinality);
 
@@ -490,7 +492,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
         'type' => 'string_long',
       ];
       $instance += [
-        'formatted' => FALSE,
+        'formatted' => TRUE,
         'default_format' => 'plain_text',
         'format' => [
           'guidelines' => TRUE,

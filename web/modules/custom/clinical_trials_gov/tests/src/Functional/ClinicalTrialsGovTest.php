@@ -112,6 +112,8 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextNotContains('Details');
     $this->assertSession()->elementExists('css', 'th.select-all');
     $this->assertSession()->fieldExists('field_mapping[rows][' . md5('protocolSection.sponsorCollaboratorsModule.responsibleParty') . '][selected]');
+    $this->assertSession()->checkboxChecked('field_mapping[rows][' . md5('protocolSection.sponsorCollaboratorsModule.responsibleParty') . '][selected]');
+    $this->assertSession()->checkboxChecked('field_mapping[rows][' . md5('protocolSection.statusModule.overallStatus') . '][selected]');
     $this->assertSession()->fieldNotExists('field_mapping[rows][' . md5('protocolSection') . '][selected]');
     $this->assertSession()->pageTextNotContains('Responsible Party Investigator Full Name');
     $this->assertSession()->pageTextNotContains('NCTIdAlias');

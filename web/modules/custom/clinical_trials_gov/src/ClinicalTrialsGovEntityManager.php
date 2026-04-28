@@ -317,7 +317,9 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
         continue;
       }
       if (($child_definition['destination_property'] ?? NULL) === 'title') {
-        $children[] = 'title';
+        if (!empty($child_definition['field_name'])) {
+          $children[] = $child_definition['field_name'];
+        }
         continue;
       }
       if (!empty($child_definition['field_name'])) {

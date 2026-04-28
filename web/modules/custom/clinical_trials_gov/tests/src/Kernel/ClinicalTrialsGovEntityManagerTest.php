@@ -78,6 +78,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
       'protocolSection.contactsLocationsModule.locations.facility',
       'protocolSection.contactsLocationsModule.locations.status',
       'protocolSection.contactsLocationsModule.locations.contacts',
+      'protocolSection.identificationModule',
       'protocolSection.sponsorCollaboratorsModule.responsibleParty',
       'protocolSection.conditionsModule.conditions',
       'protocolSection.identificationModule.briefTitle',
@@ -89,7 +90,8 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
 
     // Check that the scalar, enum, and custom fields were created.
     $this->assertSame('string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'))?->getType());
-    $this->assertSame('text_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle'))?->getType());
+    $this->assertSame('string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle'))?->getType());
+    $this->assertSame(300, FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle'))?->getSetting('max_length'));
     $this->assertSame('text_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.descriptionModule.briefSummary'))?->getType());
     $this->assertSame(-1, FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.conditionsModule.conditions'))?->getCardinality());
     $this->assertSame('list_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.statusModule.overallStatus'))?->getType());
@@ -103,6 +105,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that created fields are added to the default form and view displays.
     $form_display = EntityFormDisplay::load('node.trial.default');
     $this->assertNotNull($form_display);
+    $this->assertSame('string_textfield', $form_display?->getComponent('field_brief_title')['type'] ?? NULL);
     $this->assertSame('string_textfield', $form_display?->getComponent('field_nct_id')['type'] ?? NULL);
     $this->assertSame('custom_stacked', $form_display?->getComponent('field_responsible_party')['type'] ?? NULL);
 
@@ -121,6 +124,11 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
       'field_location_status',
       'field_location_contact',
     ], $field_groups['group_location']['children']);
+    $this->assertArrayHasKey('group_identification_module', $field_groups);
+    $this->assertContains('field_brief_title', $field_groups['group_identification_module']['children']);
+    $this->assertContains('field_nct_id', $field_groups['group_identification_module']['children']);
+    $this->assertContains('field_organization', $field_groups['group_identification_module']['children']);
+    $this->assertNotContains('title', $field_groups['group_identification_module']['children']);
 
     // Check that nested structure selections create a fieldset on the view display.
     $view_field_groups = $view_display?->getThirdPartySettings('field_group') ?? [];
@@ -147,12 +155,14 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $conditions_definition = $this->entityManager->resolveFieldDefinition('protocolSection.conditionsModule.conditions');
     $custom_definition = $this->entityManager->resolveFieldDefinition('protocolSection.identificationModule.organization');
     $responsible_party_definition = $this->entityManager->resolveFieldDefinition('protocolSection.sponsorCollaboratorsModule.responsibleParty');
+    $eligibility_module_definition = $this->entityManager->resolveFieldDefinition('protocolSection.eligibilityModule');
     $group_definition = $this->entityManager->resolveFieldDefinition('protocolSection.contactsLocationsModule.locations');
 
     // Check that title maps to the node title property.
     $this->assertSame('title', $title_definition['destination_property']);
     $this->assertSame('field_brief_title', $title_definition['field_name']);
-    $this->assertSame('text_long', $title_definition['field_type']);
+    $this->assertSame('string', $title_definition['field_type']);
+    $this->assertSame(300, $title_definition['storage_settings']['max_length']);
 
     // Check that enums resolve to list_string with allowed values.
     $this->assertSame('list_string', $enum_definition['field_type']);
@@ -190,6 +200,12 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
       'old_name_title',
       'old_organization',
     ], $responsible_party_definition['details']);
+
+    // Check that MARKUP custom-field columns use formatted long text with plain text format.
+    $this->assertSame('custom', $eligibility_module_definition['field_type']);
+    $this->assertSame('string_long', $eligibility_module_definition['storage_settings']['columns']['eligibilityCriteria']['type']);
+    $this->assertTrue($eligibility_module_definition['instance_settings']['field_settings']['eligibilityCriteria']['formatted']);
+    $this->assertSame('plain_text', $eligibility_module_definition['instance_settings']['field_settings']['eligibilityCriteria']['default_format']);
 
     // Check that nested structures can resolve to field groups.
     $this->assertSame('field_group', $group_definition['field_type']);

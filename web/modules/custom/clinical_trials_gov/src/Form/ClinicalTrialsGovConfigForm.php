@@ -153,7 +153,10 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         $existing = FieldConfig::loadByName('node', $saved_type, $definition['field_name']) !== NULL;
       }
 
-      $selected = in_array($path, $saved_fields, TRUE) || !empty($definition['required']) || $existing;
+      $selected = ($node_type === NULL)
+        || in_array($path, $saved_fields, TRUE)
+        || !empty($definition['required'])
+        || $existing;
       $disabled = !empty($definition['required']) || $existing || empty($definition['selectable']);
       $depth = $this->calculateHierarchyDepth($path);
 
