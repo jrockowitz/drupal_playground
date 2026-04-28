@@ -104,6 +104,15 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->assertSame(255, $config->get('source.constants.title_max_length'));
     $this->assertFalse($config->get('source.constants.title_wordsafe'));
     $this->assertTrue($config->get('source.constants.title_add_ellipsis'));
+
+    // Check that updating the saved query refreshes an already-cached migration definition.
+    $this->container->get('plugin.manager.migration')->createInstance('clinical_trials_gov');
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('query', 'query.cond=diabetes')
+      ->save();
+    $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
+    $migration = $this->container->get('plugin.manager.migration')->createInstance('clinical_trials_gov');
+    $this->assertSame('query.cond=diabetes', $migration->getSourceConfiguration()['query']);
   }
 
 }

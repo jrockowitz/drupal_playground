@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
 
 /**
  * Manages generated migration configuration for the import wizard.
@@ -23,6 +24,7 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
 
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
+    protected MigrationPluginManagerInterface $migrationPluginManager,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
   ) {}
 
@@ -38,6 +40,7 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
 
     if ($query === '' || $type === '' || $fields === []) {
       $migration_config->delete();
+      $this->clearMigrationPluginDefinitions();
       return;
     }
 
@@ -90,6 +93,8 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
         'default_bundle' => $type,
       ],
     ])->save();
+
+    $this->migrationPluginManager->clearCachedDefinitions();
   }
 
 }

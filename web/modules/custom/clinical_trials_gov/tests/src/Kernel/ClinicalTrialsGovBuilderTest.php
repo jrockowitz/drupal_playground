@@ -22,6 +22,7 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
     'clinical_trials_gov',
     'clinical_trials_gov_test',
     'clinical_trials_gov_report',
+    'migrate',
   ];
 
   /**

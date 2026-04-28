@@ -52,6 +52,8 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     // Check that the overview page renders the four tasks and next-step message.
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Please go to Find and build your query.');
+    $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/find');
+    $this->assertSession()->linkExists('Find');
     $this->assertSession()->pageTextContains('1. Find');
     $this->assertSession()->pageTextContains('2. Review');
     $this->assertSession()->pageTextContains('3. Configure');
@@ -93,6 +95,13 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     // Check that Find auto-loads preview results when a saved query exists.
     $this->assertSession()->pageTextContains('Showing 1 - 2 of 3 trials.');
     $this->assertSession()->linkExists('NCT05088187');
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov');
+
+    // Check that the overview page links to Configure when the query is saved.
+    $this->assertSession()->pageTextContains('Your query is saved. Go to Configure and select the destination content type and fields.');
+    $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/configure');
+    $this->assertSession()->linkExists('Configure');
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/configure');
 
@@ -139,6 +148,13 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Selected fields');
     $this->assertSession()->pageTextContains('trial');
     $this->assertSession()->buttonExists('Run Import');
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov');
+
+    // Check that the overview page links to Import when the wizard is ready.
+    $this->assertSession()->pageTextContains('Your query and field mapping are ready. Continue to Import when you are ready to sync studies.');
+    $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/import');
+    $this->assertSession()->linkExists('Import');
   }
 
 }

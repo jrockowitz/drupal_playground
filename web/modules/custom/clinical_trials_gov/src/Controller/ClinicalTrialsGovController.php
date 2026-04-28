@@ -24,16 +24,23 @@ class ClinicalTrialsGovController extends ControllerBase {
     $import_ready = ($query !== '' && $type !== '' && !empty($fields));
 
     if ($query === '') {
-      $this->messenger()->addStatus($this->t('Please go to Find and build your query.'));
+      $message = $this->buildMessage(Markup::create((string) $this->t('Please go to <a href=":url">Find</a> and build your query.', [
+        ':url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
+      ])));
     }
     elseif ($type === '' || $fields === []) {
-      $this->messenger()->addStatus($this->t('Your query is saved. Go to Configure and select the destination content type and fields.'));
+      $message = $this->buildMessage(Markup::create((string) $this->t('Your query is saved. Go to <a href=":url">Configure</a> and select the destination content type and fields.', [
+        ':url' => Url::fromRoute('clinical_trials_gov.configure')->toString(),
+      ])));
     }
     else {
-      $this->messenger()->addStatus($this->t('Your query and field mapping are ready. Continue to Import when you are ready to sync studies.'));
+      $message = $this->buildMessage(Markup::create((string) $this->t('Your query and field mapping are ready. Continue to <a href=":url">Import</a> when you are ready to sync studies.', [
+        ':url' => Url::fromRoute('clinical_trials_gov.import')->toString(),
+      ])));
     }
 
     return [
+      'message' => $message,
       'introduction' => [
         '#markup' => '<p>' . $this->t('Use the tasks below to find ClinicalTrials.gov studies, review results, configure a destination content type, and run a full-sync import.') . '</p>',
       ],
@@ -63,6 +70,21 @@ class ClinicalTrialsGovController extends ControllerBase {
             'url' => Url::fromRoute('clinical_trials_gov.import'),
           ],
         ],
+      ],
+    ];
+  }
+
+  /**
+   * Builds a status message render array with inline markup.
+   */
+  protected function buildMessage(Markup $message): array {
+    return [
+      '#theme' => 'status_messages',
+      '#message_list' => [
+        'status' => [$message],
+      ],
+      '#status_headings' => [
+        'status' => $this->t('Status message'),
       ],
     ];
   }

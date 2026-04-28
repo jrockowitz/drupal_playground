@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
-use Drupal\clinical_trials_gov_test\ClinicalTrialsGovManagerStub;
+use Drupal\clinical_trials_gov_test\ClinicalTrialsGovApiStub;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -54,9 +54,9 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
     $row = $source->current();
     $source->rewind();
     $rows = array_values(iterator_to_array($source));
-    $manager = $this->container->get('clinical_trials_gov.manager');
+    $api = $this->container->get('clinical_trials_gov.api');
 
-    // Check that the first source row contains both flattened values and preserved structured parents.
+    // Check that the first source row is hydrated with flattened study values.
     $this->assertNotNull($row);
     $this->assertSame([
       'nctId' => [
@@ -79,19 +79,31 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
     $this->assertSame('NCT01205711', $rows[2]->getSourceProperty('nctId'));
     $this->assertSame('NCT01205711', $rows[2]->getSourceProperty('protocolSection.identificationModule.nctId'));
 
-    // Check that paginated requests use pageSize and nextPageToken.
-    $this->assertInstanceOf(ClinicalTrialsGovManagerStub::class, $manager);
+    // Check that the source plugin pages through IDs, then loads studies per row.
+    $this->assertInstanceOf(ClinicalTrialsGovApiStub::class, $api);
+    $requests = $api->getRequests();
     $this->assertSame([
       [
-        'query.cond' => 'cancer',
-        'pageSize' => '1000',
+        'path' => '/studies',
+        'parameters' => [
+          'query.cond' => 'cancer',
+          'pageSize' => '1000',
+        ],
       ],
       [
-        'query.cond' => 'cancer',
-        'pageSize' => '1000',
-        'pageToken' => 'page-2',
+        'path' => '/studies',
+        'parameters' => [
+          'query.cond' => 'cancer',
+          'pageSize' => '1000',
+          'pageToken' => 'page-2',
+        ],
       ],
-    ], $manager->getStudiesRequests());
+    ], array_values(array_filter($requests, static fn(array $request): bool => $request['path'] === '/studies')));
+
+    $study_request_paths = array_values(array_map(static fn(array $request): string => $request['path'], array_filter($requests, static fn(array $request): bool => $request['path'] !== '/studies' && str_starts_with($request['path'], '/studies/'))));
+    $this->assertContains('/studies/NCT05088187', $study_request_paths);
+    $this->assertContains('/studies/NCT05189171', $study_request_paths);
+    $this->assertContains('/studies/NCT01205711', $study_request_paths);
 
   }
 

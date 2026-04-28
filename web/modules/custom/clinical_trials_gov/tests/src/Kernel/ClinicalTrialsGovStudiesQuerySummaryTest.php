@@ -24,6 +24,7 @@ class ClinicalTrialsGovStudiesQuerySummaryTest extends KernelTestBase {
   protected static $modules = [
     'clinical_trials_gov',
     'clinical_trials_gov_test',
+    'migrate',
   ];
 
   /**

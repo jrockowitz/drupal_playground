@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Plugin\migrate\source;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovApiInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\migrate\Attribute\MigrateSource;
 use Drupal\migrate\Plugin\migrate\source\SourcePluginBase;
 use Drupal\migrate\Plugin\MigrationInterface;
+use Drupal\migrate\Row;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,7 +29,7 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
     string $plugin_id,
     mixed $plugin_definition,
     MigrationInterface $migration,
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovApiInterface $api,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
   }
@@ -42,7 +43,7 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
       $plugin_id,
       $plugin_definition,
       $migration,
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.api'),
     );
   }
 
@@ -80,14 +81,18 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
     $rows = [];
 
     do {
-      $response = $this->manager->getStudies($parameters);
+      $response = $this->api->get('/studies', $parameters);
       foreach (($response['studies'] ?? []) as $study) {
         if (!is_array($study)) {
           continue;
         }
-        $row = $this->flattenStudy($study);
-        $row['nctId'] = (string) ($study['protocolSection']['identificationModule']['nctId'] ?? '');
-        $rows[] = $row;
+        $nct_id = (string) ($study['protocolSection']['identificationModule']['nctId'] ?? '');
+        if ($nct_id === '') {
+          continue;
+        }
+        $rows[] = [
+          'nctId' => $nct_id,
+        ];
       }
 
       if (!empty($response['nextPageToken']) && is_string($response['nextPageToken'])) {
@@ -99,6 +104,32 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
     } while (!empty($response['nextPageToken']));
 
     return new \ArrayIterator($rows);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareRow(Row $row) {
+    $nct_id = (string) $row->getSourceProperty('nctId');
+    if ($nct_id === '') {
+      return FALSE;
+    }
+
+    $study = $this->api->get('/studies/' . $nct_id);
+    if ($study === []) {
+      return FALSE;
+    }
+
+    foreach ($this->flattenStudy($study) as $path => $value) {
+      if ($path === '') {
+        continue;
+      }
+      $row->setSourceProperty($path, $value);
+    }
+
+    $row->setSourceProperty('nctId', $nct_id);
+
+    return parent::prepareRow($row);
   }
 
   /**
