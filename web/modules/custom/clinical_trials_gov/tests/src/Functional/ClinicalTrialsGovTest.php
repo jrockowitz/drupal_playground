@@ -162,11 +162,19 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
       $this->getSession()->getPage()->pressButton('Save');
     }
 
+    $saved_fields = $this->container->get('config.factory')->get('clinical_trials_gov.settings')->get('fields');
+
     // Check that Configure redirects to Import and the summary is ready.
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Selected fields');
     $this->assertSession()->pageTextContains('trial');
     $this->assertSession()->buttonExists('Run Import');
+    $this->assertIsArray($saved_fields);
+    $this->assertFalse(array_is_list($saved_fields));
+    $this->assertSame('protocolSection.identificationModule.nctId', $saved_fields['field_nct_id']);
+    $this->assertSame('protocolSection.identificationModule.briefTitle', $saved_fields['field_brief_title']);
+    $this->assertSame('protocolSection.statusModule.overallStatus', $saved_fields['field_overall_status']);
+    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $saved_fields['field_responsible_party']);
 
     $this->drupalGet('admin/config/services/clinical-trials-gov');
 

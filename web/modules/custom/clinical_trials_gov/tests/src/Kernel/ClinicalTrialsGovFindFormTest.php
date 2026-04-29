@@ -118,6 +118,8 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
     $saved_config = $this->container->get('config.factory')->get('clinical_trials_gov.settings');
 
     // Check that the discovery batch scans studies and saves discovered paths.
+    $this->assertContains('protocolSection', $saved_config->get('paths'));
+    $this->assertContains('protocolSection.identificationModule', $saved_config->get('paths'));
     $this->assertContains('protocolSection.identificationModule.nctId', $saved_config->get('paths'));
     $this->assertContains('protocolSection.identificationModule.briefTitle', $saved_config->get('paths'));
     $this->assertContains('protocolSection.descriptionModule.briefSummary', $saved_config->get('paths'));

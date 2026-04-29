@@ -54,6 +54,8 @@ The `Configure` step can create or update:
 
 This is not a hand-authored migration workflow. The migration is generated from the saved wizard configuration.
 
+The saved `fields` config is stored as a mapping of generated Drupal field or group name to the source metadata path.
+
 ### Import uses Drupal Migrate
 
 The `Import` step runs a Drupal Migrate batch import based on the generated migration config.

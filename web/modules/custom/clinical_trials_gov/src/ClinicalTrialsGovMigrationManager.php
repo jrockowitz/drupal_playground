@@ -36,7 +36,8 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
     $query = (string) ($settings->get('query') ?? '');
     $paths = array_values(array_filter($settings->get('paths') ?? [], 'is_string'));
     $type = (string) ($settings->get('type') ?? '');
-    $fields = array_values(array_filter($settings->get('fields') ?? [], 'is_string'));
+    $field_mappings = array_filter($settings->get('fields') ?? [], 'is_string');
+    $fields = array_values($field_mappings);
     $migration_config = $this->configFactory->getEditable(self::MIGRATION_CONFIG_NAME);
 
     if ($query === '' || $paths === [] || $type === '' || $fields === []) {

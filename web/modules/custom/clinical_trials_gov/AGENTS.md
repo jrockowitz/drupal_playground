@@ -52,7 +52,7 @@ Step behaviour:
 
 ## Configuration
 
-Primary config: `clinical_trials_gov.settings` — keys: `query`, `paths`, `type`, `fields`.
+Primary config: `clinical_trials_gov.settings` — keys: `query`, `paths`, `type`, `fields`. `fields` is stored as a mapping of generated Drupal field or group name to metadata path.
 Install defaults live in `config/install/clinical_trials_gov.settings.yml`.
 
 Generated migration: `migrate_plus.migration.clinical_trials_gov`. Deleted when query/paths/type/fields are incomplete.

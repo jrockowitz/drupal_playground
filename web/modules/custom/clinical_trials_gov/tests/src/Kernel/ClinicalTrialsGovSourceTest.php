@@ -45,7 +45,7 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
       ->set('query', 'query.cond=cancer')
       ->set('paths', ['protocolSection.identificationModule.nctId'])
       ->set('type', 'trial')
-      ->set('fields', ['protocolSection.identificationModule.nctId'])
+      ->set('fields', ['field_nct_id' => 'protocolSection.identificationModule.nctId'])
       ->save();
     $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
 

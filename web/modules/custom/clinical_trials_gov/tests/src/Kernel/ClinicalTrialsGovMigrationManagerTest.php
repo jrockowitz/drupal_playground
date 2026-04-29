@@ -68,13 +68,13 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
       ])
       ->set('type', 'trial')
       ->set('fields', [
-        'protocolSection.contactsLocationsModule.locations',
-        'protocolSection.sponsorCollaboratorsModule.responsibleParty',
-        'protocolSection.conditionsModule.conditions',
-        'protocolSection.identificationModule.briefTitle',
-        'protocolSection.identificationModule.nctId',
-        'protocolSection.identificationModule.nctIdAliases',
-        'protocolSection.statusModule.overallStatus',
+        'group_location' => 'protocolSection.contactsLocationsModule.locations',
+        'field_responsible_party' => 'protocolSection.sponsorCollaboratorsModule.responsibleParty',
+        'field_condition' => 'protocolSection.conditionsModule.conditions',
+        'field_brief_title' => 'protocolSection.identificationModule.briefTitle',
+        'field_nct_id' => 'protocolSection.identificationModule.nctId',
+        'field_nct_id_alias' => 'protocolSection.identificationModule.nctIdAliases',
+        'field_overall_status' => 'protocolSection.statusModule.overallStatus',
       ])
       ->save();
 

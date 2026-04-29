@@ -46,6 +46,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
     'protocolSection.statusModule.expandedAccessInfo' => 'ExpandedAccessInfo',
     'protocolSection.designModule.enrollmentInfo' => 'EnrollmentInfo',
     'protocolSection.contactsLocationsModule.centralContacts' => 'Contact[]',
+    'protocolSection.contactsLocationsModule.locations' => 'Location[]',
     'protocolSection.contactsLocationsModule.locations.contacts' => 'Contact[]',
     'protocolSection.contactsLocationsModule.overallOfficials' => 'Official[]',
     'protocolSection.referencesModule.references' => 'Reference[]',

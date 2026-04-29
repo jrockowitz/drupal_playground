@@ -21,8 +21,8 @@ class ClinicalTrialsGovController extends ControllerBase {
     $query = (string) ($config->get('query') ?? '');
     $paths = array_values(array_filter($config->get('paths') ?? [], 'is_string'));
     $type = (string) ($config->get('type') ?? '');
-    $fields = array_values(array_filter($config->get('fields') ?? [], 'is_string'));
-    $import_ready = ($query !== '' && $paths !== [] && $type !== '' && !empty($fields));
+    $field_mappings = array_filter($config->get('fields') ?? [], 'is_string');
+    $import_ready = ($query !== '' && $paths !== [] && $type !== '' && $field_mappings !== []);
 
     if ($query === '') {
       $message = $this->buildMessage(Markup::create((string) $this->t('Please go to <a href=":url">Find</a> and build your query.', [
@@ -34,7 +34,7 @@ class ClinicalTrialsGovController extends ControllerBase {
         ':url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ])));
     }
-    elseif ($type === '' || $fields === []) {
+    elseif ($type === '' || $field_mappings === []) {
       $message = $this->buildMessage(Markup::create((string) $this->t('Your query is saved. Go to <a href=":url">Configure</a> and select the destination content type and fields.', [
         ':url' => Url::fromRoute('clinical_trials_gov.configure')->toString(),
       ])));

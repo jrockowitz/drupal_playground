@@ -149,7 +149,28 @@ class ClinicalTrialsGovPathDiscoveryBatch {
     $discovered_paths = array_values(array_filter($results['paths'] ?? [], 'is_string'));
     $discovered_paths = array_values(array_intersect($metadata_paths, $discovered_paths));
     if ($discovered_paths !== []) {
-      $discovered_paths = array_values(array_unique(array_merge($discovered_paths, $field_manager->getRequiredFieldKeys())));
+      $expanded_paths = [];
+      foreach ($discovered_paths as $path) {
+        $expanded_paths[$path] = TRUE;
+        $parent_path = $path;
+        $last_dot = strrpos($parent_path, '.');
+        while ($last_dot !== FALSE) {
+          $parent_path = substr($parent_path, 0, $last_dot);
+          if (in_array($parent_path, $metadata_paths)) {
+            $expanded_paths[$parent_path] = TRUE;
+          }
+          $last_dot = strrpos($parent_path, '.');
+        }
+      }
+
+      $ordered_paths = [];
+      foreach ($metadata_paths as $path) {
+        if (isset($expanded_paths[$path])) {
+          $ordered_paths[] = $path;
+        }
+      }
+
+      $discovered_paths = array_values(array_unique(array_merge($ordered_paths, $field_manager->getRequiredFieldKeys())));
     }
 
     $config_factory->getEditable('clinical_trials_gov.settings')

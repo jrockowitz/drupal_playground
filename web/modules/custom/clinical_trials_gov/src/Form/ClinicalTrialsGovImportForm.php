@@ -58,7 +58,8 @@ class ClinicalTrialsGovImportForm extends FormBase {
     $query = (string) ($config->get('query') ?? '');
     $paths = array_values(array_filter($config->get('paths') ?? [], 'is_string'));
     $type = (string) ($config->get('type') ?? '');
-    $fields = array_values(array_filter($config->get('fields') ?? [], 'is_string'));
+    $field_mappings = array_filter($config->get('fields') ?? [], 'is_string');
+    $fields = array_values($field_mappings);
     $ready = ($query !== '' && $paths !== [] && $type !== '' && $fields !== []);
 
     $form['studies_query'] = [

@@ -64,7 +64,8 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $config = $this->config('clinical_trials_gov.settings');
     $paths = array_values(array_filter($config->get('paths') ?? [], 'is_string'));
     $saved_type = (string) ($config->get('type') ?? ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE);
-    $saved_fields = array_values(array_filter($config->get('fields') ?? [], 'is_string'));
+    $saved_field_mappings = array_filter($config->get('fields') ?? [], 'is_string');
+    $saved_fields = array_values($saved_field_mappings);
     $node_type = $this->entityTypeManager->getStorage('node_type')->load($saved_type);
 
     if ($paths === []) {
@@ -265,24 +266,28 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $selected_fields = [];
     foreach (array_keys($selected_rows) as $path) {
       $definition = $this->fieldManager->getFieldDefinition($path);
+      $field_name = (string) ($definition['field_name'] ?? '');
+      if ($field_name === '') {
+        continue;
+      }
       if (!empty($definition['group_only'])) {
         if ($this->hasSelectedDescendant($path, $selected_rows)) {
-          $selected_fields[] = $path;
+          $selected_fields[$field_name] = $path;
         }
         continue;
       }
       if (!empty($selected_rows[$path])) {
-        $selected_fields[] = $path;
+        $selected_fields[$field_name] = $path;
       }
     }
 
     $config
       ->set('type', $type)
-      ->set('fields', array_values(array_unique($selected_fields)))
+      ->set('fields', $selected_fields)
       ->save();
 
     $this->entityManager->createContentType($type, $label, $description);
-    $this->entityManager->createFields($type, $selected_fields);
+    $this->entityManager->createFields($type, array_values($selected_fields));
     $this->migrationManager->updateMigration();
     parent::submitForm($form, $form_state);
     $form_state->setRedirect('clinical_trials_gov.import');

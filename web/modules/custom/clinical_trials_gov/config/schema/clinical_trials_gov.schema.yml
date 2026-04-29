@@ -16,7 +16,7 @@ clinical_trials_gov.settings:
       label: 'Content type machine name'
     fields:
       type: sequence
-      label: 'Selected field keys'
+      label: 'Selected field mapping'
       sequence:
         type: string
-        label: 'Field key'
+        label: 'Metadata path'
