@@ -14,3 +14,19 @@ clinical_trials_gov_report.study:
   requirements:
     _permission: 'access administration pages'
     nctId: 'NCT\d+'
+
+clinical_trials_gov_report.metadata:
+  path: /admin/reports/status/clinical-trials-gov/metadata
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportMetadataController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'access administration pages'
+
+clinical_trials_gov_report.enums:
+  path: /admin/reports/status/clinical-trials-gov/enums
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportEnumsController::index'
+    _title: 'Enums'
+  requirements:
+    _permission: 'access administration pages'

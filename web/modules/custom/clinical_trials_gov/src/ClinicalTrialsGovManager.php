@@ -213,6 +213,14 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
         'isEnum' => !empty($item['isEnum']),
         'description' => (string) ($item['description'] ?? ''),
         'children' => $children,
+        'rules' => (string) ($item['rules'] ?? ''),
+        'altPieceNames' => array_values(array_filter(
+          is_array($item['altPieceNames'] ?? NULL) ? $item['altPieceNames'] : [],
+          fn(mixed $value): bool => is_string($value) && $value !== ''
+        )),
+        'synonyms' => !empty($item['synonyms']),
+        'dedLinkLabel' => (string) (($item['dedLink']['label'] ?? '')),
+        'dedLinkUrl' => (string) (($item['dedLink']['url'] ?? '')),
       ];
       if (!empty($item['children']) && is_array($item['children'])) {
         $rows += $this->flattenMetadata($item['children'], $path);

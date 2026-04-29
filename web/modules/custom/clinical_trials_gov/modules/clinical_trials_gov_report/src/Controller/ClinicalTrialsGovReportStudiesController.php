@@ -57,10 +57,6 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
       '#type' => 'item',
       '#markup' => $this->t('This page displays ClinicalTrials.gov studies returned by the API for the current query-string parameters.'),
     ];
-    $build['version'] = [
-      '#type' => 'item',
-      '#markup' => $this->buildVersionMarkup($version),
-    ];
     $build['search_form'] = $this->formBuilder()->getForm('Drupal\clinical_trials_gov_report\Form\ClinicalTrialsGovReportStudiesSearchForm');
 
     // pageOffset is a client-side display parameter (tracks cumulative row
@@ -117,6 +113,15 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
         ]),
       ];
     }
+
+    $build['version_separator'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'hr',
+    ];
+    $build['version'] = [
+      '#type' => 'item',
+      '#markup' => $this->buildVersionMarkup($version),
+    ];
 
     return $build;
   }

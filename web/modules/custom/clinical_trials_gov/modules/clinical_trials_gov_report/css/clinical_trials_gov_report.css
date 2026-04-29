@@ -1,6 +1,19 @@
 .clinical-trials-gov-report-study table th,
 .clinical-trials-gov-report-study table td,
+.clinical-trials-gov-report-enums table th,
+.clinical-trials-gov-report-enums table td,
+.clinical-trials-gov-report-metadata table th,
+.clinical-trials-gov-report-metadata table td,
 .clinical-trials-gov-report-studies table th,
 .clinical-trials-gov-report-studies table td {
   vertical-align: top;
+}
+
+.clinical-trials-gov-report-metadata__primary {
+  line-height: 1.4;
+}
+
+.clinical-trials-gov-report-metadata__secondary {
+  color: #666;
+  line-height: 1.4;
 }

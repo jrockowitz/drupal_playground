@@ -57,8 +57,9 @@ interface ClinicalTrialsGovManagerInterface {
    *
    * @return array
    *   Flat array keyed by metadata path. Each value has keys:
-   *   path, parent, name, piece, title, type, sourceType, description,
-   *   and children.
+   *   path, parent, name, piece, title, type, sourceType, maxChars, isEnum,
+   *   description, children, rules, altPieceNames, synonyms, dedLinkLabel,
+   *   and dedLinkUrl.
    */
   public function getMetadataByPath(?string $path = NULL): array;
 

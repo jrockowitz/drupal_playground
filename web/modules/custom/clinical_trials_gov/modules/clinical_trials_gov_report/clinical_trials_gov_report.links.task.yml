@@ -1,0 +1,14 @@
+clinical_trials_gov_report.studies:
+  route_name: clinical_trials_gov_report.studies
+  base_route: clinical_trials_gov_report.studies
+  title: 'Studies'
+
+clinical_trials_gov_report.metadata:
+  route_name: clinical_trials_gov_report.metadata
+  base_route: clinical_trials_gov_report.studies
+  title: 'Metadata'
+
+clinical_trials_gov_report.enums:
+  route_name: clinical_trials_gov_report.enums
+  base_route: clinical_trials_gov_report.studies
+  title: 'Enums'

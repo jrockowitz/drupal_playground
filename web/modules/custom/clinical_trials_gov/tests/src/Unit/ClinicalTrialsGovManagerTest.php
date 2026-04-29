@@ -206,6 +206,99 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
   }
 
   /**
+   * Tests that getMetadataByPath() preserves extended metadata fields.
+   *
+   * @covers ::getMetadataByPath
+   */
+  public function testGetMetadataByPathPreservesExtendedMetadataFields(): void {
+    $this->api
+      ->method('get')
+      ->with('/studies/metadata')
+      ->willReturn([
+        [
+          'name' => 'protocolSection',
+          'piece' => 'ProtocolSection',
+          'title' => 'Protocol Section',
+          'type' => 'StdStudy',
+          'sourceType' => 'STRUCT',
+          'dedLink' => [
+            'label' => 'Study Protocol',
+            'url' => 'https://clinicaltrials.gov/policy/protocol-definitions',
+          ],
+          'children' => [
+            [
+              'name' => 'briefTitle',
+              'piece' => 'BriefTitle',
+              'title' => 'Brief Title',
+              'type' => 'text',
+              'sourceType' => 'TEXT',
+              'rules' => 'Required for INT/OBS/EA.',
+              'altPieceNames' => ['BRIEF-TITLE'],
+              'synonyms' => TRUE,
+              'dedLink' => [
+                'label' => 'Brief Title',
+                'url' => 'https://clinicaltrials.gov/policy/protocol-definitions#BriefTitle',
+              ],
+              'children' => [],
+            ],
+          ],
+        ],
+      ]);
+
+    $result = $this->manager->getMetadataByPath();
+
+    // Check that optional root-level DED link data is preserved.
+    $this->assertSame('Study Protocol', $result['protocolSection']['dedLinkLabel']);
+    $this->assertSame('https://clinicaltrials.gov/policy/protocol-definitions', $result['protocolSection']['dedLinkUrl']);
+
+    // Check that leaf-level raw metadata fields are preserved.
+    $this->assertSame('Required for INT/OBS/EA.', $result['protocolSection.briefTitle']['rules']);
+    $this->assertSame(['BRIEF-TITLE'], $result['protocolSection.briefTitle']['altPieceNames']);
+    $this->assertTrue($result['protocolSection.briefTitle']['synonyms']);
+    $this->assertSame('Brief Title', $result['protocolSection.briefTitle']['dedLinkLabel']);
+    $this->assertSame('https://clinicaltrials.gov/policy/protocol-definitions#BriefTitle', $result['protocolSection.briefTitle']['dedLinkUrl']);
+  }
+
+  /**
+   * Tests that missing extended metadata fields normalize consistently.
+   *
+   * @covers ::getMetadataByPath
+   */
+  public function testGetMetadataByPathNormalizesMissingExtendedMetadataFields(): void {
+    $this->api
+      ->method('get')
+      ->with('/studies/metadata')
+      ->willReturn([
+        [
+          'name' => 'protocolSection',
+          'piece' => 'ProtocolSection',
+          'title' => 'Protocol Section',
+          'type' => 'StdStudy',
+          'sourceType' => 'STRUCT',
+          'children' => [
+            [
+              'name' => 'identificationModule',
+              'piece' => 'IdentificationModule',
+              'title' => 'Identification Module',
+              'type' => 'IdentificationModule',
+              'sourceType' => 'STRUCT',
+              'children' => [],
+            ],
+          ],
+        ],
+      ]);
+
+    $result = $this->manager->getMetadataByPath('protocolSection.identificationModule');
+
+    // Check that missing optional raw fields normalize to empty values.
+    $this->assertSame('', $result['rules']);
+    $this->assertSame([], $result['altPieceNames']);
+    $this->assertFalse($result['synonyms']);
+    $this->assertSame('', $result['dedLinkLabel']);
+    $this->assertSame('', $result['dedLinkUrl']);
+  }
+
+  /**
    * Tests that getMetadataByPiece() returns metadata rows keyed by piece.
    *
    * @covers ::getMetadataByPiece
