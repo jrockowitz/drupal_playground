@@ -110,12 +110,10 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('This page displays flattened ClinicalTrials.gov fields metadata returned by the API.');
     $this->assertSession()->pageTextContains('Field Name');
     $this->assertSession()->pageTextContains('Piece Name');
+    $this->assertSession()->pageTextContains('Description/Notes/Definition');
     $this->assertSession()->pageTextContains('Classic Type');
     $this->assertSession()->pageTextContains('Data Type');
-    $this->assertSession()->pageTextContains('Definition');
-    $this->assertSession()->pageTextContains('Description');
-    $this->assertSession()->pageTextContains('Notes');
-    $this->assertSession()->pageTextContains('Index Field');
+    $this->assertSession()->pageTextContains('Path');
     $this->assertSession()->pageTextContains('briefTitle');
     $this->assertSession()->pageTextContains('BriefTitle');
     $this->assertSession()->pageTextContains('BRIEF-TITLE');

@@ -151,14 +151,11 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
       '#type' => 'table',
       '#header' => [
         $this->buildHeader('Field Name', 'Piece Name'),
-        $this->t('Field Title'),
-        $this->t('Alt Piece Names'),
+        $this->buildHeader('Field Title', 'Description/Notes/Definition'),
+        $this->t('Path'),
         $this->t('Classic Type'),
         $this->t('Data Type'),
-        $this->t('Definition'),
-        $this->t('Description'),
-        $this->t('Notes'),
-        $this->buildHeader('Index Field', ''),
+        $this->t('Alt Piece Names'),
       ],
       '#rows' => $rows,
       '#empty' => $this->t('No metadata returned.'),
@@ -182,18 +179,17 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
         secondary: (string) ($row['piece'] ?? ''),
         depth: $depth,
       ),
-      $this->buildTextCell((string) ($row['title'] ?? '')),
-      $this->buildListCell($row['altPieceNames'] ?? []),
+      $this->buildFieldTitleCell(
+        title: (string) ($row['title'] ?? ''),
+        description: (string) ($row['description'] ?? ''),
+        notes: (string) ($row['rules'] ?? ''),
+        definition_label: (string) ($row['dedLinkLabel'] ?? ''),
+        definition_url: (string) ($row['dedLinkUrl'] ?? ''),
+      ),
+      $this->buildPathCell((string) ($row['path'] ?? '')),
       $this->buildTextCell($classic_type),
       $this->buildDataTypeCell($row),
-      $this->buildDefinitionCell($row),
-      $this->buildTextCell((string) ($row['description'] ?? '')),
-      $this->buildTextCell((string) ($row['rules'] ?? '')),
-      $this->buildPrimarySecondaryCell(
-        primary: (string) ($row['path'] ?? ''),
-        secondary: '',
-        depth: 0,
-      ),
+      $this->buildListCell($row['altPieceNames'] ?? []),
     ];
   }
 
@@ -223,9 +219,9 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
       . '</strong></div>';
 
     if ($secondary !== '') {
-      $markup .= '<div class="clinical-trials-gov-report-metadata__secondary"' . $style . '>'
+      $markup .= '<div class="clinical-trials-gov-report-metadata__secondary"' . $style . '><small>'
         . Html::escape($secondary)
-        . '</div>';
+        . '</small></div>';
     }
 
     return [
@@ -245,6 +241,42 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
       'data' => [
         '#markup' => nl2br(Html::escape($value)),
       ],
+    ];
+  }
+
+  /**
+   * Builds the combined field title, description, and notes cell.
+   */
+  protected function buildFieldTitleCell(string $title, string $description, string $notes, string $definition_label, string $definition_url): array|string {
+    if (($title === '') && ($description === '') && ($notes === '') && ($definition_label === '')) {
+      return '';
+    }
+
+    $markup = '';
+    if ($title !== '') {
+      $markup .= '<strong>' . Html::escape($title) . '</strong><br/>';
+    }
+    if ($description !== '') {
+      $markup .= '<small>' . nl2br(Html::escape($description)) . '</small><br/>';
+    }
+    if ($notes !== '') {
+      $markup .= '<em><small>' . nl2br(Html::escape($notes)) . '</small></em><br/>';
+    }
+    if ($definition_label !== '') {
+      $markup .= '<small>';
+      if ($definition_url !== '') {
+        $markup .= '<a href="' . Html::escape($definition_url) . '">'
+          . Html::escape($definition_label)
+          . '</a>';
+      }
+      else {
+        $markup .= Html::escape($definition_label);
+      }
+      $markup .= '</small><br/>';
+    }
+
+    return [
+      'data' => Markup::create($markup),
     ];
   }
 
@@ -285,24 +317,13 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
   /**
    * Builds the definition cell.
    */
-  protected function buildDefinitionCell(array $row): array|string {
-    $label = (string) ($row['dedLinkLabel'] ?? '');
-    $url = (string) ($row['dedLinkUrl'] ?? '');
-
-    if ($label === '') {
+  protected function buildPathCell(string $path): array|string {
+    if ($path === '') {
       return '';
     }
 
-    if ($url === '') {
-      return $this->buildTextCell($label);
-    }
-
     return [
-      'data' => [
-        '#type' => 'link',
-        '#title' => $label,
-        '#url' => Url::fromUri($url),
-      ],
+      'data' => Markup::create('<small>' . Html::escape($path) . '</small>'),
     ];
   }
 

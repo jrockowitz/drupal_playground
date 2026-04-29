@@ -98,10 +98,10 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
         'maxChars' => 300,
         'altPieceNames' => ['BRIEF-TITLE'],
         'synonyms' => FALSE,
-        'description' => '',
-        'rules' => '',
-        'dedLinkLabel' => '',
-        'dedLinkUrl' => '',
+        'description' => 'Required for all trials.',
+        'rules' => 'Has to be unique in PRS.',
+        'dedLinkLabel' => 'Brief Title',
+        'dedLinkUrl' => 'https://clinicaltrials.gov/policy/protocol-definitions#BriefTitle',
       ],
     ];
 
@@ -111,6 +111,18 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
     $this->assertCount(2, $table['#rows']);
     $this->assertSame([], $table['#rows'][0]['class']);
     $this->assertSame([], $table['#rows'][1]['class']);
+
+    // Check that the field title column combines description and notes.
+    $this->assertCount(6, $table['#header']);
+    $this->assertStringContainsString('Description/Notes/Definition', (string) $table['#header'][1]['data']);
+    $this->assertSame('Path', (string) $table['#header'][2]);
+    $this->assertSame('Alt Piece Names', (string) $table['#header'][5]);
+    $this->assertStringContainsString('Required for all trials.', (string) $table['#rows'][1]['data'][1]['data']);
+    $this->assertStringContainsString('Has to be unique in PRS.', (string) $table['#rows'][1]['data'][1]['data']);
+    $this->assertStringContainsString('https://clinicaltrials.gov/policy/protocol-definitions#BriefTitle', (string) $table['#rows'][1]['data'][1]['data']);
+    $this->assertStringNotContainsString('<strong>protocolSection.identificationModule.briefTitle</strong>', (string) $table['#rows'][1]['data'][2]['data']);
+    $this->assertStringContainsString('<small>protocolSection.identificationModule.briefTitle</small>', (string) $table['#rows'][1]['data'][2]['data']);
+    $this->assertStringContainsString('BRIEF-TITLE', (string) $table['#rows'][1]['data'][5]['data']['#markup']);
   }
 
   /**

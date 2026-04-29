@@ -69,11 +69,11 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends KernelTestBase {
     $this->assertCount(2, $build['results']['#rows']);
     $this->assertSame(
       'protocolSection.identificationModule.briefTitle',
-      strip_tags((string) $build['results']['#rows'][0]['data'][8]['data'])
+      trim(strip_tags((string) $build['results']['#rows'][0]['data'][2]['data']))
     );
     $this->assertSame(
       'protocolSection.statusModule.overallStatus',
-      strip_tags((string) $build['results']['#rows'][1]['data'][8]['data'])
+      trim(strip_tags((string) $build['results']['#rows'][1]['data'][2]['data']))
     );
   }
 
