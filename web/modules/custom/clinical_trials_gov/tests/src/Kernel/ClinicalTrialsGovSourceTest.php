@@ -67,6 +67,8 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
     $this->assertSame('NCT05088187', $row->getSourceProperty('nctId'));
     $this->assertSame('NCT05088187', $row->getSourceProperty('protocolSection.identificationModule.nctId'));
     $this->assertIsArray($row->getSourceProperty('protocolSection.identificationModule.organization'));
+    $this->assertIsArray($row->getSourceProperty('protocolSection.contactsLocationsModule.locations'));
+    $this->assertSame('Medical Unit Breast-, Endocrine tumors and Sarcoma', $row->getSourceProperty('protocolSection.contactsLocationsModule.locations.facility'));
     $this->assertSame([
       'Thyroid Nodule',
       'Thyroid Cancer',

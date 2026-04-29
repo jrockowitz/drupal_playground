@@ -122,6 +122,54 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
   }
 
   /**
+   * Tests that getStudy() flattens associative list items to child paths.
+   *
+   * @covers ::getStudy
+   */
+  public function testGetStudyFlattensAssociativeListItemsToChildPaths(): void {
+    $this->api
+      ->expects($this->once())
+      ->method('get')
+      ->with('/studies/NCT001')
+      ->willReturn([
+        'protocolSection' => [
+          'contactsLocationsModule' => [
+            'locations' => [
+              [
+                'facility' => 'Main Campus',
+                'status' => 'RECRUITING',
+              ],
+              [
+                'facility' => 'Satellite Campus',
+                'city' => 'Chicago',
+              ],
+            ],
+          ],
+        ],
+      ]);
+
+    $result = $this->manager->getStudy('NCT001');
+
+    // Check that repeated struct parents are preserved as the original list value.
+    $this->assertSame([
+      [
+        'facility' => 'Main Campus',
+        'status' => 'RECRUITING',
+      ],
+      [
+        'facility' => 'Satellite Campus',
+        'city' => 'Chicago',
+      ],
+    ], $result['protocolSection.contactsLocationsModule.locations']);
+
+    // Check that child keys are exposed without numeric indexes.
+    $this->assertSame('Main Campus', $result['protocolSection.contactsLocationsModule.locations.facility']);
+    $this->assertSame('RECRUITING', $result['protocolSection.contactsLocationsModule.locations.status']);
+    $this->assertSame('Chicago', $result['protocolSection.contactsLocationsModule.locations.city']);
+    $this->assertArrayNotHasKey('protocolSection.contactsLocationsModule.locations.0.facility', $result);
+  }
+
+  /**
    * Tests that getMetadataByPath() flattens the metadata tree.
    *
    * @covers ::getMetadataByPath

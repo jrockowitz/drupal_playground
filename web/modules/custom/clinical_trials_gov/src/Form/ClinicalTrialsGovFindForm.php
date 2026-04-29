@@ -166,6 +166,8 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
 
     $form_state->setRedirect('clinical_trials_gov.review');
     parent::submitForm($form, $form_state);
+    $this->messenger()->deleteByType('status');
+    $this->messenger()->addStatus($this->t('The studies query has been saved. Please review the selected studies below.'));
   }
 
   /**

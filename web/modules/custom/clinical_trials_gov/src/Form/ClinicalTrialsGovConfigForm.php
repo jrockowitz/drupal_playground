@@ -280,6 +280,13 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $this->entityManager->createFields($type, array_values($selected_fields));
     $this->migrationManager->updateMigration();
     parent::submitForm($form, $form_state);
+    $this->messenger()->deleteByType('status');
+    $this->messenger()->addStatus($this->formatPlural(
+      count($selected_fields),
+      '1 field has been added to the @label content type.',
+      '@count fields have been added to the @label content type.',
+      ['@label' => $label]
+    ));
     $form_state->setRedirect('clinical_trials_gov.import');
   }
 

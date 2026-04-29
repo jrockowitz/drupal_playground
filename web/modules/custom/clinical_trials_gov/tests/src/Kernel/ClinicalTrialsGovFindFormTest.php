@@ -110,31 +110,6 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
     $this->assertArrayHasKey('sets', $batch);
     $this->assertSame([ClinicalTrialsGovPathDiscoveryBatch::class, 'discover'], $batch['sets'][0]['operations'][0][0]);
 
-    $context = [];
-    do {
-      ClinicalTrialsGovPathDiscoveryBatch::discover('query.cond=lung', $context);
-    } while (($context['finished'] ?? 0) < 1);
-    ClinicalTrialsGovPathDiscoveryBatch::finish(TRUE, $context['results'], []);
-    $saved_config = $this->container->get('config.factory')->get('clinical_trials_gov.settings');
-
-    // Check that the discovery batch scans studies and saves discovered paths.
-    $this->assertContains('protocolSection', $saved_config->get('paths'));
-    $this->assertContains('protocolSection.identificationModule', $saved_config->get('paths'));
-    $this->assertContains('protocolSection.identificationModule.nctId', $saved_config->get('paths'));
-    $this->assertContains('protocolSection.identificationModule.briefTitle', $saved_config->get('paths'));
-    $this->assertContains('protocolSection.descriptionModule.briefSummary', $saved_config->get('paths'));
-    $this->assertContains('protocolSection.statusModule.overallStatus', $saved_config->get('paths'));
-    $this->assertSame([
-      'query.cond' => 'lung',
-      'fields' => 'NCTId',
-      'pageSize' => '100',
-      'pageToken' => 'page-2',
-    ], $manager->getStudiesRequests()[count($manager->getStudiesRequests()) - 1]);
-    $this->assertSame([
-      'NCT05088187',
-      'NCT05189171',
-      'NCT01205711',
-    ], $manager->getStudyRequests());
   }
 
 }

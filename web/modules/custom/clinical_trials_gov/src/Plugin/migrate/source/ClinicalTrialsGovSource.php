@@ -144,6 +144,17 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
       return $result;
     }
 
+    if (is_array($data) && array_is_list($data)) {
+      $result = [$prefix => $data];
+      foreach ($data as $item) {
+        if (!is_array($item) || array_is_list($item)) {
+          continue;
+        }
+        $result += $this->flattenStudy($item, $prefix);
+      }
+      return $result;
+    }
+
     return [$prefix => $data];
   }
 

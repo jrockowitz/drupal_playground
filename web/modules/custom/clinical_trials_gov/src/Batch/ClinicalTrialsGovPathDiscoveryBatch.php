@@ -10,6 +10,8 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
 
 /**
  * Batch callbacks for discovering available study paths from a saved query.
@@ -118,7 +120,7 @@ class ClinicalTrialsGovPathDiscoveryBatch {
     $context['results']['study_count'] = $study_count;
     $context['results']['path_count'] = count($context['sandbox']['discovered_paths']);
     $context['results']['paths'] = array_keys($context['sandbox']['discovered_paths']);
-    $context['message'] = (string) t('Discovering paths from studies (@current of @total).', [
+    $context['message'] = (string) t('Discovering fields from studies (@current of @total).', [
       '@current' => $end,
       '@total' => $study_count,
     ]);
@@ -185,10 +187,10 @@ class ClinicalTrialsGovPathDiscoveryBatch {
       return;
     }
 
-    $messenger->addStatus((string) t('Discovered @path_count available paths from @study_count studies.', [
+    $messenger->addStatus(Markup::create((string) t('Discovered @path_count fields (aka paths) that are used to determine which study/trial fields should be created and imported. Review the field <a href=":metadata_url">metadata</a>.', [
       '@path_count' => $path_count,
-      '@study_count' => $study_count,
-    ]));
+      ':metadata_url' => Url::fromRoute('clinical_trials_gov.review.metadata')->toString(),
+    ])));
   }
 
 }
