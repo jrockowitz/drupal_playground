@@ -197,26 +197,16 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         ];
       }
       $description = (string) ($definition['description'] ?? '');
-      $label_markup = '<div' . $this->buildIndentStyle($depth) . '><strong>' . Html::escape($label) . '</strong>';
-      if ($description !== '') {
-        $label_markup .= '<br/>' . Html::escape($description);
-      }
-      $label_markup .= '</div>';
       $form['field_mapping']['rows'][$row_key]['label'] = [
-        '#markup' => $label_markup,
+        'data' => $this->buildLabelCell($label, $description, $depth),
         '#wrapper_attributes' => $row_attributes,
       ];
       $form['field_mapping']['rows'][$row_key]['identifier'] = [
         '#markup' => $this->buildPieceMarkup($definition, $path),
         '#wrapper_attributes' => $row_attributes,
       ];
-      $field_name_markup = '<div' . $this->buildIndentStyle($depth) . '><small>' . Html::escape((string) ($definition['field_name'] ?? '')) . '</small>';
-      if (!empty($definition['details'])) {
-        $field_name_markup .= '<ul><li><small>' . implode('</small></li><li><small>', array_map([Html::class, 'escape'], $definition['details'])) . '</small></li></ul>';
-      }
-      $field_name_markup .= '</div>';
       $form['field_mapping']['rows'][$row_key]['field_name'] = [
-        '#markup' => $field_name_markup,
+        'data' => $this->buildFieldNameCell((string) ($definition['field_name'] ?? ''), $definition['details'] ?? [], $depth),
         '#wrapper_attributes' => $row_attributes,
       ];
       $form['field_mapping']['rows'][$row_key]['type'] = [
@@ -297,7 +287,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
    * Calculates the display depth for a metadata key.
    */
   protected function calculateHierarchyDepth(string $path): int {
-    return max(0, substr_count($path, '.') - 2);
+    return max(0, substr_count($path, '.'));
   }
 
   /**
@@ -308,7 +298,88 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       return '';
     }
 
-    return ' style="padding-left: ' . (string) ($depth * 1.25) . 'rem;"';
+    return ' style="padding-left: ' . (string) ($depth * 1.5) . 'rem;"';
+  }
+
+  /**
+   * Builds shared wrapper attributes for indented cell content.
+   */
+  protected function buildIndentAttributes(int $depth): array {
+    if ($depth <= 0) {
+      return [];
+    }
+
+    return [
+      'style' => 'padding-left: ' . (string) ($depth * 1.5) . 'rem;',
+    ];
+  }
+
+  /**
+   * Builds the label cell render array.
+   */
+  protected function buildLabelCell(string $label, string $description, int $depth): array {
+    $cell = [
+      '#type' => 'container',
+      '#attributes' => $this->buildIndentAttributes($depth),
+      'label' => [
+        '#type' => 'html_tag',
+        '#tag' => 'strong',
+        '#value' => $label,
+      ],
+    ];
+
+    if ($description !== '') {
+      $cell['break'] = [
+        '#markup' => '<br/>',
+      ];
+      $cell['description'] = [
+        '#plain_text' => $description,
+      ];
+    }
+
+    return $cell;
+  }
+
+  /**
+   * Builds the field name cell render array.
+   */
+  protected function buildFieldNameCell(string $field_name, mixed $details, int $depth): array {
+    $cell = [
+      '#type' => 'container',
+      '#attributes' => $this->buildIndentAttributes($depth),
+      'field_name' => [
+        '#type' => 'html_tag',
+        '#tag' => 'small',
+        '#value' => $field_name,
+      ],
+    ];
+
+    if (!is_array($details) || $details === []) {
+      return $cell;
+    }
+
+    $items = array_values(array_filter(array_map(
+      fn(mixed $detail): string => is_scalar($detail) ? (string) $detail : '',
+      $details
+    )));
+
+    if ($items === []) {
+      return $cell;
+    }
+
+    $cell['details'] = [
+      '#theme' => 'item_list',
+      '#items' => array_map(
+        fn(string $detail): array => [
+          '#type' => 'html_tag',
+          '#tag' => 'small',
+          '#value' => $detail,
+        ],
+        $items
+      ),
+    ];
+
+    return $cell;
   }
 
   /**
