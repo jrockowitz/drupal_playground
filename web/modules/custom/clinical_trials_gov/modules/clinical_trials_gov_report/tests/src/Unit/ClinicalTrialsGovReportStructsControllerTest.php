@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov_report\Unit;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStructsController;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -31,16 +32,17 @@ class ClinicalTrialsGovReportStructsControllerTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $field_manager = $this->createMock(ClinicalTrialsGovFieldManagerInterface::class);
     $manager = $this->createMock(ClinicalTrialsGovManagerInterface::class);
     $date_formatter = $this->createMock(DateFormatterInterface::class);
 
-    $this->controller = new class($manager, $date_formatter) extends ClinicalTrialsGovReportStructsController {
+    $this->controller = new class($field_manager, $manager, $date_formatter) extends ClinicalTrialsGovReportStructsController {
 
       /**
        * Exposes buildStructRows() for testing.
        */
-      public function exposedBuildStructRows(array $metadata): array {
-        return $this->buildStructRows($metadata);
+      public function exposedBuildStructRows(array $metadata, array $used_paths = []): array {
+        return $this->buildStructRows($metadata, $used_paths);
       }
 
       /**
@@ -143,7 +145,11 @@ class ClinicalTrialsGovReportStructsControllerTest extends UnitTestCase {
       ],
     ];
 
-    $rows = $this->controller->exposedBuildStructRows($metadata);
+    $rows = $this->controller->exposedBuildStructRows($metadata, [
+      'protocolSection',
+      'protocolSection.contactsLocationsModule.locations',
+      'protocolSection.contactsLocationsModule.locations.contacts',
+    ]);
 
     // Check that only struct rows are included.
     $this->assertCount(4, $rows);
@@ -178,6 +184,11 @@ class ClinicalTrialsGovReportStructsControllerTest extends UnitTestCase {
       ],
     ], $rows['protocolSection.contactsLocationsModule.locations.contacts']['sub_properties']);
 
+    // Check that used and unused struct rows are flagged correctly.
+    $this->assertFalse($rows['protocolSection']['is_unused']);
+    $this->assertTrue($rows['protocolSection.identificationModule']['is_unused']);
+    $this->assertFalse($rows['protocolSection.contactsLocationsModule.locations']['is_unused']);
+
     // Check that the table includes a data type column and warning row class.
     $table = $this->controller->exposedBuildStructsTable($rows);
     $this->assertSame('Data type', (string) $table['#header'][2]);
@@ -185,6 +196,7 @@ class ClinicalTrialsGovReportStructsControllerTest extends UnitTestCase {
     $this->assertSame('Location[]', $table['#rows'][2]['data'][2]['data']['#markup']);
     $this->assertSame([], $table['#rows'][2]['class']);
     $this->assertSame(['color-warning'], $table['#rows'][3]['class']);
+    $this->assertSame(['clinical-trials-gov-report-structs__row--unused'], $table['#rows'][1]['class']);
 
     // Check that sub-properties call out structs and multiple values.
     $sub_properties_cell = $this->controller->exposedBuildSubPropertiesCell($rows['protocolSection.contactsLocationsModule.locations']['sub_properties']);

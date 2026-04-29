@@ -40,6 +40,11 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->drupalLogin($this->drupalCreateUser(['access administration pages']));
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('paths', [
+        'protocolSection.contactsLocationsModule.locations.contacts',
+      ])
+      ->save();
   }
 
   /**
@@ -102,7 +107,7 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->drupalGet('admin/reports/status/clinical-trials-gov/metadata');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->elementExists('css', 'table');
-    $this->assertSession()->pageTextContains('This page displays flattened ClinicalTrials.gov metadata returned by the API.');
+    $this->assertSession()->pageTextContains('This page displays flattened ClinicalTrials.gov fields metadata returned by the API.');
     $this->assertSession()->pageTextContains('Field Name');
     $this->assertSession()->pageTextContains('Piece Name');
     $this->assertSession()->pageTextContains('Classic Type');
@@ -122,6 +127,8 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->elementExists('css', 'a[href="https://clinicaltrials.gov/policy/protocol-definitions#BriefTitle"]');
     $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
     $metadata_page_html = $this->getSession()->getPage()->getContent();
+    $this->assertStringContainsString('clinical-trials-gov-report-metadata__row--unused', $metadata_page_html);
+    $this->assertMatchesRegularExpression('/clinical-trials-gov-report-metadata__row--unused.*statusModule/s', $metadata_page_html);
     $this->assertNotFalse(strpos($metadata_page_html, '<hr'));
     $this->assertGreaterThan(
       strpos($metadata_page_html, 'ClinicalTrials.gov API:'),
@@ -180,6 +187,8 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->elementExists('css', 'small.clinical-trials-gov-report-structs__sub-properties ul');
     $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
     $structs_page_html = $this->getSession()->getPage()->getContent();
+    $this->assertStringContainsString('clinical-trials-gov-report-structs__row--unused', $structs_page_html);
+    $this->assertMatchesRegularExpression('/clinical-trials-gov-report-structs__row--unused.*statusModule/s', $structs_page_html);
     $this->assertNotFalse(strpos($structs_page_html, '<hr'));
     $this->assertGreaterThan(
       strpos($structs_page_html, 'ClinicalTrials.gov API:'),

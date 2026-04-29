@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
@@ -18,6 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ClinicalTrialsGovReportStructsController extends ControllerBase {
 
   public function __construct(
+    protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
     protected ClinicalTrialsGovManagerInterface $manager,
     protected DateFormatterInterface $dateFormatter,
   ) {}
@@ -28,6 +30,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     /** @phpstan-ignore-next-line */
     return new self(
+      $container->get('clinical_trials_gov.field_manager'),
       $container->get('clinical_trials_gov.manager'),
       $container->get('date.formatter'),
     );
@@ -38,7 +41,8 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
    */
   public function index(): array {
     $metadata = $this->manager->getMetadataByPath();
-    $struct_rows = $this->buildStructRows($metadata);
+    $used_paths = $this->fieldManager->getAvailableFieldKeys();
+    $struct_rows = $this->buildStructRows($metadata, $used_paths);
     $version = $this->manager->getVersion();
     $api_url = ClinicalTrialsGovApi::BASE_URL . '/studies/metadata';
 
@@ -101,8 +105,9 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
   /**
    * Builds normalized struct rows from metadata.
    */
-  protected function buildStructRows(array $metadata): array {
+  protected function buildStructRows(array $metadata, array $used_paths = []): array {
     $rows = [];
+    $used_path_lookup = array_fill_keys(array_values(array_filter($used_paths, 'is_string')), TRUE);
 
     foreach ($metadata as $path => $row) {
       if (!is_array($row) || (($row['sourceType'] ?? '') !== 'STRUCT')) {
@@ -129,6 +134,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
         'data_type' => (string) ($row['type'] ?? ''),
         'parent_struct' => $this->findParentStructPath($path, $metadata),
         'is_nested_multiple' => $this->isNestedMultipleStruct($path, $metadata),
+        'is_unused' => ($used_path_lookup !== [] && !isset($used_path_lookup[$path])),
         'sub_properties' => $sub_properties,
       ];
     }
@@ -190,6 +196,14 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
     $rows = [];
 
     foreach ($struct_rows as $row) {
+      $classes = [];
+      if ($row['is_nested_multiple']) {
+        $classes[] = 'color-warning';
+      }
+      if ($row['is_unused']) {
+        $classes[] = 'clinical-trials-gov-report-structs__row--unused';
+      }
+
       $rows[] = [
         'data' => [
           $this->buildPrimarySecondaryCell(
@@ -201,7 +215,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
           $this->buildTextCell($row['data_type']),
           $this->buildSubPropertiesCell($row['sub_properties']),
         ],
-        'class' => ($row['is_nested_multiple']) ? ['color-warning'] : [],
+        'class' => $classes,
       ];
     }
 

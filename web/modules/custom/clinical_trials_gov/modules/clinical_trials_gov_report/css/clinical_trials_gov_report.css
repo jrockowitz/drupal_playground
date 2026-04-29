@@ -24,3 +24,23 @@
   margin: 0;
   padding-left: 1.25rem;
 }
+
+.clinical-trials-gov-report-structs tr.clinical-trials-gov-report-structs__row--unused {
+  background-color: #f5f5f5;
+  color: #7a7a7a;
+}
+
+.clinical-trials-gov-report-structs tr.clinical-trials-gov-report-structs__row--unused a,
+.clinical-trials-gov-report-structs tr.clinical-trials-gov-report-structs__row--unused .clinical-trials-gov-report-metadata__secondary {
+  color: inherit;
+}
+
+.clinical-trials-gov-report-metadata tr.clinical-trials-gov-report-metadata__row--unused {
+  background-color: #f5f5f5;
+  color: #7a7a7a;
+}
+
+.clinical-trials-gov-report-metadata tr.clinical-trials-gov-report-metadata__row--unused a,
+.clinical-trials-gov-report-metadata tr.clinical-trials-gov-report-metadata__row--unused .clinical-trials-gov-report-metadata__secondary {
+  color: inherit;
+}

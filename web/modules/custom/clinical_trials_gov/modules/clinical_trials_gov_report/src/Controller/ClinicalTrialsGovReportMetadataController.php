@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
@@ -34,6 +35,7 @@ class ClinicalTrialsGovReportMetadataController extends ControllerBase {
   ];
 
   public function __construct(
+    protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
     protected ClinicalTrialsGovManagerInterface $manager,
     protected DateFormatterInterface $dateFormatter,
   ) {}
@@ -44,6 +46,7 @@ class ClinicalTrialsGovReportMetadataController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     /** @phpstan-ignore-next-line */
     return new self(
+      $container->get('clinical_trials_gov.field_manager'),
       $container->get('clinical_trials_gov.manager'),
       $container->get('date.formatter'),
     );
@@ -54,6 +57,7 @@ class ClinicalTrialsGovReportMetadataController extends ControllerBase {
    */
   public function index(): array {
     $metadata = $this->manager->getMetadataByPath();
+    $used_paths = $this->fieldManager->getAvailableFieldKeys();
     $version = $this->manager->getVersion();
     $api_url = ClinicalTrialsGovApi::BASE_URL . '/studies/metadata';
 
@@ -73,7 +77,7 @@ class ClinicalTrialsGovReportMetadataController extends ControllerBase {
         '#type' => 'item',
         '#markup' => $this->t('Showing @count fields', ['@count' => count($metadata)]),
       ],
-      'results' => $this->buildMetadataTable($metadata),
+      'results' => $this->buildMetadataTable($metadata, $used_paths),
       'api_url' => [
         '#type' => 'item',
         '#markup' => $this->t('ClinicalTrials.gov API: <a href=":url" class="font-monospace">@url</a>', [
@@ -116,15 +120,25 @@ class ClinicalTrialsGovReportMetadataController extends ControllerBase {
   /**
    * Builds the metadata table.
    */
-  protected function buildMetadataTable(array $metadata): array {
+  protected function buildMetadataTable(array $metadata, array $used_paths = []): array {
     $rows = [];
+    $used_path_lookup = array_fill_keys(array_values(array_filter($used_paths, 'is_string')), TRUE);
 
     foreach ($metadata as $row) {
       if (!is_array($row)) {
         continue;
       }
 
-      $rows[] = $this->buildRow($row);
+      $classes = [];
+      $path = (string) ($row['path'] ?? '');
+      if ($used_path_lookup !== [] && !isset($used_path_lookup[$path])) {
+        $classes[] = 'clinical-trials-gov-report-metadata__row--unused';
+      }
+
+      $rows[] = [
+        'data' => $this->buildRow($row),
+        'class' => $classes,
+      ];
     }
 
     return [
