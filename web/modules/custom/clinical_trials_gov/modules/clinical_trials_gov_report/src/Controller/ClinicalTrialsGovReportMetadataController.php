@@ -67,11 +67,11 @@ class ClinicalTrialsGovReportMetadataController extends ControllerBase {
       ],
       'intro' => [
         '#type' => 'item',
-        '#markup' => $this->t('This page displays flattened ClinicalTrials.gov metadata returned by the API.'),
+        '#markup' => $this->t('This page displays flattened ClinicalTrials.gov fields metadata returned by the API.'),
       ],
       'summary' => [
         '#type' => 'item',
-        '#markup' => $this->t('Showing @count metadata rows', ['@count' => count($metadata)]),
+        '#markup' => $this->t('Showing @count fields', ['@count' => count($metadata)]),
       ],
       'results' => $this->buildMetadataTable($metadata),
       'api_url' => [

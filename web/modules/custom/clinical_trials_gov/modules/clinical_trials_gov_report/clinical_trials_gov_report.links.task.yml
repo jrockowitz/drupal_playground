@@ -8,7 +8,17 @@ clinical_trials_gov_report.metadata:
   base_route: clinical_trials_gov_report.studies
   title: 'Metadata'
 
+clinical_trials_gov_report.fields:
+  route_name: clinical_trials_gov_report.metadata
+  parent_id: clinical_trials_gov_report.metadata
+  title: 'Fields'
+
+clinical_trials_gov_report.structs:
+  route_name: clinical_trials_gov_report.structs
+  parent_id: clinical_trials_gov_report.metadata
+  title: 'Structs'
+
 clinical_trials_gov_report.enums:
   route_name: clinical_trials_gov_report.enums
-  base_route: clinical_trials_gov_report.studies
+  parent_id: clinical_trials_gov_report.metadata
   title: 'Enums'

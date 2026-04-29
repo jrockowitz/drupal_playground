@@ -30,3 +30,11 @@ clinical_trials_gov_report.enums:
     _title: 'Enums'
   requirements:
     _permission: 'access administration pages'
+
+clinical_trials_gov_report.structs:
+  path: /admin/reports/status/clinical-trials-gov/structs
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStructsController::index'
+    _title: 'Structs'
+  requirements:
+    _permission: 'access administration pages'

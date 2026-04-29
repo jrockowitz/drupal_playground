@@ -52,7 +52,6 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->drupalGet('admin/reports/status/clinical-trials-gov');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Studies');
-    $this->assertSession()->pageTextContains('Metadata');
     $this->assertSession()->elementExists('css', 'form');
     $this->assertSession()->pageTextContains('This page displays ClinicalTrials.gov studies returned by the API for the current query-string parameters.');
     $this->assertSession()->pageTextContains('Version: 2.0.5 and Last Updated:');
@@ -102,8 +101,6 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     // Check that the metadata report loads and shows the expected columns.
     $this->drupalGet('admin/reports/status/clinical-trials-gov/metadata');
     $this->assertSession()->statusCodeEquals(200);
-    $this->assertSession()->pageTextContains('Studies');
-    $this->assertSession()->pageTextContains('Metadata');
     $this->assertSession()->elementExists('css', 'table');
     $this->assertSession()->pageTextContains('This page displays flattened ClinicalTrials.gov metadata returned by the API.');
     $this->assertSession()->pageTextContains('Field Name');
@@ -159,6 +156,38 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertGreaterThan(
       strpos($enums_page_html, '<hr'),
       strpos($enums_page_html, 'Version: 2.0.5 and Last Updated:')
+    );
+
+    // Check that the structs report loads and shows the expected hierarchy data.
+    $this->drupalGet('admin/reports/status/clinical-trials-gov/structs');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Structs');
+    $this->assertSession()->elementExists('css', 'table');
+    $this->assertSession()->pageTextContains('This page displays ClinicalTrials.gov struct metadata and hierarchy returned by the API.');
+    $this->assertSession()->pageTextContains('Struct');
+    $this->assertSession()->pageTextContains('Piece');
+    $this->assertSession()->pageTextContains('Data type');
+    $this->assertSession()->pageTextContains('Sub-properties');
+    $this->assertSession()->pageTextContains('contactsLocationsModule');
+    $this->assertSession()->pageTextContains('locations');
+    $this->assertSession()->pageTextContains('contacts');
+    $this->assertSession()->pageTextContains('Location');
+    $this->assertSession()->pageTextContains('Location[]');
+    $this->assertSession()->pageTextContains('LocationContact');
+    $this->assertSession()->pageTextContains('status');
+    $this->assertSession()->pageTextContains('contacts[]');
+    $this->assertSession()->pageTextContains('geoPoint');
+    $this->assertSession()->elementExists('css', 'small.clinical-trials-gov-report-structs__sub-properties ul');
+    $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
+    $structs_page_html = $this->getSession()->getPage()->getContent();
+    $this->assertNotFalse(strpos($structs_page_html, '<hr'));
+    $this->assertGreaterThan(
+      strpos($structs_page_html, 'ClinicalTrials.gov API:'),
+      strpos($structs_page_html, 'Version: 2.0.5 and Last Updated:')
+    );
+    $this->assertGreaterThan(
+      strpos($structs_page_html, '<hr'),
+      strpos($structs_page_html, 'Version: 2.0.5 and Last Updated:')
     );
 
     // Return to the studies report before checking the NCT detail link.
