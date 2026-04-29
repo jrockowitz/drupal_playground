@@ -209,9 +209,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         '#markup' => $this->buildPieceMarkup($definition, $path),
         '#wrapper_attributes' => $row_attributes,
       ];
-      $field_name_markup = '<div' . $this->buildIndentStyle($depth) . '>' . Html::escape((string) ($definition['field_name'] ?? ''));
+      $field_name_markup = '<div' . $this->buildIndentStyle($depth) . '><small>' . Html::escape((string) ($definition['field_name'] ?? '')) . '</small>';
       if (!empty($definition['details'])) {
-        $field_name_markup .= '<ul><li>' . implode('</li><li>', array_map([Html::class, 'escape'], $definition['details'])) . '</li></ul>';
+        $field_name_markup .= '<ul><li><small>' . implode('</small></li><li><small>', array_map([Html::class, 'escape'], $definition['details'])) . '</small></li></ul>';
       }
       $field_name_markup .= '</div>';
       $form['field_mapping']['rows'][$row_key]['field_name'] = [
