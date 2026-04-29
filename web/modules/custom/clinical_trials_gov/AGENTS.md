@@ -41,9 +41,9 @@ Routes:
 
 Step behaviour:
 
-**1. Find** — stores the raw query string in `clinical_trials_gov.settings:query`. On save, it starts a batch that scans up to 500 studies, fetches each study individually, and writes the discovered metadata paths to `clinical_trials_gov.settings:paths`. Limited to `query.*`, `filter.overallStatus`, `filter.ids`. Includes an Ajax preview section that auto-loads on first render if a saved query exists.
+**1. Find** — stores the raw query string in `clinical_trials_gov.settings:query`. On save, it starts a batch that scans up to 500 studies, fetches each study individually, and writes the discovered field paths to `clinical_trials_gov.settings:paths`. Limited to `query.*`, `filter.overallStatus`, `filter.ids`. Includes an Ajax preview section that auto-loads on first render if a saved query exists. The save message is `The studies query has been saved. Please review the selected studies below.`
 
-**2. Review** — splits into `Studies` and `Metadata`. Studies lists studies from the saved query and uses `clinical_trials_gov.review.study` for modal study links. Pagination is UI-only via `nextPageToken`. Metadata shows only the exact saved `clinical_trials_gov.settings:paths`. The study detail title callback returns the study's `briefTitle`, falling back to `'ClinicalTrials.gov'`.
+**2. Review** — splits into `Studies` and `Metadata`. Studies lists studies from the saved query and uses `clinical_trials_gov.review.study` for modal study links. Pagination is UI-only via `nextPageToken`. Metadata shows only the exact saved `clinical_trials_gov.settings:paths`, includes the same `Studies query` details element as the Studies page, and includes a `Field paths` footer details element with the saved paths. The study detail title callback returns the study's `briefTitle`, falling back to `'ClinicalTrials.gov'`.
 
 **3. Configure** — creates or reuses a destination content type; shows curated field definitions from `ClinicalTrialsGovFieldManager`. Field-group rows are structural only. Empty group-only rows are hidden. Child rows beneath a promoted `custom` field are hidden.
 
@@ -87,6 +87,7 @@ Field resolution lives in `ClinicalTrialsGovFieldManager::resolveFieldDefinition
 - uses `/studies` only to collect lightweight `nctId` rows (`fields=NCTId`, `pageSize=1000`, follows `nextPageToken`)
 - loads each full study in `prepareRow()` via `/studies/{nctId}`
 - flattens rows via a modified `flattenStudy()` that **also preserves parent structured objects on their parent key** — this is intentional: it lets `custom_field` destinations map from a struct key rather than reconstructing values field-by-field in migrate
+- repeated associative list items contribute child dot-paths without numeric indexes, so both parent keys like `protocolSection.contactsLocationsModule.locations` and child keys like `protocolSection.contactsLocationsModule.locations.facility` are available
 - row IDs use the top-level `nctId` source property
 - keeps the full payload out of `initializeIterator()`, which is the main memory-saving behavior for large imports
 
@@ -101,7 +102,7 @@ Test support:
 
 The stub simulates paginated `/studies` responses (two studies on page 1, one on page 2) and exposes `getStudiesRequests()` to assert pagination behaviour.
 
-Test classes: `ClinicalTrialsGovApiTest`, `ClinicalTrialsGovManagerTest`, `ClinicalTrialsGovNamesTest`, `ClinicalTrialsGovBuilderTest`, `ClinicalTrialsGovFieldManagerTest`, `ClinicalTrialsGovEntityManagerTest`, `ClinicalTrialsGovMigrationManagerTest`, `ClinicalTrialsGovSourceTest`, `ClinicalTrialsGovStudiesQueryTest`, `ClinicalTrialsGovTest` (functional).
+Test classes: `ClinicalTrialsGovApiTest`, `ClinicalTrialsGovManagerTest`, `ClinicalTrialsGovNamesTest`, `ClinicalTrialsGovBuilderTest`, `ClinicalTrialsGovFieldManagerTest`, `ClinicalTrialsGovEntityManagerTest`, `ClinicalTrialsGovMigrationManagerTest`, `ClinicalTrialsGovPathDiscoveryBatchTest`, `ClinicalTrialsGovReviewMetadataControllerTest`, `ClinicalTrialsGovSourceTest`, `ClinicalTrialsGovStudiesQueryTest`, `ClinicalTrialsGovTest` (functional).
 
 ## Useful Commands
 
@@ -125,9 +126,10 @@ ddev drush migrate:status clinical_trials_gov
 
 ## When Editing This Module
 
-- Update tests when changing: field curation, struct resolution, migration generation, source pagination, or Configure table behaviour.
+- Update tests when changing: field-path discovery, metadata table layout, field curation, struct resolution, migration generation, source pagination, or Configure table behaviour.
 - Curated field-list changes ripple into the Functional test — check `ClinicalTrialsGovTest::testWizardFlow` assertions against the Configure table.
 - If a field seems "missing", check `clinical_trials_gov.settings:paths` and the Find discovery batch before touching the resolver.
+- If a repeated struct child path seems missing, inspect both `ClinicalTrialsGovManager::flattenStudy()` and `ClinicalTrialsGovSource::flattenStudy()` before changing the batch.
 - If Configure is blocked, check whether `clinical_trials_gov.settings:paths` is empty; there is no fallback allow-list anymore.
 - If a struct seems wrong, inspect: metadata `type`, `sourceType`, `children`, and which outcome (`custom_field`, `field_group`, unsupported) is intended.
 - Preserve the distinction between UI preview/review (one page) and migration source (all pages).

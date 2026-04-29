@@ -27,7 +27,7 @@ The saved ClinicalTrials.gov query is the starting point for the entire workflow
 When you save the query on the `Find` step, the module:
 
 - stores the raw query string
-- discovers study data paths from matching studies
+- discovers field paths from matching studies
 - saves those discovered paths into configuration
 - uses those paths to decide which fields can be configured and migrated
 
@@ -42,6 +42,11 @@ Instead, it discovers available paths from the first set of studies returned by 
 - different queries can expose different available fields
 - `Configure` is blocked until study paths have been discovered
 - if a field seems to be missing, the first thing to check is whether the `Find` step has been saved successfully for a query that returns studies
+
+The discovery logic now also captures child paths inside repeated structured lists. For example, a repeated location structure can contribute both:
+
+- `protocolSection.contactsLocationsModule.locations`
+- `protocolSection.contactsLocationsModule.locations.facility`
 
 ### The module generates Drupal structure for you
 
@@ -110,6 +115,7 @@ Important behavior:
 
 - previewing a query is not the same as saving it
 - the query must be saved to update the stored query, discovered paths, and generated migration
+- after save, the status message tells you to review the selected studies below
 - if no studies are found, `Configure` will remain blocked because there are no discovered paths to work from
 
 ### 2. Review
@@ -123,6 +129,11 @@ It is meant to answer:
 
 - did the saved query return the studies I expected?
 - do these studies have the data shape I want to build fields for?
+
+The `Metadata` page also includes:
+
+- the same `Studies query` details block shown on the `Studies` page
+- a `Field paths` details section listing all saved field paths used by the queried studies
 
 The study detail page uses the study `briefTitle` as the page title and is available at the route with `{nctId}` appended.
 
@@ -195,6 +206,12 @@ Key locations:
 - [Test fixtures and stub manager](/modules/custom/clinical_trials_gov/tests/modules/clinical_trials_gov_test)
 - [Kernel tests](/modules/custom/clinical_trials_gov/tests/src/Kernel)
 - [Functional tests](/modules/custom/clinical_trials_gov/tests/src/Functional)
+
+Notable coverage includes:
+
+- `ClinicalTrialsGovPathDiscoveryBatchTest` for the Find-step field-path discovery batch
+- `ClinicalTrialsGovReviewMetadataControllerTest` for the filtered review metadata page
+- `ClinicalTrialsGovSourceTest` for flattened migrate source rows, including repeated struct child paths
 
 ## Development Commands
 
