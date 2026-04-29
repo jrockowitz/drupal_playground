@@ -14,9 +14,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Displays the review step for the import wizard.
+ * Displays the studies review step for the import wizard.
  */
-class ClinicalTrialsGovReviewController extends ControllerBase {
+class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
 
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,

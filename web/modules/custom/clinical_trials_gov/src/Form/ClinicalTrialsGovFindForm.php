@@ -81,7 +81,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     $form['preview'] = [
       '#type' => 'details',
       '#title' => $this->t('Preview'),
-      '#open' => FALSE,
+      '#open' => empty($saved_query),
     ];
     $form['preview']['update_preview'] = [
       '#type' => 'submit',

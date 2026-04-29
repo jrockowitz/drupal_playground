@@ -95,6 +95,17 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->linkExists('NCT05088187');
     $this->assertSession()->elementExists('css', 'table');
 
+    $this->drupalGet('admin/config/services/clinical-trials-gov/review/metadata');
+
+    // Check that Review Metadata only shows configured metadata paths.
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Showing 7 fields');
+    $this->assertSession()->pageTextContains('protocolSection.identificationModule.nctId');
+    $this->assertSession()->pageTextContains('protocolSection.sponsorCollaboratorsModule.responsibleParty');
+    $this->assertSession()->pageTextNotContains('protocolSection.contactsLocationsModule.centralContacts');
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/review');
+
     $this->clickLink('NCT05088187');
 
     // Check that review detail pages stay inside the wizard route space.

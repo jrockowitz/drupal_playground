@@ -1,0 +1,13 @@
+.clinical-trials-gov-report-metadata table th,
+.clinical-trials-gov-report-metadata table td {
+  vertical-align: top;
+}
+
+.clinical-trials-gov-report-metadata__primary {
+  line-height: 1.4;
+}
+
+.clinical-trials-gov-report-metadata__secondary {
+  color: #666;
+  line-height: 1.4;
+}

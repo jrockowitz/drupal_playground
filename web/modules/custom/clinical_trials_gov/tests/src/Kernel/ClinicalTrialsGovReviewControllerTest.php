@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
-use Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewController;
+use Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Kernel tests for ClinicalTrialsGovReviewController.
+ * Kernel tests for ClinicalTrialsGovReviewStudiesController.
  *
  * @group clinical_trials_gov
  */
@@ -36,7 +36,7 @@ class ClinicalTrialsGovReviewControllerTest extends KernelTestBase {
       ->set('query', 'query.cond=cancer&filter.overallStatus=RECRUITING')
       ->save();
 
-    $controller = ClinicalTrialsGovReviewController::create($this->container);
+    $controller = ClinicalTrialsGovReviewStudiesController::create($this->container);
     $build = $controller->index(new Request());
 
     // Check that the studies query details section is present and closed.

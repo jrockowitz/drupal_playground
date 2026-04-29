@@ -17,7 +17,15 @@ clinical_trials_gov.find:
 clinical_trials_gov.review:
   path: '/admin/config/services/clinical-trials-gov/review'
   defaults:
-    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewController::index'
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.review.metadata:
+  path: '/admin/config/services/clinical-trials-gov/review/metadata'
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewMetadataController::index'
     _title: 'ClinicalTrials.gov'
   requirements:
     _permission: 'administer clinical_trials_gov'
@@ -25,8 +33,8 @@ clinical_trials_gov.review:
 clinical_trials_gov.review.study:
   path: '/admin/config/services/clinical-trials-gov/review/{nctId}'
   defaults:
-    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewController::study'
-    _title_callback: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewController::title'
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController::study'
+    _title_callback: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController::title'
   requirements:
     _permission: 'administer clinical_trials_gov'
 

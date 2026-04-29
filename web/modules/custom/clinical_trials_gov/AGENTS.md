@@ -32,8 +32,9 @@ Routes:
 
 - `clinical_trials_gov.index` — Overview (`ClinicalTrialsGovController::index`)
 - `clinical_trials_gov.find` — Step 1: Find (`ClinicalTrialsGovFindForm`)
-- `clinical_trials_gov.review` — Step 2: Review list (`ClinicalTrialsGovReviewController::index`)
-- `clinical_trials_gov.review.study` — Study detail (`ClinicalTrialsGovReviewController::study`, `_title_callback: ::title`)
+- `clinical_trials_gov.review` — Step 2: Review / Studies (`ClinicalTrialsGovReviewStudiesController::index`)
+- `clinical_trials_gov.review.metadata` — Review metadata (`ClinicalTrialsGovReviewMetadataController::index`)
+- `clinical_trials_gov.review.study` — Study detail (`ClinicalTrialsGovReviewStudiesController::study`, `_title_callback: ::title`)
 - `clinical_trials_gov.configure` — Step 3: Configure (`ClinicalTrialsGovConfigForm`)
 - `clinical_trials_gov.import` — Step 4: Import (`ClinicalTrialsGovImportForm`)
 - `clinical_trials_gov.manage` — Step 5: Manage (`ClinicalTrialsGovManageController::index`)
@@ -42,7 +43,7 @@ Step behaviour:
 
 **1. Find** — stores the raw query string in `clinical_trials_gov.settings:query`. On save, it starts a batch that scans up to 500 studies, fetches each study individually, and writes the discovered metadata paths to `clinical_trials_gov.settings:paths`. Limited to `query.*`, `filter.overallStatus`, `filter.ids`. Includes an Ajax preview section that auto-loads on first render if a saved query exists.
 
-**2. Review** — lists studies from the saved query; uses `clinical_trials_gov.review.study` for modal study links. Pagination is UI-only via `nextPageToken`. The study detail title callback returns the study's `briefTitle`, falling back to `'ClinicalTrials.gov'`.
+**2. Review** — splits into `Studies` and `Metadata`. Studies lists studies from the saved query and uses `clinical_trials_gov.review.study` for modal study links. Pagination is UI-only via `nextPageToken`. Metadata shows only the exact saved `clinical_trials_gov.settings:paths`. The study detail title callback returns the study's `briefTitle`, falling back to `'ClinicalTrials.gov'`.
 
 **3. Configure** — creates or reuses a destination content type; shows curated field definitions from `ClinicalTrialsGovFieldManager`. Field-group rows are structural only. Empty group-only rows are hidden. Child rows beneath a promoted `custom` field are hidden.
 

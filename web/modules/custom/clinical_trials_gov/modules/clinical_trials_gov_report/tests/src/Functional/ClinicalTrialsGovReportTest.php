@@ -127,8 +127,7 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->elementExists('css', 'a[href="https://clinicaltrials.gov/policy/protocol-definitions#BriefTitle"]');
     $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
     $metadata_page_html = $this->getSession()->getPage()->getContent();
-    $this->assertStringContainsString('clinical-trials-gov-report-metadata__row--unused', $metadata_page_html);
-    $this->assertMatchesRegularExpression('/clinical-trials-gov-report-metadata__row--unused.*statusModule/s', $metadata_page_html);
+    $this->assertStringNotContainsString('clinical-trials-gov-report-metadata__row--unused', $metadata_page_html);
     $this->assertNotFalse(strpos($metadata_page_html, '<hr'));
     $this->assertGreaterThan(
       strpos($metadata_page_html, 'ClinicalTrials.gov API:'),

@@ -15,7 +15,7 @@ The main workflow lives at:
 The wizard is designed to move in this order:
 
 1. `Find` a study query
-2. `Review` the matching studies
+2. `Review` the matching studies and metadata
 3. `Configure` the destination content type and fields
 4. `Import` the studies through Drupal Migrate
 5. `Manage` the imported nodes
@@ -73,7 +73,8 @@ The migration source:
 
 - [Overview](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov)
 - [1. Find](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/find)
-- [2. Review](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/review)
+- [2. Review / Studies](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/review)
+- [2. Review / Metadata](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/review/metadata)
 - [3. Configure](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/configure)
 - [4. Import](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/import)
 - [5. Manage](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/manage)
@@ -113,7 +114,10 @@ Important behavior:
 
 ### 2. Review
 
-The `Review` step lists the studies returned by the saved query.
+The `Review` step has two subtasks:
+
+- `Studies` lists the studies returned by the saved query
+- `Metadata` shows the flattened metadata rows for the exact saved `paths`
 
 It is meant to answer:
 

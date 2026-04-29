@@ -13,6 +13,16 @@ clinical_trials_gov.review:
   base_route: clinical_trials_gov.index
   title: '2. Review'
 
+clinical_trials_gov.review.studies:
+  route_name: clinical_trials_gov.review
+  parent_id: clinical_trials_gov.review
+  title: 'Studies'
+
+clinical_trials_gov.review.metadata:
+  route_name: clinical_trials_gov.review.metadata
+  parent_id: clinical_trials_gov.review
+  title: 'Metadata'
+
 clinical_trials_gov.configure:
   route_name: clinical_trials_gov.configure
   base_route: clinical_trials_gov.index

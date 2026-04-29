@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov_report\Unit;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportMetadataController;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -23,26 +24,42 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
   /**
    * The controller under test.
    *
-   * @var \Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportMetadataController
+   * @var mixed
    */
   protected $controller;
+
+  /**
+   * The metadata manager mock.
+   *
+   * @var \Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected $manager;
+
+  /**
+   * The date formatter mock.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected $dateFormatter;
 
   /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
-    $field_manager = $this->createMock(ClinicalTrialsGovFieldManagerInterface::class);
-    $manager = $this->createMock(ClinicalTrialsGovManagerInterface::class);
-    $date_formatter = $this->createMock(DateFormatterInterface::class);
+    $this->manager = $this->createMock(ClinicalTrialsGovManagerInterface::class);
+    $this->dateFormatter = $this->createMock(DateFormatterInterface::class);
 
-    $this->controller = new class($field_manager, $manager, $date_formatter) extends ClinicalTrialsGovReportMetadataController {
+    $config_factory = $this->createMock(ConfigFactoryInterface::class);
+    $messenger = $this->createMock(MessengerInterface::class);
+
+    $this->controller = new class($this->manager, $config_factory, $messenger, $this->dateFormatter) extends ClinicalTrialsGovReportMetadataController {
 
       /**
        * Exposes buildMetadataTable() for testing.
        */
-      public function exposedBuildMetadataTable(array $metadata, array $used_paths = []): array {
-        return $this->buildMetadataTable($metadata, $used_paths);
+      public function exposedBuildMetadataTable(array $metadata): array {
+        return $this->buildMetadataTable($metadata);
       }
 
     };
@@ -50,11 +67,11 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
   }
 
   /**
-   * Tests that used and unused metadata rows are classified correctly.
+   * Tests that the report metadata table keeps all rows.
    *
    * @covers ::buildMetadataTable
    */
-  public function testBuildMetadataTableMarksUnusedRows(): void {
+  public function testBuildMetadataTableKeepsAllRows(): void {
     $metadata = [
       'protocolSection' => [
         'path' => 'protocolSection',
@@ -63,21 +80,6 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
         'title' => 'Protocol Section',
         'sourceType' => 'STRUCT',
         'type' => 'ProtocolSection',
-        'maxChars' => NULL,
-        'altPieceNames' => [],
-        'synonyms' => FALSE,
-        'description' => '',
-        'rules' => '',
-        'dedLinkLabel' => '',
-        'dedLinkUrl' => '',
-      ],
-      'protocolSection.identificationModule' => [
-        'path' => 'protocolSection.identificationModule',
-        'name' => 'identificationModule',
-        'piece' => 'IdentificationModule',
-        'title' => 'Identification Module',
-        'sourceType' => 'STRUCT',
-        'type' => 'IdentificationModule',
         'maxChars' => NULL,
         'altPieceNames' => [],
         'synonyms' => FALSE,
@@ -103,47 +105,52 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
       ],
     ];
 
-    $table = $this->controller->exposedBuildMetadataTable($metadata, [
-      'protocolSection',
-      'protocolSection.identificationModule.briefTitle',
-    ]);
+    $table = $this->controller->exposedBuildMetadataTable($metadata);
 
-    // Check that used rows are not dimmed.
+    // Check that the full report renders all metadata rows without filtering.
+    $this->assertCount(2, $table['#rows']);
     $this->assertSame([], $table['#rows'][0]['class']);
-    $this->assertSame([], $table['#rows'][2]['class']);
-
-    // Check that an unused row gets the muted row class.
-    $this->assertSame(['clinical-trials-gov-report-metadata__row--unused'], $table['#rows'][1]['class']);
+    $this->assertSame([], $table['#rows'][1]['class']);
   }
 
   /**
-   * Tests that no rows are dimmed when no paths are configured.
-   *
-   * @covers ::buildMetadataTable
+   * Tests that the report page includes the report-only footer details.
    */
-  public function testBuildMetadataTableWithoutUsedPathsLeavesRowsNormal(): void {
-    $metadata = [
-      'protocolSection' => [
-        'path' => 'protocolSection',
-        'name' => 'protocolSection',
-        'piece' => 'ProtocolSection',
-        'title' => 'Protocol Section',
-        'sourceType' => 'STRUCT',
-        'type' => 'ProtocolSection',
-        'maxChars' => NULL,
-        'altPieceNames' => [],
-        'synonyms' => FALSE,
-        'description' => '',
-        'rules' => '',
-        'dedLinkLabel' => '',
-        'dedLinkUrl' => '',
-      ],
-    ];
+  public function testIndexIncludesApiAndVersionFooter(): void {
+    $this->manager->method('getMetadataByPath')
+      ->willReturn([
+        'protocolSection.identificationModule.briefTitle' => [
+          'path' => 'protocolSection.identificationModule.briefTitle',
+          'name' => 'briefTitle',
+          'piece' => 'BriefTitle',
+          'title' => 'Brief Title',
+          'sourceType' => 'TEXT',
+          'type' => 'text',
+          'maxChars' => 300,
+          'altPieceNames' => [],
+          'synonyms' => FALSE,
+          'description' => '',
+          'rules' => '',
+          'dedLinkLabel' => '',
+          'dedLinkUrl' => '',
+        ],
+      ]);
+    $this->manager->method('getVersion')
+      ->willReturn([
+        'apiVersion' => '2.0.0',
+        'dataTimestamp' => '2024-01-02T03:04:05',
+      ]);
+    $this->dateFormatter->method('format')
+      ->willReturn('January 2 2024 at 3:04 am');
 
-    $table = $this->controller->exposedBuildMetadataTable($metadata, []);
+    $build = $this->controller->index();
 
-    // Check that no rows are marked unused without an allow-list.
-    $this->assertSame([], $table['#rows'][0]['class']);
+    // Check that the report footer still includes the API URL and version.
+    $this->assertArrayHasKey('footer', $build);
+    $this->assertArrayHasKey('api_url', $build['footer']);
+    $this->assertArrayHasKey('version', $build['footer']);
+    $this->assertStringContainsString('/studies/metadata', (string) $build['footer']['api_url']['#markup']);
+    $this->assertStringContainsString('Version: 2.0.0', (string) $build['footer']['version']['#markup']);
   }
 
 }
