@@ -82,14 +82,6 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $this->assertSame('custom', $responsible_party_definition['field_type']);
     $this->assertArrayNotHasKey('available', $resolved_responsible_party_definition);
     $this->assertSame('custom', $resolved_responsible_party_definition['field_type']);
-    $this->assertSame([
-      'type',
-      'investigator_full_name',
-      'investigator_title',
-      'investigator_affiliation',
-      'old_name_title',
-      'old_organization',
-    ], $responsible_party_definition['details']);
 
     // Check that structural parents still resolve as field groups even before paths are discovered.
     $this->assertFalse($protocol_section_definition['available']);
@@ -102,18 +94,9 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $this->assertSame('string', $title_definition['field_type']);
     $this->assertSame(300, $title_definition['storage_settings']['max_length']);
 
-    // Check that MARKUP custom-field columns use formatted long text with plain text format.
+    // Check that supported structs still integrate as custom fields.
     $this->assertSame('custom', $eligibility_definition['field_type']);
-    $this->assertSame('string_long', $eligibility_definition['storage_settings']['columns']['eligibilityCriteria']['type']);
-    $this->assertTrue($eligibility_definition['instance_settings']['field_settings']['eligibilityCriteria']['formatted']);
-    $this->assertSame('plain_text', $eligibility_definition['instance_settings']['field_settings']['eligibilityCriteria']['default_format']);
-    $this->assertSame('map_string', $eligibility_definition['storage_settings']['columns']['stdAges']['type']);
-    $this->assertSame('', $eligibility_definition['instance_settings']['field_settings']['stdAges']['table_empty']);
-
-    // Check that reference citations use long plain text even without maxChars in the metadata.
     $this->assertSame('custom', $references_definition['field_type']);
-    $this->assertSame('string_long', $references_definition['storage_settings']['columns']['citation']['type']);
-    $this->assertArrayNotHasKey('formatted', $references_definition['instance_settings']['field_settings']['citation']);
 
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('paths', [

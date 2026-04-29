@@ -19,6 +19,10 @@ services:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovNames
   Drupal\clinical_trials_gov\ClinicalTrialsGovNamesInterface: "@clinical_trials_gov.names"
 
+  clinical_trials_gov.custom_field_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovCustomFieldManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovCustomFieldManagerInterface: "@clinical_trials_gov.custom_field_manager"
+
   clinical_trials_gov.builder:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovBuilder
   Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface: "@clinical_trials_gov.builder"

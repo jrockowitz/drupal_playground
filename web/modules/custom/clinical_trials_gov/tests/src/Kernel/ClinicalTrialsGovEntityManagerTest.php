@@ -24,7 +24,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
   /**
    * Modules required for these kernel tests.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = [
     'clinical_trials_gov',
@@ -93,12 +93,13 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that the scalar, enum, and custom fields were created.
     $this->assertSame('string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'))?->getType());
     $this->assertSame('string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle'))?->getType());
-    $this->assertSame(300, FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle'))?->getSetting('max_length'));
+    $this->assertSame(300, FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle'))->getSetting('max_length'));
     $this->assertSame('text_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.descriptionModule.briefSummary'))?->getType());
     $this->assertSame(-1, FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.conditionsModule.conditions'))?->getCardinality());
     $this->assertSame('list_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.statusModule.overallStatus'))?->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.organization'))?->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty'))?->getType());
+    $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))?->getType());
     $this->assertSame('map_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.eligibilityModule'))?->getSetting('columns')['stdAges']['type'] ?? NULL);
     $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.referencesModule.references'))?->getSetting('columns')['citation']['type'] ?? NULL);
 
@@ -109,35 +110,31 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that created fields are added to the default form and view displays.
     $form_display = EntityFormDisplay::load('node.trial.default');
     $this->assertNotNull($form_display);
-    $this->assertSame('string_textfield', $form_display?->getComponent('field_brief_title')['type'] ?? NULL);
-    $this->assertSame('string_textfield', $form_display?->getComponent('field_nct_id')['type'] ?? NULL);
-    $this->assertSame('custom_stacked', $form_display?->getComponent('field_responsible_party')['type'] ?? NULL);
+    $this->assertSame('string_textfield', $form_display->getComponent('field_brief_title')['type'] ?? NULL);
+    $this->assertSame('string_textfield', $form_display->getComponent('field_nct_id')['type'] ?? NULL);
+    $this->assertSame('custom_stacked', $form_display->getComponent('field_responsible_party')['type'] ?? NULL);
 
     $view_display = EntityViewDisplay::load('node.trial.default');
     $this->assertNotNull($view_display);
-    $this->assertSame('string', $view_display?->getComponent('field_nct_id')['type'] ?? NULL);
-    $this->assertSame('custom_formatter', $view_display?->getComponent('field_responsible_party')['type'] ?? NULL);
+    $this->assertSame('string', $view_display->getComponent('field_nct_id')['type'] ?? NULL);
+    $this->assertSame('custom_formatter', $view_display->getComponent('field_responsible_party')['type'] ?? NULL);
 
-    // Check that nested structure selections create a field group on the form display.
-    $field_groups = $form_display?->getThirdPartySettings('field_group') ?? [];
-    $this->assertArrayHasKey('group_location', $field_groups);
-    $this->assertSame('details', $field_groups['group_location']['format_type']);
-    $this->assertTrue($field_groups['group_location']['format_settings']['open']);
-    $this->assertSame([
-      'field_location_facility',
-      'field_location_status',
-      'field_location_contact',
-    ], $field_groups['group_location']['children']);
+    // Check that the promoted custom field is added to the displays.
+    $this->assertSame('custom_stacked', $form_display->getComponent('field_location')['type'] ?? NULL);
+    $this->assertSame('custom_formatter', $view_display->getComponent('field_location')['type'] ?? NULL);
+
+    // Check that remaining nested structure selections create a field group on the form display.
+    $field_groups = $form_display->getThirdPartySettings('field_group');
     $this->assertArrayHasKey('group_identification_module', $field_groups);
     $this->assertContains('field_brief_title', $field_groups['group_identification_module']['children']);
     $this->assertContains('field_nct_id', $field_groups['group_identification_module']['children']);
     $this->assertContains('field_organization', $field_groups['group_identification_module']['children']);
     $this->assertNotContains('title', $field_groups['group_identification_module']['children']);
 
-    // Check that nested structure selections create a fieldset on the view display.
-    $view_field_groups = $view_display?->getThirdPartySettings('field_group') ?? [];
-    $this->assertArrayHasKey('group_location', $view_field_groups);
-    $this->assertSame('fieldset', $view_field_groups['group_location']['format_type']);
+    // Check that remaining nested structure selections create a fieldset on the view display.
+    $view_field_groups = $view_display->getThirdPartySettings('field_group');
+    $this->assertArrayHasKey('group_identification_module', $view_field_groups);
+    $this->assertSame('fieldset', $view_field_groups['group_identification_module']['format_type']);
   }
 
   /**
@@ -219,9 +216,9 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertSame('string_long', $references_definition['storage_settings']['columns']['citation']['type']);
     $this->assertArrayNotHasKey('formatted', $references_definition['instance_settings']['field_settings']['citation']);
 
-    // Check that nested structures can resolve to field groups.
-    $this->assertSame('field_group', $group_definition['field_type']);
-    $this->assertTrue($group_definition['group_only']);
+    // Check that whitelisted structured arrays resolve to custom fields.
+    $this->assertSame('custom', $group_definition['field_type']);
+    $this->assertFalse($group_definition['group_only']);
   }
 
 }
