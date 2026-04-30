@@ -557,4 +557,61 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
     $this->assertCount(1, $result);
   }
 
+  /**
+   * Tests that getStudy() caches and returns the same value on a second call.
+   *
+   * @covers ::getStudy
+   */
+  public function testGetStudyCachesResult(): void {
+    $raw = ['protocolSection' => ['identificationModule' => ['nctId' => 'NCT001']]];
+    $this->api
+      ->expects($this->once())
+      ->method('get')
+      ->with('/studies/NCT001')
+      ->willReturn($raw);
+
+    // Check that the first and second calls return identical flattened data.
+    $first = $this->manager->getStudy('NCT001');
+    $second = $this->manager->getStudy('NCT001');
+    $this->assertSame($first, $second);
+  }
+
+  /**
+   * Tests that an empty metadata response is cached and not re-fetched.
+   *
+   * @covers ::getMetadataByPath
+   */
+  public function testGetMetadataByPathCachesEmptyResult(): void {
+    $this->api
+      ->expects($this->once())
+      ->method('get')
+      ->with('/studies/metadata')
+      ->willReturn([]);
+
+    // Check that an empty response is stored and the API is not called again.
+    $first = $this->manager->getMetadataByPath();
+    $second = $this->manager->getMetadataByPath();
+    $this->assertSame([], $first);
+    $this->assertSame($first, $second);
+  }
+
+  /**
+   * Tests that an empty enums response is cached and not re-fetched.
+   *
+   * @covers ::getEnums
+   */
+  public function testGetEnumsCachesEmptyResult(): void {
+    $this->api
+      ->expects($this->once())
+      ->method('get')
+      ->with('/studies/enums')
+      ->willReturn([]);
+
+    // Check that an empty enums response is stored and the API is not called again.
+    $first = $this->manager->getEnums();
+    $second = $this->manager->getEnums();
+    $this->assertSame([], $first);
+    $this->assertSame($first, $second);
+  }
+
 }
