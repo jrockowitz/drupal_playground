@@ -64,7 +64,8 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
     $form['type'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Content type machine name'),
-      '#description' => $this->t('Machine name for the destination content type. Common values include trial, study, or nct. This setting is locked after the destination content type and fields are created.'),
+      '#maxlength' => 32,
+      '#description' => $this->t('Machine name for the destination content type. Limited to 32 characters. Common values include trial, study, or nct. This setting is locked after the destination content type and fields are created.'),
       '#config_target' => 'clinical_trials_gov.settings:type',
       '#required' => !$structure_locked,
       '#disabled' => $structure_locked,
@@ -72,7 +73,8 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
     $form['field_prefix'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Field prefix'),
-      '#description' => $this->t('Prefix used when generating Drupal field machine names. Common values include trial, study, or nct. This setting is locked after the destination content type and fields are created.'),
+      '#field_suffix' => '_{metadata_field_name}',
+      '#description' => $this->t('Prefix used when generating Drupal field machine names, without the leading field_. Common values include trial, study, nct, or trial_version_holder. This setting is locked after the destination content type and fields are created.'),
       '#config_target' => 'clinical_trials_gov.settings:field_prefix',
       '#required' => !$structure_locked,
       '#disabled' => $structure_locked,

@@ -13,5 +13,4 @@ dependencies:
   - migrate_tools:migrate_tools
   - migrate_plus:migrate_plus
   - custom_field:custom_field
-  - json_field:json_field
   - field_group:field_group

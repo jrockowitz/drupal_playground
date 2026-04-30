@@ -35,7 +35,6 @@ class ClinicalTrialsGovImportFormTest extends KernelTestBase {
     'filter',
     'user',
     'system',
-    'json_field',
     'custom_field',
     'field_group',
   ];

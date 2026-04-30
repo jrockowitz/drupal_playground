@@ -9,5 +9,6 @@ recipes:
 install:
   - media
   - media_library
+  - inline_form_errors
   - key
   - token

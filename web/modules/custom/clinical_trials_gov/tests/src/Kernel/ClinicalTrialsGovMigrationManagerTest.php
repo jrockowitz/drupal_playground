@@ -35,7 +35,6 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     'migrate',
     'migrate_plus',
     'migrate_tools',
-    'json_field',
     'custom_field',
     'field_group',
   ];
@@ -126,6 +125,15 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
       ],
     ], $config->get('process.' . $entity_manager->getStudyApiFieldName() . '/uri'));
     $this->assertNull($config->get('process.group_location'));
+    $this->assertSame([
+      [
+        'plugin' => 'clinical_trials_gov_custom_field',
+        'source' => [
+          'protocolSection.contactsLocationsModule.locations',
+          'constants/' . $entity_manager->generateFieldName('protocolSection.contactsLocationsModule.locations') . '_yaml_columns',
+        ],
+      ],
+    ], $config->get('process.' . $entity_manager->generateFieldName('protocolSection.contactsLocationsModule.locations')));
     $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty')));
 
     // Check that title truncation constants are available to the migration.
@@ -134,6 +142,10 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->assertTrue($config->get('source.constants.title_add_ellipsis'));
     $this->assertSame('https://clinicaltrials.gov/study/', $config->get('source.constants.study_url_prefix'));
     $this->assertSame('https://clinicaltrials.gov/api/v2/studies/', $config->get('source.constants.study_api_url_prefix'));
+    $this->assertSame([
+      'contacts',
+      'geoPoint',
+    ], $config->get('source.constants.' . $entity_manager->generateFieldName('protocolSection.contactsLocationsModule.locations') . '_yaml_columns'));
 
     // Check that updating the saved query refreshes an already-cached migration definition.
     $this->container->get('plugin.manager.migration')->createInstance('clinical_trials_gov');

@@ -67,6 +67,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
     $columns = [];
     $field_settings = [];
     $details = [];
+    $yaml_columns = [];
     $parent_piece = (string) ($metadata['piece'] ?? '');
 
     foreach ($children as $child_key) {
@@ -74,9 +75,6 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
         continue;
       }
       $child_metadata = $this->manager->getMetadataByPath($child_key);
-      if (($child_metadata['sourceType'] ?? '') === 'STRUCT') {
-        continue;
-      }
       $column_definition = $this->buildCustomFieldColumnDefinition($child_key, $child_metadata);
       if ($column_definition === NULL) {
         continue;
@@ -85,6 +83,9 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       $columns[$column_name] = $column_definition['storage'];
       $field_settings[$column_name] = $column_definition['instance'];
       $details[] = $this->names->getDetailLabel((string) ($child_metadata['piece'] ?? $child_metadata['name'] ?? ''), $parent_piece);
+      if (!empty($column_definition['yaml_fallback'])) {
+        $yaml_columns[] = $column_name;
+      }
     }
 
     if ($columns === []) {
@@ -102,6 +103,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       'type_label' => 'custom',
       'display_type_label' => $this->buildDisplayTypeLabel('custom field', (str_ends_with((string) ($metadata['type'] ?? ''), '[]') ? -1 : 1)),
       'details' => $details,
+      'yaml_columns' => $yaml_columns,
     ];
   }
 
@@ -164,6 +166,20 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       'description' => '',
       'description_display' => 'after',
     ];
+
+    if ($this->requiresYamlFallback($metadata)) {
+      return [
+        'column_name' => $column_name,
+        'storage' => [
+          'name' => $column_name,
+          'type' => 'string_long',
+        ],
+        'instance' => array_replace($instance, [
+          'label' => $title . ' (YAML)',
+        ]),
+        'yaml_fallback' => TRUE,
+      ];
+    }
 
     if ($is_multi && $this->supportsCustomFieldStringArray($source_type, $type, $is_enum)) {
       $instance += [
@@ -302,6 +318,49 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       'storage' => $storage,
       'instance' => $instance,
     ];
+  }
+
+  /**
+   * Determines whether one child value should fall back to YAML storage.
+   */
+  protected function requiresYamlFallback(array $metadata): bool {
+    $source_type = (string) ($metadata['sourceType'] ?? '');
+    $type = (string) ($metadata['type'] ?? '');
+
+    if ($source_type === 'STRUCT') {
+      return TRUE;
+    }
+
+    if ($type === '' || $type === 'text' || $type === 'boolean' || $type === 'integer') {
+      return FALSE;
+    }
+
+    if (str_ends_with($type, '[]')) {
+      return FALSE;
+    }
+
+    if (in_array($source_type, ['TEXT', 'MARKUP', 'NUMERIC', 'BOOLEAN', 'DATE'])) {
+      return FALSE;
+    }
+
+    return !$this->isScalarType($type);
+  }
+
+  /**
+   * Determines whether one metadata type is already scalar-like.
+   */
+  protected function isScalarType(string $type): bool {
+    return in_array($type, [
+      'RecruitmentStatus',
+      'ContactRole',
+      'OfficialRole',
+      'GeoName',
+      'text',
+      'boolean',
+      'integer',
+      'date',
+      'long',
+    ]);
   }
 
   /**

@@ -308,7 +308,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       'link' => 'link_default',
       'datetime' => 'datetime_default',
       'integer' => 'number',
-      'json' => 'json_textarea',
       'list_string' => 'options_select',
       'text_long' => 'text_textarea',
       'custom' => 'custom_stacked',
@@ -325,7 +324,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       'link' => 'link',
       'datetime' => 'datetime_default',
       'integer' => 'number_integer',
-      'json' => 'json',
       'list_string' => 'list_default',
       'text_long' => 'text_default',
       'custom' => 'custom_formatter',
@@ -377,6 +375,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   protected function buildSystemFieldName(string $suffix): string {
     $field_name = $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.nctId')['field_name'];
     $prefix = preg_replace('/nct_id$/', '', $field_name) ?? $field_name;
+    $prefix = preg_replace('/^field_/', '', $prefix) ?? $prefix;
 
     return $prefix . $suffix;
   }

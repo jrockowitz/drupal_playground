@@ -41,7 +41,6 @@ class ClinicalTrialsGovReadonlyHooksTest extends KernelTestBase {
     'migrate',
     'migrate_plus',
     'migrate_tools',
-    'json_field',
     'custom_field',
     'field_group',
   ];
@@ -55,10 +54,15 @@ class ClinicalTrialsGovReadonlyHooksTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installConfig(['field', 'filter', 'node', 'system']);
     $this->installSchema('node', ['node_access']);
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('field_prefix', 'trial')
+      ->save();
   }
 
   /**
-   * Tests that mapped fields become readonly while unrelated fields stay editable.
+   * Tests that mapped fields and system links become readonly.
+   *
+   * Unrelated fields should stay editable.
    */
   public function testReadonlyMappedFieldsOnly(): void {
     $entity_manager = $this->container->get('clinical_trials_gov.entity_manager');
@@ -111,6 +115,8 @@ class ClinicalTrialsGovReadonlyHooksTest extends KernelTestBase {
     // Check that readonly mode off preserves the editable widgets.
     $this->assertSame('string_textfield', $editable_display->getComponent('field_trial_brief_title')['type'] ?? NULL);
     $this->assertSame('string_textfield', $editable_display->getComponent('field_trial_nct_id')['type'] ?? NULL);
+    $this->assertSame('link_default', $editable_display->getComponent('trial_nct_url')['type'] ?? NULL);
+    $this->assertSame('link_default', $editable_display->getComponent('trial_nct_api')['type'] ?? NULL);
     $this->assertSame('string_textfield', $editable_display->getComponent('field_manual_notes')['type'] ?? NULL);
 
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
@@ -119,9 +125,11 @@ class ClinicalTrialsGovReadonlyHooksTest extends KernelTestBase {
 
     $readonly_display = EntityFormDisplay::collectRenderDisplay($node, 'default');
 
-    // Check that only mapped ClinicalTrials.gov fields switch to readonly.
+    // Check that mapped ClinicalTrials.gov fields and system links switch to readonly.
     $this->assertSame('readonly_field_widget', $readonly_display->getComponent('field_trial_brief_title')['type'] ?? NULL);
     $this->assertSame('readonly_field_widget', $readonly_display->getComponent('field_trial_nct_id')['type'] ?? NULL);
+    $this->assertSame('readonly_field_widget', $readonly_display->getComponent('trial_nct_url')['type'] ?? NULL);
+    $this->assertSame('readonly_field_widget', $readonly_display->getComponent('trial_nct_api')['type'] ?? NULL);
     $this->assertSame('string_textfield', $readonly_display->getComponent('field_manual_notes')['type'] ?? NULL);
   }
 

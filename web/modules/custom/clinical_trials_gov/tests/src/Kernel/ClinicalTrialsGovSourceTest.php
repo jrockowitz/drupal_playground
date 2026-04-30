@@ -33,7 +33,6 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
     'migrate',
     'migrate_plus',
     'migrate_tools',
-    'json_field',
     'custom_field',
   ];
 

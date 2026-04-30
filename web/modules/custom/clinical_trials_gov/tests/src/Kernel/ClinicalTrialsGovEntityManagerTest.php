@@ -41,7 +41,6 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     'migrate',
     'migrate_plus',
     'migrate_tools',
-    'json_field',
     'custom_field',
     'field_group',
   ];
@@ -106,19 +105,21 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty'))?->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))?->getType());
     $this->assertSame('map_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.eligibilityModule'))?->getSetting('columns')['stdAges']['type'] ?? NULL);
+    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))?->getSetting('columns')['contacts']['type'] ?? NULL);
+    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))?->getSetting('columns')['geoPoint']['type'] ?? NULL);
     $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.referencesModule.references'))?->getSetting('columns')['citation']['type'] ?? NULL);
-    $this->assertSame('link', FieldStorageConfig::loadByName('node', 'field_trial_nct_url')?->getType());
-    $this->assertSame('link', FieldStorageConfig::loadByName('node', 'field_trial_nct_api')?->getType());
+    $this->assertSame('link', FieldStorageConfig::loadByName('node', 'trial_nct_url')?->getType());
+    $this->assertSame('link', FieldStorageConfig::loadByName('node', 'trial_nct_api')?->getType());
 
     // Check that the bundle field config exists for the created type.
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle')));
-    $this->assertSame('ClinicalTrials.gov URL', FieldConfig::loadByName('node', 'trial', 'field_trial_nct_url')?->label());
-    $this->assertSame('ClinicalTrials.gov API', FieldConfig::loadByName('node', 'trial', 'field_trial_nct_api')?->label());
-    $this->assertSame(16, FieldConfig::loadByName('node', 'trial', 'field_trial_nct_url')->getSetting('link_type'));
-    $this->assertSame(0, FieldConfig::loadByName('node', 'trial', 'field_trial_nct_url')->getSetting('title'));
-    $this->assertSame(16, FieldConfig::loadByName('node', 'trial', 'field_trial_nct_api')->getSetting('link_type'));
-    $this->assertSame(0, FieldConfig::loadByName('node', 'trial', 'field_trial_nct_api')->getSetting('title'));
+    $this->assertSame('ClinicalTrials.gov URL', FieldConfig::loadByName('node', 'trial', 'trial_nct_url')?->label());
+    $this->assertSame('ClinicalTrials.gov API', FieldConfig::loadByName('node', 'trial', 'trial_nct_api')?->label());
+    $this->assertSame(16, FieldConfig::loadByName('node', 'trial', 'trial_nct_url')->getSetting('link_type'));
+    $this->assertSame(0, FieldConfig::loadByName('node', 'trial', 'trial_nct_url')->getSetting('title'));
+    $this->assertSame(16, FieldConfig::loadByName('node', 'trial', 'trial_nct_api')->getSetting('link_type'));
+    $this->assertSame(0, FieldConfig::loadByName('node', 'trial', 'trial_nct_api')->getSetting('title'));
 
     // Check that created fields are added to the default form and view displays.
     $form_display = EntityFormDisplay::load('node.trial.default');
@@ -126,17 +127,17 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertSame('string_textfield', $form_display->getComponent('field_trial_brief_title')['type'] ?? NULL);
     $this->assertSame('string_textfield', $form_display->getComponent('field_trial_nct_id')['type'] ?? NULL);
     $this->assertSame('custom_stacked', $form_display->getComponent('field_trial_resp_party')['type'] ?? NULL);
-    $this->assertSame('link_default', $form_display->getComponent('field_trial_nct_url')['type'] ?? NULL);
-    $this->assertSame('link_default', $form_display->getComponent('field_trial_nct_api')['type'] ?? NULL);
+    $this->assertSame('link_default', $form_display->getComponent('trial_nct_url')['type'] ?? NULL);
+    $this->assertSame('link_default', $form_display->getComponent('trial_nct_api')['type'] ?? NULL);
 
     $view_display = EntityViewDisplay::load('node.trial.default');
     $this->assertNotNull($view_display);
     $this->assertSame('string', $view_display->getComponent('field_trial_nct_id')['type'] ?? NULL);
     $this->assertSame('custom_formatter', $view_display->getComponent('field_trial_resp_party')['type'] ?? NULL);
-    $this->assertSame('link', $view_display->getComponent('field_trial_nct_url')['type'] ?? NULL);
-    $this->assertSame('link', $view_display->getComponent('field_trial_nct_api')['type'] ?? NULL);
-    $this->assertGreaterThan($view_display->getComponent('field_trial_over_status')['weight'] ?? -1, $view_display->getComponent('field_trial_nct_url')['weight'] ?? -1);
-    $this->assertGreaterThan($view_display->getComponent('field_trial_nct_url')['weight'] ?? -1, $view_display->getComponent('field_trial_nct_api')['weight'] ?? -1);
+    $this->assertSame('link', $view_display->getComponent('trial_nct_url')['type'] ?? NULL);
+    $this->assertSame('link', $view_display->getComponent('trial_nct_api')['type'] ?? NULL);
+    $this->assertGreaterThan($view_display->getComponent('field_trial_over_status')['weight'] ?? -1, $view_display->getComponent('trial_nct_url')['weight'] ?? -1);
+    $this->assertGreaterThan($view_display->getComponent('trial_nct_url')['weight'] ?? -1, $view_display->getComponent('trial_nct_api')['weight'] ?? -1);
 
     // Check that the promoted custom field is added to the displays.
     $this->assertSame('custom_stacked', $form_display->getComponent('field_trial_location')['type'] ?? NULL);

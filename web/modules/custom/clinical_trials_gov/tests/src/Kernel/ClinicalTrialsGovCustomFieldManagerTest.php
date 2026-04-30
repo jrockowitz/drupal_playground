@@ -35,7 +35,6 @@ class ClinicalTrialsGovCustomFieldManagerTest extends KernelTestBase {
     'migrate',
     'migrate_plus',
     'migrate_tools',
-    'json_field',
     'custom_field',
     'field_group',
   ];
@@ -91,6 +90,18 @@ class ClinicalTrialsGovCustomFieldManagerTest extends KernelTestBase {
     $this->assertSame('custom', $references_definition['field_type']);
     $this->assertSame('string_long', $references_definition['storage_settings']['columns']['citation']['type']);
     $this->assertArrayNotHasKey('formatted', $references_definition['instance_settings']['field_settings']['citation']);
+
+    // Check that unsupported nested values fall back to YAML-backed text.
+    $locations_definition = $this->customFieldManager->resolveStructuredFieldDefinition('protocolSection.contactsLocationsModule.locations');
+    $this->assertIsArray($locations_definition);
+    $this->assertSame('string_long', $locations_definition['storage_settings']['columns']['contacts']['type']);
+    $this->assertSame('Facility Contact (YAML)', $locations_definition['instance_settings']['field_settings']['contacts']['label']);
+    $this->assertSame('string_long', $locations_definition['storage_settings']['columns']['geoPoint']['type']);
+    $this->assertSame('Location Geo Point (YAML)', $locations_definition['instance_settings']['field_settings']['geoPoint']['label']);
+    $this->assertSame([
+      'contacts',
+      'geoPoint',
+    ], $locations_definition['yaml_columns']);
   }
 
 }

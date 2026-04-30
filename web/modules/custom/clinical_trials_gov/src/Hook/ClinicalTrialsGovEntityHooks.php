@@ -4,50 +4,27 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Hook;
 
-use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuerySummary;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
 use Drupal\clinical_trials_gov\Entity\ClinicalTrialsGovNodeAccessControlHandler;
 use Drupal\clinical_trials_gov\Entity\ClinicalTrialsGovTrashNodeAccessControlHandler;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
- * Hook implementations for the ClinicalTrials.gov module.
+ * Entity-related hook implementations for the ClinicalTrials.gov module.
  */
-class ClinicalTrialsGovHooks {
+class ClinicalTrialsGovEntityHooks {
 
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
     protected ModuleHandlerInterface $moduleHandler,
-    protected EntityTypeManagerInterface $entityTypeManager,
+    protected ClinicalTrialsGovEntityManagerInterface $entityManager,
   ) {}
-
-  /**
-   * Implements hook_gin_ignore_sticky_form_actions().
-   */
-  #[Hook('gin_ignore_sticky_form_actions')]
-  public function ginIgnoreStickyFormActions(): array {
-    return [
-      'clinical_trials_gov_find_form',
-      'clinical_trials_gov_config_form',
-      'clinical_trials_gov_import_form',
-    ];
-  }
-
-  /**
-   * Implements hook_element_info().
-   */
-  #[Hook('element_info')]
-  public function elementInfo(): array {
-    return [
-      'clinical_trials_gov_studies_query_summary' => (new ClinicalTrialsGovStudiesQuerySummary())->getInfo(),
-    ];
-  }
 
   /**
    * Implements hook_entity_type_alter().
@@ -85,12 +62,12 @@ class ClinicalTrialsGovHooks {
     }
 
     $field_mappings = array_filter($settings->get('fields') ?? [], 'is_string');
-    if ($field_mappings === []) {
-      return;
-    }
+    $field_names = array_keys($field_mappings);
+    $field_names[] = $this->entityManager->getStudyUrlFieldName();
+    $field_names[] = $this->entityManager->getStudyApiFieldName();
 
     $view_display = EntityViewDisplay::load('node.' . $bundle . '.default');
-    foreach (array_keys($field_mappings) as $field_name) {
+    foreach (array_unique($field_names) as $field_name) {
       $component = $form_display->getComponent($field_name);
       if ($component === NULL) {
         continue;

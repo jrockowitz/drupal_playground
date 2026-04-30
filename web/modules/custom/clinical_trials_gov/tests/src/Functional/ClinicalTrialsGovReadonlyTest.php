@@ -71,6 +71,12 @@ class ClinicalTrialsGovReadonlyTest extends BrowserTestBase {
       'field_trial_nct_id' => [
         'value' => 'NCT05088187',
       ],
+      'trial_nct_url' => [
+        'uri' => 'https://clinicaltrials.gov/study/NCT05088187',
+      ],
+      'trial_nct_api' => [
+        'uri' => 'https://clinicaltrials.gov/api/v2/studies/NCT05088187',
+      ],
     ]);
     $node->save();
 
@@ -82,8 +88,12 @@ class ClinicalTrialsGovReadonlyTest extends BrowserTestBase {
     // Check that the mapped ClinicalTrials.gov fields render as readonly output.
     $this->assertSession()->fieldNotExists('Brief Title');
     $this->assertSession()->fieldNotExists('Nct Id');
+    $this->assertSession()->fieldNotExists('ClinicalTrials.gov URL');
+    $this->assertSession()->fieldNotExists('ClinicalTrials.gov API');
     $this->assertSession()->pageTextContains('Readonly brief title');
     $this->assertSession()->pageTextContains('NCT05088187');
+    $this->assertSession()->pageTextContains('https://clinicaltrials.gov/study/NCT05088187');
+    $this->assertSession()->pageTextContains('https://clinicaltrials.gov/api/v2/studies/NCT05088187');
   }
 
 }

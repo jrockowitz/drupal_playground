@@ -37,4 +37,5 @@ services:
 
   clinical_trials_gov.migration_manager:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManager
+    arguments: ["@config.factory", "@plugin.manager.migration", "@clinical_trials_gov.field_manager", "@clinical_trials_gov.entity_manager", "@logger.channel.clinical_trials_gov"]
   Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface: "@clinical_trials_gov.migration_manager"

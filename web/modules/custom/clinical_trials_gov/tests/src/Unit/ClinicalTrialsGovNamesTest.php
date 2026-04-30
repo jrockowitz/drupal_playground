@@ -47,7 +47,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
     $config
       ->method('get')
       ->with('field_prefix')
-      ->willReturn('trial');
+      ->willReturn('trial_version_holder');
     $config_factory
       ->method('get')
       ->with('clinical_trials_gov.settings')
@@ -63,10 +63,10 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    */
   public function testGetFieldName(): void {
     // Check that hard-coded overrides are respected.
-    $this->assertSame('field_trial_nct_id_alias', $this->names->getFieldName('NCTIdAlias'));
+    $this->assertSame('field_trial_version_hol_0591be62', $this->names->getFieldName('NCTIdAlias'));
 
     // Check that non-overridden names are normalized to snake case.
-    $this->assertSame('field_trial_resp_party', $this->names->getFieldName('ResponsibleParty'));
+    $this->assertSame('field_trial_version_hol_fe6cf9e5', $this->names->getFieldName('ResponsibleParty'));
   }
 
   /**

@@ -35,7 +35,6 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     'migrate',
     'migrate_plus',
     'migrate_tools',
-    'json_field',
     'custom_field',
     'field_group',
   ];
@@ -54,6 +53,9 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installConfig(['field', 'filter', 'node', 'system']);
     $this->installSchema('node', ['node_access']);
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('field_prefix', 'trial')
+      ->save();
     $this->fieldManager = $this->container->get('clinical_trials_gov.field_manager');
   }
 

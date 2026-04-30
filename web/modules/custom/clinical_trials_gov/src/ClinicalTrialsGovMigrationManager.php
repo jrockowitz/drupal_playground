@@ -6,6 +6,7 @@ namespace Drupal\clinical_trials_gov;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Manages generated migration configuration for the import wizard.
@@ -37,6 +38,7 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
     protected MigrationPluginManagerInterface $migrationPluginManager,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
     protected ClinicalTrialsGovEntityManagerInterface $entityManager,
+    protected LoggerInterface $logger,
   ) {}
 
   /**
@@ -58,9 +60,20 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
     }
 
     $process = [];
+    $source_constants = [
+      'title_max_length' => self::TITLE_MAX_LENGTH,
+      'title_wordsafe' => FALSE,
+      'title_add_ellipsis' => TRUE,
+      'study_url_prefix' => self::STUDY_URL_PREFIX,
+      'study_api_url_prefix' => self::STUDY_API_URL_PREFIX,
+    ];
     foreach ($fields as $path) {
       $definition = $this->fieldManager->getFieldDefinition($path);
       if (empty($definition['selectable'])) {
+        $this->logger->warning('Skipped ClinicalTrials.gov field mapping for @path: @reason', [
+          '@path' => $path,
+          '@reason' => (string) ($definition['reason'] ?? 'Unsupported mapping.'),
+        ]);
         continue;
       }
       if (!empty($definition['group_only'])) {
@@ -80,6 +93,24 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
             ],
           ],
         ];
+      }
+
+      if ($definition['field_type'] === 'custom' && !empty($definition['yaml_columns'])) {
+        $source_constants[$definition['field_name'] . '_yaml_columns'] = $definition['yaml_columns'];
+        $process[$definition['field_name']] = [
+          [
+            'plugin' => 'clinical_trials_gov_custom_field',
+            'source' => [
+              $path,
+              'constants/' . $definition['field_name'] . '_yaml_columns',
+            ],
+          ],
+        ];
+        $this->logger->warning('ClinicalTrials.gov field @path uses YAML fallback for custom field properties: @columns', [
+          '@path' => $path,
+          '@columns' => implode(', ', $definition['yaml_columns']),
+        ]);
+        continue;
       }
 
       $process[$definition['field_name']] = $path;
@@ -113,13 +144,7 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
       'source' => [
         'plugin' => 'clinical_trials_gov',
         'query' => $query,
-        'constants' => [
-          'title_max_length' => self::TITLE_MAX_LENGTH,
-          'title_wordsafe' => FALSE,
-          'title_add_ellipsis' => TRUE,
-          'study_url_prefix' => self::STUDY_URL_PREFIX,
-          'study_api_url_prefix' => self::STUDY_API_URL_PREFIX,
-        ],
+        'constants' => $source_constants,
       ],
       'process' => $process,
       'destination' => [
