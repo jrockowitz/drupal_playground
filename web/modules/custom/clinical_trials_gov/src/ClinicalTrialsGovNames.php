@@ -22,14 +22,16 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     'analyze' => 'anal',
     'analyzed' => 'anal',
     'anticipated' => 'ant',
+    'affiliation' => 'affil',
     'baseline' => 'base',
     'collaborator' => 'collab',
+    'completion' => 'compl',
+    'date' => 'dt',
     'description' => 'desc',
     'estimated' => 'est',
     'event' => 'evt',
     'events' => 'evt',
     'expanded' => 'exp',
-    'first' => 'fst',
     'group' => 'grp',
     'identification' => 'id',
     'inferiority' => 'inf',
@@ -59,7 +61,6 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     'statistical' => 'stat',
     'submission' => 'sub',
     'update' => 'up',
-    'value' => 'val',
   ];
 
   /**
@@ -112,10 +113,14 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     $piece = trim($piece, '_');
 
     foreach (self::ABBREVIATIONS as $token => $abbreviation) {
-      $piece = preg_replace('#(^|_)' . $token . '(_|$)#', '$1' . $abbreviation . '$2', $piece);
-    }
+      $abbreviation_pattern = '#(^|_)' . preg_quote($abbreviation, '#') . '(_|$)#';
+      if (preg_match($abbreviation_pattern, $piece) === 1) {
+        continue;
+      }
 
-    $piece = preg_replace('#(?:ment|ation|etion|ition|ion)(_|$)#', '$1', $piece);
+      $token_pattern = '#(^|_)' . preg_quote($token, '#') . '(_|$)#';
+      $piece = preg_replace($token_pattern, '$1' . $abbreviation . '$2', $piece) ?? $piece;
+    }
 
     return $piece;
   }

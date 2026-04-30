@@ -70,12 +70,12 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
       ->set('type', 'trial')
       ->set('fields', [
         'group_location' => 'protocolSection.contactsLocationsModule.locations',
-        'field_responsible_party' => 'protocolSection.sponsorCollaboratorsModule.responsibleParty',
+        'field_resp_party' => 'protocolSection.sponsorCollaboratorsModule.responsibleParty',
         'field_condition' => 'protocolSection.conditionsModule.conditions',
         'field_brief_title' => 'protocolSection.identificationModule.briefTitle',
         'field_nct_id' => 'protocolSection.identificationModule.nctId',
         'field_nct_id_alias' => 'protocolSection.identificationModule.nctIdAliases',
-        'field_overall_status' => 'protocolSection.statusModule.overallStatus',
+        'field_over_status' => 'protocolSection.statusModule.overallStatus',
       ])
       ->save();
 
@@ -126,7 +126,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
       ],
     ], $config->get('process.field_nct_api/uri'));
     $this->assertNull($config->get('process.group_location'));
-    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.field_responsible_party'));
+    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.field_resp_party'));
 
     // Check that title truncation constants are available to the migration.
     $this->assertSame(255, $config->get('source.constants.title_max_length'));

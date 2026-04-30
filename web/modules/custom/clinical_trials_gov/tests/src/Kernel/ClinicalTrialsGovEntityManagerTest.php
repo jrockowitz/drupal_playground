@@ -121,17 +121,17 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertNotNull($form_display);
     $this->assertSame('string_textfield', $form_display->getComponent('field_brief_title')['type'] ?? NULL);
     $this->assertSame('string_textfield', $form_display->getComponent('field_nct_id')['type'] ?? NULL);
-    $this->assertSame('custom_stacked', $form_display->getComponent('field_responsible_party')['type'] ?? NULL);
+    $this->assertSame('custom_stacked', $form_display->getComponent('field_resp_party')['type'] ?? NULL);
     $this->assertSame('link_default', $form_display->getComponent('field_nct_url')['type'] ?? NULL);
     $this->assertSame('link_default', $form_display->getComponent('field_nct_api')['type'] ?? NULL);
 
     $view_display = EntityViewDisplay::load('node.trial.default');
     $this->assertNotNull($view_display);
     $this->assertSame('string', $view_display->getComponent('field_nct_id')['type'] ?? NULL);
-    $this->assertSame('custom_formatter', $view_display->getComponent('field_responsible_party')['type'] ?? NULL);
+    $this->assertSame('custom_formatter', $view_display->getComponent('field_resp_party')['type'] ?? NULL);
     $this->assertSame('link', $view_display->getComponent('field_nct_url')['type'] ?? NULL);
     $this->assertSame('link', $view_display->getComponent('field_nct_api')['type'] ?? NULL);
-    $this->assertGreaterThan($view_display->getComponent('field_overall_status')['weight'] ?? -1, $view_display->getComponent('field_nct_url')['weight'] ?? -1);
+    $this->assertGreaterThan($view_display->getComponent('field_over_status')['weight'] ?? -1, $view_display->getComponent('field_nct_url')['weight'] ?? -1);
     $this->assertGreaterThan($view_display->getComponent('field_nct_url')['weight'] ?? -1, $view_display->getComponent('field_nct_api')['weight'] ?? -1);
 
     // Check that the promoted custom field is added to the displays.
@@ -140,16 +140,16 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
 
     // Check that remaining nested structure selections create a field group on the form display.
     $field_groups = $form_display->getThirdPartySettings('field_group');
-    $this->assertArrayHasKey('group_identification_module', $field_groups);
-    $this->assertContains('field_brief_title', $field_groups['group_identification_module']['children']);
-    $this->assertContains('field_nct_id', $field_groups['group_identification_module']['children']);
-    $this->assertContains('field_organization', $field_groups['group_identification_module']['children']);
-    $this->assertNotContains('title', $field_groups['group_identification_module']['children']);
+    $this->assertArrayHasKey('group_id_mod', $field_groups);
+    $this->assertContains('field_brief_title', $field_groups['group_id_mod']['children']);
+    $this->assertContains('field_nct_id', $field_groups['group_id_mod']['children']);
+    $this->assertContains('field_org', $field_groups['group_id_mod']['children']);
+    $this->assertNotContains('title', $field_groups['group_id_mod']['children']);
 
     // Check that remaining nested structure selections create a fieldset on the view display.
     $view_field_groups = $view_display->getThirdPartySettings('field_group');
-    $this->assertArrayHasKey('group_identification_module', $view_field_groups);
-    $this->assertSame('fieldset', $view_field_groups['group_identification_module']['format_type']);
+    $this->assertArrayHasKey('group_id_mod', $view_field_groups);
+    $this->assertSame('fieldset', $view_field_groups['group_id_mod']['format_type']);
   }
 
   /**
@@ -192,8 +192,8 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that partial date structures resolve to custom fields.
     $this->assertSame('custom', $partial_date_struct_definition['field_type']);
     $this->assertSame([
-      'start_date',
-      'start_date_type',
+      'start_dt',
+      'start_dt_type',
     ], $partial_date_struct_definition['details']);
 
     // Check that text array fields resolve to unlimited multi-value scalar fields.
@@ -211,11 +211,11 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertSame('custom field', $responsible_party_definition['display_type_label']);
     $this->assertSame([
       'type',
-      'investigator_full_name',
-      'investigator_title',
-      'investigator_affiliation',
+      'inv_full_name',
+      'inv_title',
+      'inv_affil',
       'old_name_title',
-      'old_organization',
+      'old_org',
     ], $responsible_party_definition['details']);
 
     // Check that MARKUP custom-field columns use formatted long text with plain text format.

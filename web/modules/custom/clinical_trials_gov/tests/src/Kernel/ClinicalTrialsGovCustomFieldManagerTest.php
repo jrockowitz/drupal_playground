@@ -70,11 +70,11 @@ class ClinicalTrialsGovCustomFieldManagerTest extends KernelTestBase {
     $this->assertSame('custom', $responsible_party_definition['field_type']);
     $this->assertSame([
       'type',
-      'investigator_full_name',
-      'investigator_title',
-      'investigator_affiliation',
+      'inv_full_name',
+      'inv_title',
+      'inv_affil',
       'old_name_title',
-      'old_organization',
+      'old_org',
     ], $responsible_party_definition['details']);
 
     // Check that MARKUP child fields use formatted long text settings.

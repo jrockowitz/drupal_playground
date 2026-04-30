@@ -114,7 +114,8 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
 
     // Check that the field title column combines description and notes.
     $this->assertCount(6, $table['#header']);
-    $this->assertStringContainsString('Description/Notes/Definition', (string) $table['#header'][1]['data']);
+    $this->assertSame('Field Title', $table['#header'][1]['data']['primary']['#value']);
+    $this->assertSame('Description/Notes/Definition', $table['#header'][1]['data']['secondary']['#value']);
     $this->assertSame('Path', (string) $table['#header'][2]);
     $this->assertSame('Alt Piece Names', (string) $table['#header'][5]);
     $this->assertStringContainsString('Required for all trials.', (string) $table['#rows'][1]['data'][1]['data']);

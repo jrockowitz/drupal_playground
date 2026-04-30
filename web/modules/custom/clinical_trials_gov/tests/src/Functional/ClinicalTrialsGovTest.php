@@ -147,7 +147,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('ProtocolSection');
     $this->assertSession()->pageTextContains('ResponsibleParty');
     $this->assertSession()->elementExists('css', 'td ul li');
-    $this->assertSession()->pageTextContains('investigator_full_name');
+    $this->assertSession()->pageTextContains('inv_full_name');
     $this->assertSession()->pageTextNotContains('Details');
     $this->assertSession()->elementExists('css', 'th.select-all');
     $this->assertSession()->fieldExists('field_mapping[rows][' . md5('protocolSection.sponsorCollaboratorsModule.responsibleParty') . '][selected]');
@@ -184,8 +184,8 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertFalse(array_is_list($saved_fields));
     $this->assertSame('protocolSection.identificationModule.nctId', $saved_fields['field_nct_id']);
     $this->assertSame('protocolSection.identificationModule.briefTitle', $saved_fields['field_brief_title']);
-    $this->assertSame('protocolSection.statusModule.overallStatus', $saved_fields['field_overall_status']);
-    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $saved_fields['field_responsible_party']);
+    $this->assertSame('protocolSection.statusModule.overallStatus', $saved_fields['field_over_status']);
+    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $saved_fields['field_resp_party']);
 
     $this->drupalGet('admin/config/services/clinical-trials-gov');
 
