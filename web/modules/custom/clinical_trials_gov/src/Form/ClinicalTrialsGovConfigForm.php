@@ -11,7 +11,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -71,9 +70,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $node_type = $this->entityTypeManager->getStorage('node_type')->load($saved_type);
 
     if ($paths === []) {
-      $this->messenger()->addWarning(Markup::create((string) $this->t('Save a studies query from the <a href=":find_url">Find</a> step before configuring the destination content type and fields.', [
+      $this->messenger()->addWarning($this->t('Save a studies query from the <a href=":find_url">Find</a> step before configuring the destination content type and fields.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
-      ])));
+      ]));
       $form = parent::buildForm($form, $form_state);
       unset($form['actions']);
       return $form;
@@ -245,9 +244,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $paths = array_values(array_filter($this->config('clinical_trials_gov.settings')->get('paths') ?? [], 'is_string'));
     if ($paths === []) {
-      $this->messenger()->addWarning(Markup::create((string) $this->t('Save a studies query from the <a href=":find_url">Find</a> step before configuring the destination content type and fields.', [
+      $this->messenger()->addWarning($this->t('Save a studies query from the <a href=":find_url">Find</a> step before configuring the destination content type and fields.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
-      ])));
+      ]));
       $form_state->setRedirect('clinical_trials_gov.find');
       return;
     }

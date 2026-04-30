@@ -8,7 +8,6 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -80,9 +79,9 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
   protected function buildListPage(Request $request): array {
     $saved_query = (string) ($this->config('clinical_trials_gov.settings')->get('query') ?? '');
     if ($saved_query === '') {
-      $this->messenger()->addWarning(Markup::create((string) $this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
+      $this->messenger()->addWarning($this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
-      ])));
+      ]));
       return [];
     }
 

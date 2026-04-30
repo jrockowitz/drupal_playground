@@ -10,7 +10,6 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Render\Markup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -239,19 +238,46 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
    * Builds a cell with primary and secondary lines.
    */
   protected function buildPrimarySecondaryCell(string $primary, string $secondary, int $depth = 0): array {
-    $style = ($depth > 0) ? ' style="padding-left:' . ($depth * 1.5) . 'rem"' : '';
-    $markup = '<div class="clinical-trials-gov-report-metadata__primary"' . $style . '><strong>'
-      . Html::escape($primary)
-      . '</strong></div>';
+    $style = ($depth > 0) ? 'padding-left:' . ($depth * 1.5) . 'rem' : '';
+
+    $cell = [
+      'primary' => [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => ['clinical-trials-gov-report-metadata__primary'],
+        ],
+        'content' => [
+          '#type' => 'html_tag',
+          '#tag' => 'strong',
+          '#value' => $primary,
+        ],
+      ],
+    ];
+
+    if ($style !== '') {
+      $cell['primary']['#attributes']['style'] = $style;
+    }
 
     if ($secondary !== '') {
-      $markup .= '<div class="clinical-trials-gov-report-metadata__secondary"' . $style . '>'
-        . Html::escape($secondary)
-        . '</div>';
+      $cell['secondary'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => ['clinical-trials-gov-report-metadata__secondary'],
+        ],
+        'content' => [
+          '#markup' => Html::escape($secondary),
+        ],
+      ];
+
+      if ($style !== '') {
+        $cell['secondary']['#attributes']['style'] = $style;
+      }
     }
 
     return [
-      'data' => Markup::create($markup),
+      'data' => $cell,
     ];
   }
 
@@ -295,13 +321,15 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
       }
 
       if (!empty($value['is_struct'])) {
-        $name = '<strong>' . Html::escape($name) . '</strong>';
+        $items[] = [
+          '#type' => 'html_tag',
+          '#tag' => 'strong',
+          '#value' => $name,
+        ];
       }
       else {
-        $name = Html::escape($name);
+        $items[] = $name;
       }
-
-      $items[] = Markup::create($name);
     }
 
     if ($items === []) {

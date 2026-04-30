@@ -9,6 +9,7 @@
     "brainstorming": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/brainstorming/SKILL.md",
       "computedHash": "8df9b47092524833138b58682d03f2e153a242e550d1693657afdbee0cc9cdb0"
     },
     "browser-validator": {
@@ -34,6 +35,7 @@
     "dispatching-parallel-agents": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/dispatching-parallel-agents/SKILL.md",
       "computedHash": "e21044ae7496fc285f1df9ff3fb518a3a20bea6f5216c1f59f4987e12c769a0a"
     },
     "documentation-generator": {
@@ -44,22 +46,32 @@
     "drupal-at-your-fingertips": {
       "source": "grasmash/drupal-claude-skills",
       "sourceType": "github",
-      "computedHash": "e982ad9238000f6b537b1756f87cb7584473ba8306ddd0c8b5a12244f0941b94"
+      "skillPath": "skills/drupal-at-your-fingertips/SKILL.md",
+      "computedHash": "7dca7c2ebc0a1241cbeff6d53c63344257fc9c63738904ba03382d7f81ac0d9c"
     },
     "drupal-config-mgmt": {
       "source": "grasmash/drupal-claude-skills",
       "sourceType": "github",
-      "computedHash": "acb3851d7f0ddb8852d56ed793b6d1bbb48d68b7dfa14793718d21f40bcd8ee2"
+      "skillPath": "skills/drupal-config-mgmt/SKILL.md",
+      "computedHash": "51377c134702729976d81ceabba0cd0904ba6a4cccda15dfa5f520d75b12e370"
     },
     "drupal-contrib-mgmt": {
       "source": "grasmash/drupal-claude-skills",
       "sourceType": "github",
-      "computedHash": "df8ce4558e53a954b83d43e5c44834ef44ac0a8bed8eb523ed04afc65be7cd23"
+      "skillPath": "skills/drupal-contrib-mgmt/SKILL.md",
+      "computedHash": "97275f7474a125ac97912f245051ffa8502117f9e631b9829398caf96f34fdaa"
     },
     "drupal-ddev": {
       "source": "grasmash/drupal-claude-skills",
       "sourceType": "github",
-      "computedHash": "65846250353be5f12b5eee6c1b0ef1182a7c8ffbe68260df8ac186591c4f61bf"
+      "skillPath": "skills/drupal-ddev/SKILL.md",
+      "computedHash": "0a57bb55add53d4ac84e3804914a43489e75d0544a2b3728b235b88775f74ab3"
+    },
+    "drupal-search-api": {
+      "source": "grasmash/drupal-claude-skills",
+      "sourceType": "github",
+      "skillPath": "skills/drupal-search-api/SKILL.md",
+      "computedHash": "9f333bbcc5185ada3461638a2664e391eddcae1138fccf699f0ccbab2889004a"
     },
     "drupalorg-contribution-helper": {
       "source": "kanopi/cms-cultivator",
@@ -74,11 +86,13 @@
     "executing-plans": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/executing-plans/SKILL.md",
       "computedHash": "2f709d1a2c7564f8ce6a9bb707e7f5451117ba80f8e8e2302662c29bc61246a6"
     },
     "finishing-a-development-branch": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/finishing-a-development-branch/SKILL.md",
       "computedHash": "9edba9a38684c060fdc38290f640e1dc0c37de286723ac9be73bacacf7cd6f3d"
     },
     "performance-analyzer": {
@@ -89,11 +103,13 @@
     "receiving-code-review": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/receiving-code-review/SKILL.md",
       "computedHash": "2760c85d4f4117b0006e7ba755f4bbd61f8f4c185f347999763c97f507274e30"
     },
     "requesting-code-review": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/requesting-code-review/SKILL.md",
       "computedHash": "246e65cd72a7e360987d94e6c61564ce6d71c6361d1784d529d70e4cbbe8522d"
     },
     "security-scanner": {
@@ -104,11 +120,13 @@
     "subagent-driven-development": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/subagent-driven-development/SKILL.md",
       "computedHash": "a197f8e5fba5ea59013e1adbaa90dd42db35de8f074feca200c8038de584a83b"
     },
     "systematic-debugging": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/systematic-debugging/SKILL.md",
       "computedHash": "72e9ab72627e4fd8ed26a582e82309a98ecdc4f6e1c99418430ac05682c9e91d"
     },
     "teamwork-exporter": {
@@ -129,6 +147,7 @@
     "test-driven-development": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/test-driven-development/SKILL.md",
       "computedHash": "126f1ebf6ccd414f42544f6e83d8cc5adb089e1108eaffb7c400701e37eecd9f"
     },
     "test-plan-generator": {
@@ -149,21 +168,25 @@
     "using-superpowers": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/using-superpowers/SKILL.md",
       "computedHash": "e0eced9fbb205c212f420aded0c6f2bf5d5f059254679a8459b4fe72390160be"
     },
     "verification-before-completion": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/verification-before-completion/SKILL.md",
       "computedHash": "9b446f0c7fe1cfb560b1d34439523b1a76d5f177290007b2c053a1c749a4a8ba"
     },
     "writing-plans": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/writing-plans/SKILL.md",
       "computedHash": "bfaed11054ad8021c66860244e2d2e0d1eca483ae9f5fbfcb956e99c61f5c3d7"
     },
     "writing-skills": {
       "source": "obra/superpowers",
       "sourceType": "github",
+      "skillPath": "skills/writing-skills/SKILL.md",
       "computedHash": "c0a92e629e39ea91b1f54da67a6aa92723008a8ef5b500c6de078f55485937c7"
     }
   }

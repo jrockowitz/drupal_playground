@@ -10,7 +10,6 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 
 /**
@@ -187,10 +186,10 @@ class ClinicalTrialsGovPathDiscoveryBatch {
       return;
     }
 
-    $messenger->addStatus(Markup::create((string) t('Discovered @path_count fields (aka paths) that are used to determine which study/trial fields should be created and imported. Review the field <a href=":metadata_url">metadata</a>.', [
+    $messenger->addStatus(t('Discovered @path_count fields (aka paths) that are used to determine which study/trial fields should be created and imported. Review the field <a href=":metadata_url">metadata</a>.', [
       '@path_count' => $path_count,
       ':metadata_url' => Url::fromRoute('clinical_trials_gov.review.metadata')->toString(),
-    ])));
+    ]));
   }
 
 }

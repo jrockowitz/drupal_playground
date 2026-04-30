@@ -9,7 +9,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 
 /**
@@ -33,9 +32,9 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    */
   public function index(): array {
     if ($this->filter && $this->getSavedQuery() === '') {
-      $this->messageHandler->addWarning(Markup::create((string) $this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
+      $this->messageHandler->addWarning($this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
-      ])));
+      ]));
       return [];
     }
 
@@ -229,19 +228,48 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds a cell with primary and secondary lines.
    */
   protected function buildPrimarySecondaryCell(string $primary, string $secondary, int $depth = 0): array {
-    $style = ($depth > 0) ? ' style="padding-left:' . ($depth * 1.5) . 'rem"' : '';
-    $markup = '<div class="clinical-trials-gov-report-metadata__primary"' . $style . '><strong>'
-      . Html::escape($primary)
-      . '</strong></div>';
+    $style = ($depth > 0) ? 'padding-left:' . ($depth * 1.5) . 'rem' : '';
+
+    $cell = [
+      'primary' => [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => ['clinical-trials-gov-report-metadata__primary'],
+        ],
+        'content' => [
+          '#type' => 'html_tag',
+          '#tag' => 'strong',
+          '#value' => $primary,
+        ],
+      ],
+    ];
+
+    if ($style !== '') {
+      $cell['primary']['#attributes']['style'] = $style;
+    }
 
     if ($secondary !== '') {
-      $markup .= '<div class="clinical-trials-gov-report-metadata__secondary"' . $style . '><small>'
-        . Html::escape($secondary)
-        . '</small></div>';
+      $cell['secondary'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => ['clinical-trials-gov-report-metadata__secondary'],
+        ],
+        'content' => [
+          '#type' => 'html_tag',
+          '#tag' => 'small',
+          '#value' => $secondary,
+        ],
+      ];
+
+      if ($style !== '') {
+        $cell['secondary']['#attributes']['style'] = $style;
+      }
     }
 
     return [
-      'data' => Markup::create($markup),
+      'data' => $cell,
     ];
   }
 
@@ -268,31 +296,63 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
       return '';
     }
 
-    $markup = '';
+    $content = [];
     if ($title !== '') {
-      $markup .= '<strong>' . Html::escape($title) . '</strong><br/>';
+      $content['title'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'strong',
+        '#value' => $title,
+      ];
+      $content['title_break'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'br',
+      ];
     }
     if ($description !== '') {
-      $markup .= '<small>' . nl2br(Html::escape($description)) . '</small><br/>';
+      $content['description'] = [
+        '#markup' => '<small>' . nl2br(Html::escape($description)) . '</small>',
+      ];
+      $content['description_break'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'br',
+      ];
     }
     if ($notes !== '') {
-      $markup .= '<em><small>' . nl2br(Html::escape($notes)) . '</small></em><br/>';
+      $content['notes'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'em',
+        'content' => [
+          '#markup' => '<small>' . nl2br(Html::escape($notes)) . '</small>',
+        ],
+      ];
+      $content['notes_break'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'br',
+      ];
     }
     if ($definition_label !== '') {
-      $markup .= '<small>';
+      $content['definition'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'small',
+      ];
       if ($definition_url !== '') {
-        $markup .= '<a href="' . Html::escape($definition_url) . '">'
-          . Html::escape($definition_label)
-          . '</a>';
+        $content['definition']['content'] = [
+          '#type' => 'link',
+          '#title' => $definition_label,
+          '#url' => Url::fromUri($definition_url),
+        ];
       }
       else {
-        $markup .= Html::escape($definition_label);
+        $content['definition']['#value'] = $definition_label;
       }
-      $markup .= '</small><br/>';
+      $content['definition_break'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'br',
+      ];
     }
 
     return [
-      'data' => Markup::create($markup),
+      'data' => $content,
     ];
   }
 
@@ -339,7 +399,11 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
     }
 
     return [
-      'data' => Markup::create('<small>' . Html::escape($path) . '</small>'),
+      'data' => [
+        '#type' => 'html_tag',
+        '#tag' => 'small',
+        '#value' => $path,
+      ],
     ];
   }
 

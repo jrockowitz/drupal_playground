@@ -69,14 +69,10 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends KernelTestBase {
 
     // Check that only configured metadata rows are rendered.
     $this->assertCount(2, $build['results']['#rows']);
-    $this->assertSame(
-      'protocolSection.identificationModule.briefTitle',
-      trim(strip_tags((string) $build['results']['#rows'][0]['data'][2]['data']))
-    );
-    $this->assertSame(
-      'protocolSection.statusModule.overallStatus',
-      trim(strip_tags((string) $build['results']['#rows'][1]['data'][2]['data']))
-    );
+    $this->assertSame('small', $build['results']['#rows'][0]['data'][2]['data']['#tag']);
+    $this->assertSame('protocolSection.identificationModule.briefTitle', $build['results']['#rows'][0]['data'][2]['data']['#value']);
+    $this->assertSame('small', $build['results']['#rows'][1]['data'][2]['data']['#tag']);
+    $this->assertSame('protocolSection.statusModule.overallStatus', $build['results']['#rows'][1]['data'][2]['data']['#value']);
   }
 
   /**

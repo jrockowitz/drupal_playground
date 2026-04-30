@@ -197,11 +197,18 @@ class ClinicalTrialsGovReportStructsControllerTest extends UnitTestCase {
     $this->assertSame([], $table['#rows'][2]['class']);
     $this->assertSame(['color-warning'], $table['#rows'][3]['class']);
     $this->assertSame(['clinical-trials-gov-report-structs__row--unused'], $table['#rows'][1]['class']);
+    $this->assertSame('html_tag', $table['#rows'][2]['data'][0]['data']['primary']['#type']);
+    $this->assertSame('div', $table['#rows'][2]['data'][0]['data']['primary']['#tag']);
+    $this->assertSame('strong', $table['#rows'][2]['data'][0]['data']['primary']['content']['#tag']);
+    $this->assertSame('locations', $table['#rows'][2]['data'][0]['data']['primary']['content']['#value']);
+    $this->assertSame('Location', $table['#rows'][2]['data'][0]['data']['secondary']['content']['#markup']);
 
     // Check that sub-properties call out structs and multiple values.
     $sub_properties_cell = $this->controller->exposedBuildSubPropertiesCell($rows['protocolSection.contactsLocationsModule.locations']['sub_properties']);
     $this->assertSame('status', (string) $sub_properties_cell['data']['#items'][0]);
-    $this->assertSame('<strong>contacts[]</strong>', (string) $sub_properties_cell['data']['#items'][1]);
+    $this->assertSame('html_tag', $sub_properties_cell['data']['#items'][1]['#type']);
+    $this->assertSame('strong', $sub_properties_cell['data']['#items'][1]['#tag']);
+    $this->assertSame('contacts[]', $sub_properties_cell['data']['#items'][1]['#value']);
   }
 
 }

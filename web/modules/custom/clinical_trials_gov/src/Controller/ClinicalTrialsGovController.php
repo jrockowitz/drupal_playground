@@ -6,7 +6,6 @@ namespace Drupal\clinical_trials_gov\Controller;
 
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 
 /**
@@ -26,24 +25,24 @@ class ClinicalTrialsGovController extends ControllerBase {
     $import_ready = ($query !== '' && $paths !== [] && $type !== '' && $field_mappings !== []);
 
     if ($query === '') {
-      $message = $this->buildMessage(Markup::create((string) $this->t('Please go to <a href=":url">Find</a> and build your query.', [
+      $message = $this->buildMessage($this->t('Please go to <a href=":url">Find</a> and build your query.', [
         ':url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
-      ])));
+      ]));
     }
     elseif ($paths === []) {
-      $message = $this->buildMessage(Markup::create((string) $this->t('Your query is saved, but no fields were discovered. Go back to <a href=":url">Find</a> and save a query that returns studies.', [
+      $message = $this->buildMessage($this->t('Your query is saved, but no fields were discovered. Go back to <a href=":url">Find</a> and save a query that returns studies.', [
         ':url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
-      ])));
+      ]));
     }
     elseif ($type === '' || $field_mappings === []) {
-      $message = $this->buildMessage(Markup::create((string) $this->t('Your query is saved. Go to <a href=":url">Configure</a> and select the destination content type and fields.', [
+      $message = $this->buildMessage($this->t('Your query is saved. Go to <a href=":url">Configure</a> and select the destination content type and fields.', [
         ':url' => Url::fromRoute('clinical_trials_gov.configure')->toString(),
-      ])));
+      ]));
     }
     else {
-      $message = $this->buildMessage(Markup::create((string) $this->t('Your query and field mapping are ready. Continue to <a href=":url">Import</a> when you are ready to sync studies.', [
+      $message = $this->buildMessage($this->t('Your query and field mapping are ready. Continue to <a href=":url">Import</a> when you are ready to sync studies.', [
         ':url' => Url::fromRoute('clinical_trials_gov.import')->toString(),
-      ])));
+      ]));
     }
 
     return [
@@ -73,7 +72,7 @@ class ClinicalTrialsGovController extends ControllerBase {
             'title' => $this->t('4. Import'),
             'description' => $import_ready
               ? $this->t('Review the import summary and run the migration.')
-              : Markup::create((string) $this->t('Review the import summary and run the migration. Complete the Find and Configure steps first.')),
+              : $this->t('Review the import summary and run the migration. Complete the Find and Configure steps first.'),
             'url' => Url::fromRoute('clinical_trials_gov.import'),
           ],
           'manage' => [

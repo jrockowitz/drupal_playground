@@ -118,11 +118,17 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
     $this->assertSame('Description/Notes/Definition', $table['#header'][1]['data']['secondary']['#value']);
     $this->assertSame('Path', (string) $table['#header'][2]);
     $this->assertSame('Alt Piece Names', (string) $table['#header'][5]);
-    $this->assertStringContainsString('Required for all trials.', (string) $table['#rows'][1]['data'][1]['data']);
-    $this->assertStringContainsString('Has to be unique in PRS.', (string) $table['#rows'][1]['data'][1]['data']);
-    $this->assertStringContainsString('https://clinicaltrials.gov/policy/protocol-definitions#BriefTitle', (string) $table['#rows'][1]['data'][1]['data']);
-    $this->assertStringNotContainsString('<strong>protocolSection.identificationModule.briefTitle</strong>', (string) $table['#rows'][1]['data'][2]['data']);
-    $this->assertStringContainsString('<small>protocolSection.identificationModule.briefTitle</small>', (string) $table['#rows'][1]['data'][2]['data']);
+    $this->assertSame('html_tag', $table['#rows'][1]['data'][0]['data']['primary']['#type']);
+    $this->assertSame('div', $table['#rows'][1]['data'][0]['data']['primary']['#tag']);
+    $this->assertSame('strong', $table['#rows'][1]['data'][0]['data']['primary']['content']['#tag']);
+    $this->assertSame('briefTitle', $table['#rows'][1]['data'][0]['data']['primary']['content']['#value']);
+    $this->assertSame('BriefTitle', $table['#rows'][1]['data'][0]['data']['secondary']['content']['#value']);
+    $this->assertStringContainsString('Required for all trials.', (string) $table['#rows'][1]['data'][1]['data']['description']['#markup']);
+    $this->assertStringContainsString('Has to be unique in PRS.', (string) $table['#rows'][1]['data'][1]['data']['notes']['content']['#markup']);
+    $this->assertSame('https://clinicaltrials.gov/policy/protocol-definitions#BriefTitle', $table['#rows'][1]['data'][1]['data']['definition']['content']['#url']->getUri());
+    $this->assertSame('html_tag', $table['#rows'][1]['data'][2]['data']['#type']);
+    $this->assertSame('small', $table['#rows'][1]['data'][2]['data']['#tag']);
+    $this->assertSame('protocolSection.identificationModule.briefTitle', $table['#rows'][1]['data'][2]['data']['#value']);
     $this->assertStringContainsString('BRIEF-TITLE', (string) $table['#rows'][1]['data'][5]['data']['#markup']);
   }
 
