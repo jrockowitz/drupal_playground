@@ -18,12 +18,12 @@ clinical_trials_gov_report.structs:
   parent_id: clinical_trials_gov_report.metadata
   title: 'Structs'
 
-clinical_trials_gov_report.names:
-  route_name: clinical_trials_gov_report.names
-  parent_id: clinical_trials_gov_report.metadata
-  title: 'Names'
-
 clinical_trials_gov_report.enums:
   route_name: clinical_trials_gov_report.enums
   parent_id: clinical_trials_gov_report.metadata
   title: 'Enums'
+
+clinical_trials_gov_report.names:
+  route_name: clinical_trials_gov_report.names
+  parent_id: clinical_trials_gov_report.metadata
+  title: 'Names'
