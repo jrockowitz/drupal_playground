@@ -47,11 +47,13 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends KernelTestBase {
     $this->assertArrayHasKey('studies_query', $build);
     $this->assertArrayHasKey('summary', $build);
     $this->assertArrayHasKey('footer', $build);
+    $this->assertContains('clinical_trials_gov/clinical_trials_gov', $build['#attached']['library']);
     $this->assertSame('details', $build['studies_query']['#type']);
     $this->assertFalse($build['studies_query']['#open']);
     $this->assertSame('clinical_trials_gov_studies_query_summary', $build['studies_query']['summary']['#type']);
     $this->assertArrayHasKey('find', $build['studies_query']['links']);
     $this->assertSame('table', $build['results']['#type']);
+    $this->assertContains('clinical-trials-gov-table', $build['results']['#attributes']['class']);
     $this->assertStringContainsString('Showing 2 fields', (string) $build['summary']['#markup']);
     $this->assertArrayHasKey('field_paths', $build['footer']);
     $this->assertSame('details', $build['footer']['field_paths']['#type']);

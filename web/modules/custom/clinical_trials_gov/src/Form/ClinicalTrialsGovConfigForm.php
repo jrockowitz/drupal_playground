@@ -146,6 +146,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     ];
     $form['field_mapping']['rows'] = [
       '#type' => 'table',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-table'],
+      ],
       '#header' => [
         [
           'data' => '',

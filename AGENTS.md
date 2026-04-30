@@ -50,7 +50,7 @@ ddev code-fix <file|directory>
   - Tests for focus on checking expected behavior, instead of exact labels or markup, since these can easily change.
 - Markup
   - Use render arrays over Markup::create().
-    - `['#markup' => t('Some text'), '#prefix' => '<h2>', '#suffix' => '</h2>']`
+    - Use `['#markup' => t('Some text'), '#prefix' => '<h2>', '#suffix' => '</h2>']`
       or `['#markup' => '<h2>'. t('Some text') . '</h2>']`
       over `Markup::create('<h2>' . t('Some text') . '</h2>')`
 # Drush

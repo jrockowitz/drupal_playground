@@ -75,6 +75,7 @@ class ClinicalTrialsGovStudiesQuerySummary extends RenderElementBase {
 
     $element['#type'] = 'table';
     $element['#theme'] = 'table';
+    $element['#attributes']['class'][] = 'clinical-trials-gov-table';
     $element['#header'] = [
       [
         'data' => new TranslatableMarkup('Parameter'),

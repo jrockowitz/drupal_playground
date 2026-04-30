@@ -9,7 +9,6 @@ use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\migrate\MigrateMessage;
@@ -87,6 +86,9 @@ class ClinicalTrialsGovImportForm extends FormBase {
     ];
     $form['content_type']['summary'] = [
       '#type' => 'table',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-table'],
+      ],
       '#header' => [],
       '#rows' => [
         [
@@ -162,6 +164,9 @@ class ClinicalTrialsGovImportForm extends FormBase {
 
       $form['migration_status']['stats'] = [
         '#type' => 'table',
+        '#attributes' => [
+          'class' => ['clinical-trials-gov-table'],
+        ],
         '#header' => [],
         '#rows' => [
           [

@@ -160,8 +160,10 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
 
     // Check that the report footer still includes the API URL and version.
     $this->assertArrayHasKey('footer', $build);
+    $this->assertContains('clinical_trials_gov_report/report', $build['#attached']['library']);
     $this->assertArrayHasKey('api_url', $build['footer']);
     $this->assertArrayHasKey('version', $build['footer']);
+    $this->assertContains('clinical-trials-gov-table', $build['results']['#attributes']['class']);
     $this->assertStringContainsString('/studies/metadata', (string) $build['footer']['api_url']['#markup']);
     $this->assertStringContainsString('Version: 2.0.0', (string) $build['footer']['version']['#markup']);
   }

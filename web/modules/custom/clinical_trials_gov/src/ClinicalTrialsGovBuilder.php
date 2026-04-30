@@ -72,6 +72,9 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
 
     $build = [
       '#type' => 'table',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-table'],
+      ],
       '#header' => [
         $this->t('NCT ID'),
         $this->t('Title'),
@@ -266,6 +269,9 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
           '#title' => $this->t('Locations'),
           'table' => [
             '#type' => 'table',
+            '#attributes' => [
+              'class' => ['clinical-trials-gov-table'],
+            ],
             '#header' => [
               $this->t('Facility'),
               $this->t('Location'),
@@ -388,6 +394,9 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       '#open' => FALSE,
       'table' => [
         '#type' => 'table',
+        '#attributes' => [
+          'class' => ['clinical-trials-gov-table'],
+        ],
         '#header' => [
           $this->t('Field'),
           $this->t('Value'),
@@ -499,6 +508,9 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
 
     return [
       '#type' => 'table',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-table'],
+      ],
       '#header' => $header,
       '#rows' => $table_rows,
       '#sticky' => FALSE,

@@ -3,3 +3,5 @@ report:
   css:
     theme:
       css/clinical_trials_gov_report.css: {}
+  dependencies:
+    - clinical_trials_gov/clinical_trials_gov

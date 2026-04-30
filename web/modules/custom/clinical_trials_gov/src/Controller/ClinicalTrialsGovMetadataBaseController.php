@@ -78,7 +78,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Returns the libraries attached to the page.
    */
   protected function getAttachedLibraries(): array {
-    return ['clinical_trials_gov/report'];
+    return ['clinical_trials_gov/clinical_trials_gov'];
   }
 
   /**
@@ -149,6 +149,9 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
 
     return [
       '#type' => 'table',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-table'],
+      ],
       '#header' => [
         $this->buildHeader('Field Name', 'Piece Name'),
         $this->buildHeader('Field Title', 'Description/Notes/Definition'),

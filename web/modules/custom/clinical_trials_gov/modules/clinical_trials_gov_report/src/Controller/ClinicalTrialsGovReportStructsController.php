@@ -221,6 +221,9 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
 
     return [
       '#type' => 'table',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-table'],
+      ],
       '#header' => [
         $this->t('Struct'),
         $this->t('Piece'),

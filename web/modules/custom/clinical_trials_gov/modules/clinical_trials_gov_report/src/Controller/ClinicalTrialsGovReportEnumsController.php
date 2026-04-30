@@ -116,6 +116,9 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
 
     return [
       '#type' => 'table',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-table'],
+      ],
       '#header' => [
         $this->t('Enum Type'),
         $this->t('Values'),

@@ -136,6 +136,9 @@ class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMeta
       '#title' => $this->t('Abbreviations'),
       'table' => [
         '#type' => 'table',
+        '#attributes' => [
+          'class' => ['clinical-trials-gov-table'],
+        ],
         '#header' => [
           $this->t('Full token'),
           $this->t('Abbreviation'),
@@ -195,6 +198,9 @@ class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMeta
 
     return [
       '#type' => 'table',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-table'],
+      ],
       '#header' => [
         $this->t('ClinicalTrials.gov Field Title'),
         $this->t('ClinicalTrials.gov Identifier'),

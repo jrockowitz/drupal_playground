@@ -85,7 +85,6 @@ class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadat
    */
   protected function getAttachedLibraries(): array {
     return [
-      'clinical_trials_gov/report',
       'clinical_trials_gov_report/report',
     ];
   }
