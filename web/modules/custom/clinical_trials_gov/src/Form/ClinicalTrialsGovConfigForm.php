@@ -98,16 +98,16 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     }
 
     if ($node_type === NULL) {
+      $form['content_type']['type'] = [
+        '#type' => 'item',
+        '#title' => $this->t('Machine name'),
+        '#markup' => $saved_type,
+      ];
       $form['content_type']['label'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Label'),
         '#default_value' => $this->t('Trial'),
         '#required' => TRUE,
-      ];
-      $form['content_type']['type'] = [
-        '#type' => 'item',
-        '#title' => $this->t('Machine name'),
-        '#markup' => $saved_type,
       ];
       $form['content_type']['description'] = [
         '#type' => 'textarea',
@@ -117,15 +117,15 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       ];
     }
     else {
-      $form['content_type']['label'] = [
-        '#type' => 'item',
-        '#title' => $this->t('Label'),
-        '#markup' => $node_type->label(),
-      ];
       $form['content_type']['type'] = [
         '#type' => 'item',
         '#title' => $this->t('Machine name'),
         '#markup' => $node_type->id(),
+      ];
+      $form['content_type']['label'] = [
+        '#type' => 'item',
+        '#title' => $this->t('Label'),
+        '#markup' => $node_type->label(),
       ];
       $form['content_type']['description'] = [
         '#type' => 'item',

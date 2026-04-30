@@ -194,9 +194,12 @@ Current advanced options include:
 
 The configured ClinicalTrials.gov destination bundle is treated as import-managed content. Even users with elevated Drupal permissions cannot manually create those nodes through the UI.
 
+The saved `field_prefix` value should be entered without Drupal's leading `field_`. For example, `trial_version_holder` produces generated Drupal field names like `field_trial_version_holder_brief_title`.
+
 Readonly mode requires the contrib module `readonly_field_widget`. When enabled:
 
 - mapped ClinicalTrials.gov fields are shown with a readonly widget on node edit forms
+- the built-in ClinicalTrials.gov link fields `trial_nct_url` and `trial_nct_api` are also shown with a readonly widget
 - the editable Drupal node title input is hidden
 - the generated `briefTitle` field remains visible as readonly display text
 
@@ -209,6 +212,7 @@ Some of the most important modeling decisions in this module are:
 - required fields are always forced in
 - array-valued API types become unlimited-cardinality Drupal fields
 - nested structs may become `custom_field` fields or `field_group` containers
+- unsupported nested values inside promoted `custom_field` fields fall back to YAML-backed `string_long` properties labeled with `(YAML)`
 - markup content is stored as long text
 
 The field-resolution details live in code, but those concepts explain why the generated field list sometimes looks different from the raw API JSON.
