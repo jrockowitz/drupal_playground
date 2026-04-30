@@ -46,11 +46,11 @@ Step behaviour:
 
 **2. Review** — splits into `Studies` and `Metadata`. Studies lists studies from the saved query and uses `clinical_trials_gov.review.study` for modal study links. Pagination is UI-only via `nextPageToken`. Metadata shows only the exact saved `clinical_trials_gov.settings:paths`, includes the same `Studies query` details element as the Studies page, and includes a `Field paths` footer details element with the saved paths. The study detail title callback returns the study's `briefTitle`, falling back to `'ClinicalTrials.gov'`.
 
-**3. Configure** — creates or reuses a destination content type; shows curated field definitions from `ClinicalTrialsGovFieldManager`. Field-group rows are structural only. Empty group-only rows are hidden. Child rows beneath a promoted `custom` field are hidden.
+**3. Configure** — creates or reuses a destination content type; shows curated field definitions from `ClinicalTrialsGovFieldManager`. Field-group rows are structural only. Empty group-only rows are hidden. Child rows beneath a promoted `custom` field are hidden. The configured ClinicalTrials.gov bundle is import-managed and cannot be manually created through Drupal node add routes.
 
 **4. Import** — shows migration summary and id-map stats; runs a full sync via `MigrateBatchExecutable`.
 
-**5. Manage** — redirects to the node listing filtered to the configured content type. If the configured type is missing or has not been created yet, it redirects back to Configure with a status message.
+**5. Manage** — redirects to the node listing filtered to the configured content type. If the configured type is missing or has not been created yet, it redirects back to Configure with a status message. This is the intended place to manage imported trials because manual node creation for that bundle is blocked.
 
 ## Configuration
 
@@ -58,6 +58,8 @@ Primary config: `clinical_trials_gov.settings` — keys: `query`, `paths`, `type
 Install defaults live in `config/install/clinical_trials_gov.settings.yml`.
 
 Generated migration: `migrate_plus.migration.clinical_trials_gov`. Deleted when query/paths/type/fields are incomplete.
+
+The configured `type` is also used by the node access override that blocks manual node creation for the ClinicalTrials.gov destination bundle, including when the Trash module swaps in its own node access handler.
 
 ## Field Resolution
 

@@ -10,11 +10,6 @@ namespace Drupal\clinical_trials_gov;
 interface ClinicalTrialsGovEntityManagerInterface {
 
   /**
-   * The default content type machine name.
-   */
-  public const DEFAULT_CONTENT_TYPE = 'trial';
-
-  /**
    * Creates the content type when needed.
    */
   public function createContentType(string $type, string $label, string $description): void;

@@ -65,7 +65,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
 
     $config = $this->config('clinical_trials_gov.settings');
     $paths = array_values(array_filter($config->get('paths') ?? [], 'is_string'));
-    $saved_type = (string) ($config->get('type') ?? ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE);
+    $saved_type = (string) ($config->get('type') ?? '');
     $saved_field_mappings = array_filter($config->get('fields') ?? [], 'is_string');
     $saved_fields = array_values($saved_field_mappings);
     $node_type = $this->entityTypeManager->getStorage('node_type')->load($saved_type);
@@ -250,7 +250,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     }
 
     $config = $this->configFactory()->getEditable('clinical_trials_gov.settings');
-    $type = (string) ($form_state->getValue('existing_type') ?: $this->config('clinical_trials_gov.settings')->get('type') ?: ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE);
+    $type = (string) ($form_state->getValue('existing_type') ?: $this->config('clinical_trials_gov.settings')->get('type') ?: '');
     $label = (string) ($form_state->getValue('label') ?: 'Trial');
     $description = (string) ($form_state->getValue('description') ?: '');
 

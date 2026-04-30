@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for the ClinicalTrials.gov module.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function clinical_trials_gov_module_implements_alter(array &$implementations, string $hook): void {
+  if ($hook === 'entity_type_alter' && isset($implementations['clinical_trials_gov'])) {
+    // Run after Trash so our entity_type_alter hook can replace the node
+    // access handler with the ClinicalTrials.gov-specific handler, including
+    // the Trash-aware subclass when that module is enabled.
+    $group = $implementations['clinical_trials_gov'];
+    unset($implementations['clinical_trials_gov']);
+    $implementations['clinical_trials_gov'] = $group;
+  }
+}

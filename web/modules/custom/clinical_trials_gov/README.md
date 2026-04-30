@@ -58,6 +58,8 @@ The `Configure` step can create or update:
 - field groups for nested study sections
 - a generated `migrate_plus` migration named `clinical_trials_gov`
 
+When the destination ClinicalTrials.gov content type exists, Drupal users cannot create those nodes manually through `/node/add`. Trial content is intended to be created by the import workflow.
+
 This is not a hand-authored migration workflow. The migration is generated from the saved wizard configuration.
 
 The saved `fields` config is stored as a mapping of generated Drupal field or group name to the source metadata path.
@@ -176,6 +178,8 @@ It sends you to:
 
 - the Drupal content listing filtered to the configured content type
 
+Imported trial nodes can be managed from the content listing, but they cannot be manually created from Drupal's add-content UI.
+
 If the destination content type has not actually been created yet, it redirects back to `Configure` with a message.
 
 ### Settings
@@ -187,6 +191,8 @@ Current advanced options include:
 - destination content type machine name
 - generated field prefix
 - optional readonly mode for imported fields
+
+The configured ClinicalTrials.gov destination bundle is treated as import-managed content. Even users with elevated Drupal permissions cannot manually create those nodes through the UI.
 
 Readonly mode requires the contrib module `readonly_field_widget`. When enabled:
 

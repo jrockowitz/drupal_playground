@@ -133,18 +133,14 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    * {@inheritdoc}
    */
   public function getStudyUrlFieldName(): string {
-    return $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.nctId')['field_name'] === ''
-      ? 'field_' . ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE . '_nct_url'
-      : $this->buildSystemFieldName('nct_url');
+    return $this->buildSystemFieldName('nct_url');
   }
 
   /**
    * {@inheritdoc}
    */
   public function getStudyApiFieldName(): string {
-    return $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.nctId')['field_name'] === ''
-      ? 'field_' . ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE . '_nct_api'
-      : $this->buildSystemFieldName('nct_api');
+    return $this->buildSystemFieldName('nct_api');
   }
 
   /**

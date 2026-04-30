@@ -60,6 +60,10 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installConfig(['field', 'filter', 'node', 'system']);
     $this->installSchema('node', ['node_access']);
+    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+      ->set('type', 'trial')
+      ->set('field_prefix', 'trial')
+      ->save();
     $this->entityManager = $this->container->get('clinical_trials_gov.entity_manager');
   }
 

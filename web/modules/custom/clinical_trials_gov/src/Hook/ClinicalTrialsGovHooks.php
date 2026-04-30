@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov\Hook;
 
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuerySummary;
+use Drupal\clinical_trials_gov\Entity\ClinicalTrialsGovNodeAccessControlHandler;
+use Drupal\clinical_trials_gov\Entity\ClinicalTrialsGovTrashNodeAccessControlHandler;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -44,6 +47,21 @@ class ClinicalTrialsGovHooks {
     return [
       'clinical_trials_gov_studies_query_summary' => (new ClinicalTrialsGovStudiesQuerySummary())->getInfo(),
     ];
+  }
+
+  /**
+   * Implements hook_entity_type_alter().
+   */
+  #[Hook('entity_type_alter')]
+  public function entityTypeAlter(array &$entity_types): void {
+    if (!isset($entity_types['node']) || !$entity_types['node'] instanceof EntityTypeInterface) {
+      return;
+    }
+
+    $handler_class = $this->moduleHandler->moduleExists('trash')
+      ? ClinicalTrialsGovTrashNodeAccessControlHandler::class
+      : ClinicalTrialsGovNodeAccessControlHandler::class;
+    $entity_types['node']->setHandlerClass('access', $handler_class);
   }
 
   /**

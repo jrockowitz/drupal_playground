@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Form;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -105,7 +104,11 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
    */
   protected function isStructureLocked(): bool {
     $config = $this->config('clinical_trials_gov.settings');
-    $type = (string) ($config->get('type') ?? ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE);
+    $type = trim((string) ($config->get('type') ?? ''));
+
+    if ($type === '') {
+      return FALSE;
+    }
 
     return $this->entityTypeManager->getStorage('node_type')->load($type) !== NULL;
   }
