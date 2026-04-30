@@ -6,7 +6,6 @@ namespace Drupal\Tests\clinical_trials_gov_report\Unit;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
-use Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStudiesController;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -21,11 +20,9 @@ use PHPUnit\Framework\Attributes\Group;
 class ClinicalTrialsGovReportStudiesControllerTest extends UnitTestCase {
 
   /**
-   * The controller under test, wrapped to expose protected methods.
-   *
-   * @var \Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStudiesController
+   * The controller under test.
    */
-  protected $controller;
+  protected TestClinicalTrialsGovReportStudiesController $controller;
 
   /**
    * {@inheritdoc}
@@ -38,24 +35,7 @@ class ClinicalTrialsGovReportStudiesControllerTest extends UnitTestCase {
     $date_formatter->method('format')
       ->willReturnCallback(fn($timestamp) => date('F j Y', $timestamp));
 
-    // Anonymous subclass exposes the two protected methods under test.
-    $this->controller = new class($manager, $builder, $date_formatter) extends ClinicalTrialsGovReportStudiesController {
-
-      /**
-       * Exposes normalizeCountTotal() for testing.
-       */
-      public function exposedNormalizeCountTotal(mixed $value): string {
-        return $this->normalizeCountTotal($value);
-      }
-
-      /**
-       * Exposes buildVersionMarkup() for testing.
-       */
-      public function exposedBuildVersionMarkup(array $version): string {
-        return $this->buildVersionMarkup($version);
-      }
-
-    };
+    $this->controller = new TestClinicalTrialsGovReportStudiesController($manager, $builder, $date_formatter);
     $this->controller->setStringTranslation($this->getStringTranslationStub());
   }
 

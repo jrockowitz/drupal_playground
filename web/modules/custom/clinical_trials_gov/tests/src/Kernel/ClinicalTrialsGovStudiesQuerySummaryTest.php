@@ -19,7 +19,7 @@ class ClinicalTrialsGovStudiesQuerySummaryTest extends KernelTestBase {
   /**
    * Modules required for these kernel tests.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = [
     'clinical_trials_gov',

@@ -53,6 +53,9 @@ ddev code-fix <file|directory>
     - Use `['#markup' => t('Some text'), '#prefix' => '<h2>', '#suffix' => '</h2>']`
       or `['#markup' => '<h2>'. t('Some text') . '</h2>']`
       over `Markup::create('<h2>' . t('Some text') . '</h2>')`
+- Comments
+  - Make sure every function, method, class, and constructor has a comment.
+
 # Drush
 
 - Always use `autowire`

@@ -6,7 +6,6 @@ namespace Drupal\Tests\clinical_trials_gov_report\Unit;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
-use Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStructsController;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -22,10 +21,8 @@ class ClinicalTrialsGovReportStructsControllerTest extends UnitTestCase {
 
   /**
    * The controller under test.
-   *
-   * @var \Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStructsController
    */
-  protected $controller;
+  protected TestClinicalTrialsGovReportStructsController $controller;
 
   /**
    * {@inheritdoc}
@@ -36,30 +33,7 @@ class ClinicalTrialsGovReportStructsControllerTest extends UnitTestCase {
     $manager = $this->createMock(ClinicalTrialsGovManagerInterface::class);
     $date_formatter = $this->createMock(DateFormatterInterface::class);
 
-    $this->controller = new class($field_manager, $manager, $date_formatter) extends ClinicalTrialsGovReportStructsController {
-
-      /**
-       * Exposes buildStructRows() for testing.
-       */
-      public function exposedBuildStructRows(array $metadata, array $used_paths = []): array {
-        return $this->buildStructRows($metadata, $used_paths);
-      }
-
-      /**
-       * Exposes buildStructsTable() for testing.
-       */
-      public function exposedBuildStructsTable(array $struct_rows): array {
-        return $this->buildStructsTable($struct_rows);
-      }
-
-      /**
-       * Exposes buildSubPropertiesCell() for testing.
-       */
-      public function exposedBuildSubPropertiesCell(array $values): array|string {
-        return $this->buildSubPropertiesCell($values);
-      }
-
-    };
+    $this->controller = new TestClinicalTrialsGovReportStructsController($field_manager, $manager, $date_formatter);
     $this->controller->setStringTranslation($this->getStringTranslationStub());
   }
 

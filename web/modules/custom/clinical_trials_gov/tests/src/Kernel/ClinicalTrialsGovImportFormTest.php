@@ -56,7 +56,8 @@ class ClinicalTrialsGovImportFormTest extends KernelTestBase {
       ->save();
     $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
 
-    $form = $this->container->get('form_builder')->buildForm('Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm', new FormState());
+    $form_state = new FormState();
+    $form = $this->container->get('form_builder')->buildForm('Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm', $form_state);
 
     // Check that the import form is grouped into the expected fieldsets.
     $this->assertArrayHasKey('studies_query', $form);
@@ -117,7 +118,8 @@ class ClinicalTrialsGovImportFormTest extends KernelTestBase {
       ->set('type', '')
       ->set('fields', [])
       ->save();
-    $not_ready_form = $this->container->get('form_builder')->buildForm('Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm', new FormState());
+    $not_ready_form_state = new FormState();
+    $not_ready_form = $this->container->get('form_builder')->buildForm('Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm', $not_ready_form_state);
     $warning_messages = $this->container->get('messenger')->messagesByType('warning');
 
     // Check that the not-ready warning is displayed through the page messenger.

@@ -155,11 +155,9 @@ function fetch_api(string $path, array $params = []): array {
     if ($response === FALSE) {
       return ['error' => 'Failed to fetch: ' . $url, 'url' => $url];
     }
-    if (isset($http_response_header)) {
-      foreach ($http_response_header as $header) {
-        if (preg_match('/^HTTP\/\d+\.?\d*\s+(\d+)/', $header, $matches) && (int) $matches[1] >= 400) {
-          return ['error' => 'HTTP ' . $matches[1] . ': ' . $response, 'url' => $url];
-        }
+    foreach ($http_response_header as $header) {
+      if (preg_match('/^HTTP\/\d+\.?\d*\s+(\d+)/', $header, $matches) && (int) $matches[1] >= 400) {
+        return ['error' => 'HTTP ' . $matches[1] . ': ' . $response, 'url' => $url];
       }
     }
   }

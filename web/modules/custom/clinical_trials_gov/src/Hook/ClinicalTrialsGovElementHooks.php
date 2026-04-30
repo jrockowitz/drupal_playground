@@ -18,7 +18,10 @@ class ClinicalTrialsGovElementHooks {
   #[Hook('element_info')]
   public function elementInfo(): array {
     return [
-      'clinical_trials_gov_studies_query_summary' => (new ClinicalTrialsGovStudiesQuerySummary())->getInfo(),
+      'clinical_trials_gov_studies_query_summary' => [
+        '#query' => '',
+        '#pre_render' => [[ClinicalTrialsGovStudiesQuerySummary::class, 'preRenderSummary']],
+      ],
     ];
   }
 

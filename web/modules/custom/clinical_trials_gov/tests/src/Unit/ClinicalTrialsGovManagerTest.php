@@ -8,6 +8,7 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovApiInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManager;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Unit tests for ClinicalTrialsGovManager.
@@ -26,7 +27,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
   /**
    * The mocked API.
    */
-  protected ClinicalTrialsGovApiInterface $api;
+  protected ClinicalTrialsGovApiInterface&MockObject $api;
 
   /**
    * {@inheritdoc}

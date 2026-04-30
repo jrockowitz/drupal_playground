@@ -11,6 +11,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -30,12 +31,12 @@ class ClinicalTrialsGovApiTest extends UnitTestCase {
   /**
    * The mocked HTTP client.
    */
-  protected ClientInterface $httpClient;
+  protected ClientInterface&MockObject $httpClient;
 
   /**
    * The mocked logger.
    */
-  protected LoggerInterface $logger;
+  protected LoggerInterface&MockObject $logger;
 
   /**
    * {@inheritdoc}

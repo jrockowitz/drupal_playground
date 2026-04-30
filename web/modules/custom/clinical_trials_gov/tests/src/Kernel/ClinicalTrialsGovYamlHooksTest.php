@@ -208,8 +208,12 @@ class ClinicalTrialsGovYamlHooksTest extends KernelTestBase {
 
   /**
    * Creates a field item list mock for one field name.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   A mock field item list.
    */
   protected function createFieldItemListMock(string $field_name): FieldItemListInterface {
+    /** @var \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>&\PHPUnit\Framework\MockObject\MockObject $items */
     $items = $this->createMock(FieldItemListInterface::class);
     $items->method('getName')->willReturn($field_name);
     return $items;

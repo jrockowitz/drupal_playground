@@ -4,12 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Batch;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
 
 /**
@@ -47,8 +42,8 @@ class ClinicalTrialsGovPathDiscoveryBatch {
       $context['results']['path_count'] = 0;
     }
 
+    /** @var \Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface $manager */
     $manager = \Drupal::service('clinical_trials_gov.manager');
-    assert($manager instanceof ClinicalTrialsGovManagerInterface);
 
     if ($context['sandbox']['stage'] === 'collect_ids') {
       $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query);
@@ -130,16 +125,16 @@ class ClinicalTrialsGovPathDiscoveryBatch {
    * Saves discovered paths and refreshes the generated migration.
    */
   public static function finish(bool $success, array $results, array $operations): void {
+    /** @var \Drupal\Core\Config\ConfigFactoryInterface $config_factory */
     $config_factory = \Drupal::service('config.factory');
-    assert($config_factory instanceof ConfigFactoryInterface);
+    /** @var \Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface $field_manager */
     $field_manager = \Drupal::service('clinical_trials_gov.field_manager');
-    assert($field_manager instanceof ClinicalTrialsGovFieldManagerInterface);
+    /** @var \Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface $manager */
     $manager = \Drupal::service('clinical_trials_gov.manager');
-    assert($manager instanceof ClinicalTrialsGovManagerInterface);
+    /** @var \Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface $migration_manager */
     $migration_manager = \Drupal::service('clinical_trials_gov.migration_manager');
-    assert($migration_manager instanceof ClinicalTrialsGovMigrationManagerInterface);
+    /** @var \Drupal\Core\Messenger\MessengerInterface $messenger */
     $messenger = \Drupal::messenger();
-    assert($messenger instanceof MessengerInterface);
 
     if (!$success) {
       $messenger->addError((string) t('Path discovery did not complete successfully. Please try the Find step again.'));

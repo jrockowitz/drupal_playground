@@ -10,6 +10,7 @@ use Drupal\clinical_trials_gov\Entity\ClinicalTrialsGovTrashNodeAccessControlHan
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -94,7 +95,12 @@ class ClinicalTrialsGovEntityHooks {
    */
   #[Hook('form_node_form_alter')]
   public function formNodeFormAlter(array &$form, FormStateInterface $form_state): void {
-    $entity = $form_state->getFormObject()->getEntity();
+    $form_object = $form_state->getFormObject();
+    if (!$form_object instanceof EntityFormInterface) {
+      return;
+    }
+
+    $entity = $form_object->getEntity();
     if ($entity->getEntityTypeId() !== 'node') {
       return;
     }

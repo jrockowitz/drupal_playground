@@ -129,9 +129,6 @@ class ClinicalTrialsGovImportForm extends FormBase {
     if ($ready) {
       try {
         $migration = $this->migrationPluginManager->createInstance('clinical_trials_gov');
-        if (!is_object($migration)) {
-          $migration = NULL;
-        }
       }
       catch (\Throwable) {
         $migration = NULL;

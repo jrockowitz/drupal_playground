@@ -7,6 +7,10 @@
 
 // Requires SELF, build_query_string(), flatten_study(), and metadata_anchor_id()
 // from clinical_trials_gov.php, which includes this file.
+if (!defined('CURRENT_SCRIPT')) {
+  define('CURRENT_SCRIPT', basename((string) ($_SERVER['PHP_SELF'] ?? '')));
+}
+
 define('_CLINICALTRIALS_STATUS_COLOURS', [
   'RECRUITING' => 'success',
   'NOT_YET_RECRUITING' => 'warning text-dark',

@@ -7,7 +7,6 @@ namespace Drupal\Tests\clinical_trials_gov\Unit;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
-use Drupal\clinical_trials_gov\Form\ClinicalTrialsGovConfigForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -23,10 +22,8 @@ class ClinicalTrialsGovConfigFormTest extends UnitTestCase {
 
   /**
    * The form under test.
-   *
-   * @var \Drupal\clinical_trials_gov\Form\ClinicalTrialsGovConfigForm
    */
-  protected $form;
+  protected TestClinicalTrialsGovConfigForm $form;
 
   /**
    * {@inheritdoc}
@@ -38,37 +35,7 @@ class ClinicalTrialsGovConfigFormTest extends UnitTestCase {
     $entity_manager = $this->createMock(ClinicalTrialsGovEntityManagerInterface::class);
     $migration_manager = $this->createMock(ClinicalTrialsGovMigrationManagerInterface::class);
 
-    $this->form = new class($entity_type_manager, $field_manager, $entity_manager, $migration_manager) extends ClinicalTrialsGovConfigForm {
-
-      /**
-       * Exposes calculateHierarchyDepth() for testing.
-       */
-      public function exposedCalculateHierarchyDepth(string $path): int {
-        return $this->calculateHierarchyDepth($path);
-      }
-
-      /**
-       * Exposes buildIndentStyle() for testing.
-       */
-      public function exposedBuildIndentStyle(int $depth): string {
-        return $this->buildIndentStyle($depth);
-      }
-
-      /**
-       * Exposes buildLabelCell() for testing.
-       */
-      public function exposedBuildLabelCell(string $label, string $description, int $depth): array {
-        return $this->buildLabelCell($label, $description, $depth);
-      }
-
-      /**
-       * Exposes buildFieldNameCell() for testing.
-       */
-      public function exposedBuildFieldNameCell(string $field_name, mixed $details, int $depth): array {
-        return $this->buildFieldNameCell($field_name, $details, $depth);
-      }
-
-    };
+    $this->form = new TestClinicalTrialsGovConfigForm($entity_type_manager, $field_manager, $entity_manager, $migration_manager);
   }
 
   /**

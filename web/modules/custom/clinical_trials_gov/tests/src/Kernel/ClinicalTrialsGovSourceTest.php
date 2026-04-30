@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
-use Drupal\clinical_trials_gov_test\ClinicalTrialsGovApiStub;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -53,7 +52,8 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
     $source->rewind();
     $row = $source->current();
     $source->rewind();
-    $rows = array_values(iterator_to_array($source));
+    $rows = iterator_to_array($source, FALSE);
+    /** @var \Drupal\clinical_trials_gov_test\ClinicalTrialsGovApiStub $api */
     $api = $this->container->get('clinical_trials_gov.api');
 
     // Check that the first source row is hydrated with flattened study values.
@@ -82,7 +82,6 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
     $this->assertSame('NCT01205711', $rows[2]->getSourceProperty('protocolSection.identificationModule.nctId'));
 
     // Check that the source plugin pages through IDs, then loads studies per row.
-    $this->assertInstanceOf(ClinicalTrialsGovApiStub::class, $api);
     $requests = $api->getRequests();
     $this->assertSame([
       [
