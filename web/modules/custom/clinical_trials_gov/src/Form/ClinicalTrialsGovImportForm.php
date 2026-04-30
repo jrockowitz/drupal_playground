@@ -54,12 +54,12 @@ class ClinicalTrialsGovImportForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('clinical_trials_gov.settings');
-    $query = (string) ($config->get('query') ?? '');
-    $paths = array_values(array_filter($config->get('paths') ?? [], 'is_string'));
-    $type = (string) ($config->get('type') ?? '');
-    $field_mappings = array_filter($config->get('fields') ?? [], 'is_string');
+    $query = $config->get('query');
+    $paths = (array) $config->get('paths');
+    $type = $config->get('type');
+    $field_mappings = (array) $config->get('fields');
     $fields = array_values($field_mappings);
-    $ready = ($query !== '' && $paths !== [] && $type !== '' && $fields !== []);
+    $ready = ($query && $paths && $type && $fields);
 
     $form['studies_query'] = [
       '#type' => 'fieldset',
@@ -97,7 +97,7 @@ class ClinicalTrialsGovImportForm extends FormBase {
             'style' => 'width: 50%',
           ],
           [
-            'data' => ($type !== '' ? $type : $this->t('Not configured')),
+            'data' => ($type ? $type : $this->t('Not configured')),
             'style' => 'width: 50%',
           ],
         ],
@@ -135,7 +135,7 @@ class ClinicalTrialsGovImportForm extends FormBase {
       }
     }
 
-    if ($migration !== NULL) {
+    if ($migration) {
       $id_map = $migration->getIdMap();
       $source_rows = $this->t('N/A');
       $unprocessed = $this->t('N/A');

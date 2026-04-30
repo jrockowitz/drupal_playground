@@ -68,13 +68,13 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    */
   public static function parseQueryString(string $query_string): array {
     $result = [];
-    if ($query_string === '') {
+    if (!$query_string) {
       return $result;
     }
     foreach (explode('&', $query_string) as $pair) {
       [$raw_key, $raw_value] = array_pad(explode('=', $pair, 2), 2, '');
       $key = urldecode($raw_key);
-      if ($key !== '') {
+      if ($key) {
         $result[$key] = urldecode($raw_value);
       }
     }
@@ -133,7 +133,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     }
 
     foreach ($include_fields as $include_field) {
-      if (!is_string($include_field) || $include_field === '') {
+      if (!is_string($include_field) || !$include_field) {
         continue;
       }
       if ($field_key === $include_field || str_starts_with($field_key, $include_field)) {
@@ -159,7 +159,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       }
       $path = static::elementNameToApiKey($name);
       $value = static::normalizeSubmittedValue($path, $child['#value']);
-      if ($value === '') {
+      if (!$value) {
         continue;
       }
       $parts[] = rawurlencode($path) . '=' . rawurlencode($value);
@@ -519,7 +519,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    * Builds a field element from a definition.
    */
   protected static function buildFieldElement(array $definition, string $default_value): array {
-    if (($definition['key'] === 'countTotal') && ($default_value === '')) {
+    if (($definition['key'] === 'countTotal') && !$default_value) {
       $default_value = 'true';
     }
 
@@ -626,7 +626,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    */
   protected static function normalizeSubmittedValue(string $path, mixed $value): string {
     $normalized = trim((string) $value);
-    if ($normalized === '') {
+    if (!$normalized) {
       return '';
     }
 

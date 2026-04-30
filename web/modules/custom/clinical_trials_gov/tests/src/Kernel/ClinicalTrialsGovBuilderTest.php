@@ -63,6 +63,14 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
     $this->assertTrue($build['summary']['#open']);
     $this->assertSame('container', $build['summary']['content']['#type']);
 
+    // Check that summary overview items are structured render arrays.
+    $overview_items = $build['summary']['content']['overview']['items']['#items'];
+    $first_overview_item = $overview_items[0];
+    $this->assertSame('container', $first_overview_item['#type']);
+    $this->assertSame('html_tag', $first_overview_item['label']['#type']);
+    $this->assertSame('strong', $first_overview_item['label']['#tag']);
+    $this->assertArrayHasKey('#markup', $first_overview_item['value']);
+
     // Check that the flattened data table is present inside a closed details.
     $this->assertArrayHasKey('data_table', $build);
     $this->assertSame('details', $build['data_table']['#type']);

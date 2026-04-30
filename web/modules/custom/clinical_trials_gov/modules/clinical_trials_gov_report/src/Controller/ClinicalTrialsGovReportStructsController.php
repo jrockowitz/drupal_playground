@@ -88,9 +88,9 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
     $timestamp = (string) ($version['dataTimestamp'] ?? '');
     $formatted_timestamp = $timestamp;
 
-    if ($timestamp !== '') {
+    if ($timestamp) {
       $date_time = strtotime($timestamp . ' UTC');
-      if ($date_time !== FALSE) {
+      if ($date_time) {
         $formatted_timestamp = $this->dateFormatter->format($date_time, 'custom', 'F j Y \a\t g:i a');
       }
     }
@@ -133,7 +133,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
         'data_type' => (string) ($row['type'] ?? ''),
         'parent_struct' => $this->findParentStructPath($path, $metadata),
         'is_nested_multiple' => $this->isNestedMultipleStruct($path, $metadata),
-        'is_unused' => ($used_path_lookup !== [] && !isset($used_path_lookup[$path])),
+        'is_unused' => ($used_path_lookup && !isset($used_path_lookup[$path])),
         'sub_properties' => $sub_properties,
       ];
     }
@@ -148,7 +148,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
     $parts = explode('.', $path);
     array_pop($parts);
 
-    while ($parts !== []) {
+    while ($parts) {
       $candidate = implode('.', $parts);
       if (isset($metadata[$candidate]) && is_array($metadata[$candidate]) && (($metadata[$candidate]['sourceType'] ?? '') === 'STRUCT')) {
         return $candidate;
@@ -173,7 +173,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
 
     $parent_struct = $this->findParentStructPath($path, $metadata);
 
-    while ($parent_struct !== '') {
+    while ($parent_struct) {
       if (
         isset($metadata[$parent_struct])
         && is_array($metadata[$parent_struct])
@@ -207,7 +207,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
         'data' => [
           $this->buildPrimarySecondaryCell(
             primary: $row['name'],
-            secondary: ($row['title'] !== '') ? $row['title'] : $row['piece'],
+            secondary: ($row['title']) ? $row['title'] : $row['piece'],
             depth: substr_count($row['path'], '.'),
           ),
           $this->buildTextCell($row['piece']),
@@ -255,11 +255,11 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
       ],
     ];
 
-    if ($style !== '') {
+    if ($style) {
       $cell['primary']['#attributes']['style'] = $style;
     }
 
-    if ($secondary !== '') {
+    if ($secondary) {
       $cell['secondary'] = [
         '#type' => 'html_tag',
         '#tag' => 'div',
@@ -271,7 +271,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
         ],
       ];
 
-      if ($style !== '') {
+      if ($style) {
         $cell['secondary']['#attributes']['style'] = $style;
       }
     }
@@ -285,7 +285,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
    * Builds a multi-line list cell.
    */
   protected function buildListCell(array $values): array|string {
-    if ($values === []) {
+    if (!$values) {
       return '';
     }
 
@@ -301,7 +301,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
    * Builds the sub-properties cell as a small bullet list.
    */
   protected function buildSubPropertiesCell(array $values): array|string {
-    if ($values === []) {
+    if (!$values) {
       return '';
     }
 
@@ -312,7 +312,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
       }
 
       $name = (string) ($value['name'] ?? '');
-      if ($name === '') {
+      if (!$name) {
         continue;
       }
 
@@ -332,7 +332,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
       }
     }
 
-    if ($items === []) {
+    if (!$items) {
       return '';
     }
 
@@ -350,7 +350,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
    * Builds a plain text cell preserving line breaks.
    */
   protected function buildTextCell(string $value): array|string {
-    if ($value === '') {
+    if (!$value) {
       return '';
     }
 

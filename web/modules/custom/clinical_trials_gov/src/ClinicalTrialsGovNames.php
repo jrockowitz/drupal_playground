@@ -148,11 +148,11 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
   public function getDisplayLabel(string $piece): string {
     $metadata = $this->manager->getMetadataByPiece($piece);
     $title = (string) ($metadata['title'] ?? '');
-    if ($title !== '') {
+    if ($title) {
       return $title;
     }
 
-    if ($piece === '' || str_contains($piece, ' ') || str_contains($piece, '-')) {
+    if (!$piece || str_contains($piece, ' ') || str_contains($piece, '-')) {
       return $piece;
     }
 
@@ -166,7 +166,7 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
    * {@inheritdoc}
    */
   public function getDetailLabel(string $piece, string $parent_piece = ''): string {
-    if ($parent_piece !== '' && str_starts_with($piece, $parent_piece)) {
+    if ($parent_piece && str_starts_with($piece, $parent_piece)) {
       $piece = substr($piece, strlen($parent_piece)) ?: $piece;
     }
 
@@ -193,10 +193,10 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
    * Returns the configured Drupal field prefix.
    */
   protected function getConfiguredFieldPrefix(): string {
-    $field_prefix = (string) ($this->configFactory->get('clinical_trials_gov.settings')->get('field_prefix') ?? '');
+    $field_prefix = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('field_prefix');
     $field_prefix = trim($field_prefix);
 
-    if ($field_prefix === '') {
+    if (!$field_prefix) {
       return self::FIELD_PREFIX;
     }
 

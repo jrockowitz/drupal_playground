@@ -83,9 +83,9 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
     $timestamp = (string) ($version['dataTimestamp'] ?? '');
     $formatted_timestamp = $timestamp;
 
-    if ($timestamp !== '') {
+    if ($timestamp) {
       $date_time = strtotime($timestamp . ' UTC');
-      if ($date_time !== FALSE) {
+      if ($date_time) {
         $formatted_timestamp = $this->dateFormatter->format($date_time, 'custom', 'F j Y \a\t g:i a');
       }
     }
@@ -146,11 +146,11 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
       $raw_value = (string) ($value['value'] ?? '');
       $legacy_value = (string) ($value['legacyValue'] ?? '');
 
-      if ($raw_value === '' && $legacy_value === '') {
+      if (!$raw_value && !$legacy_value) {
         continue;
       }
 
-      $items[] = ($legacy_value !== '')
+      $items[] = ($legacy_value)
         ? $legacy_value . ' (' . $raw_value . ')'
         : $raw_value;
     }
@@ -178,7 +178,7 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
    * Builds a plain text cell preserving line breaks.
    */
   protected function buildTextCell(string $value): array|string {
-    if ($value === '') {
+    if (!$value) {
       return '';
     }
 

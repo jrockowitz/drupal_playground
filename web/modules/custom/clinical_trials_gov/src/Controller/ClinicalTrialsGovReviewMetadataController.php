@@ -28,7 +28,7 @@ class ClinicalTrialsGovReviewMetadataController extends ClinicalTrialsGovMetadat
    */
   public function index(): array {
     $build = parent::index();
-    if ($build === []) {
+    if (!$build) {
       return $build;
     }
 

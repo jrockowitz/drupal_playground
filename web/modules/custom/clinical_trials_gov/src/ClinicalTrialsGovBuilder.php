@@ -7,6 +7,7 @@ namespace Drupal\clinical_trials_gov;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 
 /**
@@ -38,7 +39,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       $phases = implode(', ', $design_module['phases'] ?? []);
       $conditions = implode(', ', $conditions_module['conditions'] ?? []);
 
-      if ($nct_id !== '' && $study_route !== NULL) {
+      if ($nct_id && $study_route) {
         $url = Url::fromRoute($study_route, ['nctId' => $nct_id]);
         if ($modal) {
           $nct_cell = [
@@ -130,31 +131,31 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
     $lead_sponsor = (string) $this->getStudyValue($study, 'protocolSection.sponsorCollaboratorsModule.leadSponsor.name', '');
 
     $overview_items = [];
-    if ($status !== '') {
-      $overview_items[] = $this->buildLabelValueMarkup((string) $this->t('Status'), $status);
+    if ($status) {
+      $overview_items[] = $this->buildLabelValueMarkup($this->t('Status'), $status);
     }
-    if ($phases !== []) {
-      $overview_items[] = $this->buildLabelValueMarkup((string) $this->t('Phases'), implode(', ', $phases));
+    if ($phases) {
+      $overview_items[] = $this->buildLabelValueMarkup($this->t('Phases'), implode(', ', $phases));
     }
-    if ($study_type !== '') {
-      $overview_items[] = $this->buildLabelValueMarkup((string) $this->t('Study type'), $study_type);
+    if ($study_type) {
+      $overview_items[] = $this->buildLabelValueMarkup($this->t('Study type'), $study_type);
     }
     $identity_items = [];
-    if ($nct_id !== '') {
-      $identity_items[] = $this->buildLabelValueMarkup((string) $this->t('NCT ID'), $nct_id);
+    if ($nct_id) {
+      $identity_items[] = $this->buildLabelValueMarkup($this->t('NCT ID'), $nct_id);
     }
-    if ($lead_sponsor !== '') {
-      $identity_items[] = $this->buildLabelValueMarkup((string) $this->t('Sponsor'), $lead_sponsor);
+    if ($lead_sponsor) {
+      $identity_items[] = $this->buildLabelValueMarkup($this->t('Sponsor'), $lead_sponsor);
     }
 
     $facts_items = $this->buildFactsItems($study);
     $overview_items = array_merge($overview_items, $identity_items, $facts_items);
-    if ($overview_items !== []) {
+    if ($overview_items) {
       $build['overview'] = $this->buildSummaryFieldset((string) $this->t('Study overview'), $overview_items);
     }
 
     $conditions = $this->normalizeStringList($this->getStudyValue($study, 'protocolSection.conditionsModule.conditions', []));
-    if ($conditions !== []) {
+    if ($conditions) {
       $build['conditions'] = [
         '#type' => 'fieldset',
         '#title' => $this->t('Conditions'),
@@ -166,7 +167,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
     }
 
     $brief_summary = (string) $this->getStudyValue($study, 'protocolSection.descriptionModule.briefSummary', '');
-    if ($brief_summary !== '') {
+    if ($brief_summary) {
       $build['brief_summary'] = [
         '#type' => 'fieldset',
         '#title' => $this->t('Summary'),
@@ -177,7 +178,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
     }
 
     $interventions = $this->getStudyValue($study, 'protocolSection.armsInterventionsModule.interventions', []);
-    if (is_array($interventions) && $interventions !== []) {
+    if (is_array($interventions) && $interventions) {
       $items = [];
       foreach ($interventions as $intervention) {
         if (!is_array($intervention)) {
@@ -187,17 +188,17 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
         $type = (string) ($intervention['type'] ?? '');
         $description = (string) ($intervention['description'] ?? '');
         $item = $name;
-        if ($type !== '') {
+        if ($type) {
           $item .= ' (' . $type . ')';
         }
-        if ($description !== '') {
+        if ($description) {
           $item .= ': ' . $description;
         }
-        if ($item !== '') {
+        if ($item) {
           $items[] = $item;
         }
       }
-      if ($items !== []) {
+      if ($items) {
         $build['interventions'] = [
           '#type' => 'fieldset',
           '#title' => $this->t('Interventions'),
@@ -210,7 +211,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
     }
 
     $primary_outcomes = $this->getStudyValue($study, 'protocolSection.outcomesModule.primaryOutcomes', []);
-    if (is_array($primary_outcomes) && $primary_outcomes !== []) {
+    if (is_array($primary_outcomes) && $primary_outcomes) {
       $items = [];
       foreach ($primary_outcomes as $outcome) {
         if (!is_array($outcome)) {
@@ -218,12 +219,12 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
         }
         $measure = (string) ($outcome['measure'] ?? '');
         $time_frame = (string) ($outcome['timeFrame'] ?? '');
-        if ($measure === '') {
+        if (!$measure) {
           continue;
         }
-        $items[] = ($time_frame !== '') ? ($measure . ' (' . $time_frame . ')') : $measure;
+        $items[] = ($time_frame) ? ($measure . ' (' . $time_frame . ')') : $measure;
       }
-      if ($items !== []) {
+      if ($items) {
         $build['primary_outcomes'] = [
           '#type' => 'fieldset',
           '#title' => $this->t('Primary outcomes'),
@@ -236,7 +237,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
     }
 
     $eligibility = (string) $this->getStudyValue($study, 'protocolSection.eligibilityModule.eligibilityCriteria', '');
-    if ($eligibility !== '') {
+    if ($eligibility) {
       $build['eligibility'] = [
         '#type' => 'fieldset',
         '#title' => $this->t('Eligibility'),
@@ -247,7 +248,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
     }
 
     $locations = $this->getStudyValue($study, 'protocolSection.contactsLocationsModule.locations', []);
-    if (is_array($locations) && $locations !== []) {
+    if (is_array($locations) && $locations) {
       $rows = [];
       foreach ($locations as $location) {
         if (!is_array($location)) {
@@ -263,7 +264,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
           (string) ($location['status'] ?? ''),
         ];
       }
-      if ($rows !== []) {
+      if ($rows) {
         $build['locations'] = [
           '#type' => 'fieldset',
           '#title' => $this->t('Locations'),
@@ -304,9 +305,18 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
   /**
    * Builds bold label and value markup for summary lists.
    */
-  protected function buildLabelValueMarkup(string $label, string $value): array {
+  protected function buildLabelValueMarkup(string|TranslatableMarkup $label, string|TranslatableMarkup $value): array {
     return [
-      '#markup' => '<strong>' . Html::escape($label) . ':</strong> ' . Html::escape($value),
+      '#type' => 'container',
+      'label' => [
+        '#type' => 'html_tag',
+        '#tag' => 'strong',
+        '#value' => $label,
+        '#suffix' => ': ',
+      ],
+      'value' => [
+        '#markup' => $value,
+      ],
     ];
   }
 
@@ -317,40 +327,40 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
     $items = [];
 
     $start_date = (string) $this->getStudyValue($study, 'protocolSection.statusModule.startDateStruct.date', '');
-    if ($start_date !== '') {
-      $items[] = $this->buildLabelValueMarkup((string) $this->t('Start date'), $start_date);
+    if ($start_date) {
+      $items[] = $this->buildLabelValueMarkup($this->t('Start date'), $start_date);
     }
 
     $completion_date = (string) $this->getStudyValue($study, 'protocolSection.statusModule.completionDateStruct.date', '');
-    if ($completion_date !== '') {
-      $items[] = $this->buildLabelValueMarkup((string) $this->t('Completion date'), $completion_date);
+    if ($completion_date) {
+      $items[] = $this->buildLabelValueMarkup($this->t('Completion date'), $completion_date);
     }
 
     $enrollment_count = $this->getStudyValue($study, 'protocolSection.designModule.enrollmentInfo.count', NULL);
     $enrollment_type = (string) $this->getStudyValue($study, 'protocolSection.designModule.enrollmentInfo.type', '');
     if ($enrollment_count !== NULL) {
       $value = (string) $enrollment_count;
-      if ($enrollment_type !== '') {
+      if ($enrollment_type) {
         $value .= ' (' . $enrollment_type . ')';
       }
-      $items[] = $this->buildLabelValueMarkup((string) $this->t('Enrollment'), $value);
+      $items[] = $this->buildLabelValueMarkup($this->t('Enrollment'), $value);
     }
 
     $sex = (string) $this->getStudyValue($study, 'protocolSection.eligibilityModule.sex', '');
-    if ($sex !== '') {
-      $items[] = $this->buildLabelValueMarkup((string) $this->t('Sex'), $sex);
+    if ($sex) {
+      $items[] = $this->buildLabelValueMarkup($this->t('Sex'), $sex);
     }
 
     $minimum_age = (string) $this->getStudyValue($study, 'protocolSection.eligibilityModule.minimumAge', '');
     $maximum_age = (string) $this->getStudyValue($study, 'protocolSection.eligibilityModule.maximumAge', '');
-    if ($minimum_age !== '' || $maximum_age !== '') {
-      $age_range = (($minimum_age !== '') ? $minimum_age : (string) $this->t('N/A')) . ' - ' . (($maximum_age !== '') ? $maximum_age : (string) $this->t('N/A'));
-      $items[] = $this->buildLabelValueMarkup((string) $this->t('Age range'), $age_range);
+    if ($minimum_age || $maximum_age) {
+      $age_range = (($minimum_age) ? $minimum_age : (string) $this->t('N/A')) . ' - ' . (($maximum_age) ? $maximum_age : (string) $this->t('N/A'));
+      $items[] = $this->buildLabelValueMarkup($this->t('Age range'), $age_range);
     }
 
     $healthy_volunteers = $this->getStudyValue($study, 'protocolSection.eligibilityModule.healthyVolunteers', NULL);
     if ($healthy_volunteers !== NULL) {
-      $items[] = $this->buildLabelValueMarkup((string) $this->t('Healthy volunteers'), (string) ($healthy_volunteers ? $this->t('Yes') : $this->t('No')));
+      $items[] = $this->buildLabelValueMarkup($this->t('Healthy volunteers'), ($healthy_volunteers) ? $this->t('Yes') : $this->t('No'));
     }
 
     return $items;
@@ -368,10 +378,10 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       $data_type = (string) ($field_metadata['sourceType'] ?? '');
 
       $field_markup = '<strong>' . Html::escape($title) . '</strong>';
-      if ($data_type !== '') {
+      if ($data_type) {
         $field_markup .= ' (' . Html::escape($data_type) . ')';
       }
-      if ($description !== '') {
+      if ($description) {
         $field_markup .= '<br/>' . Html::escape($description);
       }
       $field_markup .= '<br/><small>' . Html::escape($key) . '</small>';

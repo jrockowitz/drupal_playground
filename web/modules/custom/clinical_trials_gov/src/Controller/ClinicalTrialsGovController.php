@@ -18,23 +18,23 @@ class ClinicalTrialsGovController extends ControllerBase {
    */
   public function index(): array {
     $config = $this->config('clinical_trials_gov.settings');
-    $query = (string) ($config->get('query') ?? '');
-    $paths = array_values(array_filter($config->get('paths') ?? [], 'is_string'));
-    $type = (string) ($config->get('type') ?? '');
-    $field_mappings = array_filter($config->get('fields') ?? [], 'is_string');
-    $import_ready = ($query !== '' && $paths !== [] && $type !== '' && $field_mappings !== []);
+    $query = $config->get('query');
+    $paths = (array) $config->get('paths');
+    $type = $config->get('type');
+    $field_mappings = (array) $config->get('fields');
+    $import_ready = ($query && $paths && $type && $field_mappings);
 
-    if ($query === '') {
+    if (!$query) {
       $message = $this->buildMessage($this->t('Please go to <a href=":url">Find</a> and build your query.', [
         ':url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ]));
     }
-    elseif ($paths === []) {
+    elseif (!$paths) {
       $message = $this->buildMessage($this->t('Your query is saved, but no fields were discovered. Go back to <a href=":url">Find</a> and save a query that returns studies.', [
         ':url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ]));
     }
-    elseif ($type === '' || $field_mappings === []) {
+    elseif (!$type || !$field_mappings) {
       $message = $this->buildMessage($this->t('Your query is saved. Go to <a href=":url">Configure</a> and select the destination content type and fields.', [
         ':url' => Url::fromRoute('clinical_trials_gov.configure')->toString(),
       ]));

@@ -157,7 +157,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
       return 'true';
     }
 
-    $normalized = is_bool($value) ? ($value ? 'true' : 'false') : strtolower((string) $value);
+    $normalized = strtolower((string) $value);
 
     return match($normalized) {
       '1', 'true', 'yes' => 'true',
@@ -173,9 +173,9 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
     $timestamp = (string) ($version['dataTimestamp'] ?? '');
     $formatted_timestamp = $timestamp;
 
-    if ($timestamp !== '') {
+    if ($timestamp) {
       $date_time = strtotime($timestamp . ' UTC');
-      if ($date_time !== FALSE) {
+      if ($date_time) {
         $formatted_timestamp = $this->dateFormatter->format($date_time, 'custom', 'F j Y \a\t g:i a');
       }
     }

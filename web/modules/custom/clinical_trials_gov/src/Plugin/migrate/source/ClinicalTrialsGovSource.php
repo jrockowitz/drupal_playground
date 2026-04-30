@@ -83,7 +83,7 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
           continue;
         }
         $nct_id = (string) ($study['protocolSection']['identificationModule']['nctId'] ?? '');
-        if ($nct_id === '') {
+        if (!$nct_id) {
           continue;
         }
         $rows[] = [
@@ -107,7 +107,7 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
    */
   public function prepareRow(Row $row) {
     $nct_id = (string) $row->getSourceProperty('nctId');
-    if ($nct_id === '') {
+    if (!$nct_id) {
       return FALSE;
     }
 
@@ -117,7 +117,7 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
     }
 
     foreach ($this->flattenStudy($study) as $path => $value) {
-      if ($path === '') {
+      if (!$path) {
         continue;
       }
       $row->setSourceProperty($path, $value);
@@ -134,11 +134,11 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
   protected function flattenStudy(mixed $data, string $prefix = ''): array {
     if (is_array($data) && !array_is_list($data)) {
       $result = [];
-      if ($prefix !== '') {
+      if ($prefix) {
         $result[$prefix] = $data;
       }
       foreach ($data as $key => $value) {
-        $child_key = ($prefix !== '') ? $prefix . '.' . $key : (string) $key;
+        $child_key = ($prefix) ? $prefix . '.' . $key : (string) $key;
         $result += $this->flattenStudy($value, $child_key);
       }
       return $result;

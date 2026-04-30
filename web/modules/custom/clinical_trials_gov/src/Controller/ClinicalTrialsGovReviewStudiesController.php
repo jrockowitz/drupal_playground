@@ -77,8 +77,8 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
    * Builds the saved-query studies list page.
    */
   protected function buildListPage(Request $request): array {
-    $saved_query = (string) ($this->config('clinical_trials_gov.settings')->get('query') ?? '');
-    if ($saved_query === '') {
+    $saved_query = (string) $this->config('clinical_trials_gov.settings')->get('query');
+    if (!$saved_query) {
       $this->messenger()->addWarning($this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ]));
@@ -88,7 +88,7 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($saved_query);
     $page_token = (string) $request->query->get('pageToken', '');
     $page_offset = (int) $request->query->get('pageOffset', 0);
-    if ($page_token !== '') {
+    if ($page_token) {
       $parameters['pageToken'] = $page_token;
     }
     $parameters['countTotal'] = 'true';

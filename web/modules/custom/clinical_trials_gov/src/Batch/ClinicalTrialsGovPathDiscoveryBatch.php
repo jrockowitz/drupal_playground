@@ -49,7 +49,7 @@ class ClinicalTrialsGovPathDiscoveryBatch {
       $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query);
       $parameters['fields'] = 'NCTId';
       $parameters['pageSize'] = (string) self::SEARCH_PAGE_SIZE;
-      if ($context['sandbox']['page_token'] !== '') {
+      if ($context['sandbox']['page_token']) {
         $parameters['pageToken'] = (string) $context['sandbox']['page_token'];
       }
 
@@ -60,7 +60,7 @@ class ClinicalTrialsGovPathDiscoveryBatch {
         }
 
         $nct_id = (string) ($study['protocolSection']['identificationModule']['nctId'] ?? '');
-        if ($nct_id === '') {
+        if (!$nct_id) {
           continue;
         }
 
@@ -74,7 +74,7 @@ class ClinicalTrialsGovPathDiscoveryBatch {
       }
 
       $next_page_token = (string) ($response['nextPageToken'] ?? '');
-      if ($next_page_token !== '' && count($context['sandbox']['study_ids']) < self::MAX_STUDIES) {
+      if ($next_page_token && count($context['sandbox']['study_ids']) < self::MAX_STUDIES) {
         $context['sandbox']['page_token'] = $next_page_token;
         $context['message'] = (string) t('Collecting study identifiers (@count found so far).', [
           '@count' => count($context['sandbox']['study_ids']),
@@ -103,7 +103,7 @@ class ClinicalTrialsGovPathDiscoveryBatch {
     for ($index = $start; $index < $end; $index++) {
       $study = $manager->getStudy($study_ids[$index]);
       foreach (array_keys($study) as $path) {
-        if (!is_string($path) || $path === '') {
+        if (!is_string($path) || !$path) {
           continue;
         }
         $context['sandbox']['discovered_paths'][$path] = TRUE;
@@ -144,7 +144,7 @@ class ClinicalTrialsGovPathDiscoveryBatch {
     $metadata_paths = array_keys($manager->getMetadataByPath());
     $discovered_paths = array_values(array_filter($results['paths'] ?? [], 'is_string'));
     $discovered_paths = array_values(array_intersect($metadata_paths, $discovered_paths));
-    if ($discovered_paths !== []) {
+    if ($discovered_paths) {
       $expanded_paths = [];
       foreach ($discovered_paths as $path) {
         $expanded_paths[$path] = TRUE;

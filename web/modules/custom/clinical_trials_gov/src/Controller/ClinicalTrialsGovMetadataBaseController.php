@@ -31,7 +31,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds the metadata page.
    */
   public function index(): array {
-    if ($this->filter && $this->getSavedQuery() === '') {
+    if ($this->filter && !$this->getSavedQuery()) {
       $this->messageHandler->addWarning($this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ]));
@@ -56,7 +56,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
     ];
 
     $footer = $this->buildFooter();
-    if ($footer !== []) {
+    if ($footer) {
       $build['footer'] = $footer;
     }
 
@@ -91,17 +91,14 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Returns configured metadata paths.
    */
   protected function getConfiguredPaths(): array {
-    return array_values(array_filter(
-      $this->configurationFactory->get('clinical_trials_gov.settings')->get('paths') ?? [],
-      'is_string'
-    ));
+    return (array) $this->configurationFactory->get('clinical_trials_gov.settings')->get('paths');
   }
 
   /**
    * Returns the saved query string.
    */
   protected function getSavedQuery(): string {
-    return (string) ($this->configurationFactory->get('clinical_trials_gov.settings')->get('query') ?? '');
+    return (string) $this->configurationFactory->get('clinical_trials_gov.settings')->get('query');
   }
 
   /**
@@ -114,7 +111,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
     }
 
     $path_lookup = array_fill_keys($this->getConfiguredPaths(), TRUE);
-    if ($path_lookup === []) {
+    if (!$path_lookup) {
       return [];
     }
 
@@ -171,7 +168,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
     $depth = substr_count((string) ($row['path'] ?? ''), '.');
     $classic_type = (string) ($row['sourceType'] ?? '');
     $max_chars = $row['maxChars'] ?? NULL;
-    if (is_int($max_chars) && $classic_type !== '') {
+    if (is_int($max_chars) && $classic_type) {
       $classic_type .= ' (max ' . $max_chars . ' chars)';
     }
 
@@ -209,7 +206,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
         'line_break' => [
           '#type' => 'html_tag',
           '#tag' => 'br',
-          '#access' => ($secondary !== ''),
+          '#access' => ($secondary),
         ],
         'secondary' => [
           '#type' => 'html_tag',
@@ -218,7 +215,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
           '#attributes' => [
             'class' => ['clinical-trials-gov-report-metadata__secondary'],
           ],
-          '#access' => ($secondary !== ''),
+          '#access' => ($secondary),
         ],
       ],
     ];
@@ -245,11 +242,11 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
       ],
     ];
 
-    if ($style !== '') {
+    if ($style) {
       $cell['primary']['#attributes']['style'] = $style;
     }
 
-    if ($secondary !== '') {
+    if ($secondary) {
       $cell['secondary'] = [
         '#type' => 'html_tag',
         '#tag' => 'div',
@@ -263,7 +260,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
         ],
       ];
 
-      if ($style !== '') {
+      if ($style) {
         $cell['secondary']['#attributes']['style'] = $style;
       }
     }
@@ -277,7 +274,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds a plain text cell preserving line breaks.
    */
   protected function buildTextCell(string $value): array|string {
-    if ($value === '') {
+    if (!$value) {
       return '';
     }
 
@@ -292,12 +289,12 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds the combined field title, description, and notes cell.
    */
   protected function buildFieldTitleCell(string $title, string $description, string $notes, string $definition_label, string $definition_url): array|string {
-    if (($title === '') && ($description === '') && ($notes === '') && ($definition_label === '')) {
+    if (!$title && !$description && !$notes && !$definition_label) {
       return '';
     }
 
     $content = [];
-    if ($title !== '') {
+    if ($title) {
       $content['title'] = [
         '#type' => 'html_tag',
         '#tag' => 'strong',
@@ -308,7 +305,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
         '#tag' => 'br',
       ];
     }
-    if ($description !== '') {
+    if ($description) {
       $content['description'] = [
         '#markup' => '<small>' . nl2br(Html::escape($description)) . '</small>',
       ];
@@ -317,7 +314,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
         '#tag' => 'br',
       ];
     }
-    if ($notes !== '') {
+    if ($notes) {
       $content['notes'] = [
         '#type' => 'html_tag',
         '#tag' => 'em',
@@ -330,12 +327,12 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
         '#tag' => 'br',
       ];
     }
-    if ($definition_label !== '') {
+    if ($definition_label) {
       $content['definition'] = [
         '#type' => 'html_tag',
         '#tag' => 'small',
       ];
-      if ($definition_url !== '') {
+      if ($definition_url) {
         $content['definition']['content'] = [
           '#type' => 'link',
           '#title' => $definition_label,
@@ -383,7 +380,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
       $suffixes[] = 'synonyms';
     }
 
-    if ($suffixes !== []) {
+    if ($suffixes) {
       $value .= ' (' . implode(', ', $suffixes) . ')';
     }
 
@@ -394,7 +391,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds the definition cell.
    */
   protected function buildPathCell(string $path): array|string {
-    if ($path === '') {
+    if (!$path) {
       return '';
     }
 

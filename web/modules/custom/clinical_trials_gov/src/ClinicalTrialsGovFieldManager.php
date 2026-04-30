@@ -227,7 +227,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
     $definitions = [];
 
     foreach ($paths as $path) {
-      if (!is_string($path) || $path === '') {
+      if (!is_string($path) || !$path) {
         continue;
       }
       $definitions[$path] = $this->getFieldDefinition($path);
@@ -258,12 +258,9 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    * Returns configured metadata paths.
    */
   protected function getConfiguredAvailableFieldKeys(): array {
-    $paths = array_values(array_filter(
-      $this->configFactory->get('clinical_trials_gov.settings')->get('paths') ?? [],
-      'is_string'
-    ));
+    $paths = (array) $this->configFactory->get('clinical_trials_gov.settings')->get('paths');
 
-    if ($paths === []) {
+    if (!$paths) {
       return [];
     }
 

@@ -27,7 +27,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    */
   public function createContentType(string $type, string $label, string $description): void {
     $node_type_storage = $this->entityTypeManager->getStorage('node_type');
-    if ($node_type_storage->load($type) !== NULL) {
+    if ($node_type_storage->load($type)) {
       return;
     }
 
@@ -45,7 +45,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     $field_definitions = [];
 
     foreach ($fields as $path) {
-      if (!is_string($path) || $path === '') {
+      if (!is_string($path) || !$path) {
         continue;
       }
 
@@ -56,7 +56,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       }
 
       $field_name = $definition['field_name'];
-      if (FieldStorageConfig::loadByName('node', $field_name) === NULL) {
+      if (!FieldStorageConfig::loadByName('node', $field_name)) {
         FieldStorageConfig::create([
           'field_name' => $field_name,
           'entity_type' => 'node',
@@ -67,7 +67,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
         ])->save();
       }
 
-      if (FieldConfig::loadByName('node', $type, $field_name) !== NULL) {
+      if (FieldConfig::loadByName('node', $type, $field_name)) {
         continue;
       }
 
@@ -85,7 +85,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     foreach ($this->getSystemLinkFieldDefinitions() as $field_name => $definition) {
       $field_definitions[$field_name] = $definition;
 
-      if (FieldStorageConfig::loadByName('node', $field_name) === NULL) {
+      if (!FieldStorageConfig::loadByName('node', $field_name)) {
         FieldStorageConfig::create([
           'field_name' => $field_name,
           'entity_type' => 'node',
@@ -96,7 +96,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
         ])->save();
       }
 
-      if (FieldConfig::loadByName('node', $type, $field_name) !== NULL) {
+      if (FieldConfig::loadByName('node', $type, $field_name)) {
         continue;
       }
 
@@ -167,7 +167,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
 
     $selected_fields = [];
     foreach ($fields as $field) {
-      if (is_string($field) && $field !== '') {
+      if (is_string($field) && $field) {
         $selected_fields[$field] = $this->fieldManager->resolveFieldDefinition($field);
       }
     }
@@ -417,7 +417,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   protected function resolveParentGroupName(string $path, array $selected_fields): string {
     $metadata = $this->manager->getMetadataByPath($path);
     $parent = (string) ($metadata['parent'] ?? '');
-    if ($parent === '' || !isset($selected_fields[$parent]) || empty($selected_fields[$parent]['group_only'])) {
+    if (!$parent || !isset($selected_fields[$parent]) || empty($selected_fields[$parent]['group_only'])) {
       return '';
     }
 

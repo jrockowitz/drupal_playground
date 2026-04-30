@@ -17,9 +17,9 @@ trait ClinicalTrialsGovNodeAccessTrait {
    */
   protected function checkClinicalTrialsGovCreateAccess(?string $entityBundle): AccessResultInterface {
     $settings = \Drupal::config('clinical_trials_gov.settings');
-    $configured_bundle = (string) ($settings->get('type') ?? '');
+    $configured_bundle = (string) $settings->get('type');
 
-    if ($entityBundle !== NULL && $entityBundle === $configured_bundle) {
+    if ($entityBundle && $entityBundle === $configured_bundle) {
       return AccessResult::forbidden()->addCacheableDependency($settings);
     }
 

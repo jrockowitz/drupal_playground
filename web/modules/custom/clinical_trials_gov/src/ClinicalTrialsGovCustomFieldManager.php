@@ -331,7 +331,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       return TRUE;
     }
 
-    if ($type === '' || $type === 'text' || $type === 'boolean' || $type === 'integer') {
+    if (!$type || $type === 'text' || $type === 'boolean' || $type === 'integer') {
       return FALSE;
     }
 

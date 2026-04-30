@@ -83,7 +83,7 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
           continue;
         }
         $metadata_piece = (string) ($metadata['piece'] ?? '');
-        if ($metadata_piece === '') {
+        if (!$metadata_piece) {
           continue;
         }
         $this->metadataByPieceCache[$metadata_piece] = $metadata;
@@ -171,7 +171,7 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
     if (is_array($data) && !array_is_list($data)) {
       $result = [];
       foreach ($data as $key => $value) {
-        $child_key = ($prefix !== '') ? $prefix . '.' . $key : (string) $key;
+        $child_key = ($prefix) ? $prefix . '.' . $key : (string) $key;
         $result += $this->flattenStudy($value, $child_key);
       }
       return $result;
@@ -201,17 +201,17 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
         continue;
       }
       $name = (string) ($item['name'] ?? '');
-      $path = ($parent !== '' && $name !== '') ? $parent . '.' . $name : $name;
+      $path = ($parent && $name) ? $parent . '.' . $name : $name;
       $children = [];
       foreach (($item['children'] ?? []) as $child) {
         if (!is_array($child)) {
           continue;
         }
         $child_name = (string) ($child['name'] ?? '');
-        if ($child_name === '') {
+        if (!$child_name) {
           continue;
         }
-        $children[] = ($path !== '') ? $path . '.' . $child_name : $child_name;
+        $children[] = ($path) ? $path . '.' . $child_name : $child_name;
       }
       $rows[$path] = [
         'path' => $path,

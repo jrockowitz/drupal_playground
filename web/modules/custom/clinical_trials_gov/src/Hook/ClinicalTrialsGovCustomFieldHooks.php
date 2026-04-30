@@ -71,7 +71,7 @@ class ClinicalTrialsGovCustomFieldHooks {
    */
   public static function validateYamlElement(array &$element, FormStateInterface $form_state, array &$complete_form = []): void {
     $value = $element['#value'] ?? '';
-    if (!is_scalar($value) || trim((string) $value) === '') {
+    if (!is_scalar($value) || !trim((string) $value)) {
       return;
     }
 
@@ -118,15 +118,15 @@ class ClinicalTrialsGovCustomFieldHooks {
    */
   protected function matchesClinicalTrialsGovFieldName(string $field_name): bool {
     $prefix = $this->getClinicalTrialsGovFieldPrefix();
-    return ($prefix !== '' && str_starts_with($field_name, $prefix));
+    return ($prefix && str_starts_with($field_name, $prefix));
   }
 
   /**
    * Returns the configured ClinicalTrials.gov field name prefix.
    */
   protected function getClinicalTrialsGovFieldPrefix(): string {
-    $field_prefix = trim((string) ($this->configFactory->get('clinical_trials_gov.settings')->get('field_prefix') ?? ''));
-    if ($field_prefix === '') {
+    $field_prefix = trim((string) $this->configFactory->get('clinical_trials_gov.settings')->get('field_prefix'));
+    if (!$field_prefix) {
       return '';
     }
 

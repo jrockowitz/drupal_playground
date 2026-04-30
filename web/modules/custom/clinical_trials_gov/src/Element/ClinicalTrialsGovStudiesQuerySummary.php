@@ -51,7 +51,7 @@ class ClinicalTrialsGovStudiesQuerySummary extends RenderElementBase {
 
     foreach ($definitions as $definition) {
       $key = (string) ($definition['key'] ?? '');
-      if ($key === '' || !isset($parameters[$key])) {
+      if (!$key || !isset($parameters[$key])) {
         continue;
       }
 

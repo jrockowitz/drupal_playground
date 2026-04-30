@@ -106,13 +106,13 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
    */
   protected function isStructureLocked(): bool {
     $config = $this->config('clinical_trials_gov.settings');
-    $type = trim((string) ($config->get('type') ?? ''));
+    $type = trim((string) $config->get('type'));
 
-    if ($type === '') {
+    if (!$type) {
       return FALSE;
     }
 
-    return $this->entityTypeManager->getStorage('node_type')->load($type) !== NULL;
+    return (bool) $this->entityTypeManager->getStorage('node_type')->load($type);
   }
 
 }

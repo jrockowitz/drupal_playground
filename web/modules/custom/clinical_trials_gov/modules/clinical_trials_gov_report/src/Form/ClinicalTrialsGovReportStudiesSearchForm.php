@@ -33,7 +33,7 @@ class ClinicalTrialsGovReportStudiesSearchForm extends FormBase {
     $form['parameters'] = [
       '#type' => 'details',
       '#title' => $this->t('Query-string parameters'),
-      '#open' => ($query_string === ''),
+      '#open' => (!$query_string),
     ];
     $form['parameters']['studies_query'] = [
       '#type' => 'clinical_trials_gov_studies_query',
@@ -46,7 +46,7 @@ class ClinicalTrialsGovReportStudiesSearchForm extends FormBase {
         '#value' => $this->t('Search'),
       ],
     ];
-    if ($query_string !== '') {
+    if ($query_string) {
       $form['parameters']['actions']['reset'] = [
         '#type' => 'submit',
         '#value' => $this->t('Reset'),

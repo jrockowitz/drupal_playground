@@ -57,12 +57,12 @@ class ClinicalTrialsGovEntityHooks {
     }
 
     $bundle = (string) ($context['bundle'] ?? '');
-    $type = (string) ($settings->get('type') ?? '');
+    $type = $settings->get('type');
     if ($bundle !== $type) {
       return;
     }
 
-    $field_mappings = array_filter($settings->get('fields') ?? [], 'is_string');
+    $field_mappings = (array) $settings->get('fields');
     $field_names = array_keys($field_mappings);
     $field_names[] = $this->entityManager->getStudyUrlFieldName();
     $field_names[] = $this->entityManager->getStudyApiFieldName();
@@ -70,7 +70,7 @@ class ClinicalTrialsGovEntityHooks {
     $view_display = EntityViewDisplay::load('node.' . $bundle . '.default');
     foreach (array_unique($field_names) as $field_name) {
       $component = $form_display->getComponent($field_name);
-      if ($component === NULL) {
+      if (!$component) {
         continue;
       }
 
@@ -110,11 +110,11 @@ class ClinicalTrialsGovEntityHooks {
       return;
     }
 
-    if ($entity->bundle() !== (string) ($settings->get('type') ?? '')) {
+    if ($entity->bundle() !== $settings->get('type')) {
       return;
     }
 
-    $mapped_paths = array_values(array_filter($settings->get('fields') ?? [], 'is_string'));
+    $mapped_paths = array_values((array) $settings->get('fields'));
     if (!in_array('protocolSection.identificationModule.briefTitle', $mapped_paths, TRUE)) {
       return;
     }

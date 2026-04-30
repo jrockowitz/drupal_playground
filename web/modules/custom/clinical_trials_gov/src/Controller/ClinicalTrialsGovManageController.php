@@ -16,10 +16,10 @@ class ClinicalTrialsGovManageController extends ControllerBase {
    * Redirects to the configured content overview or back to Configure.
    */
   public function index(): RedirectResponse {
-    $type = (string) ($this->config('clinical_trials_gov.settings')->get('type') ?? '');
-    $node_type = ($type !== '') ? $this->entityTypeManager()->getStorage('node_type')->load($type) : NULL;
+    $type = (string) $this->config('clinical_trials_gov.settings')->get('type');
+    $node_type = ($type) ? $this->entityTypeManager()->getStorage('node_type')->load($type) : NULL;
 
-    if ($type === '' || $node_type === NULL) {
+    if (!$type || !$node_type) {
       $this->messenger()->addStatus($this->t('Create the destination content type before managing imported studies.'));
       return $this->redirect('clinical_trials_gov.configure');
     }

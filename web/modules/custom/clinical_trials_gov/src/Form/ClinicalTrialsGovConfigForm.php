@@ -63,13 +63,13 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $form['#attached']['library'][] = 'clinical_trials_gov/clinical_trials_gov';
 
     $config = $this->config('clinical_trials_gov.settings');
-    $paths = array_values(array_filter($config->get('paths') ?? [], 'is_string'));
-    $saved_type = (string) ($config->get('type') ?? '');
-    $saved_field_mappings = array_filter($config->get('fields') ?? [], 'is_string');
+    $paths = (array) $config->get('paths');
+    $saved_type = $config->get('type');
+    $saved_field_mappings = (array) $config->get('fields');
     $saved_fields = array_values($saved_field_mappings);
     $node_type = $this->entityTypeManager->getStorage('node_type')->load($saved_type);
 
-    if ($paths === []) {
+    if (!$paths) {
       $this->messenger()->addWarning($this->t('Save a studies query from the <a href=":find_url">Find</a> step before configuring the destination content type and fields.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ]));
@@ -84,7 +84,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       '#open' => TRUE,
     ];
 
-    if ($node_type === NULL) {
+    if (!$node_type) {
       $form['settings_message'] = [
         '#type' => 'container',
         '#weight' => -10,
@@ -96,7 +96,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       ];
     }
 
-    if ($node_type === NULL) {
+    if (!$node_type) {
       $form['content_type']['type'] = [
         '#type' => 'item',
         '#title' => $this->t('Machine name'),
@@ -193,7 +193,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       }
 
       $label = (string) ($definition['label'] ?? '');
-      if ($label === '') {
+      if (!$label) {
         $label = (string) ($definition['piece'] ?? $path);
       }
 
@@ -242,8 +242,8 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $paths = array_values(array_filter($this->config('clinical_trials_gov.settings')->get('paths') ?? [], 'is_string'));
-    if ($paths === []) {
+    $paths = (array) $this->config('clinical_trials_gov.settings')->get('paths');
+    if (!$paths) {
       $this->messenger()->addWarning($this->t('Save a studies query from the <a href=":find_url">Find</a> step before configuring the destination content type and fields.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ]));
@@ -252,7 +252,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     }
 
     $config = $this->configFactory()->getEditable('clinical_trials_gov.settings');
-    $type = (string) ($form_state->getValue('existing_type') ?: $this->config('clinical_trials_gov.settings')->get('type') ?: '');
+    $type = (string) ($form_state->getValue('existing_type') ?: $this->config('clinical_trials_gov.settings')->get('type'));
     $label = (string) ($form_state->getValue('label') ?: 'Trial');
     $description = (string) ($form_state->getValue('description') ?: '');
 
@@ -272,7 +272,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     foreach (array_keys($selected_rows) as $path) {
       $definition = $this->fieldManager->getFieldDefinition($path);
       $field_name = (string) ($definition['field_name'] ?? '');
-      if ($field_name === '') {
+      if (!$field_name) {
         continue;
       }
       if (!empty($definition['group_only'])) {
@@ -350,7 +350,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       ],
     ];
 
-    if ($description !== '') {
+    if ($description) {
       $cell['break'] = [
         '#markup' => '<br/>',
       ];
@@ -417,7 +417,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         return ($last_dot === FALSE) ? $detail : substr($detail, $last_dot + 1);
       }, array_filter($definition['details'], 'is_string'));
 
-      if ($properties !== []) {
+      if ($properties) {
         $markup .= '<ul><li><small>' . implode('</small></li><li><small>', array_map([Html::class, 'escape'], $properties)) . '</small></li></ul>';
       }
     }

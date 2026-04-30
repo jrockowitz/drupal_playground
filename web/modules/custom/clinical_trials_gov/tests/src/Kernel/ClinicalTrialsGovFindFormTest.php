@@ -19,9 +19,7 @@ use PHPUnit\Framework\Attributes\Group;
 class ClinicalTrialsGovFindFormTest extends KernelTestBase {
 
   /**
-   * Modules required for these kernel tests.
-   *
-   * @var array<string>
+   * {@inheritdoc}
    */
   protected static $modules = [
     'clinical_trials_gov',

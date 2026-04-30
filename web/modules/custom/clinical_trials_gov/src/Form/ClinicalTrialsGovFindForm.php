@@ -65,7 +65,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     $form['#attached']['library'][] = 'clinical_trials_gov/clinical_trials_gov';
 
     $config = $this->config('clinical_trials_gov.settings');
-    $saved_query = (string) ($config->get('query') ?? '');
+    $saved_query = (string) $config->get('query');
     $form['query_wrapper'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Studies query'),
@@ -194,7 +194,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
    */
   protected function buildPreview(FormStateInterface $form_state, string $saved_query): array {
     $query = $this->getPreviewQuery($form_state, $saved_query);
-    if ($query === '') {
+    if (!$query) {
       return $this->buildMessages(
         $this->t('Use Update preview to preview the current query without saving it.'),
       );
@@ -210,7 +210,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
 
     $page_token = $this->getPreviewPageToken($form_state);
     $page_offset = $this->getPreviewPageOffset($form_state);
-    if ($page_token !== '') {
+    if ($page_token) {
       $parameters['pageToken'] = $page_token;
     }
     $parameters['countTotal'] = 'true';
@@ -249,7 +249,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
       ];
     }
 
-    if ($studies !== []) {
+    if ($studies) {
       $build['results'] = $this->builder->buildStudiesList($studies, 'clinical_trials_gov.review.study', ['modal' => TRUE]);
     }
 
@@ -282,7 +282,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
       return (string) $form_state->get('preview_query');
     }
 
-    return (ClinicalTrialsGovStudiesQuery::parseQueryString($saved_query) !== []) ? $saved_query : '';
+    return (ClinicalTrialsGovStudiesQuery::parseQueryString($saved_query)) ? $saved_query : '';
   }
 
   /**

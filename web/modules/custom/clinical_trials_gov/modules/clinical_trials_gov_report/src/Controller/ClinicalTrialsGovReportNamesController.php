@@ -48,7 +48,7 @@ class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMeta
     ];
 
     $footer = $this->buildFooter();
-    if ($footer !== []) {
+    if ($footer) {
       $build['footer'] = $footer;
     }
 
@@ -92,7 +92,7 @@ class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMeta
       ],
     ];
 
-    if ($this->truncatedFieldNames !== []) {
+    if ($this->truncatedFieldNames) {
       $items = [];
       foreach ($this->truncatedFieldNames as $piece => $values) {
         $items[] = $piece . ' => ' . $values['drupal_name'] . ' => ' . $values['field_name'];
@@ -172,7 +172,7 @@ class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMeta
       $drupal_field_name = $this->buildDrupalFieldName((string) $path, $piece);
       $row_classes = [];
 
-      if (($drupal_name !== '') && !str_ends_with($drupal_field_name, $drupal_name)) {
+      if ($drupal_name && !str_ends_with($drupal_field_name, $drupal_name)) {
         $row_classes[] = 'color-warning';
         $this->truncatedFieldNames[$piece] = [
           'drupal_name' => $drupal_name,
