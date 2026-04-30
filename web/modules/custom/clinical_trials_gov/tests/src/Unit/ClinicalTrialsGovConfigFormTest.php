@@ -81,4 +81,117 @@ class ClinicalTrialsGovConfigFormTest extends UnitTestCase {
     $this->assertSame('padding-left: 3rem;', $field_name_cell['#attributes']['style']);
   }
 
+  /**
+   * Tests shouldHideFieldRow() hides children of non-group custom fields.
+   *
+   * @covers ::shouldHideFieldRow
+   */
+  public function testShouldHideFieldRowHidesChildrenOfCustomFields(): void {
+    $definitions = [
+      'protocolSection.designModule.enrollmentInfo' => [
+        'available' => TRUE,
+        'field_type' => 'custom',
+        'group_only' => FALSE,
+      ],
+      'protocolSection.designModule.enrollmentInfo.count' => [],
+      'protocolSection.statusModule.overallStatus' => [
+        'available' => TRUE,
+        'field_type' => 'string',
+        'group_only' => FALSE,
+      ],
+    ];
+
+    // Check that a child of a non-group custom field is hidden.
+    $this->assertTrue(
+      $this->form->exposedShouldHideFieldRow('protocolSection.designModule.enrollmentInfo.count', $definitions)
+    );
+
+    // Check that a standalone field is not hidden.
+    $this->assertFalse(
+      $this->form->exposedShouldHideFieldRow('protocolSection.statusModule.overallStatus', $definitions)
+    );
+
+    // Check that the custom field parent itself is not hidden.
+    $this->assertFalse(
+      $this->form->exposedShouldHideFieldRow('protocolSection.designModule.enrollmentInfo', $definitions)
+    );
+  }
+
+  /**
+   * Tests shouldHideFieldRow() does not hide children of group_only parents.
+   *
+   * @covers ::shouldHideFieldRow
+   */
+  public function testShouldHideFieldRowKeepsChildrenOfGroupOnlyParents(): void {
+    $definitions = [
+      'protocolSection.statusModule' => [
+        'available' => TRUE,
+        'field_type' => 'custom',
+        'group_only' => TRUE,
+      ],
+      'protocolSection.statusModule.overallStatus' => [],
+    ];
+
+    // Check that group_only parents do not cause their children to be hidden.
+    $this->assertFalse(
+      $this->form->exposedShouldHideFieldRow('protocolSection.statusModule.overallStatus', $definitions)
+    );
+  }
+
+  /**
+   * Tests shouldHideEmptyGroupRow() hides group rows with no visible children.
+   *
+   * @covers ::shouldHideEmptyGroupRow
+   */
+  public function testShouldHideEmptyGroupRow(): void {
+    $definitions = [
+      'protocolSection.statusModule' => ['group_only' => TRUE],
+      'protocolSection.statusModule.overallStatus' => ['group_only' => FALSE],
+      'protocolSection.emptyGroup' => ['group_only' => TRUE],
+    ];
+
+    // Check that a group row with visible children is not hidden.
+    $this->assertFalse(
+      $this->form->exposedShouldHideEmptyGroupRow('protocolSection.statusModule', $definitions)
+    );
+
+    // Check that a group row with no children is hidden.
+    $this->assertTrue(
+      $this->form->exposedShouldHideEmptyGroupRow('protocolSection.emptyGroup', $definitions)
+    );
+
+    // Check that a non-group row is never hidden by this method.
+    $this->assertFalse(
+      $this->form->exposedShouldHideEmptyGroupRow('protocolSection.statusModule.overallStatus', $definitions)
+    );
+  }
+
+  /**
+   * Tests hasSelectedDescendant() detects selected child paths.
+   *
+   * @covers ::hasSelectedDescendant
+   */
+  public function testHasSelectedDescendant(): void {
+    $selected_rows = [
+      'protocolSection.statusModule.overallStatus' => TRUE,
+      'protocolSection.statusModule.startDateStruct' => FALSE,
+      'protocolSection.designModule.phases' => TRUE,
+    ];
+
+    // Check that a selected child path is detected.
+    $this->assertTrue(
+      $this->form->exposedHasSelectedDescendant('protocolSection.statusModule', $selected_rows)
+    );
+
+    // Check that unselected-only children are not detected.
+    $this->assertFalse(
+      $this->form->exposedHasSelectedDescendant('protocolSection.referencesModule', $selected_rows)
+    );
+
+    // Check that sibling paths are not treated as descendants.
+    $this->assertFalse(
+      $this->form->exposedHasSelectedDescendant('protocolSection.status', $selected_rows)
+    );
+  }
+
 }

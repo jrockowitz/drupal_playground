@@ -39,4 +39,25 @@ class TestClinicalTrialsGovConfigForm extends ClinicalTrialsGovConfigForm {
     return $this->buildFieldNameCell($field_name, $details, $depth);
   }
 
+  /**
+   * Exposes shouldHideFieldRow() for testing.
+   */
+  public function exposedShouldHideFieldRow(string $path, array $definitions): bool {
+    return $this->shouldHideFieldRow($path, $definitions);
+  }
+
+  /**
+   * Exposes shouldHideEmptyGroupRow() for testing.
+   */
+  public function exposedShouldHideEmptyGroupRow(string $path, array $definitions): bool {
+    return $this->shouldHideEmptyGroupRow($path, $definitions);
+  }
+
+  /**
+   * Exposes hasSelectedDescendant() for testing.
+   */
+  public function exposedHasSelectedDescendant(string $path, array $selected_rows): bool {
+    return $this->hasSelectedDescendant($path, $selected_rows);
+  }
+
 }
