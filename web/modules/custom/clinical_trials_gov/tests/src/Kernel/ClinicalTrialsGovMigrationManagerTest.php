@@ -26,6 +26,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     'node',
     'field',
     'text',
+    'link',
     'options',
     'datetime',
     'filter',
@@ -106,6 +107,24 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->assertSame('protocolSection.identificationModule.nctId', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctId')));
     $this->assertSame('protocolSection.conditionsModule.conditions', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.conditionsModule.conditions')));
     $this->assertSame('protocolSection.identificationModule.nctIdAliases', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctIdAliases')));
+    $this->assertSame([
+      [
+        'plugin' => 'concat',
+        'source' => [
+          'constants/study_url_prefix',
+          'nctId',
+        ],
+      ],
+    ], $config->get('process.field_nct_url/uri'));
+    $this->assertSame([
+      [
+        'plugin' => 'concat',
+        'source' => [
+          'constants/study_api_url_prefix',
+          'nctId',
+        ],
+      ],
+    ], $config->get('process.field_nct_api/uri'));
     $this->assertNull($config->get('process.group_location'));
     $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.field_responsible_party'));
 
@@ -113,6 +132,8 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->assertSame(255, $config->get('source.constants.title_max_length'));
     $this->assertFalse($config->get('source.constants.title_wordsafe'));
     $this->assertTrue($config->get('source.constants.title_add_ellipsis'));
+    $this->assertSame('https://clinicaltrials.gov/study/', $config->get('source.constants.study_url_prefix'));
+    $this->assertSame('https://clinicaltrials.gov/api/v2/studies/', $config->get('source.constants.study_api_url_prefix'));
 
     // Check that updating the saved query refreshes an already-cached migration definition.
     $this->container->get('plugin.manager.migration')->createInstance('clinical_trials_gov');

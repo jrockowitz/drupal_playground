@@ -135,7 +135,6 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
       strpos($metadata_page_html, '<hr'),
       strpos($metadata_page_html, 'Version: 2.0.5 and Last Updated:')
     );
-
     // Check that the enums report loads and shows the expected grouped table.
     $this->drupalGet('admin/reports/status/clinical-trials-gov/enums');
     $this->assertSession()->statusCodeEquals(200);
@@ -195,6 +194,29 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
       strpos($structs_page_html, '<hr'),
       strpos($structs_page_html, 'Version: 2.0.5 and Last Updated:')
     );
+
+    // Check that the names report loads and shows the expected naming columns.
+    $this->drupalGet('admin/reports/status/clinical-trials-gov/names');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('This page displays how ClinicalTrials.gov identifiers are converted into Drupal labels and machine names.');
+    $this->assertSession()->pageTextContains('ClinicalTrials.gov Field Title');
+    $this->assertSession()->pageTextContains('ClinicalTrials.gov Identifier');
+    $this->assertSession()->pageTextContains('Drupal Field Label');
+    $this->assertSession()->pageTextContains('Drupal Name');
+    $this->assertSession()->pageTextContains('Drupal Field Name');
+    $this->assertSession()->pageTextContains('Brief Title');
+    $this->assertSession()->pageTextContains('BriefTitle');
+    $this->assertSession()->pageTextContains('brief_title');
+    $this->assertSession()->pageTextContains('field_brief_title');
+    $this->assertSession()->pageTextContains('EA Recruitment Status');
+    $this->assertSession()->pageTextContains('ExpandedAccessStatusForNCTId');
+    $this->assertSession()->pageTextContains('expanded_access_status_for_nct_id');
+    $this->assertSession()->pageTextContains('field_expanded_access_s_1d2e2fd7');
+    $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
+    $names_page_html = $this->getSession()->getPage()->getContent();
+    $this->assertStringContainsString('color-warning', $names_page_html);
+    $this->assertMatchesRegularExpression('/color-warning.*ExpandedAccessStatusForNCTId/s', $names_page_html);
+    $this->assertStringNotContainsString('color-warning"><td><div class="clinical-trials-gov-report-metadata__primary"><strong>Brief Title</strong>', $names_page_html);
 
     // Return to the studies report before checking the NCT detail link.
     $this->drupalGet('admin/reports/status/clinical-trials-gov');

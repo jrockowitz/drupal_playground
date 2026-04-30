@@ -197,15 +197,28 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds a header cell with optional secondary text.
    */
   protected function buildHeader(string $primary, string $secondary): array {
-    $markup = '<strong>' . Html::escape($primary) . '</strong>';
-    if ($secondary !== '') {
-      $markup .= '<br><span class="clinical-trials-gov-report-metadata__secondary">'
-        . Html::escape($secondary)
-        . '</span>';
-    }
-
     return [
-      'data' => Markup::create($markup),
+      'data' => [
+        'primary' => [
+          '#type' => 'html_tag',
+          '#tag' => 'strong',
+          '#value' => $primary,
+        ],
+        'line_break' => [
+          '#type' => 'html_tag',
+          '#tag' => 'br',
+          '#access' => ($secondary !== ''),
+        ],
+        'secondary' => [
+          '#type' => 'html_tag',
+          '#tag' => 'span',
+          '#value' => $secondary,
+          '#attributes' => [
+            'class' => ['clinical-trials-gov-report-metadata__secondary'],
+          ],
+          '#access' => ($secondary !== ''),
+        ],
+      ],
     ];
   }
 

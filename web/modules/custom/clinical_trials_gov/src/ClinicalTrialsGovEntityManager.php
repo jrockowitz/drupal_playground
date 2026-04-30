@@ -8,11 +8,26 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\link\LinkItemInterface;
 
 /**
  * Manages wizard-created content types and fields.
  */
 class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerInterface {
+
+  /**
+   * Built-in generated Trial link fields.
+   */
+  protected const SYSTEM_LINK_FIELDS = [
+    'field_nct_url' => [
+      'field_name' => 'field_nct_url',
+      'label' => 'ClinicalTrials.gov URL',
+    ],
+    'field_nct_api' => [
+      'field_name' => 'field_nct_api',
+      'label' => 'ClinicalTrials.gov API',
+    ],
+  ];
 
   public function __construct(
     protected ModuleHandlerInterface $moduleHandler,
@@ -77,6 +92,35 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
         'label' => $definition['label'],
         'description' => $definition['description'],
         'required' => !empty($definition['required']),
+        'settings' => $definition['instance_settings'],
+      ])->save();
+    }
+
+    foreach ($this->getSystemLinkFieldDefinitions() as $field_name => $definition) {
+      $field_definitions[$field_name] = $definition;
+
+      if (FieldStorageConfig::loadByName('node', $field_name) === NULL) {
+        FieldStorageConfig::create([
+          'field_name' => $field_name,
+          'entity_type' => 'node',
+          'type' => $definition['field_type'],
+          'settings' => $definition['storage_settings'],
+          'cardinality' => $definition['cardinality'],
+          'translatable' => TRUE,
+        ])->save();
+      }
+
+      if (FieldConfig::loadByName('node', $type, $field_name) !== NULL) {
+        continue;
+      }
+
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $type,
+        'label' => $definition['label'],
+        'description' => $definition['description'],
+        'required' => FALSE,
         'settings' => $definition['instance_settings'],
       ])->save();
     }
@@ -261,6 +305,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   protected function getFormDisplayWidget(array $definition): string {
     return match ($definition['field_type']) {
       'boolean' => 'boolean_checkbox',
+      'link' => 'link_default',
       'datetime' => 'datetime_default',
       'integer' => 'number',
       'json' => 'json_textarea',
@@ -277,6 +322,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   protected function getViewDisplayFormatter(array $definition): string {
     return match ($definition['field_type']) {
       'boolean' => 'boolean',
+      'link' => 'link',
       'datetime' => 'datetime_default',
       'integer' => 'number_integer',
       'json' => 'json',
@@ -285,6 +331,32 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       'custom' => 'custom_formatter',
       default => 'string',
     };
+  }
+
+  /**
+   * Returns the built-in generated Trial link field definitions.
+   */
+  protected function getSystemLinkFieldDefinitions(): array {
+    $definitions = [];
+
+    foreach (self::SYSTEM_LINK_FIELDS as $field_name => $field) {
+      $definitions[$field_name] = [
+        'field_name' => $field_name,
+        'label' => $field['label'],
+        'description' => '',
+        'field_type' => 'link',
+        'storage_settings' => [],
+        'instance_settings' => [
+          'title' => DRUPAL_DISABLED,
+          'link_type' => LinkItemInterface::LINK_EXTERNAL,
+        ],
+        'cardinality' => 1,
+        'selectable' => TRUE,
+        'group_only' => FALSE,
+      ];
+    }
+
+    return $definitions;
   }
 
   /**
