@@ -29,6 +29,9 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
    */
   protected ?array $enumsCache = NULL;
 
+  /**
+   * Constructs a new ClinicalTrialsGovManager.
+   */
   public function __construct(
     protected ClinicalTrialsGovApiInterface $api,
   ) {}
@@ -66,7 +69,7 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
       $data = $this->api->get('/studies/metadata');
       $this->metadataByPathCache = $this->flattenMetadata($data);
     }
-    if ($path === NULL) {
+    if (!$path) {
       return $this->metadataByPathCache;
     }
     return $this->metadataByPathCache[$path] ?? [];
@@ -89,7 +92,7 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
         $this->metadataByPieceCache[$metadata_piece] = $metadata;
       }
     }
-    if ($piece === NULL) {
+    if (!$piece) {
       return $this->metadataByPieceCache;
     }
     return $this->metadataByPieceCache[$piece] ?? [];
@@ -166,6 +169,14 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
    *
    * Associative arrays (objects) are recursed into. Lists and scalar values
    * are stored as-is under their full dotted key path.
+   *
+   * @param mixed $data
+   *   The data to flatten.
+   * @param string $prefix
+   *   The dot-notation prefix accumulated so far.
+   *
+   * @return array
+   *   A flat array of dot-notation key => value pairs.
    */
   protected function flattenStudy(mixed $data, string $prefix = ''): array {
     if (is_array($data) && !array_is_list($data)) {
@@ -193,6 +204,14 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
 
   /**
    * Recursively flattens the metadata tree to dot-notation name-path rows.
+   *
+   * @param array $items
+   *   The metadata items to flatten.
+   * @param string $parent
+   *   The dot-notation parent path accumulated so far.
+   *
+   * @return array
+   *   A flat array keyed by dot-notation path, each value a metadata row.
    */
   protected function flattenMetadata(array $items, string $parent = ''): array {
     $rows = [];
@@ -231,8 +250,8 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
           fn(mixed $value): bool => is_string($value) && $value !== ''
         )),
         'synonyms' => !empty($item['synonyms']),
-        'dedLinkLabel' => (string) (($item['dedLink']['label'] ?? '')),
-        'dedLinkUrl' => (string) (($item['dedLink']['url'] ?? '')),
+        'dedLinkLabel' => (string) ($item['dedLink']['label'] ?? ''),
+        'dedLinkUrl' => (string) ($item['dedLink']['url'] ?? ''),
       ];
       if (!empty($item['children']) && is_array($item['children'])) {
         $rows += $this->flattenMetadata($item['children'], $path);

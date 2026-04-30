@@ -10,8 +10,6 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Functional tests for the ClinicalTrials.gov import wizard.
- *
- * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
 #[RunTestsInSeparateProcesses]
@@ -183,10 +181,10 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->fieldValueEquals('Description', 'Imported ClinicalTrials.gov studies.');
     $this->assertSession()->elementAttributeContains('css', 'textarea[name="description"]', 'rows', '3');
 
-    if ($this->getSession()->getPage()->findField('Label') !== NULL) {
+    if ($this->getSession()->getPage()->findField('Label')) {
       $this->getSession()->getPage()->fillField('Label', 'Trial');
     }
-    if ($this->getSession()->getPage()->findButton('Save configuration') !== NULL) {
+    if ($this->getSession()->getPage()->findButton('Save configuration')) {
       $this->getSession()->getPage()->pressButton('Save configuration');
     }
     else {

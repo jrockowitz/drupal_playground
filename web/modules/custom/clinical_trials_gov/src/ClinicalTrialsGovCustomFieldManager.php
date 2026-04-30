@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov;
 
+use Drupal\link\LinkItemInterface;
+
 /**
  * Builds custom-field definitions for supported structured metadata.
  */
 class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFieldManagerInterface {
-  /**
-   * Generic link type for custom_field url columns (LinkItemInterface::LINK_GENERIC).
-   */
-  protected const LINK_TYPE_GENERIC = 17;
 
   /**
    * Policy-backed max character overrides missing from study metadata.
@@ -38,6 +36,9 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
     'protocolSection.referencesModule.availIpds' => 'AvailIpd[]',
   ];
 
+  /**
+   * Constructs a new ClinicalTrialsGovCustomFieldManager.
+   */
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
     protected ClinicalTrialsGovNamesInterface $names,
@@ -76,7 +77,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       }
       $child_metadata = $this->manager->getMetadataByPath($child_key);
       $column_definition = $this->buildCustomFieldColumnDefinition($child_key, $child_metadata);
-      if ($column_definition === NULL) {
+      if (!$column_definition) {
         continue;
       }
       $column_name = $column_definition['column_name'];
@@ -101,7 +102,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
         'field_settings' => $field_settings,
       ],
       'type_label' => 'custom',
-      'display_type_label' => $this->buildDisplayTypeLabel('custom field', (str_ends_with((string) ($metadata['type'] ?? ''), '[]') ? -1 : 1)),
+      'display_type_label' => $this->buildDisplayTypeLabel('custom field', ((str_ends_with((string) ($metadata['type'] ?? ''), '[]')) ? -1 : 1)),
       'details' => $details,
       'yaml_columns' => $yaml_columns,
     ];
@@ -126,7 +127,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       if (($child_metadata['sourceType'] ?? '') === 'STRUCT') {
         return FALSE;
       }
-      if ($this->buildCustomFieldColumnDefinition($child_key, $child_metadata) === NULL) {
+      if (!$this->buildCustomFieldColumnDefinition($child_key, $child_metadata)) {
         return FALSE;
       }
     }
@@ -291,7 +292,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
         'type' => 'uri',
       ];
       $instance += [
-        'link_type' => self::LINK_TYPE_GENERIC,
+        'link_type' => LinkItemInterface::LINK_GENERIC,
         'field_prefix' => 'default',
         'field_prefix_custom' => '',
       ];

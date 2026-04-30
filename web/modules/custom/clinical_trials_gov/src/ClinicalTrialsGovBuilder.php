@@ -17,6 +17,9 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
 
   use StringTranslationTrait;
 
+  /**
+   * Constructs a new ClinicalTrialsGovBuilder.
+   */
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
   ) {}
@@ -470,7 +473,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       ];
     }
 
-    if ($value === []) {
+    if (!$value) {
       return [
         '#markup' => '—',
       ];
@@ -533,7 +536,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
   protected function buildAssociativeList(array $values): array {
     $items = [];
     foreach ($values as $key => $value) {
-      $text = is_scalar($value) || $value === NULL ? (string) ($value ?? '—') : json_encode($value);
+      $text = (is_scalar($value) || $value === NULL) ? (string) ($value ?? '—') : json_encode($value);
       $items[] = $this->t('@key: @value', [
         '@key' => (string) $key,
         '@value' => (string) $text,

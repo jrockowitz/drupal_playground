@@ -56,7 +56,7 @@ $studies_params = [
  */
 function parse_query_string(string $query_string): array {
   $result = [];
-  if ($query_string === '') {
+  if (!$query_string) {
     return $result;
   }
 
@@ -211,7 +211,7 @@ function flatten_metadata(array $items, string $prefix = ''): array {
       }
 
       $child_name = (string) ($child['name'] ?? '');
-      if ($child_name === '') {
+      if (!$child_name) {
         continue;
       }
 
@@ -369,7 +369,7 @@ function route_request(array $request_context, array $endpoints, array $studies_
   $path = $request_context['path'];
   $params = $request_context['params'];
 
-  if ($path === '') {
+  if (!$path) {
     // Handle the index route: ''.
     route_index_request($endpoints);
     return;

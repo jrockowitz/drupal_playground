@@ -81,7 +81,7 @@ class ClinicalTrialsGovApiStub implements ClinicalTrialsGovApiInterface {
       default => NULL,
     };
 
-    return ($fixture_name !== NULL) ? $this->loadFixture($fixture_name) : [];
+    return ($fixture_name) ? $this->loadFixture($fixture_name) : [];
   }
 
   /**

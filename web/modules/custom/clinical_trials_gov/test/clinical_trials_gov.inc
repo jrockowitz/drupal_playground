@@ -75,9 +75,9 @@ function render_page_end(): void {
  * Renders a Bootstrap alert for API and request errors.
  */
 function render_error_message(string $message, string $url = '', string $classes = ''): void {
-  $class_suffix = ($classes !== '') ? ' ' . $classes : '';
+  $class_suffix = ($classes) ? ' ' . $classes : '';
   echo '<div class="alert alert-danger' . htmlspecialchars($class_suffix) . '">' . htmlspecialchars($message) . '</div>' . "\n";
-  if ($url !== '') {
+  if ($url) {
     echo '<p class="small text-muted mb-3">API URL: <a href="' . htmlspecialchars($url) . '" target="_blank" class="font-monospace">' . htmlspecialchars($url) . '</a></p>' . "\n";
   }
 }
@@ -388,7 +388,7 @@ function render_study_summary(array $data): void {
   $min_age = $eligibility_module['minimumAge'] ?? '';
   $max_age = $eligibility_module['maximumAge'] ?? '';
   $healthy_raw = $eligibility_module['healthyVolunteers'] ?? NULL;
-  $healthy_volunteers = ($healthy_raw === NULL) ? NULL : ($healthy_raw ? 'Yes' : 'No');
+  $healthy_volunteers = (!$healthy_raw) ? NULL : ($healthy_raw ? 'Yes' : 'No');
 
   $cards = [];
   if ($lead_sponsor) {
@@ -403,7 +403,7 @@ function render_study_summary(array $data): void {
   if ($completion_date) {
     $cards[] = ['Completion Date', $completion_date];
   }
-  if ($enrollment_count !== NULL) {
+  if ($enrollment_count) {
     $cards[] = ['Enrollment', $enrollment_count . ($enrollment_type ? ' (' . $enrollment_type . ')' : '')];
   }
   if ($sex) {
@@ -412,7 +412,7 @@ function render_study_summary(array $data): void {
   if ($min_age || $max_age) {
     $cards[] = ['Age Range', ($min_age ?: 'N/A') . ' - ' . ($max_age ?: 'N/A')];
   }
-  if ($healthy_volunteers !== NULL) {
+  if ($healthy_volunteers) {
     $cards[] = ['Healthy Volunteers', $healthy_volunteers];
   }
 
@@ -557,7 +557,7 @@ function render_study_summary(array $data): void {
  *   list of objects   -> inline <table>
  */
 function render_study_data_value(mixed $value): string {
-  if ($value === NULL) {
+  if (is_null($value)) {
     return '<em class="text-muted">-</em>';
   }
 
@@ -708,7 +708,7 @@ function render_generic(mixed $data): void {
  * Renders a clickable API URL and a collapsible Raw JSON block.
  */
 function render_raw_json(mixed $data, string $url = ''): void {
-  if ($url !== '') {
+  if ($url) {
     echo '<p class="mt-3 mb-1 small text-muted">API URL: <a href="' . htmlspecialchars($url) . '" target="_blank" class="font-monospace">' . htmlspecialchars($url) . '</a></p>' . "\n";
   }
   echo '<details class="mt-2">' . "\n";

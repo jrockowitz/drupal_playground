@@ -19,6 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ClinicalTrialsGovReportStudiesController extends ControllerBase {
 
+  /**
+   * Constructs a new ClinicalTrialsGovReportStudiesController.
+   */
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
     protected ClinicalTrialsGovBuilderInterface $builder,
@@ -91,7 +94,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
 
     $build['results'] = $this->builder->buildStudiesList($studies, 'clinical_trials_gov_report.study');
 
-    if ($api_url !== NULL) {
+    if ($api_url) {
       $build['api_url'] = [
         '#type' => 'item',
         '#markup' => $this->t('ClinicalTrials.gov API: <a href=":url" class="font-monospace">@url</a>', [
@@ -130,7 +133,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
    * Builds the upstream ClinicalTrials.gov API URL for the current query.
    */
   protected function buildApiUrl(array $parameters): ?string {
-    if ($parameters === []) {
+    if (!$parameters) {
       return NULL;
     }
 
@@ -159,7 +162,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
 
     $normalized = strtolower((string) $value);
 
-    return match($normalized) {
+    return match ($normalized) {
       '1', 'true', 'yes' => 'true',
       default => 'false',
     };

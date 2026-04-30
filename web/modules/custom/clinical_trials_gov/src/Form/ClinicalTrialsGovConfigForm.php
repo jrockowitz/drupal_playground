@@ -22,6 +22,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ClinicalTrialsGovConfigForm extends ConfigFormBase {
 
+  /**
+   * Constructs a new ClinicalTrialsGovConfigForm.
+   */
   public function __construct(
     protected EntityTypeManagerInterface $entityTypeManager,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
@@ -177,10 +180,10 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         $existing = TRUE;
       }
       elseif (!empty($definition['field_name'])) {
-        $existing = FieldConfig::loadByName('node', $saved_type, $definition['field_name']) !== NULL;
+        $existing = (bool) FieldConfig::loadByName('node', $saved_type, $definition['field_name']);
       }
 
-      $selected = ($node_type === NULL)
+      $selected = (!$node_type)
         || in_array($path, $saved_fields, TRUE)
         || !empty($definition['required'])
         || $existing;
@@ -264,7 +267,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       $path = (string) $row['path'];
       $definition = $this->fieldManager->getFieldDefinition($path);
       $existing = (($definition['destination_property'] ?? NULL) === 'title')
-        || (!empty($definition['field_name']) && FieldConfig::loadByName('node', $type, $definition['field_name']) !== NULL);
+        || (!empty($definition['field_name']) && FieldConfig::loadByName('node', $type, $definition['field_name']));
       $selected_rows[$path] = !empty($definition['required']) || $existing || !empty($row['selected']);
     }
 

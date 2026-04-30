@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov;
 
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\Entity\FieldConfig;
@@ -15,6 +17,9 @@ use Drupal\link\LinkItemInterface;
  */
 class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerInterface {
 
+  /**
+   * Constructs a new ClinicalTrialsGovEntityManager.
+   */
   public function __construct(
     protected ModuleHandlerInterface $moduleHandler,
     protected EntityTypeManagerInterface $entityTypeManager,
@@ -244,7 +249,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       }
 
       $field_name = $definition['field_name'];
-      if ($form_display->getComponent($field_name) === NULL) {
+      if (!$form_display->getComponent($field_name)) {
         $form_display->setComponent($field_name, [
           'type' => $this->getFormDisplayWidget($definition),
           'weight' => $weight,
@@ -252,7 +257,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
         ]);
       }
 
-      if ($view_display->getComponent($field_name) === NULL) {
+      if (!$view_display->getComponent($field_name)) {
         $view_display->setComponent($field_name, [
           'type' => $this->getViewDisplayFormatter($definition),
           'label' => 'above',
@@ -274,7 +279,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * Loads or creates the default entity form display for a node bundle.
    */
-  protected function loadOrCreateFormDisplay(string $type): object {
+  protected function loadOrCreateFormDisplay(string $type): EntityFormDisplayInterface {
     $display_id = 'node.' . $type . '.default';
     $storage = $this->entityTypeManager->getStorage('entity_form_display');
     return $storage->load($display_id) ?? $storage->create([
@@ -288,7 +293,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * Loads or creates the default entity view display for a node bundle.
    */
-  protected function loadOrCreateViewDisplay(string $type): object {
+  protected function loadOrCreateViewDisplay(string $type): EntityViewDisplayInterface {
     $display_id = 'node.' . $type . '.default';
     $storage = $this->entityTypeManager->getStorage('entity_view_display');
     return $storage->load($display_id) ?? $storage->create([

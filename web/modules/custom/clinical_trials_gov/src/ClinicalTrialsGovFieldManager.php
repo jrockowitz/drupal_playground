@@ -31,11 +31,14 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    */
   protected ?array $availableFieldKeys = NULL;
 
+  /**
+   * Constructs a new ClinicalTrialsGovFieldManager.
+   */
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
+    protected ModuleHandlerInterface $moduleHandler,
     protected ClinicalTrialsGovManagerInterface $manager,
     protected ClinicalTrialsGovNamesInterface $names,
-    protected ModuleHandlerInterface $moduleHandler,
     protected ClinicalTrialsGovCustomFieldManagerInterface $customFieldManager,
   ) {}
 
@@ -134,7 +137,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
 
     if ($source_type === 'STRUCT') {
       $structured_definition = $this->resolveStructuredFieldDefinition($path);
-      if ($structured_definition !== NULL) {
+      if ($structured_definition) {
         return array_merge($definition, $structured_definition);
       }
 
@@ -188,7 +191,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
     }
 
     $definition['field_type'] = ($source_type === 'MARKUP') ? 'text_long' : 'string';
-    if ($definition['field_type'] === 'string' && $max_chars !== NULL) {
+    if ($definition['field_type'] === 'string' && $max_chars) {
       $definition['storage_settings']['max_length'] = (int) $max_chars;
     }
     $definition['type_label'] = $definition['field_type'];
