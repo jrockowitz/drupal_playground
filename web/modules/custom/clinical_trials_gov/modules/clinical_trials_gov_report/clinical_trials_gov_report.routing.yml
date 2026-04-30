@@ -23,14 +23,6 @@ clinical_trials_gov_report.metadata:
   requirements:
     _permission: 'access administration pages'
 
-clinical_trials_gov_report.names:
-  path: /admin/reports/status/clinical-trials-gov/names
-  defaults:
-    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportNamesController::index'
-    _title: 'ClinicalTrials.gov'
-  requirements:
-    _permission: 'access administration pages'
-
 clinical_trials_gov_report.enums:
   path: /admin/reports/status/clinical-trials-gov/enums
   defaults:
@@ -44,5 +36,13 @@ clinical_trials_gov_report.structs:
   defaults:
     _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStructsController::index'
     _title: 'Structs'
+  requirements:
+    _permission: 'access administration pages'
+
+clinical_trials_gov_report.names:
+  path: /admin/reports/status/clinical-trials-gov/names
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportNamesController::index'
+    _title: 'ClinicalTrials.gov'
   requirements:
     _permission: 'access administration pages'

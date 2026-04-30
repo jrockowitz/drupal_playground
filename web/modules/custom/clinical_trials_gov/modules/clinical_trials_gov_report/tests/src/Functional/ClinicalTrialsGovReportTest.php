@@ -210,12 +210,16 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('field_brief_title');
     $this->assertSession()->pageTextContains('EA Recruitment Status');
     $this->assertSession()->pageTextContains('ExpandedAccessStatusForNCTId');
-    $this->assertSession()->pageTextContains('expanded_access_status_for_nct_id');
-    $this->assertSession()->pageTextContains('field_expanded_access_s_1d2e2fd7');
+    $this->assertSession()->pageTextContains('exp_acc_status_for_nct_id');
+    $this->assertSession()->pageTextContains('field_exp_acc_status_for_nct_id');
+    $this->assertSession()->pageTextContains('Abbreviations');
+    $this->assertSession()->pageTextContains('Full token');
+    $this->assertSession()->pageTextContains('Abbreviation');
+    $this->assertSession()->pageTextContains('description');
+    $this->assertSession()->pageTextContains('desc');
     $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
     $names_page_html = $this->getSession()->getPage()->getContent();
-    $this->assertStringContainsString('color-warning', $names_page_html);
-    $this->assertMatchesRegularExpression('/color-warning.*ExpandedAccessStatusForNCTId/s', $names_page_html);
+    $this->assertStringContainsString('<details', $names_page_html);
     $this->assertStringNotContainsString('color-warning"><td><div class="clinical-trials-gov-report-metadata__primary"><strong>Brief Title</strong>', $names_page_html);
 
     // Return to the studies report before checking the NCT detail link.

@@ -47,7 +47,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
     $this->assertSame('field_nct_id_alias', $this->names->getFieldName('NCTIdAlias'));
 
     // Check that non-overridden names are normalized to snake case.
-    $this->assertSame('field_responsible_party', $this->names->getFieldName('ResponsibleParty'));
+    $this->assertSame('field_resp_party', $this->names->getFieldName('ResponsibleParty'));
   }
 
   /**
@@ -102,10 +102,40 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    */
   public function testGetDetailLabel(): void {
     // Check that the parent piece prefix is trimmed from the child piece.
-    $this->assertSame('investigator_full_name', $this->names->getDetailLabel('ResponsiblePartyInvestigatorFullName', 'ResponsibleParty'));
+    $this->assertSame('inv_full_name', $this->names->getDetailLabel('ResponsiblePartyInvestigatorFullName', 'ResponsibleParty'));
 
     // Check that labels still normalize when there is no parent piece.
     $this->assertSame('type', $this->names->getDetailLabel('Type'));
+  }
+
+  /**
+   * Tests normalized pieces apply seeded abbreviations by token.
+   *
+   * @covers ::normalizePiece
+   */
+  public function testNormalizePieceAppliesAbbreviations(): void {
+    // Check that seeded abbreviations shorten long normalized tokens.
+    $this->assertSame('res_first_submit_qc_dt', $this->names->normalizePiece('ResultsFirstSubmitQCDate'));
+  }
+
+  /**
+   * Tests abbreviations only apply to whole underscore-delimited tokens.
+   *
+   * @covers ::normalizePiece
+   */
+  public function testNormalizePieceOnlyAbbreviatesWholeTokens(): void {
+    // Check that partial substrings are not abbreviated.
+    $this->assertSame('measured_value', $this->names->normalizePiece('MeasuredValue'));
+  }
+
+  /**
+   * Tests abbreviation tokens are not abbreviated twice.
+   *
+   * @covers ::normalizePiece
+   */
+  public function testNormalizePieceDoesNotDoubleAbbreviate(): void {
+    // Check that an existing abbreviation token is left intact.
+    $this->assertSame('base_desc', $this->names->normalizePiece('BaseDesc'));
   }
 
 }

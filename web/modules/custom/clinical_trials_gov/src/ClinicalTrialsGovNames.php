@@ -10,18 +10,68 @@ namespace Drupal\clinical_trials_gov;
 class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
 
   /**
+   * Abbreviations for normalized snake_case name tokens.
+   */
+  public const ABBREVIATIONS = [
+    'denom_count_group' => 'de_count_grp',
+    'outcome_analysis_ci' => 'out_anl_ci',
+    'intervention_browse' => 'int_brow',
+    'access' => 'acc',
+    'affected' => 'affect',
+    'analysis' => 'anal',
+    'analyze' => 'anal',
+    'analyzed' => 'anal',
+    'anticipated' => 'ant',
+    'baseline' => 'base',
+    'collaborator' => 'collab',
+    'description' => 'desc',
+    'estimated' => 'est',
+    'event' => 'evt',
+    'events' => 'evt',
+    'expanded' => 'exp',
+    'first' => 'fst',
+    'group' => 'grp',
+    'identification' => 'id',
+    'inferiority' => 'inf',
+    'intervention' => 'int',
+    'investigator' => 'inv',
+    'limit' => 'lim',
+    'limitations' => 'lim',
+    'measure' => 'meas',
+    'module' => 'mod',
+    'mortality' => 'mort',
+    'organization' => 'org',
+    'other' => 'oth',
+    'outcome' => 'out',
+    'overall' => 'over',
+    'population' => 'pop',
+    'primary' => 'prim',
+    'references' => 'ref',
+    'reference' => 'ref',
+    'regulated' => 'reg',
+    'responsible' => 'resp',
+    'results' => 'res',
+    'second' => 'sec',
+    'secondary' => 'sec',
+    'selected' => 'sel',
+    'serious' => 'ser',
+    'sponsor' => 'spons',
+    'statistical' => 'stat',
+    'submission' => 'sub',
+    'update' => 'up',
+    'value' => 'val',
+  ];
+
+  /**
    * Friendly field-name stems keyed by ClinicalTrials.gov piece.
    */
   protected const FIELD_NAMES = [
     'NCTId' => 'nct_id',
     'NCTIdAlias' => 'nct_id_alias',
-    'BriefTitle' => 'brief_title',
-    'BriefSummary' => 'brief_summary',
-    'OfficialTitle' => 'official_title',
-    'OrgStudyIdInfo' => 'org_study_id_info',
     'IPDSharingStatement' => 'ipd_sharing_statement',
     'IPDSharingTimeFrame' => 'ipd_sharing_time_frame',
-    'IPDSharingAccessCriteria' => 'ipd_sharing_access_criteria',
+    'IPDSharingAccessCriteria' => 'ipd_sharing_access_crit',
+    'NPtrsToThisExpAccNCTId' => 'nptrs_exp_act_nct_id',
   ];
 
   /**
@@ -59,8 +109,15 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     $piece = preg_replace('/(?<=[A-Z])(?=[A-Z][a-z])/', '_', $piece) ?? $piece;
     $piece = preg_replace('/(?<=[a-z0-9])(?=[A-Z])/', '_', $piece) ?? $piece;
     $piece = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '_', $piece) ?? '');
+    $piece = trim($piece, '_');
 
-    return trim($piece, '_');
+    foreach (self::ABBREVIATIONS as $token => $abbreviation) {
+      $piece = preg_replace('#(^|_)' . $token . '(_|$)#', '$1' . $abbreviation . '$2', $piece);
+    }
+
+    $piece = preg_replace('#(?:ment|ation|etion|ition|ion)(_|$)#', '$1', $piece);
+
+    return $piece;
   }
 
   /**

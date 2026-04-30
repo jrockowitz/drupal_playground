@@ -6,6 +6,7 @@ namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovNames;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovNamesInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -16,6 +17,43 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Renders the ClinicalTrials.gov names report.
  */
 class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMetadataController {
+
+  /**
+   * Tracks truncated machine names for the current page build.
+   */
+  protected array $truncatedFieldNames = [];
+
+  /**
+   * Builds the names report page.
+   */
+  public function index(): array {
+    $metadata = $this->getDisplayedMetadata();
+    $results = $this->buildMetadataTable($metadata);
+
+    $build = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => $this->getContainerClasses(),
+      ],
+      '#attached' => [
+        'library' => $this->getAttachedLibraries(),
+      ],
+      'intro' => $this->buildIntro(),
+      'summary' => [
+        '#type' => 'item',
+        '#markup' => $this->t('Showing @count fields', ['@count' => count($metadata)]),
+      ],
+      'abbreviations' => $this->buildAbbreviationsDetails(),
+      'results' => $results,
+    ];
+
+    $footer = $this->buildFooter();
+    if ($footer !== []) {
+      $build['footer'] = $footer;
+    }
+
+    return $build;
+  }
 
   public function __construct(
     ClinicalTrialsGovManagerInterface $manager,
@@ -47,9 +85,63 @@ class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMeta
    * {@inheritdoc}
    */
   protected function buildIntro(): array {
+    $build = [
+      'description' => [
+        '#type' => 'item',
+        '#markup' => $this->t('This page displays how ClinicalTrials.gov identifiers are converted into Drupal labels and machine names.'),
+      ],
+    ];
+
+    if ($this->truncatedFieldNames !== []) {
+      $items = [];
+      foreach ($this->truncatedFieldNames as $piece => $values) {
+        $items[] = $piece . ' => ' . $values['drupal_name'] . ' => ' . $values['field_name'];
+      }
+
+      $build['warning'] = [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => ['messages', 'messages--warning'],
+        ],
+        'title' => [
+          '#type' => 'html_tag',
+          '#tag' => 'strong',
+          '#value' => (string) $this->t('The following Drupal field names were truncated.'),
+        ],
+        'list' => [
+          '#theme' => 'item_list',
+          '#items' => $items,
+        ],
+      ];
+    }
+
+    return $build;
+  }
+
+  /**
+   * Builds the abbreviations details widget.
+   */
+  protected function buildAbbreviationsDetails(): array {
+    $rows = [];
+
+    foreach (ClinicalTrialsGovNames::ABBREVIATIONS as $token => $abbreviation) {
+      $rows[] = [
+        $token,
+        $abbreviation,
+      ];
+    }
+
     return [
-      '#type' => 'item',
-      '#markup' => $this->t('This page displays how ClinicalTrials.gov identifiers are converted into Drupal labels and machine names.'),
+      '#type' => 'details',
+      '#title' => $this->t('Abbreviations'),
+      'table' => [
+        '#type' => 'table',
+        '#header' => [
+          $this->t('Full token'),
+          $this->t('Abbreviation'),
+        ],
+        '#rows' => $rows,
+      ],
     ];
   }
 
@@ -65,6 +157,7 @@ class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMeta
    */
   protected function buildMetadataTable(array $metadata): array {
     $rows = [];
+    $this->truncatedFieldNames = [];
 
     foreach ($metadata as $path => $row) {
       if (!is_array($row)) {
@@ -78,6 +171,10 @@ class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMeta
 
       if (($drupal_name !== '') && !str_ends_with($drupal_field_name, $drupal_name)) {
         $row_classes[] = 'color-warning';
+        $this->truncatedFieldNames[$piece] = [
+          'drupal_name' => $drupal_name,
+          'field_name' => $drupal_field_name,
+        ];
       }
 
       $rows[] = [
