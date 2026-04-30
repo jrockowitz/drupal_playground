@@ -77,9 +77,9 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/manage');
 
-    // Check that Manage redirects to Configure with a message when no type exists.
+    // Check that Manage redirects to Configure without a message when no query is saved.
     $this->assertSession()->addressEquals('admin/config/services/clinical-trials-gov/configure');
-    $this->assertSession()->pageTextContains('Create the destination content type before managing imported studies.');
+    $this->assertSession()->pageTextNotContains('Create the destination content type before managing imported studies.');
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/find');
 
@@ -98,6 +98,12 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
         'protocolSection.descriptionModule.briefSummary',
       ])
       ->save();
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/manage');
+
+    // Check that Manage shows the message when a query is saved but no content type exists.
+    $this->assertSession()->addressEquals('admin/config/services/clinical-trials-gov/configure');
+    $this->assertSession()->pageTextContains('Create the destination content type before managing imported studies.');
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/review');
 

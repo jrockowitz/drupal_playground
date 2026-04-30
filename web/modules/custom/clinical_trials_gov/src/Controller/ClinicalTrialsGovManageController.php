@@ -20,7 +20,10 @@ class ClinicalTrialsGovManageController extends ControllerBase {
     $node_type = ($type) ? $this->entityTypeManager()->getStorage('node_type')->load($type) : NULL;
 
     if (!$type || !$node_type) {
-      $this->messenger()->addStatus($this->t('Create the destination content type before managing imported studies.'));
+      $query = $this->config('clinical_trials_gov.settings')->get('query');
+      if ($query) {
+        $this->messenger()->addStatus($this->t('Create the destination content type before managing imported studies.'));
+      }
       return $this->redirect('clinical_trials_gov.configure');
     }
 
