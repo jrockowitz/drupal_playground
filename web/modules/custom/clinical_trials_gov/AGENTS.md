@@ -38,6 +38,7 @@ Routes:
 - `clinical_trials_gov.configure` — Step 3: Configure (`ClinicalTrialsGovConfigForm`)
 - `clinical_trials_gov.import` — Step 4: Import (`ClinicalTrialsGovImportForm`)
 - `clinical_trials_gov.manage` — Step 5: Manage (`ClinicalTrialsGovManageController::index`)
+- `clinical_trials_gov.settings` — Optional Settings (`ClinicalTrialsGovSettingsForm`)
 
 Step behaviour:
 
@@ -53,7 +54,7 @@ Step behaviour:
 
 ## Configuration
 
-Primary config: `clinical_trials_gov.settings` — keys: `query`, `paths`, `type`, `fields`. `fields` is stored as a mapping of generated Drupal field or group name to metadata path.
+Primary config: `clinical_trials_gov.settings` — keys: `query`, `paths`, `type`, `field_prefix`, `readonly`, `fields`. `fields` is stored as a mapping of generated Drupal field or group name to metadata path.
 Install defaults live in `config/install/clinical_trials_gov.settings.yml`.
 
 Generated migration: `migrate_plus.migration.clinical_trials_gov`. Deleted when query/paths/type/fields are incomplete.
@@ -79,6 +80,21 @@ Field resolution lives in `ClinicalTrialsGovFieldManager::resolveFieldDefinition
 **Available field list:** `ClinicalTrialsGovFieldManager::getAvailableFieldKeys()` reads the saved `clinical_trials_gov.settings:paths` allow-list, always unions in required paths, and then adds ancestor paths so group structures still resolve correctly. There is no legacy fallback list anymore; if `paths` is empty, Configure is blocked until Find discovers fields.
 
 **Field names** are generated from the metadata `piece`, normalised to snake_case, prefixed with `field_`, capped at 32 characters. Long names are truncated and suffixed with an 8-character SHA-256 hash. Overrides live in `ClinicalTrialsGovNames::FIELD_NAMES`.
+
+## Readonly Mode
+
+Readonly mode is optional and only applies when:
+
+- `clinical_trials_gov.settings:readonly` is `TRUE`
+- the `readonly_field_widget` module is enabled
+- the edited node bundle matches `clinical_trials_gov.settings:type`
+
+When active:
+
+- only fields listed in `clinical_trials_gov.settings:fields` are switched to `readonly_field_widget`
+- unrelated bundle fields remain editable
+- the core node title input is hidden when the saved mapping includes `protocolSection.identificationModule.briefTitle`
+- the generated `briefTitle` field remains visible and readonly
 
 ## Source Plugin
 

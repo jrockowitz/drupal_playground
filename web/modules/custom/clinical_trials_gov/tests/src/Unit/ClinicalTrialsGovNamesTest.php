@@ -6,8 +6,11 @@ namespace Drupal\Tests\clinical_trials_gov\Unit;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovNames;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Unit tests for ClinicalTrialsGovNames.
@@ -20,8 +23,10 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
 
   /**
    * The mocked ClinicalTrials.gov manager.
+   *
+   * @var \Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface&\PHPUnit\Framework\MockObject\MockObject
    */
-  protected ClinicalTrialsGovManagerInterface $manager;
+  protected ClinicalTrialsGovManagerInterface|MockObject $manager;
 
   /**
    * The names service under test.
@@ -34,7 +39,21 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
     $this->manager = $this->createMock(ClinicalTrialsGovManagerInterface::class);
-    $this->names = new ClinicalTrialsGovNames($this->manager);
+    $config_factory = $this->createMock(ConfigFactoryInterface::class);
+    $config = $this->getMockBuilder(ImmutableConfig::class)
+      ->disableOriginalConstructor()
+      ->onlyMethods(['get'])
+      ->getMock();
+    $config
+      ->method('get')
+      ->with('field_prefix')
+      ->willReturn('trial');
+    $config_factory
+      ->method('get')
+      ->with('clinical_trials_gov.settings')
+      ->willReturn($config);
+
+    $this->names = new ClinicalTrialsGovNames($this->manager, $config_factory);
   }
 
   /**
@@ -44,10 +63,10 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    */
   public function testGetFieldName(): void {
     // Check that hard-coded overrides are respected.
-    $this->assertSame('field_nct_id_alias', $this->names->getFieldName('NCTIdAlias'));
+    $this->assertSame('field_trial_nct_id_alias', $this->names->getFieldName('NCTIdAlias'));
 
     // Check that non-overridden names are normalized to snake case.
-    $this->assertSame('field_resp_party', $this->names->getFieldName('ResponsibleParty'));
+    $this->assertSame('field_trial_resp_party', $this->names->getFieldName('ResponsibleParty'));
   }
 
   /**

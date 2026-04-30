@@ -19,6 +19,7 @@ The wizard is designed to move in this order:
 3. `Configure` the destination content type and fields
 4. `Import` the studies through Drupal Migrate
 5. `Manage` the imported nodes
+6. `Settings` for optional advanced behavior such as readonly imported fields
 
 ### The query drives everything
 
@@ -150,6 +151,7 @@ Important behavior:
 - `Configure` requires discovered `paths`
 - some rows are structural only and exist to support field groups
 - some nested structs are promoted into `custom_field` fields instead of expanding into many top-level Drupal fields
+- if readonly mode is enabled through `Settings`, generated ClinicalTrials.gov fields become readonly on edit forms
 
 ### 4. Import
 
@@ -175,6 +177,22 @@ It sends you to:
 - the Drupal content listing filtered to the configured content type
 
 If the destination content type has not actually been created yet, it redirects back to `Configure` with a message.
+
+### Settings
+
+The optional `Settings` step controls advanced behavior for the generated trial content type.
+
+Current advanced options include:
+
+- destination content type machine name
+- generated field prefix
+- optional readonly mode for imported fields
+
+Readonly mode requires the contrib module `readonly_field_widget`. When enabled:
+
+- mapped ClinicalTrials.gov fields are shown with a readonly widget on node edit forms
+- the editable Drupal node title input is hidden
+- the generated `briefTitle` field remains visible as readonly display text
 
 ## Field Modeling Notes
 

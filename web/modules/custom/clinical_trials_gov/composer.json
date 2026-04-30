@@ -6,14 +6,13 @@
     "require": {
         "php": "^8.3",
         "drupal/core": "^10.3 || ^11",
-        "drupal/node": "^10.3 || ^11",
-        "drupal/text": "^10.3 || ^11",
-        "drupal/options": "^10.3 || ^11",
-        "drupal/datetime": "^10.3 || ^11",
-        "drupal/migrate_plus": "^6.0",
-        "drupal/migrate_tools": "^6.0",
         "drupal/custom_field": "^4.0",
-        "drupal/json_field": "^1.7",
-        "drupal/field_group": "^4.0"
+        "drupal/json_field": "^1.0",
+        "drupal/migrate_plus": "^6.0",
+        "drupal/migrate_tools": "^6.0"
+    },
+    "require-dev": {
+        "drupal/field_group": "^4.0",
+        "drupal/readonly_field_widget": "^2.1"
     }
 }

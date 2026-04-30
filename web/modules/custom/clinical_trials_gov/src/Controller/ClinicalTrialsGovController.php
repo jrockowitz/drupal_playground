@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Controller;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
@@ -48,7 +49,7 @@ class ClinicalTrialsGovController extends ControllerBase {
     return [
       'message' => $message,
       'introduction' => [
-        '#markup' => '<p>' . $this->t('Use the tasks below to find ClinicalTrials.gov studies, review studies and metadata, configure a destination content type, run a full-sync import, and manage imported content.') . '</p>',
+        '#markup' => '<p>' . $this->t('Use the tasks below to find ClinicalTrials.gov studies, review studies and metadata, configure a destination content type, run a full-sync import, manage imported content, and adjust advanced settings when needed.') . '</p>',
       ],
       'content' => [
         '#theme' => 'admin_block_content',
@@ -80,6 +81,11 @@ class ClinicalTrialsGovController extends ControllerBase {
             'description' => $this->t('Manage imported content for the configured content type.'),
             'url' => Url::fromRoute('clinical_trials_gov.manage'),
           ],
+          'settings' => [
+            'title' => $this->t('Settings'),
+            'description' => $this->t('Advanced settings for the content type machine name and generated field prefix.'),
+            'url' => Url::fromRoute('clinical_trials_gov.settings'),
+          ],
         ],
       ],
     ];
@@ -88,7 +94,7 @@ class ClinicalTrialsGovController extends ControllerBase {
   /**
    * Builds a status message render array with inline markup.
    */
-  protected function buildMessage(Markup $message): array {
+  protected function buildMessage(MarkupInterface|string $message): array {
     return [
       '#theme' => 'status_messages',
       '#message_list' => [

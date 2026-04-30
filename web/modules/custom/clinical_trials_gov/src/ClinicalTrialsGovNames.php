@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+
 /**
  * Converts ClinicalTrials.gov pieces into Drupal names and labels.
  */
@@ -97,6 +99,7 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
 
   public function __construct(
     protected ClinicalTrialsGovManagerInterface $manager,
+    protected ConfigFactoryInterface $configFactory,
   ) {}
 
   /**
@@ -129,7 +132,7 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
    * {@inheritdoc}
    */
   public function getFieldName(string $piece): string {
-    return $this->buildMachineName(self::FIELD_PREFIX, $piece, self::FIELD_NAME_MAX_LENGTH);
+    return $this->buildMachineName($this->getConfiguredFieldPrefix(), $piece, self::FIELD_NAME_MAX_LENGTH);
   }
 
   /**
@@ -184,6 +187,20 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     $prefix_value = substr($machine_name, 0, $prefix_length);
 
     return rtrim($prefix_value, '_') . '_' . $hash;
+  }
+
+  /**
+   * Returns the configured Drupal field prefix.
+   */
+  protected function getConfiguredFieldPrefix(): string {
+    $field_prefix = (string) ($this->configFactory->get('clinical_trials_gov.settings')->get('field_prefix') ?? ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE);
+    $field_prefix = trim($field_prefix);
+
+    if ($field_prefix === '') {
+      $field_prefix = ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE;
+    }
+
+    return self::FIELD_PREFIX . $field_prefix . '_';
   }
 
 }

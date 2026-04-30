@@ -24,7 +24,7 @@ trait ClinicalTrialsGovMessageTrait {
    * @param string|\Drupal\Component\Render\MarkupInterface|null $heading
    *   The optional custom message heading.
    */
-  protected function buildMessages(string|array|MarkupInterface $messages, string $type, string|MarkupInterface|null $heading = NULL): array {
+  protected function buildMessages(string|array|MarkupInterface $messages, string $type = 'status', string|MarkupInterface|null $heading = NULL): array {
     if ($messages instanceof MarkupInterface) {
       $messages = (string) $messages;
     }

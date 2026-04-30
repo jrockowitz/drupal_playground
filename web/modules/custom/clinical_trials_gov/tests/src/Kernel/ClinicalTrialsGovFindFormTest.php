@@ -112,4 +112,34 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
 
   }
 
+  /**
+   * Tests that saving Find requires a defined query but preview does not.
+   */
+  public function testValidateFormRequiresQueryForSaveOnly(): void {
+    $form_object = ClinicalTrialsGovFindForm::create($this->container);
+
+    $save_form_state = new FormState();
+    $save_form_state->setValue('query', '');
+    $save_form = $form_object->buildForm([], $save_form_state);
+    $save_form_state->setTriggeringElement([
+      '#parents' => ['actions', 'submit'],
+    ]);
+    $form_object->validateForm($save_form, $save_form_state);
+
+    // Check that saving without a query is rejected.
+    $this->assertTrue($save_form_state->hasAnyErrors());
+    $this->assertNotEmpty($save_form_state->getErrors()['query'] ?? NULL);
+
+    $preview_form_state = new FormState();
+    $preview_form_state->setValue('query', '');
+    $preview_form = $form_object->buildForm([], $preview_form_state);
+    $preview_form_state->setTriggeringElement([
+      '#parents' => ['preview', 'update_preview'],
+    ]);
+    $form_object->validateForm($preview_form, $preview_form_state);
+
+    // Check that preview updates can still run without saving a query.
+    $this->assertArrayNotHasKey('query', $preview_form_state->getErrors());
+  }
+
 }

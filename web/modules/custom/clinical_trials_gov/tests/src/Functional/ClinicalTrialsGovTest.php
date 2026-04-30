@@ -25,6 +25,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     'clinical_trials_gov_test',
     'clinical_trials_gov_report',
     'field_group',
+    'readonly_field_widget',
   ];
 
   /**
@@ -50,7 +51,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
   public function testWizardFlow(): void {
     $this->drupalGet('admin/config/services/clinical-trials-gov');
 
-    // Check that the overview page renders the five tasks and next-step message.
+    // Check that the overview page renders the tasks and next-step message.
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Please go to Find and build your query.');
     $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/find');
@@ -60,6 +61,21 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('3. Configure');
     $this->assertSession()->pageTextContains('4. Import');
     $this->assertSession()->pageTextContains('5. Manage');
+    $this->assertSession()->pageTextContains('Settings');
+    $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/settings');
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/settings');
+
+    // Check that Settings starts with editable defaults and guidance text.
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldValueEquals('Content type machine name', 'trial');
+    $this->assertSession()->fieldValueEquals('Field prefix', 'trial');
+    $this->assertSession()->pageTextContains('trial');
+    $this->assertSession()->pageTextContains('study');
+    $this->assertSession()->pageTextContains('nct');
+    $this->assertNotNull($this->getSession()->getPage()->findField('Content type machine name'));
+    $this->assertNotNull($this->getSession()->getPage()->findField('Field prefix'));
+    $this->assertSession()->checkboxNotChecked('Read-only imported fields');
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/manage');
 
@@ -136,6 +152,11 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/configure');
 
+    // Check that Configure shows the new Settings guidance before structure exists.
+    $this->assertSession()->pageTextContains('Review the content type and fields that will be created below.');
+    $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/settings');
+    $this->assertSession()->linkExists('Settings');
+
     // Check that the field mapping table uses the updated columns and values.
     $this->assertSession()->pageTextContains('Piece');
     $this->assertSession()->pageTextContains('Field type');
@@ -156,7 +177,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->fieldNotExists('field_mapping[rows][' . md5('protocolSection') . '][selected]');
     $this->assertSession()->pageTextNotContains('Responsible Party Investigator Full Name');
     $this->assertSession()->pageTextNotContains('NCTIdAlias');
-    $this->assertSession()->pageTextNotContains('field_nct_id_alias');
+    $this->assertSession()->pageTextNotContains('field_trial_nct_id_alias');
     $this->assertSession()->pageTextNotContains('protocolSection.identificationModule.nctIdAliases');
     $this->assertSession()->pageTextNotContains('No description.');
     $this->assertSession()->fieldValueEquals('Description', 'Imported ClinicalTrials.gov studies.');
@@ -164,7 +185,6 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
 
     if ($this->getSession()->getPage()->findField('Label') !== NULL) {
       $this->getSession()->getPage()->fillField('Label', 'Trial');
-      $this->getSession()->getPage()->fillField('Machine name', 'trial');
     }
     if ($this->getSession()->getPage()->findButton('Save configuration') !== NULL) {
       $this->getSession()->getPage()->pressButton('Save configuration');
@@ -182,10 +202,10 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->buttonExists('Run Import');
     $this->assertIsArray($saved_fields);
     $this->assertFalse(array_is_list($saved_fields));
-    $this->assertSame('protocolSection.identificationModule.nctId', $saved_fields['field_nct_id']);
-    $this->assertSame('protocolSection.identificationModule.briefTitle', $saved_fields['field_brief_title']);
-    $this->assertSame('protocolSection.statusModule.overallStatus', $saved_fields['field_over_status']);
-    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $saved_fields['field_resp_party']);
+    $this->assertSame('protocolSection.identificationModule.nctId', $saved_fields['field_trial_nct_id']);
+    $this->assertSame('protocolSection.identificationModule.briefTitle', $saved_fields['field_trial_brief_title']);
+    $this->assertSame('protocolSection.statusModule.overallStatus', $saved_fields['field_trial_over_status']);
+    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $saved_fields['field_trial_resp_party']);
 
     $this->drupalGet('admin/config/services/clinical-trials-gov');
 
@@ -193,6 +213,12 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Your query and field mapping are ready. Continue to Import when you are ready to sync studies.');
     $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/import');
     $this->assertSession()->linkExists('Import');
+
+    $this->drupalGet('admin/config/services/clinical-trials-gov/settings');
+
+    // Check that machine-name settings lock after structure creation.
+    $this->assertTrue($this->getSession()->getPage()->findField('Content type machine name')->hasAttribute('disabled'));
+    $this->assertTrue($this->getSession()->getPage()->findField('Field prefix')->hasAttribute('disabled'));
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/manage');
 

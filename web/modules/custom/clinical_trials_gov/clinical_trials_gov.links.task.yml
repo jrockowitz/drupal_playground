@@ -37,3 +37,8 @@ clinical_trials_gov.manage:
   route_name: clinical_trials_gov.manage
   base_route: clinical_trials_gov.index
   title: '5. Manage'
+
+clinical_trials_gov.settings:
+  route_name: clinical_trials_gov.settings
+  base_route: clinical_trials_gov.index
+  title: 'Settings'

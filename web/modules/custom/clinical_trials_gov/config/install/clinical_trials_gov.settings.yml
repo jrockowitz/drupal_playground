@@ -1,4 +1,6 @@
 query: ''
 paths: { }
 type: trial
+field_prefix: trial
+readonly: false
 fields: { }

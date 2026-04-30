@@ -9,6 +9,7 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
+use Drupal\clinical_trials_gov\Traits\ClinicalTrialsGovMessageTrait;
 use Drupal\Core\Batch\BatchBuilder;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Step 1 of the import wizard.
  */
 class ClinicalTrialsGovFindForm extends ConfigFormBase {
+  use ClinicalTrialsGovMessageTrait;
 
   /**
    * Preview page size.
@@ -149,6 +151,23 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
+    $triggering_element = $form_state->getTriggeringElement();
+    $trigger_parents = $triggering_element['#parents'] ?? [];
+
+    if ($trigger_parents !== ['actions', 'submit']) {
+      return;
+    }
+
+    $query = (string) $form_state->getValue('query');
+    if (ClinicalTrialsGovStudiesQuery::parseQueryString($query) === []) {
+      $form_state->setErrorByName('query', $this->t('Enter at least one query value before saving the studies query.'));
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $query = (string) $form_state->getValue('query');
     $this->configFactory()->getEditable('clinical_trials_gov.settings')
@@ -159,7 +178,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
 
     $batch = (new BatchBuilder())
       ->setTitle($this->t('Discovering study fields on ClinicalTrials.gov'))
-      ->setProgressMessage($this->t('Discovering available study fields...'))
+      ->setProgressMessage($this->t('Discovering available study fields based on your query...'))
       ->addOperation([ClinicalTrialsGovPathDiscoveryBatch::class, 'discover'], [$query])
       ->setFinishCallback([ClinicalTrialsGovPathDiscoveryBatch::class, 'finish']);
     batch_set($batch->toArray());
@@ -176,20 +195,17 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
   protected function buildPreview(FormStateInterface $form_state, string $saved_query): array {
     $query = $this->getPreviewQuery($form_state, $saved_query);
     if ($query === '') {
-      return [
-        'message' => [
-          '#markup' => '<p>' . $this->t('Use Update preview to preview the current query without saving it.') . '</p>',
-        ],
-      ];
+      return $this->buildMessages(
+        $this->t('Use Update preview to preview the current query without saving it.'),
+      );
     }
 
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query);
     if ($parameters === []) {
-      return [
-        'message' => [
-          '#markup' => '<p>' . $this->t('Enter at least one query value to preview studies.') . '</p>',
-        ],
-      ];
+      return $this->buildMessages(
+        $this->t('Enter at least one query value to preview studies.'),
+        'warning',
+      );
     }
 
     $page_token = $this->getPreviewPageToken($form_state);
@@ -290,4 +306,5 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
 
     return 0;
   }
+
 }

@@ -14,6 +14,12 @@ clinical_trials_gov.settings:
     type:
       type: string
       label: 'Content type machine name'
+    field_prefix:
+      type: string
+      label: 'Field machine name prefix'
+    readonly:
+      type: boolean
+      label: 'Read-only imported fields'
     fields:
       type: sequence
       label: 'Selected field mapping'

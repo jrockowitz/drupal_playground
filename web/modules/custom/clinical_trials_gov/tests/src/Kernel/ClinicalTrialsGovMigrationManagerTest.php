@@ -18,7 +18,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
   /**
    * Modules required for these kernel tests.
    *
-   * @var array
+   * @var array<string>
    */
   protected static $modules = [
     'clinical_trials_gov',
@@ -70,12 +70,12 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
       ->set('type', 'trial')
       ->set('fields', [
         'group_location' => 'protocolSection.contactsLocationsModule.locations',
-        'field_resp_party' => 'protocolSection.sponsorCollaboratorsModule.responsibleParty',
-        'field_condition' => 'protocolSection.conditionsModule.conditions',
-        'field_brief_title' => 'protocolSection.identificationModule.briefTitle',
-        'field_nct_id' => 'protocolSection.identificationModule.nctId',
-        'field_nct_id_alias' => 'protocolSection.identificationModule.nctIdAliases',
-        'field_over_status' => 'protocolSection.statusModule.overallStatus',
+        'field_trial_resp_party' => 'protocolSection.sponsorCollaboratorsModule.responsibleParty',
+        'field_trial_condition' => 'protocolSection.conditionsModule.conditions',
+        'field_trial_brief_title' => 'protocolSection.identificationModule.briefTitle',
+        'field_trial_nct_id' => 'protocolSection.identificationModule.nctId',
+        'field_trial_nct_id_alias' => 'protocolSection.identificationModule.nctIdAliases',
+        'field_trial_over_status' => 'protocolSection.statusModule.overallStatus',
       ])
       ->save();
 
@@ -115,7 +115,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
           'nctId',
         ],
       ],
-    ], $config->get('process.field_nct_url/uri'));
+    ], $config->get('process.' . $entity_manager->getStudyUrlFieldName() . '/uri'));
     $this->assertSame([
       [
         'plugin' => 'concat',
@@ -124,9 +124,9 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
           'nctId',
         ],
       ],
-    ], $config->get('process.field_nct_api/uri'));
+    ], $config->get('process.' . $entity_manager->getStudyApiFieldName() . '/uri'));
     $this->assertNull($config->get('process.group_location'));
-    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.field_resp_party'));
+    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty')));
 
     // Check that title truncation constants are available to the migration.
     $this->assertSame(255, $config->get('source.constants.title_max_length'));

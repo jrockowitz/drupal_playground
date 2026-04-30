@@ -36,6 +36,7 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
     protected ConfigFactoryInterface $configFactory,
     protected MigrationPluginManagerInterface $migrationPluginManager,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
+    protected ClinicalTrialsGovEntityManagerInterface $entityManager,
   ) {}
 
   /**
@@ -84,7 +85,7 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
       $process[$definition['field_name']] = $path;
     }
 
-    $process['field_nct_url/uri'] = [
+    $process[$this->entityManager->getStudyUrlFieldName() . '/uri'] = [
       [
         'plugin' => 'concat',
         'source' => [
@@ -93,7 +94,7 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
         ],
       ],
     ];
-    $process['field_nct_api/uri'] = [
+    $process[$this->entityManager->getStudyApiFieldName() . '/uri'] = [
       [
         'plugin' => 'concat',
         'source' => [
@@ -127,14 +128,18 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
       ],
     ])->save();
 
-    $this->migrationPluginManager->clearCachedDefinitions();
+    if (method_exists($this->migrationPluginManager, 'clearCachedDefinitions')) {
+      $this->migrationPluginManager->clearCachedDefinitions();
+    }
   }
 
   /**
    * Clears cached migration plugin definitions after config changes.
    */
   protected function clearMigrationPluginDefinitions(): void {
-    $this->migrationPluginManager->clearCachedDefinitions();
+    if (method_exists($this->migrationPluginManager, 'clearCachedDefinitions')) {
+      $this->migrationPluginManager->clearCachedDefinitions();
+    }
   }
 
 }

@@ -1719,17 +1719,17 @@
         },
         {
             "name": "drupal/ai",
-            "version": "1.3.3",
+            "version": "1.3.4",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ai.git",
-                "reference": "1.3.3"
+                "reference": "1.3.4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ai-1.3.3.zip",
-                "reference": "1.3.3",
-                "shasum": "092d335a5e42f543c89240def37ff995cc534883"
+                "url": "https://ftp.drupal.org/files/projects/ai-1.3.4.zip",
+                "reference": "1.3.4",
+                "shasum": "bb35c2caa6b83b37bffcb0f95da150a6d79c6f57"
             },
             "require": {
                 "drupal/core": "^10.5 || ^11.2",
@@ -1759,8 +1759,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.3.3",
-                    "datestamp": "1776263290",
+                    "version": "1.3.4",
+                    "datestamp": "1777473459",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -1950,7 +1950,7 @@
         },
         {
             "name": "drupal/ai_api_explorer",
-            "version": "1.3.3",
+            "version": "1.3.4",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -1958,8 +1958,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.3.3",
-                    "datestamp": "1776263290",
+                    "version": "1.3.4",
+                    "datestamp": "1777473459",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2064,7 +2064,7 @@
         },
         {
             "name": "drupal/ai_assistant_api",
-            "version": "1.3.3",
+            "version": "1.3.4",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2072,8 +2072,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.3.3",
-                    "datestamp": "1776263290",
+                    "version": "1.3.4",
+                    "datestamp": "1777473459",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2178,7 +2178,7 @@
         },
         {
             "name": "drupal/ai_chatbot",
-            "version": "1.3.3",
+            "version": "1.3.4",
             "require": {
                 "drupal/ai": "^1",
                 "drupal/ai_assistant_api": "*",
@@ -2187,8 +2187,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.3.3",
-                    "datestamp": "1776263290",
+                    "version": "1.3.4",
+                    "datestamp": "1777473459",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2293,7 +2293,7 @@
         },
         {
             "name": "drupal/ai_ckeditor",
-            "version": "1.3.3",
+            "version": "1.3.4",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2301,8 +2301,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.3.3",
-                    "datestamp": "1776263290",
+                    "version": "1.3.4",
+                    "datestamp": "1777473459",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2569,7 +2569,7 @@
         },
         {
             "name": "drupal/ai_logging",
-            "version": "1.3.3",
+            "version": "1.3.4",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2577,8 +2577,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.3.3",
-                    "datestamp": "1776263290",
+                    "version": "1.3.4",
+                    "datestamp": "1777473459",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -5296,17 +5296,17 @@
         },
         {
             "name": "drupal/existing_values_autocomplete_widget",
-            "version": "2.0.0-beta2",
+            "version": "2.0.0-beta3",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/existing_values_autocomplete_widget.git",
-                "reference": "2.0.0-beta2"
+                "reference": "2.0.0-beta3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/existing_values_autocomplete_widget-2.0.0-beta2.zip",
-                "reference": "2.0.0-beta2",
-                "shasum": "9188003d7ab4054d00b5c1203b798e08c848fad2"
+                "url": "https://ftp.drupal.org/files/projects/existing_values_autocomplete_widget-2.0.0-beta3.zip",
+                "reference": "2.0.0-beta3",
+                "shasum": "fd1c0b705b6b44d3aefaa91ccba39c34220da25d"
             },
             "require": {
                 "drupal/core": "^10.1 || ^11"
@@ -5314,8 +5314,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.0-beta2",
-                    "datestamp": "1736260599",
+                    "version": "2.0.0-beta3",
+                    "datestamp": "1777469431",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Beta releases are not covered by Drupal security advisories."
@@ -16082,6 +16082,51 @@
             "time": "2026-02-04T09:01:40+00:00"
         },
         {
+            "name": "drupal/readonly_field_widget",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/readonly_field_widget.git",
+                "reference": "2.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/readonly_field_widget-2.1.0.zip",
+                "reference": "2.1.0",
+                "shasum": "7aa60522e3d89aba5ddce1c7a8b59435c5d616c3"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9 || ^10 || ^11"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.1.0",
+                    "datestamp": "1754564080",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "thtas",
+                    "homepage": "https://www.drupal.org/user/287467"
+                }
+            ],
+            "description": "Provides a field widget which can display the field formatter version of a field on the edit form.",
+            "homepage": "https://www.drupal.org/project/readonly_field_widget",
+            "support": {
+                "source": "https://git.drupalcode.org/project/readonly_field_widget",
+                "issues": "https://www.drupal.org/project/issues/readonly_field_widget"
+            }
+        },
+        {
             "name": "google/protobuf",
             "version": "v4.33.6",
             "source": {
@@ -17672,11 +17717,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.51",
+            "version": "2.1.54",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/dc3b523c45e714c70de2ac5113b958223b55dc59",
-                "reference": "dc3b523c45e714c70de2ac5113b958223b55dc59",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8be50c3992107dc837b17da4d140fbbdf9a5c5bd",
+                "reference": "8be50c3992107dc837b17da4d140fbbdf9a5c5bd",
                 "shasum": ""
             },
             "require": {
@@ -17721,7 +17766,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-21T18:22:01+00:00"
+            "time": "2026-04-29T13:31:09+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",

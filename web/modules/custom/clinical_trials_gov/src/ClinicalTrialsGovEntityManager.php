@@ -15,20 +15,6 @@ use Drupal\link\LinkItemInterface;
  */
 class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerInterface {
 
-  /**
-   * Built-in generated Trial link fields.
-   */
-  protected const SYSTEM_LINK_FIELDS = [
-    'field_nct_url' => [
-      'field_name' => 'field_nct_url',
-      'label' => 'ClinicalTrials.gov URL',
-    ],
-    'field_nct_api' => [
-      'field_name' => 'field_nct_api',
-      'label' => 'ClinicalTrials.gov API',
-    ],
-  ];
-
   public function __construct(
     protected ModuleHandlerInterface $moduleHandler,
     protected EntityTypeManagerInterface $entityTypeManager,
@@ -141,6 +127,24 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    */
   public function generateFieldName(string $path): string {
     return $this->fieldManager->resolveFieldDefinition($path)['field_name'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getStudyUrlFieldName(): string {
+    return $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.nctId')['field_name'] === ''
+      ? 'field_' . ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE . '_nct_url'
+      : $this->buildSystemFieldName('nct_url');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getStudyApiFieldName(): string {
+    return $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.nctId')['field_name'] === ''
+      ? 'field_' . ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE . '_nct_api'
+      : $this->buildSystemFieldName('nct_api');
   }
 
   /**
@@ -337,12 +341,10 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    * Returns the built-in generated Trial link field definitions.
    */
   protected function getSystemLinkFieldDefinitions(): array {
-    $definitions = [];
-
-    foreach (self::SYSTEM_LINK_FIELDS as $field_name => $field) {
-      $definitions[$field_name] = [
-        'field_name' => $field_name,
-        'label' => $field['label'],
+    $definitions = [
+      $this->getStudyUrlFieldName() => [
+        'field_name' => $this->getStudyUrlFieldName(),
+        'label' => 'ClinicalTrials.gov URL',
         'description' => '',
         'field_type' => 'link',
         'storage_settings' => [],
@@ -353,10 +355,34 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
         'cardinality' => 1,
         'selectable' => TRUE,
         'group_only' => FALSE,
-      ];
-    }
+      ],
+      $this->getStudyApiFieldName() => [
+        'field_name' => $this->getStudyApiFieldName(),
+        'label' => 'ClinicalTrials.gov API',
+        'description' => '',
+        'field_type' => 'link',
+        'storage_settings' => [],
+        'instance_settings' => [
+          'title' => DRUPAL_DISABLED,
+          'link_type' => LinkItemInterface::LINK_EXTERNAL,
+        ],
+        'cardinality' => 1,
+        'selectable' => TRUE,
+        'group_only' => FALSE,
+      ],
+    ];
 
     return $definitions;
+  }
+
+  /**
+   * Builds a generated system field name using the configured prefix.
+   */
+  protected function buildSystemFieldName(string $suffix): string {
+    $field_name = $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.nctId')['field_name'];
+    $prefix = preg_replace('/nct_id$/', '', $field_name) ?? $field_name;
+
+    return $prefix . $suffix;
   }
 
   /**

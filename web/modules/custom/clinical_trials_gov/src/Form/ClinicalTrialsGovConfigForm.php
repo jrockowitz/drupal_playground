@@ -18,6 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Step 3 of the import wizard.
+ *
+ * @phpstan-consistent-constructor
  */
 class ClinicalTrialsGovConfigForm extends ConfigFormBase {
 
@@ -84,6 +86,18 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     ];
 
     if ($node_type === NULL) {
+      $form['settings_message'] = [
+        '#type' => 'container',
+        '#weight' => -10,
+        'message' => [
+          '#markup' => '<p>' . $this->t('Review the content type and fields that will be created below. Go to <a href=":url">Settings</a> to change the machine names and field prefix.', [
+            ':url' => Url::fromRoute('clinical_trials_gov.settings')->toString(),
+          ]) . '</p>',
+        ],
+      ];
+    }
+
+    if ($node_type === NULL) {
       $form['content_type']['label'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Label'),
@@ -91,10 +105,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         '#required' => TRUE,
       ];
       $form['content_type']['type'] = [
-        '#type' => 'textfield',
+        '#type' => 'item',
         '#title' => $this->t('Machine name'),
-        '#default_value' => $saved_type,
-        '#required' => TRUE,
+        '#markup' => $saved_type,
       ];
       $form['content_type']['description'] = [
         '#type' => 'textarea',
@@ -237,7 +250,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     }
 
     $config = $this->configFactory()->getEditable('clinical_trials_gov.settings');
-    $type = (string) ($form_state->getValue('existing_type') ?: $form_state->getValue('type'));
+    $type = (string) ($form_state->getValue('existing_type') ?: $this->config('clinical_trials_gov.settings')->get('type') ?: ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE);
     $label = (string) ($form_state->getValue('label') ?: 'Trial');
     $description = (string) ($form_state->getValue('description') ?: '');
 
