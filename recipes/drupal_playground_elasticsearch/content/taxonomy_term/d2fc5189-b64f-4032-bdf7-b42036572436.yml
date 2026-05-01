@@ -1,0 +1,16 @@
+_meta:
+  version: '1.0'
+  entity_type: taxonomy_term
+  uuid: d2fc5189-b64f-4032-bdf7-b42036572436
+  bundle: tags
+  default_langcode: en
+default:
+  status:
+    -
+      value: true
+  name:
+    -
+      value: DDEV
+  weight:
+    -
+      value: 0

@@ -1,0 +1,21 @@
+name: 'Drupal Playground Elasticsearch'
+description: 'Sets up Search API with Elasticsearch Connector for article search.'
+type: 'Site'
+recipes:
+  - drupal_playground_base
+install:
+  - better_exposed_filters
+  - facets
+  - facets_exposed_filters
+  - shortcut
+  - search_api
+  - elasticsearch_connector
+config:
+  strict: false
+  import:
+    shortcut: '*'
+    search_api:
+      - search_api.server.drupal_playground_elasticsearch
+      - search_api.index.drupal_playground_articles
+    views:
+      - views.view.drupal_playground_article_search

@@ -1,0 +1,50 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 27c196ce-ce9c-4a05-85ae-a6959b49ade8
+  bundle: article
+  default_langcode: en
+  depends:
+    ed25d85d-fbbc-4037-90ad-411bc9f31d01: taxonomy_term
+    13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+    d2fc5189-b64f-4032-bdf7-b42036572436: taxonomy_term
+    2e7cb81f-d421-4a3e-8920-4f847e88ac5b: taxonomy_term
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Elasticsearch connector for Drupal & DDEV'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: ed25d85d-fbbc-4037-90ad-411bc9f31d01
+    -
+      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+    -
+      entity: d2fc5189-b64f-4032-bdf7-b42036572436
+    -
+      entity: 2e7cb81f-d421-4a3e-8920-4f847e88ac5b
+  body:
+    -
+      value: |-
+        <h2>Why the Connector Module Matters</h2>
+        <p>The Elasticsearch Connector module for Drupal provides the backend integration that lets Search API talk to Elasticsearch in a Drupal-native way. Search API defines what should be indexed and how it should be presented, while the connector module handles the details of connecting to an Elasticsearch server, creating and updating indexes, sending queries, and parsing results. That separation is useful because it keeps Drupal’s search framework clean. Site builders can work with servers and indexes in Search API, while the connector module focuses on the Elasticsearch-specific pieces.</p>
+        <p>In practice, this means you can configure a Search API server with an Elasticsearch backend, point it at a local or remote cluster, and then build indexes in the same way you would with other supported backends. The connector exposes backend configuration such as the connection URL and advanced index settings. Once that server exists, the Drupal-side search experience still looks familiar: choose a datasource, pick fields, configure processors, and build a Views page on top of the resulting index.</p>
+        <h2>How It Works with Drupal Search API</h2>
+        <p>The connector module does not replace Search API. It extends it. Search API remains the place where Drupal decides which entities and fields matter. The connector then takes that structured definition and translates it into Elasticsearch operations. This is an important mental model for Drupal developers. If search behavior feels wrong, the fix may live in Search API field configuration or processors. If connection behavior fails, the issue may live in backend settings or the local Elasticsearch service. Understanding that division helps with debugging and with long-term maintenance.</p>
+        <p>For an article search use case, the combination is straightforward. Search API defines an index of article nodes, chooses fields such as title and body, and sets up the query interface. The Elasticsearch Connector server points at a cluster URL such as <code>http://elasticsearch:9200</code>. When the index is built, Drupal sends the prepared content to Elasticsearch. When a user searches, Drupal issues backend queries and receives ranked results. The site builder gets a Drupal-centric workflow, while the actual search execution happens in Elasticsearch.</p>
+        <h2>Why DDEV Is a Good Fit for Local Search Work</h2>
+        <p>DDEV makes it easier to work on Drupal features that depend on extra services such as databases, browsers, or search engines. Instead of requiring every developer to install and manage Elasticsearch directly on their machine, the project can define the service in version-controlled DDEV configuration. That creates a shared local environment: the service name, port, memory settings, and startup behavior all live in the repository. When another developer starts the project, they get the same search stack rather than a one-off personal setup.</p>
+        <p>That consistency is especially valuable for search work because small differences in local services can be confusing. A site may work for one person and fail for another if the backend URL, version, or container startup differs. DDEV reduces that drift. The project can expose Elasticsearch as a local service, make it reachable from the web container, and document the expected URL for Drupal configuration. In this recipe, that URL is <code>http://elasticsearch:9200</code>, which keeps the Search API server simple and predictable.</p>
+        <h2>A Practical DDEV Setup Flow</h2>
+        <p>A good local setup flow usually starts by committing the DDEV service definition alongside the Drupal recipe. That way the project knows how to start Elasticsearch and Drupal knows how to use it. After the environment is started, the Drupal site can install the required modules, apply the recipe, import the default content, and connect the Search API server to the local backend. The developer’s job becomes mostly orchestration: start services, install the site, rebuild or index content, and verify the search page.</p>
+        <p>Once the service is running, verification should happen at both the infrastructure and application levels. At the infrastructure level, DDEV should show Elasticsearch as healthy. At the application level, Search API should list an enabled server and an enabled article index. Finally, the site should return expected results for known content. That layered approach matters because it separates “the service is up” from “Drupal is configured correctly” and from “the user experience is working.”</p>
+        <h2>What This Means for a Drupal Team</h2>
+        <p>For a Drupal team, the connector-plus-DDEV pattern is a good example of keeping local development honest. Search is no longer treated as an optional integration that only exists in higher environments. Instead, it becomes part of the normal developer workflow. Contributors can change Search API config, adjust field mappings, review result pages, and debug indexing behavior without needing a bespoke environment. That shortens the feedback loop and makes search improvements easier to test.</p>
+        <p>The larger lesson is that a connector module is most useful when the environment around it is also predictable. Elasticsearch Connector gives Drupal the backend integration. DDEV gives the team a reliable local runtime. Search API gives site builders a structured way to define the search experience. When those three pieces are aligned, Drupal search work becomes much easier to understand, test, and maintain.</p>
+      format: basic_html
+      summary: 'The Elasticsearch Connector module links Drupal Search API to Elasticsearch, and DDEV makes that integration practical to run, test, and verify in a shared local development setup.'

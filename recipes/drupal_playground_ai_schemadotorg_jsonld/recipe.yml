@@ -11,6 +11,7 @@ install:
   - ai_schemadotorg_jsonld_breadcrumb
   - ai_schemadotorg_jsonld_log
 config:
+  strict: false
   actions:
     ai_schemadotorg_jsonld.settings:
       addField:

@@ -1,0 +1,47 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 6adc11b3-30be-4a61-8735-2c75cdd41b36
+  bundle: article
+  default_langcode: en
+  depends:
+    fa6fb2fb-2619-4eba-b238-227402aa18a2: taxonomy_term
+    13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+    084f13d6-bed6-4406-a286-c3c9413f5650: taxonomy_term
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Drupal Search API'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: fa6fb2fb-2619-4eba-b238-227402aa18a2
+    -
+      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+    -
+      entity: 084f13d6-bed6-4406-a286-c3c9413f5650
+  body:
+    -
+      value: |-
+        <h2>What Drupal Search API Does</h2>
+        <p>Drupal Search API is the layer that turns Drupal content into a manageable search system. Instead of tying a site directly to a single backend or forcing developers to work at a very low level, Search API provides a common framework for defining what content should be indexed, how it should be processed, and where it should be stored. It works as an integration point between Drupal’s entity system and search backends such as the database, Solr, or Elasticsearch. That separation is important because it lets teams build a search experience around Drupal concepts while still choosing the backend that best fits their needs.</p>
+        <p>At the center of Search API are two ideas: servers and indexes. A server represents the backend connection, such as an Elasticsearch cluster or a database-backed engine. An index defines what content is searchable. For example, an index might include only article nodes, or it might cover multiple entity types such as nodes, media, files, and taxonomy terms. Developers can choose which fields matter, how those fields should be typed, and what processors should run before the content is stored. That design makes Search API flexible enough for simple projects and substantial editorial platforms alike.</p>
+        <h2>How Search API Fits Into Drupal</h2>
+        <p>Drupal content is built around entities and fields, so Search API follows the same model. You select a datasource such as nodes, then choose bundles and fields. A title can be indexed as text, a created timestamp as a date, a taxonomy reference as a string or integer depending on use, and a rendered field as searchable body content. Search API can also combine values through processors, add URLs, respect entity status, and apply content access restrictions. In other words, it does not just copy raw database values into a search backend. It prepares Drupal content for discovery.</p>
+        <p>This is one reason Search API feels natural in Drupal projects. Site builders can reason about search in the same way they reason about displays, fields, and views. They do not have to abandon Drupal’s content architecture to add a search engine. Instead, Search API becomes the bridge between Drupal’s editorial model and a backend designed for retrieval. When content changes, Search API can track those changes and send updates to the backend so the index stays current.</p>
+        <h2>Processors, Field Types, and Content Preparation</h2>
+        <p>A useful search index is rarely just a direct dump of stored values. Search API supports processors that clean up, enrich, or transform data before it is indexed or queried. A processor can add URLs, strip markup, normalize text, tokenize fields, or account for access rules. That means the shape of search data can be more purposeful than the shape of editorial storage. Drupal may store rich formatted body fields, but Search API can pass those through filters that make them more effective for full-text matching.</p>
+        <p>Field types matter as well. Text fields behave differently from dates, booleans, integers, and references. Search quality often improves when a site models fields intentionally. A title should usually be text and may get a relevance boost. A publication date might support sorting. A taxonomy tag may support filtering or grouping. An author field can be displayed in results or used for specialized queries. Search API gives site builders a vocabulary for those decisions, which helps keep search design explicit instead of accidental.</p>
+        <h2>Why Views Support Matters</h2>
+        <p>One of the most practical strengths of Search API is its integration with Drupal Views. Once an index exists, Views can use it as a data source. That makes it possible to build search pages with exposed keyword filters, relevance sorting, paging, and result displays without custom code. A search page can render results in teaser view mode, show excerpts, or add contextual filtering as needed. Teams who already know how to build listings with Views can often build a solid first search interface quickly.</p>
+        <p>Because Search API integrates with Views rather than bypassing it, search results can follow the same presentation patterns as the rest of the site. Editors and site builders are not forced into a disconnected search experience. They can reuse familiar display tools, combine search with existing theme structures, and iterate on result presentation as the site evolves. That alignment is a big part of why Search API is widely adopted in Drupal projects.</p>
+        <h2>When to Use Search API</h2>
+        <p>Search API becomes especially valuable when content discovery is more than a basic convenience. If a project needs stronger ranking, better filtering, cleaner integration with custom fields, or the ability to swap search backends without rebuilding the whole feature, Search API is often the right foundation. It also provides a path for growth. A site may begin with a modest index and a single Views page, then later add facets, autocomplete, custom processors, or alternate result experiences.</p>
+        <p>In short, Drupal Search API is not just a connector module. It is the search framework that lets Drupal content become searchable in a deliberate, structured way. It handles the content modeling side of search so backend-specific modules can focus on transport and storage. That division of responsibility keeps search maintainable, portable, and much easier to reason about over time.</p>
+      format: basic_html
+      summary: 'Drupal Search API provides the Drupal-side framework for defining servers, indexes, fields, processors, and Views-powered search interfaces across different backends.'

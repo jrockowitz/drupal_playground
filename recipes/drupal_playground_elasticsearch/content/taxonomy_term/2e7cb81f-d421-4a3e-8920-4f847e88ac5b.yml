@@ -1,0 +1,16 @@
+_meta:
+  version: '1.0'
+  entity_type: taxonomy_term
+  uuid: 2e7cb81f-d421-4a3e-8920-4f847e88ac5b
+  bundle: tags
+  default_langcode: en
+default:
+  status:
+    -
+      value: true
+  name:
+    -
+      value: Connector
+  weight:
+    -
+      value: 0

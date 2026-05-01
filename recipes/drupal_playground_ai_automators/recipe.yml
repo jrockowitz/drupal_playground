@@ -8,9 +8,9 @@ install:
   - ai_automators
   - field_widget_actions
 config:
+  strict: false
   import:
     ai_automators: '*'
-  strict: false
   actions:
     core.entity_form_display.node.article.default:
       setComponentThirdPartySetting:

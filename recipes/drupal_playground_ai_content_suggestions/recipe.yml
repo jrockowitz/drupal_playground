@@ -4,7 +4,6 @@ description: >
 type: 'Site'
 recipes:
   - drupal_playground_ai
-
 install:
   - ai_content_suggestions
 config:

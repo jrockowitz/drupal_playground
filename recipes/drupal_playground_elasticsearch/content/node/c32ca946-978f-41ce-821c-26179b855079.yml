@@ -1,0 +1,46 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: c32ca946-978f-41ce-821c-26179b855079
+  bundle: article
+  default_langcode: en
+  depends:
+    ed25d85d-fbbc-4037-90ad-411bc9f31d01: taxonomy_term
+    bae844cc-9578-4123-b3d2-8bd9dd5fa59c: taxonomy_term
+    084f13d6-bed6-4406-a286-c3c9413f5650: taxonomy_term
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: Elasticsearch
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: ed25d85d-fbbc-4037-90ad-411bc9f31d01
+    -
+      entity: bae844cc-9578-4123-b3d2-8bd9dd5fa59c
+    -
+      entity: 084f13d6-bed6-4406-a286-c3c9413f5650
+  body:
+    -
+      value: |-
+        <h2>What Elasticsearch Is</h2>
+        <p>Elasticsearch is an open source search and analytics engine built for storing, indexing, and querying large amounts of structured and unstructured information. People often encounter it first as part of a website search feature, but the same technology is also used for observability dashboards, log aggregation, application metrics, product discovery, and document retrieval. Its core strength is that it can turn text, numbers, dates, and other fields into a form that is optimized for very fast retrieval. Instead of scanning content one record at a time, Elasticsearch creates indexes that allow applications to ask focused questions and get relevant answers quickly.</p>
+        <p>At a practical level, Elasticsearch is especially good at full-text search. That means it does more than look for exact matches. It can tokenize content into searchable terms, normalize casing, understand word boundaries, rank results by relevance, and combine multiple fields into a single query experience. A title that mentions a term directly can score more highly than a body field that references it in passing. That ranking behavior is one reason Elasticsearch is so popular for editorial and content-heavy systems. Users expect a search engine to feel smart, and Elasticsearch gives developers many ways to shape that experience.</p>
+        <h2>How Elasticsearch Stores Information</h2>
+        <p>Elasticsearch organizes information into indexes, which are similar to collections of related documents. A document is usually a JSON object containing fields such as a title, description, author, created date, or tags. When content is indexed, Elasticsearch keeps both the original field values and the analyzed search terms it generates from them. That means an application can retrieve documents as content objects while also benefiting from fast search behavior under the hood.</p>
+        <p>One of the design ideas behind Elasticsearch is distribution. It can split an index into shards and replicate data across nodes, which makes the engine suitable for workloads ranging from a single local development container to a large production cluster. Even when a project begins with a simple one-node setup, the same search model can later scale into larger environments if usage grows. For local Drupal development this usually starts with a single-node configuration, but it still helps developers learn the same concepts they will need in more advanced deployments.</p>
+        <h2>Why Relevance Matters</h2>
+        <p>Search quality is not only about speed. Relevance is the difference between a search that feels useful and one that feels frustrating. Elasticsearch supports field boosts, phrase matches, fuzzy matching, analyzers, synonyms, and other relevance controls that let teams tune results around their own content model. For example, a site may want title matches to matter more than body matches, or recent content to appear more prominently than older material. Those choices are part of search design, not just search infrastructure, and Elasticsearch gives developers room to make them explicit.</p>
+        <p>Another benefit is the ability to mix search with filtering and sorting. A user might search for a topic, then narrow results by content type, tags, published date, or availability. That combination of search relevance and structured filtering is one of the engine’s biggest strengths. It treats search as part of a broader discovery workflow rather than a standalone text box. In content systems, that often leads to better user experiences because visitors can move from a broad query to a more precise set of results without leaving the same interface.</p>
+        <h2>Common Uses Beyond Site Search</h2>
+        <p>Although site search is a common entry point, Elasticsearch is used in many other contexts. Operations teams index logs so they can investigate failures. Product teams index catalog data for faceted browsing. Editorial teams power content hubs with topic landing pages, related articles, and autocomplete. Knowledge systems use it to retrieve documents across large repositories. The same indexing and querying patterns keep showing up because the engine works well whenever fast retrieval and relevance ranking matter.</p>
+        <p>For Drupal teams, Elasticsearch becomes most valuable when a site grows beyond a very small content set or when content discovery becomes a first-class feature. A content-rich project may need better ranking, better filtering, or a more scalable backend than a simple database search can provide. In that setting Elasticsearch is less about adding complexity for its own sake and more about giving search the kind of foundation that lets it evolve with the site.</p>
+        <h2>What to Learn First</h2>
+        <p>If you are new to Elasticsearch, the best first concepts to understand are documents, indexes, mappings, analyzers, and queries. Documents are the things being searched. Indexes hold groups of documents. Mappings describe field types. Analyzers control how text is processed for indexing and searching. Queries describe how results should be matched and ranked. Once those ideas click, the engine feels much less mysterious. From there, tools like Drupal Search API can provide the application-layer integration that turns those search concepts into a maintainable site feature.</p>
+      format: basic_html
+      summary: 'Elasticsearch is a search and analytics engine designed for fast retrieval, full-text search, relevance ranking, and scalable indexing across many kinds of content.'

@@ -1,0 +1,16 @@
+_meta:
+  version: '1.0'
+  entity_type: taxonomy_term
+  uuid: 084f13d6-bed6-4406-a286-c3c9413f5650
+  bundle: tags
+  default_langcode: en
+default:
+  status:
+    -
+      value: true
+  name:
+    -
+      value: Indexing
+  weight:
+    -
+      value: 0

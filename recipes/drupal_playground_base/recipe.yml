@@ -12,3 +12,5 @@ install:
   - inline_form_errors
   - key
   - token
+config:
+  strict: false

@@ -1,0 +1,18 @@
+_meta:
+  version: '1.0'
+  entity_type: shortcut
+  uuid: 655bf066-f69f-4ea5-a590-cad6f0edce71
+  bundle: default
+  default_langcode: en
+default:
+  title:
+    -
+      value: Articles
+  weight:
+    -
+      value: -10
+  link:
+    -
+      uri: 'internal:/search/articles'
+      title: ''
+      options: {  }

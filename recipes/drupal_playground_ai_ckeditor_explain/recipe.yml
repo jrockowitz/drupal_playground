@@ -7,7 +7,6 @@ recipes:
   - drupal_playground_ai
   - drupal_playground_ai_ckeditor
   - drupal_playground_ai_automators
-
 config:
   strict: false
   actions:

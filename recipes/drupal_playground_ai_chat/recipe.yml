@@ -5,7 +5,6 @@ description: >
 type: 'Site'
 recipes:
   - drupal_playground_ai
-
 install:
   - ai_agents
   - ai_assistant_api

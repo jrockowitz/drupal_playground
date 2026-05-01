@@ -2,7 +2,7 @@
 
 ## Description: Install Drupal, optionally with one or more presets or all presets
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install schemadotorg\nddev install translation\nddev install all
+## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install all
 ## ProjectTypes: drupal,drupal11
 
 if [ "$#" -gt 1 ]; then
@@ -18,7 +18,7 @@ if [ "$1" = "all" ]; then
   set -- ai schemadotorg eca translation
 fi
 
-drush site:install core/recipes/standard \
+drush site:install standard \
   --db-url=mysql://db:db@db/db \
   --site-name="Drupal Playground" \
   --account-name=admin \
@@ -53,6 +53,11 @@ for PRESET in "$@"; do
   elif [ "$PRESET" = "eca" ]; then
     echo "Applying ECA Starterkit recipe..."
     drush recipe ../recipes/drupal_playground_eca
+  elif [ "$PRESET" = "elastic" ]; then
+    echo "Applying Elasticsearch recipe..."
+    drush recipe ../recipes/drupal_playground_elasticsearch
+    echo "Indexing Elasticsearch demo content..."
+    drush search-api:index drupal_playground_articles
   elif [ "$PRESET" = "translation" ]; then
     echo "Applying translation recipe..."
     drush recipe ../recipes/drupal_playground_translation
