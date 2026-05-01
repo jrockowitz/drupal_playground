@@ -55,7 +55,13 @@ ddev drush search-api:index drupal_playground_articles
 
 This recipe includes `drupal/facets:^3.0` and uses the `facets_exposed_filters` submodule to turn the `Tags` filter on `/search/articles` into a real tag facet.
 
-The package used for this setup is:
+The Elasticsearch recipe installs the needed search UI modules for this feature:
+
+- `facets`
+- `facets_exposed_filters`
+- `better_exposed_filters`
+
+The underlying Composer package used for this setup is:
 
 ```shell
 composer require 'drupal/facets:^3.0'
@@ -76,6 +82,8 @@ Current behavior:
 - the `Tags` filter is a choice-based tags facet
 - Search API relevance remains the default sort
 
+The `ddev install elastic` preset clears the Search API index before reindexing content so Elasticsearch field mappings stay in sync with the recipe configuration.
+
 ## Steps to Review (⚫ = step  ✅ = pass  ❌ = fail)
 
 ### Local Elasticsearch service
@@ -94,6 +102,7 @@ Current behavior:
 - ⚫ Run `ddev install elastic`.
 - ⚫ Confirm the install output includes `Applying Elasticsearch recipe...`.
 - ⚫ Confirm the install output includes `Created content for Drupal Playground Elasticsearch recipe.`.
+- ⚫ Confirm the install output includes `Clearing Elasticsearch index to rebuild mappings...`.
 - ⚫ Confirm the install output includes `Indexing Elasticsearch demo content...`.
 - ⚫ Run `ddev uli`.
 - ⚫ Open the one-time login URL and confirm you land in the Drupal admin area.
@@ -152,9 +161,11 @@ Current behavior:
 - ⚫ Edit the `Tags` filter and confirm the filter plugin is `Facets filter`.
 - ⚫ Confirm the facet settings are attached to the current page display and tag field.
 - ⚫ Confirm the default sort is Search API relevance descending.
+- ⚫ Confirm the tags facet renders as a multi-select list of tag names, not raw term IDs.
 - ⚫ Visit `/search/articles`.
 - ⚫ Search for `Drupal`.
-- ⚫ Narrow the results with the `Tags` facet.
+- ⚫ Narrow the results with the `Tags` facet by selecting `Drupal`.
+- ⚫ Confirm the filtered page keeps the keyword query and reduces the results to the Drupal-tagged articles.
 - ⚫ Narrow the results with the `Authored by` filter.
 - ⚫ Confirm the search results page shows the three demo articles with teaser content.
 - ⚫ Confirm the result teasers show article preview content without errors.

@@ -56,6 +56,8 @@ for PRESET in "$@"; do
   elif [ "$PRESET" = "elastic" ]; then
     echo "Applying Elasticsearch recipe..."
     drush recipe ../recipes/drupal_playground_elasticsearch
+    echo "Clearing Elasticsearch index to rebuild mappings..."
+    drush search-api:clear drupal_playground_articles -y
     echo "Indexing Elasticsearch demo content..."
     drush search-api:index drupal_playground_articles
   elif [ "$PRESET" = "translation" ]; then
