@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - asset_injector
+id: drupal_playground_article_search_filters
+label: 'Drupal Playground Article Search Filters'
+code: |-
+  body.path-search .form-checkboxes.bef-checkboxes.bef-nested ul,
+  body.path-search .form-checkboxes.bef-checkboxes.bef-nested li {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+  }
+conditions_require_all: true
+conditions:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /search/articles
+contexts: {  }
+media: all
+preprocess: true

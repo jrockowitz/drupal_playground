@@ -6,6 +6,7 @@
   "require": {
     "drupal/core": "^11.3",
     "drupal/key": "^1",
-    "drupal/token": "^1"
+    "drupal/token": "^1",
+    "drupal/asset_injector": "^2.21"
   }
 }

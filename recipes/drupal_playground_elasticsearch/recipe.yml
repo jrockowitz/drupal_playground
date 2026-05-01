@@ -13,6 +13,8 @@ install:
 config:
   strict: false
   import:
+    asset_injector:
+      - asset_injector.css.drupal_playground_article_search_filters
     shortcut: '*'
     search_api:
       - search_api.server.drupal_playground_elasticsearch
