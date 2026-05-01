@@ -95,8 +95,8 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
 
     // Check that labels and field metadata render separately.
     $this->assertInstanceOf(TranslatableMarkup::class, $processed['query__cond']['#title']);
-    $this->assertSame('Condition or disease (query.cond)', (string) $processed['query__cond']['#title']);
-    $this->assertSame('Sort (sort)', (string) $processed['sort']['#title']);
+    $this->assertSame('Condition or disease', (string) $processed['query__cond']['#title']);
+    $this->assertSame('Sort', (string) $processed['sort']['#title']);
     $this->assertStringContainsString('filter.overallStatus', $processed['filter__overallStatus']['#field_prefix']);
     $this->assertStringContainsString('(array of string)', $processed['filter__overallStatus']['#field_prefix']);
 

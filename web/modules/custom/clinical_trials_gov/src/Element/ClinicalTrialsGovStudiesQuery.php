@@ -524,10 +524,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     }
 
     $element = [
-      '#title' => t('@label (@name)', [
-        '@label' => (string) $definition['label'],
-        '@name' => (string) $definition['key'],
-      ]),
+      '#title' => $definition['label'],
       '#default_value' => $default_value,
       '#description' => static::buildDescription($definition),
       '#field_prefix' => '<div>' . htmlspecialchars($definition['key']) . ' (' . htmlspecialchars($definition['data_type']) . ')</div>',
