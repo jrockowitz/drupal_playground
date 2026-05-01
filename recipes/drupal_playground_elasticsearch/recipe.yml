@@ -21,3 +21,7 @@ config:
       - search_api.index.drupal_playground_articles
     views:
       - views.view.drupal_playground_article_search
+  actions:
+    node.type.article:
+      simpleConfigUpdate:
+        display_submitted: false
