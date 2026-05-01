@@ -218,6 +218,9 @@ verdean
 Versionable
 viewsreference
 Yoast
+elif
+fulltext
+ignorecase
 writeln
 CHEATSHEET
 cheatsheet

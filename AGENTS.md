@@ -10,9 +10,6 @@
 ## DDEV
 
 ```bash
-# Open site and log in as admin (one-time login link)
-ddev uli
-
 # Runs PHPUnit
 ddev phpunit <file|directory>
 
