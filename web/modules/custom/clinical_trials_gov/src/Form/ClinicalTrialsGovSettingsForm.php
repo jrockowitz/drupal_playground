@@ -74,7 +74,7 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Field prefix'),
       '#field_suffix' => '_{metadata_field_name}',
-      '#description' => $this->t('Prefix used when generating Drupal field machine names, without the leading field_. Common values include trial, study, nct, or trial_version_holder. This setting is locked after the destination content type and fields are created.'),
+      '#description' => $this->t('Prefix used when generating Drupal field machine names. Common values include trial, study, nct, or trial_version_holder. For example, trial produces trial_brief_title. This setting is locked after the destination content type and fields are created.'),
       '#config_target' => 'clinical_trials_gov.settings:field_prefix',
       '#required' => !$structure_locked,
       '#disabled' => $structure_locked,

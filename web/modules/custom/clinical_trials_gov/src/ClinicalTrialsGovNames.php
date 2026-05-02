@@ -19,7 +19,7 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     'outcome_analysis_ci' => 'out_anl_ci',
     'intervention_browse' => 'int_brow',
     'access' => 'acc',
-    'affected' => 'affect',
+    'affected' => 'aff',
     'analysis' => 'anal',
     'analyze' => 'anal',
     'analyzed' => 'anal',
@@ -27,13 +27,14 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     'affiliation' => 'affil',
     'baseline' => 'base',
     'collaborator' => 'collab',
-    'completion' => 'compl',
+    'completion' => 'comp',
     'date' => 'dt',
     'description' => 'desc',
     'estimated' => 'est',
     'event' => 'evt',
     'events' => 'evt',
     'expanded' => 'exp',
+    'first' => 'fst',
     'group' => 'grp',
     'identification' => 'id',
     'inferiority' => 'inf',
@@ -53,16 +54,17 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     'references' => 'ref',
     'reference' => 'ref',
     'regulated' => 'reg',
-    'responsible' => 'resp',
     'results' => 'res',
+    'responsible' => 'resp',
     'second' => 'sec',
     'secondary' => 'sec',
     'selected' => 'sel',
     'serious' => 'ser',
-    'sponsor' => 'spons',
-    'statistical' => 'stat',
+    'sponsor' => 'spon',
+    'statistical' => 'sta',
     'submission' => 'sub',
     'update' => 'up',
+    'value' => 'val',
   ];
 
   /**
@@ -76,11 +78,6 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     'IPDSharingAccessCriteria' => 'ipd_sharing_access_crit',
     'NPtrsToThisExpAccNCTId' => 'nptrs_exp_act_nct_id',
   ];
-
-  /**
-   * The Drupal field prefix.
-   */
-  protected const FIELD_PREFIX = 'field_';
 
   /**
    * The Drupal field group prefix.
@@ -116,14 +113,10 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     $piece = trim($piece, '_');
 
     foreach (self::ABBREVIATIONS as $token => $abbreviation) {
-      $abbreviation_pattern = '#(^|_)' . preg_quote($abbreviation, '#') . '(_|$)#';
-      if (preg_match($abbreviation_pattern, $piece) === 1) {
-        continue;
-      }
-
-      $token_pattern = '#(^|_)' . preg_quote($token, '#') . '(_|$)#';
-      $piece = preg_replace($token_pattern, '$1' . $abbreviation . '$2', $piece) ?? $piece;
+      $piece = preg_replace('#(^|_)' . $token . '(_|$)#', '$1' . $abbreviation . '$2', $piece);
     }
+
+    $piece = preg_replace('#(?:ment|ation|etion|ition|ion)(_|$)#', '$1', $piece);
 
     return $piece;
   }
@@ -197,10 +190,10 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     $field_prefix = trim($field_prefix);
 
     if (!$field_prefix) {
-      return self::FIELD_PREFIX;
+      return '';
     }
 
-    return self::FIELD_PREFIX . $field_prefix . '_';
+    return $field_prefix . '_';
   }
 
 }

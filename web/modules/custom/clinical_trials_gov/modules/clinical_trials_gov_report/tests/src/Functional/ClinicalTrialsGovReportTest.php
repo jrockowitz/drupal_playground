@@ -207,11 +207,11 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Brief Title');
     $this->assertSession()->pageTextContains('BriefTitle');
     $this->assertSession()->pageTextContains('brief_title');
-    $this->assertSession()->pageTextContains('field_trial_brief_title');
+    $this->assertSession()->pageTextContains('trial_brief_title');
     $this->assertSession()->pageTextContains('EA Recruitment Status');
     $this->assertSession()->pageTextContains('ExpandedAccessStatusForNCTId');
     $this->assertSession()->pageTextContains('exp_acc_status_for_nct_id');
-    $this->assertSession()->pageTextContains('field_trial_exp_acc_sta_1d2e2fd7');
+    $this->assertSession()->pageTextContains('trial_exp_acc_status_for_nct_id');
     $this->assertSession()->pageTextContains('Abbreviations');
     $this->assertSession()->pageTextContains('Full token');
     $this->assertSession()->pageTextContains('Abbreviation');

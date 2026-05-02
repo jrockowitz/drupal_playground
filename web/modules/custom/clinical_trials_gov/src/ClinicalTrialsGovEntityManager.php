@@ -380,7 +380,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   protected function buildSystemFieldName(string $suffix): string {
     $field_name = $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.nctId')['field_name'];
     $prefix = preg_replace('/nct_id$/', '', $field_name) ?? $field_name;
-    $prefix = preg_replace('/^field_/', '', $prefix) ?? $prefix;
 
     return $prefix . $suffix;
   }

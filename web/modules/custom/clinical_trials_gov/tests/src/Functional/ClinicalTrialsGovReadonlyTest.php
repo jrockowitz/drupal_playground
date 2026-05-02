@@ -44,8 +44,8 @@ class ClinicalTrialsGovReadonlyTest extends BrowserTestBase {
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('type', 'trial')
       ->set('fields', [
-        'field_trial_brief_title' => 'protocolSection.identificationModule.briefTitle',
-        'field_trial_nct_id' => 'protocolSection.identificationModule.nctId',
+        'trial_brief_title' => 'protocolSection.identificationModule.briefTitle',
+        'trial_nct_id' => 'protocolSection.identificationModule.nctId',
       ])
       ->set('readonly', TRUE)
       ->save();
@@ -65,10 +65,10 @@ class ClinicalTrialsGovReadonlyTest extends BrowserTestBase {
     $node = Node::create([
       'type' => 'trial',
       'title' => 'Editable title',
-      'field_trial_brief_title' => [
+      'trial_brief_title' => [
         'value' => 'Readonly brief title',
       ],
-      'field_trial_nct_id' => [
+      'trial_nct_id' => [
         'value' => 'NCT05088187',
       ],
       'trial_nct_url' => [

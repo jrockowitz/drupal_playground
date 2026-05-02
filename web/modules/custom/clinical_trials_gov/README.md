@@ -194,7 +194,7 @@ Current advanced options include:
 
 The configured ClinicalTrials.gov destination bundle is treated as import-managed content. Even users with elevated Drupal permissions cannot manually create those nodes through the UI.
 
-The saved `field_prefix` value should be entered without Drupal's leading `field_`. For example, `trial_version_holder` produces generated Drupal field names like `field_trial_version_holder_brief_title`.
+The saved `field_prefix` value is used directly when generating Drupal field names. For example, `trial_version_holder` produces generated Drupal field names like `trial_version_holder_brief_title`.
 
 Readonly mode requires the contrib module `readonly_field_widget`. When enabled:
 
@@ -208,7 +208,7 @@ Readonly mode requires the contrib module `readonly_field_widget`. When enabled:
 Some of the most important modeling decisions in this module are:
 
 - `briefTitle` maps to Drupal node `title`
-- `briefTitle` is also preserved as its own generated field, `field_brief_title`
+- `briefTitle` is also preserved as its own generated field, such as `trial_brief_title`
 - required fields are always forced in
 - array-valued API types become unlimited-cardinality Drupal fields
 - nested structs may become `custom_field` fields or `field_group` containers

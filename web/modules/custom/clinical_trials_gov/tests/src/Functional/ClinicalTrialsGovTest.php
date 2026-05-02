@@ -181,7 +181,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->fieldNotExists('field_mapping[rows][' . md5('protocolSection') . '][selected]');
     $this->assertSession()->pageTextNotContains('Responsible Party Investigator Full Name');
     $this->assertSession()->pageTextNotContains('NCTIdAlias');
-    $this->assertSession()->pageTextNotContains('field_trial_nct_id_alias');
+    $this->assertSession()->pageTextNotContains('trial_nct_id_alias');
     $this->assertSession()->pageTextNotContains('protocolSection.identificationModule.nctIdAliases');
     $this->assertSession()->pageTextNotContains('No description.');
     $this->assertSession()->fieldValueEquals('Description', 'Imported ClinicalTrials.gov studies.');
@@ -206,10 +206,10 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->buttonExists('Run Import');
     $this->assertIsArray($saved_fields);
     $this->assertFalse(array_is_list($saved_fields));
-    $this->assertSame('protocolSection.identificationModule.nctId', $saved_fields['field_trial_nct_id']);
-    $this->assertSame('protocolSection.identificationModule.briefTitle', $saved_fields['field_trial_brief_title']);
-    $this->assertSame('protocolSection.statusModule.overallStatus', $saved_fields['field_trial_over_status']);
-    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $saved_fields['field_trial_resp_party']);
+    $this->assertSame('protocolSection.identificationModule.nctId', $saved_fields['trial_nct_id']);
+    $this->assertSame('protocolSection.identificationModule.briefTitle', $saved_fields['trial_brief_title']);
+    $this->assertSame('protocolSection.statusModule.overallStatus', $saved_fields['trial_over_status']);
+    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $saved_fields['trial_resp_party']);
 
     $this->drupalGet('admin/config/services/clinical-trials-gov');
 

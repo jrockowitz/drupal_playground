@@ -57,7 +57,7 @@ Step behaviour:
 Primary config: `clinical_trials_gov.settings` — keys: `query`, `paths`, `type`, `field_prefix`, `readonly`, `fields`. `fields` is stored as a mapping of generated Drupal field or group name to metadata path.
 Install defaults live in `config/install/clinical_trials_gov.settings.yml`.
 
-`field_prefix` stores only the custom prefix fragment, without Drupal's leading `field_`. For example, a saved value of `trial_version_holder` generates Drupal field names beginning with `field_trial_version_holder_`.
+`field_prefix` is used directly as the generated Drupal field-name prefix. For example, a saved value of `trial_version_holder` generates Drupal field names beginning with `trial_version_holder_`.
 
 Generated migration: `migrate_plus.migration.clinical_trials_gov`. Deleted when query/paths/type/fields are incomplete.
 
@@ -83,7 +83,7 @@ Field resolution lives in `ClinicalTrialsGovFieldManager::resolveFieldDefinition
 
 **Available field list:** `ClinicalTrialsGovFieldManager::getAvailableFieldKeys()` reads the saved `clinical_trials_gov.settings:paths` allow-list, always unions in required paths, and then adds ancestor paths so group structures still resolve correctly. There is no legacy fallback list anymore; if `paths` is empty, Configure is blocked until Find discovers fields.
 
-**Field names** are generated from the metadata `piece`, normalised to snake_case, and prefixed with `field_{field_prefix}_` when a custom prefix is configured. Long names are capped at 32 characters, truncated, and suffixed with an 8-character SHA-256 hash. Overrides live in `ClinicalTrialsGovNames::FIELD_NAMES`.
+**Field names** are generated from the metadata `piece`, normalised to snake_case, and prefixed with `{field_prefix}_` when a custom prefix is configured. Long names are capped at 32 characters, truncated, and suffixed with an 8-character SHA-256 hash. Overrides live in `ClinicalTrialsGovNames::FIELD_NAMES`.
 
 **Custom-field YAML fallback** is used for unsupported nested struct/list properties inside promoted `custom_field` definitions. Those properties are stored as `string_long`, labeled with a `(YAML)` suffix, serialized in the migrate process plugin, rendered inside `<pre>` tags, and syntax-validated on edit forms.
 

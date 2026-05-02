@@ -90,7 +90,7 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
 
     // Check that brief title still maps to node title and keeps a generated field.
     $this->assertSame('title', $title_definition['destination_property']);
-    $this->assertSame('field_trial_brief_title', $title_definition['field_name']);
+    $this->assertSame('trial_brief_title', $title_definition['field_name']);
     $this->assertSame('string', $title_definition['field_type']);
     $this->assertSame(300, $title_definition['storage_settings']['max_length']);
 

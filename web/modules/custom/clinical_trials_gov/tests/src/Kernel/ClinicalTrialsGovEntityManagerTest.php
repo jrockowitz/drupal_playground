@@ -122,31 +122,31 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that created fields are added to the default form and view displays.
     $form_display = EntityFormDisplay::load('node.trial.default');
     $this->assertNotNull($form_display);
-    $this->assertSame('string_textfield', $form_display->getComponent('field_trial_brief_title')['type'] ?? NULL);
-    $this->assertSame('string_textfield', $form_display->getComponent('field_trial_nct_id')['type'] ?? NULL);
-    $this->assertSame('custom_stacked', $form_display->getComponent('field_trial_resp_party')['type'] ?? NULL);
+    $this->assertSame('string_textfield', $form_display->getComponent('trial_brief_title')['type'] ?? NULL);
+    $this->assertSame('string_textfield', $form_display->getComponent('trial_nct_id')['type'] ?? NULL);
+    $this->assertSame('custom_stacked', $form_display->getComponent('trial_resp_party')['type'] ?? NULL);
     $this->assertSame('link_default', $form_display->getComponent('trial_nct_url')['type'] ?? NULL);
     $this->assertSame('link_default', $form_display->getComponent('trial_nct_api')['type'] ?? NULL);
 
     $view_display = EntityViewDisplay::load('node.trial.default');
     $this->assertNotNull($view_display);
-    $this->assertSame('string', $view_display->getComponent('field_trial_nct_id')['type'] ?? NULL);
-    $this->assertSame('custom_formatter', $view_display->getComponent('field_trial_resp_party')['type'] ?? NULL);
+    $this->assertSame('string', $view_display->getComponent('trial_nct_id')['type'] ?? NULL);
+    $this->assertSame('custom_formatter', $view_display->getComponent('trial_resp_party')['type'] ?? NULL);
     $this->assertSame('link', $view_display->getComponent('trial_nct_url')['type'] ?? NULL);
     $this->assertSame('link', $view_display->getComponent('trial_nct_api')['type'] ?? NULL);
-    $this->assertGreaterThan($view_display->getComponent('field_trial_over_status')['weight'] ?? -1, $view_display->getComponent('trial_nct_url')['weight'] ?? -1);
+    $this->assertGreaterThan($view_display->getComponent('trial_over_status')['weight'] ?? -1, $view_display->getComponent('trial_nct_url')['weight'] ?? -1);
     $this->assertGreaterThan($view_display->getComponent('trial_nct_url')['weight'] ?? -1, $view_display->getComponent('trial_nct_api')['weight'] ?? -1);
 
     // Check that the promoted custom field is added to the displays.
-    $this->assertSame('custom_stacked', $form_display->getComponent('field_trial_location')['type'] ?? NULL);
-    $this->assertSame('custom_formatter', $view_display->getComponent('field_trial_location')['type'] ?? NULL);
+    $this->assertSame('custom_stacked', $form_display->getComponent('trial_loc')['type'] ?? NULL);
+    $this->assertSame('custom_formatter', $view_display->getComponent('trial_loc')['type'] ?? NULL);
 
     // Check that remaining nested structure selections create a field group on the form display.
     $field_groups = $form_display->getThirdPartySettings('field_group');
     $this->assertArrayHasKey('group_id_mod', $field_groups);
-    $this->assertContains('field_trial_brief_title', $field_groups['group_id_mod']['children']);
-    $this->assertContains('field_trial_nct_id', $field_groups['group_id_mod']['children']);
-    $this->assertContains('field_trial_org', $field_groups['group_id_mod']['children']);
+    $this->assertContains('trial_brief_title', $field_groups['group_id_mod']['children']);
+    $this->assertContains('trial_nct_id', $field_groups['group_id_mod']['children']);
+    $this->assertContains('trial_org', $field_groups['group_id_mod']['children']);
     $this->assertNotContains('title', $field_groups['group_id_mod']['children']);
 
     // Check that remaining nested structure selections create a fieldset on the view display.
@@ -165,7 +165,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that generated field names are deterministic and 32 characters or less.
     $this->assertSame($long_name, $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations.contacts.phoneExt'));
     $this->assertLessThanOrEqual(32, strlen($long_name));
-    $this->assertSame('field_trial_nct_id_alias', $alias_name);
+    $this->assertSame('trial_nct_id_alias', $alias_name);
 
     $title_definition = $this->entityManager->resolveFieldDefinition('protocolSection.identificationModule.briefTitle');
     $enum_definition = $this->entityManager->resolveFieldDefinition('protocolSection.statusModule.overallStatus');
@@ -180,7 +180,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
 
     // Check that title maps to the node title property.
     $this->assertSame('title', $title_definition['destination_property']);
-    $this->assertSame('field_trial_brief_title', $title_definition['field_name']);
+    $this->assertSame('trial_brief_title', $title_definition['field_name']);
     $this->assertSame('string', $title_definition['field_type']);
     $this->assertSame(300, $title_definition['storage_settings']['max_length']);
 
@@ -244,14 +244,14 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
    */
   public function testGenerateFieldNameUsesConfiguredPrefix(): void {
     // Check that the default prefix is used when no override is saved.
-    $this->assertSame('field_trial_nct_id', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'));
+    $this->assertSame('trial_nct_id', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'));
 
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('field_prefix', 'study')
       ->save();
 
     // Check that changing the configured prefix changes generated field names.
-    $this->assertSame('field_study_nct_id', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'));
+    $this->assertSame('study_nct_id', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'));
   }
 
 }

@@ -76,7 +76,7 @@ class ClinicalTrialsGovYamlHooksTest extends KernelTestBase {
   public function testPreprocessCustomFieldItem(): void {
     $variables = [
       'elements' => [
-        '#field_name' => 'field_trial_version_holder_location',
+        '#field_name' => 'trial_version_holder_location',
       ],
       'label' => 'Facility Contact (YAML)',
       'value' => [
@@ -95,7 +95,7 @@ class ClinicalTrialsGovYamlHooksTest extends KernelTestBase {
 
     $non_yaml_variables = [
       'elements' => [
-        '#field_name' => 'field_trial_version_holder_location',
+        '#field_name' => 'trial_version_holder_location',
       ],
       'label' => 'Facility Name',
       'value' => [
@@ -134,7 +134,7 @@ class ClinicalTrialsGovYamlHooksTest extends KernelTestBase {
       'contacts' => [
         '#type' => 'textarea',
         '#title' => 'Facility Contact (YAML)',
-        '#parents' => ['field_trial_version_holder_location', 0, 'contacts'],
+        '#parents' => ['trial_version_holder_location', 0, 'contacts'],
         '#value' => 'contacts: [',
       ],
       'geoPoint' => [
@@ -142,19 +142,19 @@ class ClinicalTrialsGovYamlHooksTest extends KernelTestBase {
         '#title' => 'Location Geo Point (YAML)',
         'value' => [
           '#type' => 'textarea',
-          '#parents' => ['field_trial_version_holder_location', 0, 'geoPoint', 'value'],
+          '#parents' => ['trial_version_holder_location', 0, 'geoPoint', 'value'],
           '#value' => "lat: 59.32938\nlon: 18.06871\n",
         ],
       ],
       'facility' => [
         '#type' => 'textarea',
         '#title' => 'Facility Name',
-        '#parents' => ['field_trial_version_holder_location', 0, 'facility'],
+        '#parents' => ['trial_version_holder_location', 0, 'facility'],
         '#value' => 'Karolinska University Hospital',
       ],
     ];
     $this->hooks->fieldWidgetSingleElementFormAlter($matching_element, new FormState(), [
-      'items' => $this->createFieldItemListMock('field_trial_version_holder_location'),
+      'items' => $this->createFieldItemListMock('trial_version_holder_location'),
     ]);
 
     // Check that YAML-labeled textarea and text_format value elements get validation.
@@ -180,7 +180,7 @@ class ClinicalTrialsGovYamlHooksTest extends KernelTestBase {
     $empty_element = [
       '#type' => 'textarea',
       '#title' => 'Facility Contact (YAML)',
-      '#parents' => ['field_trial_version_holder_location', 0, 'contacts'],
+      '#parents' => ['trial_version_holder_location', 0, 'contacts'],
       '#value' => '',
     ];
     ClinicalTrialsGovCustomFieldHooks::validateYamlElement($empty_element, $empty_state);

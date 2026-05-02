@@ -130,7 +130,7 @@ class ClinicalTrialsGovCustomFieldHooks {
       return '';
     }
 
-    return 'field_' . $field_prefix . '_';
+    return $field_prefix . '_';
   }
 
 }

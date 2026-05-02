@@ -63,10 +63,10 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    */
   public function testGetFieldName(): void {
     // Check that hard-coded overrides are respected.
-    $this->assertSame('field_trial_version_hol_0591be62', $this->names->getFieldName('NCTIdAlias'));
+    $this->assertSame('trial_version_holder_nc_0591be62', $this->names->getFieldName('NCTIdAlias'));
 
     // Check that non-overridden names are normalized to snake case.
-    $this->assertSame('field_trial_version_hol_fe6cf9e5', $this->names->getFieldName('ResponsibleParty'));
+    $this->assertSame('trial_version_holder_resp_party', $this->names->getFieldName('ResponsibleParty'));
   }
 
   /**
@@ -76,7 +76,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    */
   public function testGetGroupName(): void {
     // Check that group names are prefixed and normalized.
-    $this->assertSame('group_location', $this->names->getGroupName('Location'));
+    $this->assertSame('group_loc', $this->names->getGroupName('Location'));
   }
 
   /**
@@ -134,7 +134,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    */
   public function testNormalizePieceAppliesAbbreviations(): void {
     // Check that seeded abbreviations shorten long normalized tokens.
-    $this->assertSame('res_first_submit_qc_dt', $this->names->normalizePiece('ResultsFirstSubmitQCDate'));
+    $this->assertSame('res_fst_submit_qc_dt', $this->names->normalizePiece('ResultsFirstSubmitQCDate'));
   }
 
   /**
@@ -144,7 +144,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    */
   public function testNormalizePieceOnlyAbbreviatesWholeTokens(): void {
     // Check that partial substrings are not abbreviated.
-    $this->assertSame('measured_value', $this->names->normalizePiece('MeasuredValue'));
+    $this->assertSame('measured_val', $this->names->normalizePiece('MeasuredValue'));
   }
 
   /**
