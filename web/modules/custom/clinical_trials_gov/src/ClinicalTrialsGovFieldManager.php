@@ -13,20 +13,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInterface {
 
   /**
-   * ClinicalTrials.gov field key mapped to the node title property.
-   */
-  protected const TITLE_FIELD_PATH = 'protocolSection.identificationModule.briefTitle';
-
-  /**
-   * Required fields for every import configuration.
-   */
-  protected const REQUIRED_FIELD_KEYS = [
-    'protocolSection.identificationModule.nctId',
-    'protocolSection.identificationModule.briefTitle',
-    'protocolSection.descriptionModule.briefSummary',
-  ];
-
-  /**
    * Cached ordered list of configured field keys.
    */
   protected ?array $availableFieldKeys = NULL;
@@ -46,7 +32,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    * {@inheritdoc}
    */
   public function getRequiredFieldKeys(): array {
-    return self::REQUIRED_FIELD_KEYS;
+    return $this->configFactory->get('clinical_trials_gov.settings')->get('required_paths');
   }
 
   /**
@@ -129,7 +115,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
       'details' => [],
     ];
 
-    if ($path === self::TITLE_FIELD_PATH) {
+    if ($path === $this->getTitleFieldPath()) {
       $definition['destination_property'] = 'title';
       $definition['type_label'] = 'title';
       $definition['display_type_label'] = 'title';
@@ -261,13 +247,24 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    * Returns configured metadata paths.
    */
   protected function getConfiguredAvailableFieldKeys(): array {
-    $paths = (array) $this->configFactory->get('clinical_trials_gov.settings')->get('paths');
+    $paths = $this->configFactory->get('clinical_trials_gov.settings')->get('query_paths');
 
     if (!$paths) {
       return [];
     }
 
-    return array_values(array_unique(array_merge($paths, self::REQUIRED_FIELD_KEYS)));
+    return array_values(array_unique(array_merge(
+      $paths,
+      [$this->getTitleFieldPath()],
+      $this->getRequiredFieldKeys(),
+    )));
+  }
+
+  /**
+   * Returns the configured title metadata path.
+   */
+  protected function getTitleFieldPath(): string {
+    return (string) $this->configFactory->get('clinical_trials_gov.settings')->get('title_path');
   }
 
   /**
@@ -295,7 +292,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    * Determines whether a field is required in the wizard UI.
    */
   protected function isRequiredField(string $path): bool {
-    return in_array($path, self::REQUIRED_FIELD_KEYS);
+    return ($path === $this->getTitleFieldPath()) || in_array($path, $this->getRequiredFieldKeys());
   }
 
 }

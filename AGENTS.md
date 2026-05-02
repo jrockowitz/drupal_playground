@@ -31,8 +31,9 @@ ddev code-fix <file|directory>
 
 # Drupal
 
-- Simple Config
+- Config
   - Use `#config_target` when extending `ConfigFormBase`. @see https://www.drupal.org/node/3373502
+  - When simple config is schema-validated, trust the schema-backed return type instead of adding defensive casts like `(array) $config->get('query_paths')`.
 - Services
   - Always use `autowire`
   - Always create an interface

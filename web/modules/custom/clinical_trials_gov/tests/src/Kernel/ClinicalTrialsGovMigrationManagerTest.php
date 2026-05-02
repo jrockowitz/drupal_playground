@@ -55,7 +55,13 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->config('clinical_trials_gov.settings');
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer&filter.overallStatus=RECRUITING')
-      ->set('paths', [
+      ->set('title_path', 'protocolSection.identificationModule.briefTitle')
+      ->set('required_paths', [
+        'protocolSection.identificationModule.nctId',
+        'protocolSection.identificationModule.briefTitle',
+        'protocolSection.descriptionModule.briefSummary',
+      ])
+      ->set('query_paths', [
         'protocolSection.contactsLocationsModule.locations',
         'protocolSection.sponsorCollaboratorsModule.responsibleParty',
         'protocolSection.conditionsModule.conditions',
@@ -156,7 +162,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
 
     // Check that clearing discovered paths removes the generated migration.
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
-      ->set('paths', [])
+      ->set('query_paths', [])
       ->save();
     $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
     $this->assertNull($this->container->get('config.factory')->get('migrate_plus.migration.clinical_trials_gov')->get('id'));

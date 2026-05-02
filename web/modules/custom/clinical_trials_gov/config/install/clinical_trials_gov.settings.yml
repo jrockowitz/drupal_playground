@@ -1,6 +1,11 @@
 query: ''
-paths: { }
+query_paths: { }
+title_path: 'protocolSection.identificationModule.briefTitle'
+required_paths:
+  - 'protocolSection.identificationModule.nctId'
+  - 'protocolSection.identificationModule.briefTitle'
+  - 'protocolSection.descriptionModule.briefSummary'
 type: trial
 field_prefix: trial
-readonly: false
 fields: { }
+readonly: false

@@ -88,7 +88,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
 
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
-      ->set('paths', [
+      ->set('query_paths', [
         'protocolSection.conditionsModule.conditions',
         'protocolSection.designModule.designInfo.maskingInfo.masking',
         'protocolSection.sponsorCollaboratorsModule.responsibleParty',
@@ -230,7 +230,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertStringContainsString('/admin/content?title=&type=trial', $this->getSession()->getCurrentUrl());
 
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
-      ->set('paths', [])
+      ->set('query_paths', [])
       ->save();
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/configure');
@@ -242,7 +242,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextNotContains('Field mapping');
 
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
-      ->set('paths', [
+      ->set('query_paths', [
         'protocolSection.statusModule.overallStatus',
         'protocolSection.identificationModule.nctId',
         'protocolSection.identificationModule.briefTitle',

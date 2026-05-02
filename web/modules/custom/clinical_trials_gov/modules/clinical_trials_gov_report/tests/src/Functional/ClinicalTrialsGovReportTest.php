@@ -41,7 +41,7 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     parent::setUp();
     $this->drupalLogin($this->drupalCreateUser(['access administration pages']));
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
-      ->set('paths', [
+      ->set('query_paths', [
         'protocolSection.contactsLocationsModule.locations.contacts',
       ])
       ->save();

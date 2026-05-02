@@ -39,9 +39,10 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
    * Tests that the source plugin yields flattened rows.
    */
   public function testSourceRows(): void {
+    $this->installConfig('clinical_trials_gov');
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
-      ->set('paths', ['protocolSection.identificationModule.nctId'])
+      ->set('query_paths', ['protocolSection.identificationModule.nctId'])
       ->set('type', 'trial')
       ->set('fields', ['field_nct_id' => 'protocolSection.identificationModule.nctId'])
       ->save();

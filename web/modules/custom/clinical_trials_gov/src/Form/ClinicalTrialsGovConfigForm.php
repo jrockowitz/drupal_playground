@@ -66,9 +66,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $form['#attached']['library'][] = 'clinical_trials_gov/clinical_trials_gov';
 
     $config = $this->config('clinical_trials_gov.settings');
-    $paths = (array) $config->get('paths');
+    $paths = $config->get('query_paths');
     $saved_type = $config->get('type');
-    $saved_field_mappings = (array) $config->get('fields');
+    $saved_field_mappings = $config->get('fields');
     $saved_fields = array_values($saved_field_mappings);
     $node_type = $this->entityTypeManager->getStorage('node_type')->load($saved_type);
 
@@ -245,7 +245,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $paths = (array) $this->config('clinical_trials_gov.settings')->get('paths');
+    $paths = $this->config('clinical_trials_gov.settings')->get('query_paths');
     if (!$paths) {
       $this->messenger()->addWarning($this->t('Save a studies query from the <a href=":find_url">Find</a> step before configuring the destination content type and fields.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),

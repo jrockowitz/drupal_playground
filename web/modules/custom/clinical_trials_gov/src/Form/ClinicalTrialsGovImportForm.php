@@ -55,9 +55,9 @@ class ClinicalTrialsGovImportForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('clinical_trials_gov.settings');
     $query = $config->get('query');
-    $paths = (array) $config->get('paths');
+    $paths = $config->get('query_paths');
     $type = $config->get('type');
-    $field_mappings = (array) $config->get('fields');
+    $field_mappings = $config->get('fields');
     $fields = array_values($field_mappings);
     $ready = ($query && $paths && $type && $fields);
 

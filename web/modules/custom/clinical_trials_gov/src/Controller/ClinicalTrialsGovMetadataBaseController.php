@@ -91,7 +91,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Returns configured metadata paths.
    */
   protected function getConfiguredPaths(): array {
-    return (array) $this->configurationFactory->get('clinical_trials_gov.settings')->get('paths');
+    return $this->configurationFactory->get('clinical_trials_gov.settings')->get('query_paths');
   }
 
   /**

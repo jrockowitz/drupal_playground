@@ -172,7 +172,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     $query = (string) $form_state->getValue('query');
     $this->configFactory()->getEditable('clinical_trials_gov.settings')
       ->set('query', $query)
-      ->set('paths', [])
+      ->set('query_paths', [])
       ->save();
     $this->migrationManager->updateMigration();
 

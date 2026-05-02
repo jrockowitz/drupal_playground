@@ -170,7 +170,7 @@ class ClinicalTrialsGovPathDiscoveryBatch {
     }
 
     $config_factory->getEditable('clinical_trials_gov.settings')
-      ->set('paths', $discovered_paths)
+      ->set('query_paths', $discovered_paths)
       ->save();
     $migration_manager->updateMigration();
 

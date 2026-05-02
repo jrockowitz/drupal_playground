@@ -9,8 +9,14 @@ use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\ConfigTarget;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\RedundantEditableConfigNamesTrait;
+use Drupal\Core\Render\Markup;
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Validator\ConstraintViolationInterface;
 
 /**
  * Advanced settings for the ClinicalTrials.gov workflow.
@@ -18,6 +24,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @phpstan-consistent-constructor
  */
 class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
+  use RedundantEditableConfigNamesTrait;
+
+  /**
+   * The editable config names.
+   */
+  protected function editableConfigNames(): array {
+    return ['clinical_trials_gov.settings'];
+  }
 
   public function __construct(
     ConfigFactoryInterface $configFactory,
@@ -50,18 +64,74 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames(): array {
-    return ['clinical_trials_gov.settings'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $structure_locked = $this->isStructureLocked();
     $config = $this->config('clinical_trials_gov.settings');
+    $structure_locked = $this->isStructureLocked();
+    $query = (string) $config->get('query');
+    $query_paths = $config->get('query_paths');
+    $find_url = Url::fromRoute('clinical_trials_gov.find')->toString();
 
-    $form['type'] = [
+    $form['studies_query'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Studies query'),
+      '#description' => $this->t('Review the saved studies query and the discovered query paths from the <a href=":find_url">Find</a> page.', [
+        ':find_url' => $find_url,
+      ]),
+      '#open' => FALSE,
+    ];
+    $form['studies_query']['query'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Query'),
+      '#markup' => '<small>' . htmlspecialchars($query ?: (string) $this->t('No query saved.')) . '</small>',
+      '#description' => $this->t('The above query is defined when you update the Studies query on the <a href=":find_url">Find</a> page.', [
+        ':find_url' => $find_url,
+      ]),
+    ];
+    $form['studies_query']['query_paths'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Query paths'),
+      '#markup' => $query_paths
+        ? Markup::create('<small><pre>' . implode("\n", array_map('htmlspecialchars', $query_paths)) . '</pre></small>')
+        : '<small>' . htmlspecialchars((string) $this->t('No query paths saved.')) . '</small>',
+      '#description' => $this->t('The above query paths are discovered when you update the Studies query on the <a href=":find_url">Find</a> page.', [
+        ':find_url' => $find_url,
+      ]),
+    ];
+
+    $form['metadata'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Metadata'),
+      '#description' => $this->t('Configure how ClinicalTrials.gov metadata maps into the Drupal title and required field list.'),
+      '#open' => TRUE,
+    ];
+    $form['metadata']['title_path'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Title metadata path'),
+      '#description' => $this->t('Metadata path that will populate the Drupal node title.'),
+      '#config_target' => 'clinical_trials_gov.settings:title_path',
+      '#required' => TRUE,
+    ];
+    $form['metadata']['required_paths'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Required metadata paths'),
+      '#description' => $this->t('Enter one metadata path per line. These paths are always available in Configure.'),
+      '#rows' => 6,
+      '#config_target' => new ConfigTarget(
+        'clinical_trials_gov.settings',
+        'required_paths',
+        [static::class, 'formatRequiredPaths'],
+        [static::class, 'parseRequiredPaths'],
+      ),
+      '#required' => TRUE,
+    ];
+
+    $form['content_type'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Content type'),
+      '#description' => $this->t('Configure the destination content type and generated field behavior for imported studies.'),
+      '#open' => TRUE,
+    ];
+    $form['content_type']['type'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Content type machine name'),
       '#maxlength' => 32,
@@ -70,7 +140,7 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
       '#required' => !$structure_locked,
       '#disabled' => $structure_locked,
     ];
-    $form['field_prefix'] = [
+    $form['content_type']['field_prefix'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Field prefix'),
       '#field_suffix' => '_{metadata_field_name}',
@@ -79,11 +149,11 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
       '#required' => !$structure_locked,
       '#disabled' => $structure_locked,
     ];
-    $form['readonly'] = [
+    $form['content_type']['readonly'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Read-only imported fields'),
       '#description' => $this->t('Display imported ClinicalTrials.gov fields as readonly on edit forms and hide the editable node title when the generated title mapping is present.'),
-      '#default_value' => (bool) $config->get('readonly'),
+      '#config_target' => 'clinical_trials_gov.settings:readonly',
       '#access' => $this->moduleHandler->moduleExists('readonly_field_widget'),
     ];
 
@@ -91,14 +161,40 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
   }
 
   /**
+   * Formats required paths for textarea display.
+   */
+  public static function formatRequiredPaths(?array $paths): string {
+    return implode("\n", $paths ?? []);
+  }
+
+  /**
+   * Parses newline-delimited required paths for config storage.
+   */
+  public static function parseRequiredPaths(string $paths): array {
+    $required_paths = preg_split('/\r\n|\r|\n/', trim($paths)) ?: [];
+    $required_paths = array_map('trim', $required_paths);
+    $required_paths = array_filter($required_paths, static fn (string $path): bool => $path !== '');
+    return array_values(array_unique($required_paths));
+  }
+
+  /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state): void {
-    parent::submitForm($form, $form_state);
+  protected function formatMultipleViolationsMessage(string $form_element_name, array $violations): MarkupInterface|\Stringable {
+    if ($form_element_name !== 'required_paths') {
+      return parent::formatMultipleViolationsMessage($form_element_name, $violations);
+    }
 
-    $this->configFactory()->getEditable('clinical_trials_gov.settings')
-      ->set('readonly', (bool) $form_state->getValue('readonly'))
-      ->save();
+    $messages = [];
+    foreach ($violations as $index => $violation) {
+      assert($violation instanceof ConstraintViolationInterface);
+      $messages[] = (string) $this->t('Line @line: @message', [
+        '@line' => $index + 1,
+        '@message' => $violation->getMessage(),
+      ]);
+    }
+
+    return Markup::create(implode("\n", $messages));
   }
 
   /**

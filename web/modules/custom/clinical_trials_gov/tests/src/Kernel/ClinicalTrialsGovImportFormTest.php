@@ -43,12 +43,13 @@ class ClinicalTrialsGovImportFormTest extends KernelTestBase {
   public function testBuildFormSections(): void {
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
+    $this->installConfig('clinical_trials_gov');
     $this->installConfig(['field', 'filter', 'node', 'system']);
     $this->installSchema('node', ['node_access']);
 
     $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer&filter.overallStatus=RECRUITING')
-      ->set('paths', ['protocolSection.identificationModule.nctId'])
+      ->set('query_paths', ['protocolSection.identificationModule.nctId'])
       ->set('type', 'trial')
       ->set('fields', ['field_nct_id' => 'protocolSection.identificationModule.nctId'])
       ->save();
@@ -112,7 +113,7 @@ class ClinicalTrialsGovImportFormTest extends KernelTestBase {
     $this->container->get('messenger')->deleteAll();
     $this->config('clinical_trials_gov.settings')
       ->set('query', '')
-      ->set('paths', [])
+      ->set('query_paths', [])
       ->set('type', '')
       ->set('fields', [])
       ->save();

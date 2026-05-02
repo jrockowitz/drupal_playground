@@ -30,6 +30,14 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installConfig('clinical_trials_gov');
+  }
+
+  /**
    * Tests preview paging and reset behavior.
    */
   public function testPreviewPaging(): void {
@@ -96,7 +104,7 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
     $submit_form_state->setValue('query', 'query.cond=lung');
     $submit_form = $form_object->buildForm([], $submit_form_state);
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
-      ->set('paths', ['protocolSection.statusModule.overallStatus'])
+      ->set('query_paths', ['protocolSection.statusModule.overallStatus'])
       ->save();
     $form_object->submitForm($submit_form, $submit_form_state);
     $saved_config = $this->container->get('config.factory')->get('clinical_trials_gov.settings');
@@ -104,7 +112,7 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
 
     // Check that submitting Find clears stale paths and registers a discovery batch.
     $this->assertSame('query.cond=lung', $saved_config->get('query'));
-    $this->assertSame([], $saved_config->get('paths'));
+    $this->assertSame([], $saved_config->get('query_paths'));
     $this->assertArrayHasKey('sets', $batch);
     $this->assertSame([ClinicalTrialsGovPathDiscoveryBatch::class, 'discover'], $batch['sets'][0]['operations'][0][0]);
 

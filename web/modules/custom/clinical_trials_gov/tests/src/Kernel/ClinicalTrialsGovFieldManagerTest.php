@@ -53,6 +53,12 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $this->installSchema('node', ['node_access']);
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('field_prefix', 'trial')
+      ->set('title_path', 'protocolSection.identificationModule.briefTitle')
+      ->set('required_paths', [
+        'protocolSection.identificationModule.nctId',
+        'protocolSection.identificationModule.briefTitle',
+        'protocolSection.descriptionModule.briefSummary',
+      ])
       ->save();
     $this->fieldManager = $this->container->get('clinical_trials_gov.field_manager');
   }
@@ -99,7 +105,12 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $this->assertSame('custom', $references_definition['field_type']);
 
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
-      ->set('paths', [
+      ->set('title_path', 'protocolSection.identificationModule.nctId')
+      ->set('required_paths', [
+        'protocolSection.identificationModule.nctId',
+        'protocolSection.descriptionModule.briefSummary',
+      ])
+      ->set('query_paths', [
         'protocolSection.statusModule.overallStatus',
       ])
       ->save();
@@ -107,17 +118,22 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $field_manager = $this->container->get('clinical_trials_gov.field_manager');
     $configured_available_field_keys = $field_manager->getAvailableFieldKeys();
     $configured_available_definitions = $field_manager->getAvailableFieldDefinitions();
+    $configured_title_definition = $field_manager->resolveFieldDefinition('protocolSection.identificationModule.nctId');
+    $configured_brief_title_definition = $field_manager->resolveFieldDefinition('protocolSection.identificationModule.briefTitle');
 
-    // Check that saved paths become the authoritative allow-list with required and ancestors added.
+    // Check that saved paths become the authoritative allow-list with required, title, and ancestors added.
     $this->assertContains('protocolSection', $configured_available_field_keys);
     $this->assertContains('protocolSection.statusModule', $configured_available_field_keys);
     $this->assertContains('protocolSection.statusModule.overallStatus', $configured_available_field_keys);
     $this->assertContains('protocolSection.identificationModule.nctId', $configured_available_field_keys);
-    $this->assertContains('protocolSection.identificationModule.briefTitle', $configured_available_field_keys);
     $this->assertContains('protocolSection.descriptionModule.briefSummary', $configured_available_field_keys);
     $this->assertNotContains('protocolSection.sponsorCollaboratorsModule.responsibleParty', $configured_available_field_keys);
     $this->assertArrayHasKey('protocolSection.statusModule.overallStatus', $configured_available_definitions);
     $this->assertArrayNotHasKey('protocolSection.sponsorCollaboratorsModule.responsibleParty', $configured_available_definitions);
+
+    // Check that the configured title path gets the title mapping instead of the hard-coded brief title path.
+    $this->assertSame('title', $configured_title_definition['destination_property']);
+    $this->assertNull($configured_brief_title_definition['destination_property']);
   }
 
 }

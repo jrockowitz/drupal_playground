@@ -19,9 +19,9 @@ class ClinicalTrialsGovController extends ControllerBase {
   public function index(): array {
     $config = $this->config('clinical_trials_gov.settings');
     $query = $config->get('query');
-    $paths = (array) $config->get('paths');
+    $paths = $config->get('query_paths');
     $type = $config->get('type');
-    $field_mappings = (array) $config->get('fields');
+    $field_mappings = $config->get('fields');
     $import_ready = ($query && $paths && $type && $field_mappings);
 
     if (!$query) {

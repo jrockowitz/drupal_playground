@@ -1,28 +1,51 @@
 clinical_trials_gov.settings:
   type: config_object
   label: 'ClinicalTrials.gov settings'
+  constraints:
+    FullyValidatable: ~
   mapping:
     query:
       type: string
       label: 'Query string'
-    paths:
+    query_paths:
       type: sequence
-      label: 'Allowed metadata paths'
+      label: 'Query-discovered metadata paths'
       sequence:
         type: string
-        label: 'Metadata path'
+        label: 'Query-discovered metadata path'
+        constraints:
+          NotBlank: []
+          ClinicalTrialsGovMetadataPath: []
+    title_path:
+      type: string
+      label: 'Title metadata path'
+      constraints:
+        NotBlank: []
+        ClinicalTrialsGovMetadataPath: []
+    required_paths:
+      type: sequence
+      label: 'Required metadata paths'
+      constraints:
+        Count:
+          min: 1
+      sequence:
+        type: string
+        label: 'Required metadata path'
+        constraints:
+          NotBlank: []
+          ClinicalTrialsGovMetadataPath: []
     type:
       type: string
       label: 'Content type machine name'
     field_prefix:
       type: string
       label: 'Field machine name prefix'
-    readonly:
-      type: boolean
-      label: 'Read-only imported fields'
     fields:
       type: sequence
       label: 'Selected field mapping'
       sequence:
         type: string
         label: 'Metadata path'
+    readonly:
+      type: boolean
+      label: 'Read-only imported fields'

@@ -62,7 +62,7 @@ class ClinicalTrialsGovEntityHooks {
       return;
     }
 
-    $field_mappings = (array) $settings->get('fields');
+    $field_mappings = $settings->get('fields');
     $field_names = array_keys($field_mappings);
     $field_names[] = $this->entityManager->getStudyUrlFieldName();
     $field_names[] = $this->entityManager->getStudyApiFieldName();
@@ -114,7 +114,7 @@ class ClinicalTrialsGovEntityHooks {
       return;
     }
 
-    $mapped_paths = array_values((array) $settings->get('fields'));
+    $mapped_paths = array_values($settings->get('fields'));
     if (!in_array('protocolSection.identificationModule.briefTitle', $mapped_paths, TRUE)) {
       return;
     }
