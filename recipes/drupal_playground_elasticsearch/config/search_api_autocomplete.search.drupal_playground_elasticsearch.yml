@@ -3,13 +3,13 @@ langcode: en
 status: true
 dependencies:
   config:
-    - search_api.index.drupal_playground_articles
-    - views.view.drupal_playground_article_search
+    - search_api.index.drupal_playground_elasticsearch
+    - views.view.drupal_playground_elasticsearch
   module:
     - views
-id: drupal_playground_article_search
-label: 'Drupal Playground Article Search'
-index_id: drupal_playground_articles
+id: drupal_playground_elasticsearch
+label: 'Drupal Playground Elasticsearch'
+index_id: drupal_playground_elasticsearch
 suggester_settings:
   live_results:
     fields:
@@ -25,7 +25,7 @@ suggester_weights:
 suggester_limits:
   live_results: 5
 search_settings:
-  'views:drupal_playground_article_search':
+  'views:drupal_playground_elasticsearch':
     displays:
       default: false
       selected:

@@ -19,20 +19,20 @@ config:
   strict: false
   import:
     asset_injector:
-      - asset_injector.css.drupal_playground_article_search_filters
+      - asset_injector.css.drupal_playground_elasticsearch_filters
     shortcut: '*'
     search_api:
       - search_api.server.drupal_playground_elasticsearch
-      - search_api.index.drupal_playground_articles
+      - search_api.index.drupal_playground_elasticsearch
     search_api_autocomplete:
-      - search_api_autocomplete.search.drupal_playground_article_search
+      - search_api_autocomplete.search.drupal_playground_elasticsearch
     views:
-      - views.view.drupal_playground_article_search
+      - views.view.drupal_playground_elasticsearch
   actions:
     node.type.article:
       simpleConfigUpdate:
         display_submitted: false
     user.role.anonymous:
-      grantPermission: 'use search_api_autocomplete for drupal_playground_article_search'
+      grantPermission: 'use search_api_autocomplete for drupal_playground_elasticsearch'
     user.role.authenticated:
-      grantPermission: 'use search_api_autocomplete for drupal_playground_article_search'
+      grantPermission: 'use search_api_autocomplete for drupal_playground_elasticsearch'

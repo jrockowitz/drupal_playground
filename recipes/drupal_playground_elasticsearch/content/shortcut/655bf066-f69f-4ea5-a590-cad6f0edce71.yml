@@ -7,12 +7,12 @@ _meta:
 default:
   title:
     -
-      value: 'Search Articles'
+      value: Elasticsearch
   weight:
     -
       value: -10
   link:
     -
-      uri: 'internal:/search/articles'
+      uri: 'internal:/elasticsearch'
       title: ''
       options: {  }

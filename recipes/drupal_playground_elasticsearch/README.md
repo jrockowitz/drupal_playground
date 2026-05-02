@@ -1,26 +1,35 @@
 # Drupal Playground Elasticsearch
 
-Sets up a simple Search API experience backed by Elasticsearch Connector for `article` content in Drupal Playground, including autocomplete suggestions and spellcheck.
+Sets up a simple Elasticsearch-backed Search API demo for Drupal content in Drupal Playground, including autocomplete suggestions and spellcheck.
 
 ## What It Installs
 
-- Search API
-- Elasticsearch Connector
-- Facets
-- Facets Exposed Filters
-- Better Exposed Filters
-- Search API Autocomplete
-- Search API Spellcheck
-- Views Exposed Filters Summary
-- Views Ajax History
+### Modules
+
+- [Search API](https://www.drupal.org/project/search_api)
+- [Elasticsearch Connector](https://www.drupal.org/project/elasticsearch_connector)
+- [Facets](https://www.drupal.org/project/facets)
+- `facets_exposed_filters` from [Facets](https://www.drupal.org/project/facets)
+- [Better Exposed Filters](https://www.drupal.org/project/better_exposed_filters)
+- [Search API Autocomplete](https://www.drupal.org/project/search_api_autocomplete)
+- [Search API Spellcheck](https://www.drupal.org/project/search_api_spellcheck)
+- [Views Exposed Filters Summary](https://www.drupal.org/project/views_filters_summary)
+- `views_filters_summary_search_api` from [Views Exposed Filters Summary](https://www.drupal.org/project/views_filters_summary)
+- [Views Ajax History](https://www.drupal.org/project/views_ajax_history)
+
+### Configuration
+
 - A Search API server pointed at the local DDEV Elasticsearch service
 - A Search API index for `article` nodes
-- A simple Views search page at `/search/articles`
-- Autocomplete suggestions on the `/search/articles` keyword field
-- A `Did you mean:` spellcheck prompt on the `/search/articles` results page
-- A header summary of the active exposed filters on `/search/articles`
+- A simple Views search page at `/elasticsearch`
+- Autocomplete suggestions on the `/elasticsearch` keyword field
+- A `Did you mean:` spellcheck prompt on the `/elasticsearch` results page
+- A header summary of the active exposed filters on `/elasticsearch`
 - AJAX search state that updates the browser URL and back/forward history
-- An `Articles` shortcut that links to `/search/articles`
+
+### Default Content
+
+- An `Elasticsearch` shortcut that links to `/elasticsearch`
 - Ten default-content demo articles stored in the recipe
 
 ## Local DDEV Elasticsearch
@@ -56,33 +65,33 @@ ddev install elastic
 Run indexing after applying the recipe so the recipe-provided demo articles appear in search results:
 
 ```shell
-ddev drush search-api:index drupal_playground_articles
+ddev drush search-api:index drupal_playground_elasticsearch
 ```
 
 ## Autocomplete
 
 This recipe includes `drupal/search_api_autocomplete:^1.11`.
 
-The current Elasticsearch Connector backend in this project supports Search API spellcheck but does not advertise the `search_api_autocomplete` backend feature. Because of that, the recipe configures Search API Autocomplete with the **live results** suggester for the article search view instead of the server-backed suggester.
+The current Elasticsearch Connector backend in this project supports Search API spellcheck but does not advertise the `search_api_autocomplete` backend feature. Because of that, the recipe configures Search API Autocomplete with the **live results** suggester for the demo content search view instead of the server-backed suggester.
 
-That gives the `/search/articles` keyword field autocomplete suggestions based on the indexed article content without depending on backend-native autocomplete support.
+That gives the `/elasticsearch` keyword field autocomplete suggestions based on the indexed demo content without depending on backend-native autocomplete support.
 
 The autocomplete search entity is:
 
-- `search_api_autocomplete.search.drupal_playground_article_search`
+- `search_api_autocomplete.search.drupal_playground_elasticsearch`
 
 The recipe grants the generated autocomplete permission to:
 
 - anonymous users
 - authenticated users
 
-That keeps the public article search page working for both visitors and signed-in users.
+That keeps the public Elasticsearch demo page working for both visitors and signed-in users.
 
 ## Spellcheck
 
 This recipe includes `drupal/search_api_spellcheck:^4.0`.
 
-The article search view adds the `Search API Spellcheck "Did You Mean"` header plugin so misspelled queries can suggest a corrected search. In this recipe the spellcheck prompt is configured to:
+The demo content search view adds the `Search API Spellcheck "Did You Mean"` header plugin so misspelled queries can suggest a corrected search. In this recipe the spellcheck prompt is configured to:
 
 - show a single best correction
 - hide itself when the search already has results
@@ -92,9 +101,9 @@ The article search view adds the `Search API Spellcheck "Did You Mean"` header p
 
 This recipe includes `drupal/views_filters_summary:^3.4`.
 
-Because the article search page is backed by a Search API index, the recipe also enables the bundled `views_filters_summary_search_api` submodule so the selected fulltext and Search API filter values are summarized correctly.
+Because the Elasticsearch demo page is backed by a Search API index, the recipe also enables the bundled `views_filters_summary_search_api` submodule so the selected fulltext and Search API filter values are summarized correctly.
 
-The article search view replaces the plain result-count header with a Views Exposed Filters Summary header configured to:
+The demo content search view replaces the plain result-count header with a Views Exposed Filters Summary header configured to:
 
 - display the result count
 - summarize the `Search` and `Tags` exposed filters
@@ -106,17 +115,17 @@ The article search view replaces the plain result-count header with a Views Expo
 
 This recipe includes `drupal/views_ajax_history:^1.8`.
 
-The article search view already uses AJAX for filtering and paging. This module adds browser history support to that AJAX behavior so users can:
+The demo content search view already uses AJAX for filtering and paging. This module adds browser history support to that AJAX behavior so users can:
 
 - share the current filtered search URL
 - use the browser back button after changing filters or paging results
 - use the browser forward button to return to a later AJAX search state
 
-The recipe enables the `ajax_history` display extender on the article search view.
+The recipe enables the `ajax_history` display extender on the demo content search view.
 
 ## Facets
 
-This recipe includes `drupal/facets:^3.0` and uses the `facets_exposed_filters` submodule to turn the `Tags` filter on `/search/articles` into a real tag facet.
+This recipe includes `drupal/facets:^3.0` and uses the `facets_exposed_filters` submodule to turn the `Tags` filter on `/elasticsearch` into a real tag facet.
 
 The Elasticsearch recipe installs the needed search UI modules for this feature:
 
@@ -134,9 +143,9 @@ Facets 3 is the recommended approach for new Search API and Views integrations. 
 
 The facet source for this setup is the existing search page display:
 
-- `search_api:views_page__drupal_playground_article_search__page_1`
+- `search_api:views_page__drupal_playground_elasticsearch__page_1`
 
-The facet target is the indexed tags field in the `drupal_playground_articles` Search API index.
+The facet target is the indexed tags field in the `drupal_playground_elasticsearch` Search API index.
 
 Current behavior:
 
@@ -186,13 +195,13 @@ The `ddev install elastic` preset clears the Search API index before reindexing 
 ### Search index review
 
 - ⚫ From `/admin/config/search/search-api`, open the index named `Drupal Playground Articles`.
-- ⚫ Or go directly to `/admin/config/search/search-api/index/drupal_playground_articles/edit`.
+- ⚫ Or go directly to `/admin/config/search/search-api/index/drupal_playground_elasticsearch/edit`.
 - ⚫ Confirm the datasource is node content limited to the `article` bundle.
 - ⚫ Confirm the indexed fields include `Title`, `Body`, and `Authored on`.
 - ⚫ Confirm the indexed fields also include `Author name` and `Tags`.
 - ⚫ Confirm the server is `Drupal Playground Elasticsearch`.
 - ⚫ Confirm the index is enabled.
-- ⚫ Confirm the index shows `10` items indexed, or run `ddev drush search-api:index drupal_playground_articles` and refresh.
+- ⚫ Confirm the index shows `10` items indexed, or run `ddev drush search-api:index drupal_playground_elasticsearch` and refresh.
 
 ### Default content review
 
@@ -221,15 +230,15 @@ The `ddev install elastic` preset clears the Search API index before reindexing 
   - `Connector`
 - ⚫ Go to **Configuration → User interface → Shortcuts** at `/admin/config/user-interface/shortcut`.
 - ⚫ Open the default shortcut set at `/admin/config/user-interface/shortcut/manage/default`.
-- ⚫ Confirm there is a shortcut titled `Articles`.
-- ⚫ Confirm the shortcut link points to `/search/articles`.
+- ⚫ Confirm there is a shortcut titled `Elasticsearch`.
+- ⚫ Confirm the shortcut link points to `/elasticsearch`.
 
 ### View and search page review
 
 - ⚫ Go to **Structure → Views** at `/admin/structure/views`.
-- ⚫ Open the view at `/admin/structure/views/view/drupal_playground_article_search`.
-- ⚫ Confirm the view uses `drupal_playground_articles` as its Search API data source.
-- ⚫ Confirm the page path is `/search/articles`.
+- ⚫ Open the view at `/admin/structure/views/view/drupal_playground_elasticsearch`.
+- ⚫ Confirm the view uses `drupal_playground_elasticsearch` as its Search API data source.
+- ⚫ Confirm the page path is `/elasticsearch`.
 - ⚫ Confirm the exposed fulltext filter labeled `Search` is present.
 - ⚫ Confirm the `Search` field uses Search API Autocomplete.
 - ⚫ Type `Drupal` into the search field and confirm autocomplete suggestions appear.
@@ -238,7 +247,7 @@ The `ddev install elastic` preset clears the Search API index before reindexing 
 - ⚫ Confirm the facet settings are attached to the current page display and tag field.
 - ⚫ Confirm the default sort is Search API relevance descending.
 - ⚫ Confirm the tags facet renders as a multi-select list of tag names, not raw term IDs.
-- ⚫ Visit `/search/articles`.
+- ⚫ Visit `/elasticsearch`.
 - ⚫ Search for a misspelled version of `Elasticsearch` and confirm a `Did you mean:` correction appears.
 - ⚫ Search for `Drupal`.
 - ⚫ Narrow the results with the `Tags` facet by selecting `Drupal`.
@@ -254,13 +263,13 @@ The `ddev install elastic` preset clears the Search API index before reindexing 
 - ⚫ Confirm the `views_filters_summary` module is enabled.
 - ⚫ Confirm the `views_filters_summary_search_api` submodule is enabled.
 - ⚫ Confirm the `views_ajax_history` module is enabled.
-- ⚫ Confirm the tags facet is attached to `search_api:views_page__drupal_playground_article_search__page_1`.
-- ⚫ Confirm `/search/articles` shows tag choices instead of a free-text `Tags` input.
-- ⚫ Confirm `/search/articles` attaches the Search API Autocomplete JavaScript and endpoint for `drupal_playground_article_search`.
-- ⚫ Confirm `/search/articles` attaches the Views Exposed Filters Summary JavaScript.
+- ⚫ Confirm the tags facet is attached to `search_api:views_page__drupal_playground_elasticsearch__page_1`.
+- ⚫ Confirm `/elasticsearch` shows tag choices instead of a free-text `Tags` input.
+- ⚫ Confirm `/elasticsearch` attaches the Search API Autocomplete JavaScript and endpoint for `drupal_playground_elasticsearch`.
+- ⚫ Confirm `/elasticsearch` attaches the Views Exposed Filters Summary JavaScript.
 - ⚫ Search for `Drupal` and select the `Drupal` tag.
 - ⚫ Confirm the header summarizes the active filters and result count.
-- ⚫ Confirm `/search/articles` attaches the Views Ajax History JavaScript and `viewsAjaxHistory` Drupal settings.
+- ⚫ Confirm `/elasticsearch` attaches the Views Ajax History JavaScript and `viewsAjaxHistory` Drupal settings.
 - ⚫ Change the search keywords, tags, or pager with AJAX and confirm the browser URL updates.
 - ⚫ Use the browser back button and confirm the previous AJAX search state is restored.
 - ⚫ Confirm selecting a tag narrows the results correctly.
@@ -268,8 +277,8 @@ The `ddev install elastic` preset clears the Search API index before reindexing 
 ### Command-line review
 
 - ⚫ Run `ddev drush search-api:server-list` and confirm `drupal_playground_elasticsearch` is enabled.
-- ⚫ Run `ddev drush search-api:list` and confirm `drupal_playground_articles` is enabled.
-- ⚫ Run `ddev drush search-api:search drupal_playground_articles Drupal`.
+- ⚫ Run `ddev drush search-api:list` and confirm `drupal_playground_elasticsearch` is enabled.
+- ⚫ Run `ddev drush search-api:search drupal_playground_elasticsearch Drupal`.
 - ⚫ Confirm Search API returns the recipe-provided articles.
 
 ## Verification
@@ -283,12 +292,12 @@ ddev drush search-api:server-status drupal_playground_elasticsearch
 Visit the search page:
 
 ```shell
-ddev launch /search/articles
+ddev launch /elasticsearch
 ```
 
 Or use the one-time login URL after `ddev install elastic` and browse to:
 
-- `/search/articles`
+- `/elasticsearch`
 
 The recipe ships ten `article` nodes as default content:
 
@@ -305,7 +314,7 @@ The recipe ships ten `article` nodes as default content:
 
 The recipe also ships one shortcut in the default shortcut set:
 
-- Articles
+- Elasticsearch
 
 The current search page uses exposed filters for:
 

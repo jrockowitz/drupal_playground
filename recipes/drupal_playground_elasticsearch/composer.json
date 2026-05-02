@@ -1,6 +1,6 @@
 {
   "name": "drupal/drupal_playground_elasticsearch",
-  "description": "Installs Search API and Elasticsearch Connector with a simple article search experience for Drupal Playground.",
+  "description": "Installs Search API and Elasticsearch Connector with a simple Elasticsearch experience for Drupal Playground.",
   "type": "drupal-recipe",
   "license": "GPL-2.0-or-later",
   "version": "1.0.0",

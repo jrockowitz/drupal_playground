@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - search_api.index.drupal_playground_articles
+    - search_api.index.drupal_playground_elasticsearch
   module:
     - better_exposed_filters
     - facets_exposed_filters
@@ -12,12 +12,12 @@ dependencies:
     - views_filters_summary
 _core:
   default_config_hash: PaD9OtCtcufbIRVKTF7Ga17Tst5lZ3z8bMMEAJVlWUo
-id: drupal_playground_article_search
-label: 'Drupal Playground Article Search'
+id: drupal_playground_elasticsearch
+label: Elasticsearch
 module: views
 description: 'A simple article search page backed by Elasticsearch.'
 tag: ''
-base_table: search_api_index_drupal_playground_articles
+base_table: search_api_index_drupal_playground_elasticsearch
 base_field: search_api_id
 display:
   default:
@@ -26,7 +26,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: 'Search Articles'
+      title: Elasticsearch
       pager:
         type: mini
         options:
@@ -115,7 +115,7 @@ display:
       sorts:
         search_api_relevance:
           id: search_api_relevance
-          table: search_api_index_drupal_playground_articles
+          table: search_api_index_drupal_playground_elasticsearch
           field: search_api_relevance
           relationship: none
           group_type: group
@@ -127,7 +127,7 @@ display:
       filters:
         search_api_fulltext:
           id: search_api_fulltext
-          table: search_api_index_drupal_playground_articles
+          table: search_api_index_drupal_playground_elasticsearch
           field: search_api_fulltext
           relationship: none
           group_type: group
@@ -173,7 +173,7 @@ display:
           fields: {  }
         facets_field_tags:
           id: facets_field_tags
-          table: search_api_index_drupal_playground_articles
+          table: search_api_index_drupal_playground_elasticsearch
           field: facets_field_tags
           relationship: none
           group_type: group
@@ -311,8 +311,8 @@ display:
         - url.query_args
         - 'user.node_grants:view'
       tags:
-        - 'config:search_api.index.drupal_playground_articles'
-        - 'search_api_list:drupal_playground_articles'
+        - 'config:search_api.index.drupal_playground_elasticsearch'
+        - 'search_api_list:drupal_playground_elasticsearch'
       cacheable: false
   page_1:
     id: page_1
@@ -325,7 +325,7 @@ display:
         ajax_history:
           enable_history: true
           exclude_args: ''
-      path: search/articles
+      path: elasticsearch
     cache_metadata:
       max-age: -1
       contexts:
@@ -334,6 +334,6 @@ display:
         - url.query_args
         - 'user.node_grants:view'
       tags:
-        - 'config:search_api.index.drupal_playground_articles'
-        - 'search_api_list:drupal_playground_articles'
+        - 'config:search_api.index.drupal_playground_elasticsearch'
+        - 'search_api_list:drupal_playground_elasticsearch'
       cacheable: false

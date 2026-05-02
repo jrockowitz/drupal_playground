@@ -3,50 +3,50 @@ status: true
 dependencies:
   module:
     - asset_injector
-id: drupal_playground_article_search_filters
-label: 'Drupal Playground Article Search Filters'
+id: drupal_playground_elasticsearch_filters
+label: 'Drupal Playground Elasticsearch Filters'
 code: |-
-  body.path-search .form-checkboxes.bef-checkboxes.bef-nested ul,
-  body.path-search .form-checkboxes.bef-checkboxes.bef-nested li {
+  body.path-elasticsearch .form-checkboxes.bef-checkboxes.bef-nested ul,
+  body.path-elasticsearch .form-checkboxes.bef-checkboxes.bef-nested li {
     list-style: none;
     margin-left: 0;
     padding-left: 0;
   }
 
-  body.path-search .view-filters form.views-exposed-form.bef-exposed-form {
+  body.path-elasticsearch .view-filters form.views-exposed-form.bef-exposed-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
 
-  body.path-search .view-filters .form-item-keys {
+  body.path-elasticsearch .view-filters .form-item-keys {
     order: 1;
     width: 100%;
     margin: 0;
   }
 
-  body.path-search .view-filters .form-item-keys input {
+  body.path-elasticsearch .view-filters .form-item-keys input {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
   }
 
-  body.path-search .view-filters .form-actions {
+  body.path-elasticsearch .view-filters .form-actions {
     order: 2;
     margin: 0;
   }
 
-  body.path-search .view-filters fieldset {
+  body.path-elasticsearch .view-filters fieldset {
     order: 3;
     margin: 0;
   }
 
-  body.path-search .view-content .teaser__meta:empty {
+  body.path-elasticsearch .view-content .teaser__meta:empty {
     display: none;
   }
 
   @media (min-width: 900px) {
-    body.path-search .view {
+    body.path-elasticsearch .view {
       display: grid;
       grid-template-columns: minmax(280px, 35%) minmax(0, 65%);
       grid-template-areas:
@@ -57,22 +57,22 @@ code: |-
       align-items: start;
     }
 
-    body.path-search .view-filters {
+    body.path-elasticsearch .view-filters {
       grid-area: filters;
       margin: 0;
     }
 
-    body.path-search form.views-exposed-form.bef-exposed-form {
+    body.path-elasticsearch form.views-exposed-form.bef-exposed-form {
       margin: 0;
     }
 
-    body.path-search .view-header {
+    body.path-elasticsearch .view-header {
       grid-area: summary;
       margin: 0 0 1rem 0;
     }
 
-    body.path-search .view-content,
-    body.path-search .view-empty {
+    body.path-elasticsearch .view-content,
+    body.path-elasticsearch .view-empty {
       grid-area: results;
       min-width: 0;
     }
@@ -82,7 +82,7 @@ conditions:
   request_path:
     id: request_path
     negate: false
-    pages: /search/articles
+    pages: /elasticsearch
 contexts: {  }
 media: all
 preprocess: true

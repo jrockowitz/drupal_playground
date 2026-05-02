@@ -10,8 +10,8 @@ dependencies:
   module:
     - node
     - search_api
-id: drupal_playground_articles
-name: 'Drupal Playground Articles'
+id: drupal_playground_elasticsearch
+name: 'Drupal Playground Elasticsearch'
 description: 'Article search index powered by Elasticsearch.'
 read_only: false
 field_settings:
