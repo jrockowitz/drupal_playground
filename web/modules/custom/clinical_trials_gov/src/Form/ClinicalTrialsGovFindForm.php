@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Form;
 
-use Drupal\clinical_trials_gov\Batch\ClinicalTrialsGovPathDiscoveryBatch;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\clinical_trials_gov\Traits\ClinicalTrialsGovMessageTrait;
-use Drupal\Core\Batch\BatchBuilder;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -29,6 +29,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
   public function __construct(
     protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovBuilderInterface $builder,
+    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
     protected ClinicalTrialsGovMigrationManagerInterface $migrationManager,
   ) {}
 
@@ -39,6 +40,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     return new static(
       $container->get('clinical_trials_gov.study_manager'),
       $container->get('clinical_trials_gov.builder'),
+      $container->get('clinical_trials_gov.paths_manager'),
       $container->get('clinical_trials_gov.migration_manager'),
     );
   }
@@ -170,23 +172,22 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $query = (string) $form_state->getValue('query');
+    $query_paths = $this->pathsManager->discoverQueryPaths($query);
     $this->configFactory()->getEditable('clinical_trials_gov.settings')
       ->set('query', $query)
-      ->set('query_paths', [])
+      ->set('query_paths', $query_paths)
       ->save();
     $this->migrationManager->updateMigration();
-
-    $batch = (new BatchBuilder())
-      ->setTitle($this->t('Discovering study fields on ClinicalTrials.gov'))
-      ->setProgressMessage($this->t('Discovering available study fields based on your query...'))
-      ->addOperation([ClinicalTrialsGovPathDiscoveryBatch::class, 'discover'], [$query])
-      ->setFinishCallback([ClinicalTrialsGovPathDiscoveryBatch::class, 'finish']);
-    batch_set($batch->toArray());
 
     $form_state->setRedirect('clinical_trials_gov.review');
     parent::submitForm($form, $form_state);
     $this->messenger()->deleteByType('status');
-    $this->messenger()->addStatus($this->t('The studies query has been saved. Please review the selected studies below.'));
+    $this->messenger()->addStatus($this->t('The studies query and @number fields (@see <a href=":metadata_url">metadata</a>) from the first @page_size most recent studies have been saved. Please review the selected studies below.', [
+      '@number' => count($query_paths),
+      '@page_size' => 1000,
+      '@see' => '@see',
+      ':metadata_url' => Url::fromRoute('clinical_trials_gov.review.metadata')->toString(),
+    ]));
   }
 
   /**

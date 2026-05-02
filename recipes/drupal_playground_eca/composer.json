@@ -6,6 +6,7 @@
     "require": {
         "drupal/core": ">=11.2",
         "drupal/eca": "*",
-        "drupal/modeler_api": "*"
+        "drupal/modeler_api": "*",
+        "drupal/eca_starterkit": "^1"
     }
 }

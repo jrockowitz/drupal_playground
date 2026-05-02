@@ -132,7 +132,7 @@ Test support:
 
 The stub simulates paginated `/studies` responses (two studies on page 1, one on page 2) and exposes `getStudiesRequests()` to assert pagination behaviour.
 
-Test classes: `ClinicalTrialsGovApiTest`, `ClinicalTrialsGovManagerTest`, `ClinicalTrialsGovNamesTest`, `ClinicalTrialsGovBuilderTest`, `ClinicalTrialsGovFieldManagerTest`, `ClinicalTrialsGovEntityManagerTest`, `ClinicalTrialsGovMigrationManagerTest`, `ClinicalTrialsGovPathDiscoveryBatchTest`, `ClinicalTrialsGovReviewMetadataControllerTest`, `ClinicalTrialsGovSourceTest`, `ClinicalTrialsGovStudiesQueryTest`, `ClinicalTrialsGovTest` (functional).
+Test classes: `ClinicalTrialsGovApiTest`, `ClinicalTrialsGovManagerTest`, `ClinicalTrialsGovNamesTest`, `ClinicalTrialsGovBuilderTest`, `ClinicalTrialsGovFieldManagerTest`, `ClinicalTrialsGovEntityManagerTest`, `ClinicalTrialsGovMigrationManagerTest`, `ClinicalTrialsGovManagerDiscoveryTest`, `ClinicalTrialsGovReviewMetadataControllerTest`, `ClinicalTrialsGovSourceTest`, `ClinicalTrialsGovStudiesQueryTest`, `ClinicalTrialsGovTest` (functional).
 
 ## Useful Commands
 

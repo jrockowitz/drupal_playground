@@ -354,11 +354,12 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
         'label' => $definition['label'],
         'parent_name' => $this->resolveParentGroupName($path, $selected_fields),
         'weight' => 0,
-        'format_type' => 'fieldset',
+        'format_type' => 'details',
         'format_settings' => [
           'label' => $definition['label'],
           'classes' => '',
           'id' => '',
+          'open' => TRUE,
           'description' => $definition['description'],
           'required_fields' => FALSE,
           'label_as_html' => FALSE,

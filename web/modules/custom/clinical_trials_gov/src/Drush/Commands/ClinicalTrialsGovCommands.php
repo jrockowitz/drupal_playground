@@ -55,6 +55,7 @@ class ClinicalTrialsGovCommands extends DrushCommands {
     $this->io()->writeln('ClinicalTrials.gov setup complete.');
     $this->io()->writeln('Query: ' . $query);
     $this->io()->writeln('Bundle: ' . $type);
+    $this->io()->writeln('Discovery sample: first 250 most recently updated studies');
     $this->io()->writeln('Discovered paths: ' . (string) count($paths));
     $this->io()->writeln('Saved fields: ' . (string) count($field_mappings));
     $this->io()->writeln('Run `drush migrate:import clinical_trials_gov` next.');

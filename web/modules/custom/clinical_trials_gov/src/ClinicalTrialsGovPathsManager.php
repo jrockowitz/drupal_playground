@@ -13,9 +13,14 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 class ClinicalTrialsGovPathsManager implements ClinicalTrialsGovPathsManagerInterface {
 
   /**
-   * The delay between requests is 15 seconds.
+   * The maximum number of studies to scan during discovery.
    */
-  protected const STUDY_REQUEST_DELAY_MICROSECONDS = 15000;
+  protected const DISCOVERY_PAGE_SIZE = 1000;
+
+  /**
+   * The discovery sort order used to favor recently updated studies.
+   */
+  protected const DISCOVERY_SORT = 'LastUpdatePostDate:desc';
 
   /**
    * Cached effective required paths.
@@ -86,44 +91,19 @@ class ClinicalTrialsGovPathsManager implements ClinicalTrialsGovPathsManagerInte
    * {@inheritdoc}
    */
   public function discoverQueryPaths(string $query): array {
-    $study_ids = [];
-    $page_token = '';
+    $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query);
+    $parameters['pageSize'] = self::DISCOVERY_PAGE_SIZE;
+    $parameters['sort'] = self::DISCOVERY_SORT;
 
-    do {
-      $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query);
-      $parameters['fields'] = 'NCTId';
-      $parameters['pageSize'] = '100';
-      if ($page_token) {
-        $parameters['pageToken'] = $page_token;
-      }
-
-      $response = $this->studyManager->getStudies($parameters);
-      foreach (($response['studies'] ?? []) as $study) {
-        if (!is_array($study)) {
-          continue;
-        }
-
-        $nct_id = (string) ($study['protocolSection']['identificationModule']['nctId'] ?? '');
-        if (!$nct_id || in_array($nct_id, $study_ids)) {
-          continue;
-        }
-
-        $study_ids[] = $nct_id;
-        if (count($study_ids) >= 500) {
-          break;
-        }
-      }
-
-      $page_token = (count($study_ids) < 500) ? (string) ($response['nextPageToken'] ?? '') : '';
-    } while ($page_token);
+    $response = $this->studyManager->getStudies($parameters);
 
     $discovered_paths = [];
-    foreach ($study_ids as $delta => $nct_id) {
-      if ($delta > 0) {
-        $this->delayBetweenStudyRequests();
+    foreach (($response['studies'] ?? []) as $study) {
+      if (!is_array($study)) {
+        continue;
       }
 
-      foreach (array_keys($this->studyManager->getStudy($nct_id)) as $path) {
+      foreach (array_keys($this->flattenStudy($study)) as $path) {
         if (!is_string($path) || !$path) {
           continue;
         }
@@ -137,7 +117,7 @@ class ClinicalTrialsGovPathsManager implements ClinicalTrialsGovPathsManagerInte
   /**
    * {@inheritdoc}
    */
-  public function normalizeDiscoveredPaths(array $discovered_paths): array {
+  protected function normalizeDiscoveredPaths(array $discovered_paths): array {
     $metadata_paths = array_keys($this->studyManager->getMetadataByPath());
     $ordered_paths = $this->expandAndOrderPaths($discovered_paths, $metadata_paths);
 
@@ -206,10 +186,30 @@ class ClinicalTrialsGovPathsManager implements ClinicalTrialsGovPathsManagerInte
   }
 
   /**
-   * Pauses execution between individual study-detail requests.
+   * Flattens one study payload into dotted field paths.
    */
-  protected function delayBetweenStudyRequests(): void {
-    usleep(self::STUDY_REQUEST_DELAY_MICROSECONDS);
+  protected function flattenStudy(mixed $data, string $prefix = ''): array {
+    if (is_array($data) && !array_is_list($data)) {
+      $result = [];
+      foreach ($data as $key => $value) {
+        $child_key = ($prefix) ? $prefix . '.' . $key : (string) $key;
+        $result += $this->flattenStudy($value, $child_key);
+      }
+      return $result;
+    }
+
+    if (is_array($data) && array_is_list($data)) {
+      $result = [$prefix => $data];
+      foreach ($data as $item) {
+        if (!is_array($item) || array_is_list($item)) {
+          continue;
+        }
+        $result += $this->flattenStudy($item, $prefix);
+      }
+      return $result;
+    }
+
+    return [$prefix => $data];
   }
 
 }

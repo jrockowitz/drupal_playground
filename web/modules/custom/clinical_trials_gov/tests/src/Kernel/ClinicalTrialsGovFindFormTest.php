@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
-use Drupal\clinical_trials_gov\Batch\ClinicalTrialsGovPathDiscoveryBatch;
 use Drupal\clinical_trials_gov\Form\ClinicalTrialsGovFindForm;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
@@ -108,13 +107,16 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
       ->save();
     $form_object->submitForm($submit_form, $submit_form_state);
     $saved_config = $this->container->get('config.factory')->get('clinical_trials_gov.settings');
-    $batch = batch_get();
 
-    // Check that submitting Find clears stale paths and registers a discovery batch.
+    // Check that submitting Find saves discovered paths immediately.
     $this->assertSame('query.cond=lung', $saved_config->get('query'));
-    $this->assertSame([], $saved_config->get('query_paths'));
-    $this->assertArrayHasKey('sets', $batch);
-    $this->assertSame([ClinicalTrialsGovPathDiscoveryBatch::class, 'discover'], $batch['sets'][0]['operations'][0][0]);
+    $this->assertContains('protocolSection.identificationModule.nctId', $saved_config->get('query_paths'));
+    $this->assertContains('protocolSection.identificationModule.briefTitle', $saved_config->get('query_paths'));
+    $this->assertSame([
+      'query.cond' => 'lung',
+      'pageSize' => 1000,
+      'sort' => 'LastUpdatePostDate:desc',
+    ], $study_manager->getStudiesRequests()[count($study_manager->getStudiesRequests()) - 1]);
 
   }
 

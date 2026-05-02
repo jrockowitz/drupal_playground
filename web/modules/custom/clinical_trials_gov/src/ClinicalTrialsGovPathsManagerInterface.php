@@ -34,9 +34,4 @@ interface ClinicalTrialsGovPathsManagerInterface {
    */
   public function discoverQueryPaths(string $query): array;
 
-  /**
-   * Normalizes discovered study paths against known metadata paths.
-   */
-  public function normalizeDiscoveredPaths(array $discovered_paths): array;
-
 }

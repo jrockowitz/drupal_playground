@@ -55,19 +55,13 @@ class ClinicalTrialsGovManagerDiscoveryTest extends KernelTestBase {
     $this->assertContains('protocolSection.contactsLocationsModule.locations.facility', $paths);
     $this->assertNotContains('not.real.path', $paths);
 
-    // Check that the discovery helper still walks both studies pages and loads
-    // the expected individual study records.
+    // Check that the discovery helper scans one recent studies page directly.
     $this->assertSame([
       'query.cond' => 'lung',
-      'fields' => 'NCTId',
-      'pageSize' => '100',
-      'pageToken' => 'page-2',
+      'pageSize' => 1000,
+      'sort' => 'LastUpdatePostDate:desc',
     ], $study_manager->getStudiesRequests()[count($study_manager->getStudiesRequests()) - 1]);
-    $this->assertSame([
-      'NCT05088187',
-      'NCT05189171',
-      'NCT01205711',
-    ], $study_manager->getStudyRequests());
+    $this->assertSame([], $study_manager->getStudyRequests());
   }
 
 }

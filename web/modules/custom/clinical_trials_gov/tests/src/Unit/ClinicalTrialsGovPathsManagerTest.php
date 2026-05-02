@@ -80,11 +80,11 @@ class ClinicalTrialsGovPathsManagerTest extends UnitTestCase {
   }
 
   /**
-   * Tests that query discovery pauses between study-detail requests.
+   * Tests that query discovery scans the first 250 recent studies directly.
    *
    * @covers ::discoverQueryPaths
    */
-  public function testDiscoverQueryPathsPausesBetweenStudyRequests(): void {
+  public function testDiscoverQueryPathsUsesRecentStudiesResponse(): void {
     $study_manager = $this->createMock(ClinicalTrialsGovStudyManagerInterface::class);
     $config_factory = $this->createMock(ConfigFactoryInterface::class);
     $config = $this->getMockBuilder(ImmutableConfig::class)
@@ -106,19 +106,32 @@ class ClinicalTrialsGovPathsManagerTest extends UnitTestCase {
     $study_manager
       ->expects($this->once())
       ->method('getStudies')
+      ->with([
+        'query.cond' => 'lung',
+        'pageSize' => 1000,
+        'sort' => 'LastUpdatePostDate:desc',
+      ])
       ->willReturn([
         'studies' => [
-          ['protocolSection' => ['identificationModule' => ['nctId' => 'NCT001']]],
-          ['protocolSection' => ['identificationModule' => ['nctId' => 'NCT002']]],
+          [
+            'protocolSection' => [
+              'identificationModule' => [
+                'nctId' => 'NCT001',
+              ],
+            ],
+          ],
+          [
+            'protocolSection' => [
+              'identificationModule' => [
+                'briefTitle' => 'Trial',
+              ],
+            ],
+          ],
         ],
       ]);
     $study_manager
-      ->expects($this->exactly(2))
-      ->method('getStudy')
-      ->willReturnMap([
-        ['NCT001', ['protocolSection.identificationModule.nctId' => 'NCT001']],
-        ['NCT002', ['protocolSection.identificationModule.briefTitle' => 'Trial']],
-      ]);
+      ->expects($this->never())
+      ->method('getStudy');
     $study_manager
       ->method('getMetadataByPath')
       ->willReturn([
@@ -128,37 +141,13 @@ class ClinicalTrialsGovPathsManagerTest extends UnitTestCase {
         'protocolSection.identificationModule.briefTitle' => [],
       ]);
 
-    $delays = [];
-    $paths_manager = new class($config_factory, $study_manager, $delays) extends ClinicalTrialsGovPathsManager {
-
-      /**
-       * Constructs a delay-observing paths manager test double.
-       */
-      public function __construct(
-        ConfigFactoryInterface $configFactory,
-        ClinicalTrialsGovStudyManagerInterface $studyManager,
-        protected array &$delays,
-      ) {
-        parent::__construct($configFactory, $studyManager);
-      }
-
-      /**
-       * {@inheritdoc}
-       */
-      protected function delayBetweenStudyRequests(): void {
-        $this->delays[] = TRUE;
-      }
-
-    };
+    $paths_manager = new ClinicalTrialsGovPathsManager($config_factory, $study_manager);
 
     $paths = $paths_manager->discoverQueryPaths('query.cond=lung');
 
-    // Check that both study-detail paths are discovered and normalized.
+    // Check that response paths are discovered and normalized directly.
     $this->assertContains('protocolSection.identificationModule.nctId', $paths);
     $this->assertContains('protocolSection.identificationModule.briefTitle', $paths);
-
-    // Check that one pause happens between the two detail requests.
-    $this->assertCount(1, $delays);
   }
 
 }

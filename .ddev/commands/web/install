@@ -18,6 +18,8 @@ if [ "$1" = "all" ]; then
   set -- ai schemadotorg eca translation
 fi
 
+uli_path="/"
+
 drush site:install standard \
   --db-url=mysql://db:db@db/db \
   --site-name="Drupal Playground" \
@@ -36,6 +38,7 @@ drush pm:uninstall toolbar
 
 for PRESET in "$@"; do
   if [ "$PRESET" = "ai" ]; then
+
     echo "Applying AI recipe..."
     drush recipe ../recipes/drupal_playground_ai
     drush recipe ../recipes/drupal_playground_ai_chat
@@ -47,34 +50,55 @@ for PRESET in "$@"; do
 
     echo "Applying AI Schema.org JSON-LD recipe..."
     drush recipe ../recipes/drupal_playground_ai_schemadotorg_jsonld
+    uli_path="/admin/config/ai"
+
   elif [ "$PRESET" = "schemadotorg" ]; then
+
     echo "Applying Schema.org Blueprints recipe..."
     drush recipe ../recipes/drupal_playground_schemadotorg
+    uli_path="/admin/config/schemadotorg"
+
   elif [ "$PRESET" = "eca" ]; then
+
     echo "Applying ECA Starterkit recipe..."
     drush recipe ../recipes/drupal_playground_eca
+    uli_path="/admin/config/workflow/eca"
+
   elif [ "$PRESET" = "elastic" ]; then
+
     echo "Applying Elasticsearch recipe..."
     drush recipe ../recipes/drupal_playground_elasticsearch
     echo "Clearing Elasticsearch index to rebuild mappings..."
     drush search-api:clear drupal_playground_articles -y
     echo "Indexing Elasticsearch demo content..."
     drush search-api:index drupal_playground_articles
+    uli_path="/elasticsearch"
+
   elif [ "$PRESET" = "translation" ]; then
+
     echo "Applying translation recipe..."
     drush recipe ../recipes/drupal_playground_translation
     drush locale-check
     drush locale-update
+
   elif [ "$PRESET" = "modules" ]; then
+
     drush en -y telephone_filter entity_labels
+
   elif [ "$PRESET" = "trials" ]; then
+
     echo "Installing ClinicalTrials.gov module..."
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
+    uli_path="/admin/config/services/clinical-trials-gov"
+
   elif [ "$PRESET" = "trials-setup" ]; then
+
     echo "Setting up ClinicalTrials.gov import..."
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
     drush clinical-trials-gov:setup 'query.cond=Cancer&query.term=New%20York&filter.overallStatus=RECRUITING'
     drush migrate:import clinical_trials_gov
+    uli_path="/admin/config/services/clinical-trials-gov"
+
   fi
 done
 
@@ -82,4 +106,4 @@ drush cr
 
 echo ""
 echo "Installation complete. One-time login URL:"
-drush uli
+drush uli "$uli_path"

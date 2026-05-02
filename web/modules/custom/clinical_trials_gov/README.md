@@ -334,7 +334,7 @@ Key locations:
 
 Notable coverage includes:
 
-- `ClinicalTrialsGovPathDiscoveryBatchTest` for the Find-step field-path discovery batch
+- `ClinicalTrialsGovManagerDiscoveryTest` for query-path discovery from the recent studies sample
 - `ClinicalTrialsGovReviewMetadataControllerTest` for the filtered review metadata page
 - `ClinicalTrialsGovSourceTest` for flattened migrate source rows, including repeated struct child paths
 
