@@ -1,8 +1,13 @@
 clinical_trials_gov:
   version: 1.x
+  js:
+    js/clinical_trials_gov_config_form.js: {}
   css:
     theme:
       css/clinical_trials_gov.css: {}
+  dependencies:
+    - core/drupal
+    - core/once
 
 studies_query:
   version: 1.x

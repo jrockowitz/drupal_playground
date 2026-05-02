@@ -183,11 +183,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         $existing = (bool) FieldConfig::loadByName('node', $saved_type, $definition['field_name']);
       }
 
-      $selected = (!$node_type)
-        || in_array($path, $saved_fields, TRUE)
-        || !empty($definition['required'])
-        || $existing;
-      $disabled = !empty($definition['required']) || $existing || empty($definition['selectable']);
+      $is_required = !empty($definition['required']) || $this->hasRequiredDescendant($path, $definitions);
+      $selected = $this->isFieldSelectedByDefault($path, $definition, $saved_fields, $existing, $is_required);
+      $disabled = $is_required || $existing || empty($definition['selectable']);
       $depth = $this->calculateHierarchyDepth($path);
 
       $row_attributes = ['class' => []];
@@ -202,7 +200,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
 
       if (!empty($definition['group_only'])) {
         $form['field_mapping']['rows'][$row_key]['selected'] = [
-          '#markup' => '',
+          '#type' => 'checkbox',
+          '#default_value' => $selected,
+          '#disabled' => TRUE,
           '#wrapper_attributes' => $row_attributes,
         ];
       }
@@ -258,6 +258,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $type = (string) ($form_state->getValue('existing_type') ?: $this->config('clinical_trials_gov.settings')->get('type'));
     $label = (string) ($form_state->getValue('label') ?: 'Trial');
     $description = (string) ($form_state->getValue('description') ?: '');
+    $definitions = $this->fieldManager->getAvailableFieldDefinitions();
 
     $selected_rows = [];
     foreach (($form_state->getValue(['field_mapping', 'rows']) ?? []) as $row) {
@@ -265,10 +266,11 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         continue;
       }
       $path = (string) $row['path'];
-      $definition = $this->fieldManager->getFieldDefinition($path);
+      $definition = $definitions[$path] ?? $this->fieldManager->getFieldDefinition($path);
+      $is_required = !empty($definition['required']) || $this->hasRequiredDescendant($path, $definitions);
       $existing = (($definition['destination_property'] ?? NULL) === 'title')
         || (!empty($definition['field_name']) && FieldConfig::loadByName('node', $type, $definition['field_name']));
-      $selected_rows[$path] = !empty($definition['required']) || $existing || !empty($row['selected']);
+      $selected_rows[$path] = $is_required || $existing || !empty($row['selected']);
     }
 
     $selected_fields = [];
@@ -426,6 +428,34 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     }
 
     return $markup;
+  }
+
+  /**
+   * Determines whether a metadata field should be selected by default.
+   */
+  protected function isFieldSelectedByDefault(string $path, array $definition, array $saved_fields, bool $existing, bool $is_required = FALSE): bool {
+    return $is_required
+      || in_array($path, $saved_fields, TRUE)
+      || !empty($definition['required'])
+      || $existing;
+  }
+
+  /**
+   * Determines whether a metadata path has any required descendants.
+   */
+  protected function hasRequiredDescendant(string $path, array $definitions): bool {
+    $prefix = $path . '.';
+
+    foreach ($definitions as $candidate_path => $candidate_definition) {
+      if (!str_starts_with($candidate_path, $prefix)) {
+        continue;
+      }
+      if (!empty($candidate_definition['required'])) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
   /**

@@ -70,7 +70,7 @@ for PRESET in "$@"; do
   elif [ "$PRESET" = "trials" ]; then
     echo "Installing ClinicalTrials.gov module..."
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
-    # drush config:set -y clinical_trials_gov.settings query 'query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING'
+    drush config:set -y clinical_trials_gov.settings query 'query.cond=Cancer&query.term=New%20York&filter.overallStatus=RECRUITING'
   fi
 done
 

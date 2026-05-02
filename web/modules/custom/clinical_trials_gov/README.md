@@ -217,6 +217,74 @@ Some of the most important modeling decisions in this module are:
 
 The field-resolution details live in code, but those concepts explain why the generated field list sometimes looks different from the raw API JSON.
 
+### Recommended required paths
+
+When `clinical_trials_gov.settings:required_paths` is used to guarantee enough metadata for both search and study-detail display, it helps to think about the paths in categories even though the saved config itself should remain a flat ordered list.
+
+`*` means the path is especially useful for Search API / Elasticsearch filters or facets.
+
+Recommended categories:
+
+- Identity and summary
+  - `protocolSection.identificationModule.nctId` *
+  - `protocolSection.identificationModule.orgStudyIdInfo.id`
+  - `protocolSection.identificationModule.secondaryIdInfos`
+  - `protocolSection.identificationModule.briefTitle` *
+  - `protocolSection.identificationModule.officialTitle`
+  - `protocolSection.identificationModule.acronym` *
+  - `protocolSection.identificationModule.organization.fullName`
+  - `protocolSection.identificationModule.organization.class` *
+  - `protocolSection.descriptionModule.briefSummary`
+  - `protocolSection.descriptionModule.detailedDescription`
+- Status and dates
+  - `protocolSection.statusModule.whyStopped`
+  - `protocolSection.statusModule.studyFirstSubmitDate`
+  - `protocolSection.statusModule.overallStatus` *
+  - `protocolSection.statusModule.startDateStruct.date` *
+  - `protocolSection.statusModule.primaryCompletionDateStruct.date`
+  - `protocolSection.statusModule.completionDateStruct.date`
+  - `protocolSection.statusModule.lastUpdatePostDateStruct.date`
+- Conditions and terms
+  - `protocolSection.conditionsModule.conditions` *
+  - `protocolSection.conditionsModule.keywords` *
+- Study design
+  - `protocolSection.designModule.studyType` *
+  - `protocolSection.designModule.phases` *
+  - `protocolSection.designModule.enrollmentInfo.count`
+- Interventions
+  - `protocolSection.armsInterventionsModule.armGroups`
+  - `protocolSection.armsInterventionsModule.interventions.type` *
+  - `protocolSection.armsInterventionsModule.interventions.name` *
+  - `protocolSection.armsInterventionsModule.interventions.description`
+- Outcomes
+  - `protocolSection.outcomesModule.primaryOutcomes`
+  - `protocolSection.outcomesModule.secondaryOutcomes`
+- Eligibility
+  - `protocolSection.eligibilityModule.eligibilityCriteria`
+  - `protocolSection.eligibilityModule.sex` *
+  - `protocolSection.eligibilityModule.minimumAge` *
+  - `protocolSection.eligibilityModule.maximumAge` *
+  - `protocolSection.eligibilityModule.stdAges` *
+  - `protocolSection.eligibilityModule.healthyVolunteers` *
+  - `protocolSection.eligibilityModule.studyPopulation`
+  - `protocolSection.eligibilityModule.samplingMethod` *
+- Sponsors and collaborators
+  - `protocolSection.sponsorCollaboratorsModule.leadSponsor.name` *
+  - `protocolSection.sponsorCollaboratorsModule.leadSponsor.class` *
+  - `protocolSection.sponsorCollaboratorsModule.collaborators.name`
+  - `protocolSection.sponsorCollaboratorsModule.collaborators.class` *
+- Contacts and officials
+  - `protocolSection.contactsLocationsModule.centralContacts`
+  - `protocolSection.contactsLocationsModule.overallOfficials`
+- Locations
+  - `protocolSection.contactsLocationsModule.locations.facility`
+  - `protocolSection.contactsLocationsModule.locations.status` *
+  - `protocolSection.contactsLocationsModule.locations.city` *
+  - `protocolSection.contactsLocationsModule.locations.state` *
+  - `protocolSection.contactsLocationsModule.locations.country` *
+- Results
+  - `hasResults` *
+
 ## Useful Files
 
 - [AGENTS.md](/modules/custom/clinical_trials_gov/AGENTS.md)

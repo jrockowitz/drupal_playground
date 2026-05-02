@@ -82,6 +82,53 @@ class ClinicalTrialsGovConfigFormTest extends UnitTestCase {
   }
 
   /**
+   * Tests that default field selection only keeps saved, required, or existing fields checked.
+   *
+   * @covers ::isFieldSelectedByDefault
+   */
+  public function testIsFieldSelectedByDefault(): void {
+    // Check that non-required unsaved fields are not selected by default.
+    $this->assertFalse(
+      $this->form->exposedIsFieldSelectedByDefault(
+        'protocolSection.statusModule.statusVerifiedDate',
+        ['required' => FALSE],
+        [],
+        FALSE,
+      )
+    );
+
+    // Check that required fields stay selected.
+    $this->assertTrue(
+      $this->form->exposedIsFieldSelectedByDefault(
+        'protocolSection.identificationModule.nctId',
+        ['required' => TRUE],
+        [],
+        FALSE,
+      )
+    );
+
+    // Check that saved fields stay selected.
+    $this->assertTrue(
+      $this->form->exposedIsFieldSelectedByDefault(
+        'protocolSection.conditionsModule.conditions',
+        ['required' => FALSE],
+        ['protocolSection.conditionsModule.conditions'],
+        FALSE,
+      )
+    );
+
+    // Check that existing fields stay selected.
+    $this->assertTrue(
+      $this->form->exposedIsFieldSelectedByDefault(
+        'protocolSection.descriptionModule.briefSummary',
+        ['required' => FALSE],
+        [],
+        TRUE,
+      )
+    );
+  }
+
+  /**
    * Tests shouldHideFieldRow() hides children of non-group custom fields.
    *
    * @covers ::shouldHideFieldRow
@@ -191,6 +238,48 @@ class ClinicalTrialsGovConfigFormTest extends UnitTestCase {
     // Check that sibling paths are not treated as descendants.
     $this->assertFalse(
       $this->form->exposedHasSelectedDescendant('protocolSection.status', $selected_rows)
+    );
+  }
+
+  /**
+   * Tests hasRequiredDescendant() detects required child paths.
+   *
+   * @covers ::hasRequiredDescendant
+   */
+  public function testHasRequiredDescendant(): void {
+    $definitions = [
+      'protocolSection.eligibilityModule' => [
+        'group_only' => TRUE,
+        'required' => FALSE,
+      ],
+      'protocolSection.eligibilityModule.eligibilityCriteria' => [
+        'required' => TRUE,
+      ],
+      'protocolSection.eligibilityModule.studyPopulation' => [
+        'required' => FALSE,
+      ],
+      'protocolSection.designModule' => [
+        'group_only' => TRUE,
+        'required' => FALSE,
+      ],
+      'protocolSection.designModule.studyType' => [
+        'required' => FALSE,
+      ],
+    ];
+
+    // Check that a required child path marks the parent as required.
+    $this->assertTrue(
+      $this->form->exposedHasRequiredDescendant('protocolSection.eligibilityModule', $definitions)
+    );
+
+    // Check that a branch with no required children stays optional.
+    $this->assertFalse(
+      $this->form->exposedHasRequiredDescendant('protocolSection.designModule', $definitions)
+    );
+
+    // Check that sibling paths are not treated as descendants.
+    $this->assertFalse(
+      $this->form->exposedHasRequiredDescendant('protocolSection.eligibility', $definitions)
     );
   }
 

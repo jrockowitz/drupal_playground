@@ -15,27 +15,34 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
    * Abbreviations for normalized snake_case name tokens.
    */
   public const ABBREVIATIONS = [
+    // Phrases.
     'denom_count_group' => 'de_count_grp',
-    'outcome_analysis_ci' => 'out_anl_ci',
+    'event_group' => 'evt_grp',
     'intervention_browse' => 'int_brow',
+    'other_event' => 'oth_evt',
+    'outcome_analysis_ci' => 'out_anl_ci',
+    'serious_event' => 'ser_evt',
+    'unposted_event' => 'unposted_evt',
+    // Words.
     'access' => 'acc',
+    'achievement' => 'achieve',
     'affected' => 'aff',
+    'affiliation' => 'aff',
+    'agreement' => 'agree',
     'analysis' => 'anal',
     'analyze' => 'anal',
     'analyzed' => 'anal',
     'anticipated' => 'ant',
-    'affiliation' => 'affil',
+    'assignment' => 'assign',
     'baseline' => 'base',
     'collaborator' => 'collab',
+    'comment' => 'com',
     'completion' => 'comp',
-    'date' => 'dt',
+    'condition' => 'cond',
+    'creation' => 'create',
     'description' => 'desc',
     'estimated' => 'est',
-    'event' => 'evt',
-    'events' => 'evt',
     'expanded' => 'exp',
-    'first' => 'fst',
-    'group' => 'grp',
     'identification' => 'id',
     'inferiority' => 'inf',
     'intervention' => 'int',
@@ -46,25 +53,21 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     'module' => 'mod',
     'mortality' => 'mort',
     'organization' => 'org',
-    'other' => 'oth',
     'outcome' => 'out',
-    'overall' => 'over',
     'population' => 'pop',
     'primary' => 'prim',
-    'references' => 'ref',
     'reference' => 'ref',
+    'references' => 'ref',
     'regulated' => 'reg',
-    'results' => 'res',
     'responsible' => 'resp',
-    'second' => 'sec',
-    'secondary' => 'sec',
+    'results' => 'res',
     'selected' => 'sel',
     'serious' => 'ser',
-    'sponsor' => 'spon',
     'statistical' => 'sta',
+    'struct' => 'str',
     'submission' => 'sub',
-    'update' => 'up',
     'value' => 'val',
+    'violation' => 'viol',
   ];
 
   /**
@@ -115,8 +118,6 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
     foreach (self::ABBREVIATIONS as $token => $abbreviation) {
       $piece = preg_replace('#(^|_)' . $token . '(_|$)#', '$1' . $abbreviation . '$2', $piece);
     }
-
-    $piece = preg_replace('#(?:ment|ation|etion|ition|ion)(_|$)#', '$1', $piece);
 
     return $piece;
   }

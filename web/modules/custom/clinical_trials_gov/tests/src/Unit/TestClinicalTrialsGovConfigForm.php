@@ -40,6 +40,13 @@ class TestClinicalTrialsGovConfigForm extends ClinicalTrialsGovConfigForm {
   }
 
   /**
+   * Exposes isFieldSelectedByDefault() for testing.
+   */
+  public function exposedIsFieldSelectedByDefault(string $path, array $definition, array $saved_fields, bool $existing): bool {
+    return $this->isFieldSelectedByDefault($path, $definition, $saved_fields, $existing);
+  }
+
+  /**
    * Exposes shouldHideFieldRow() for testing.
    */
   public function exposedShouldHideFieldRow(string $path, array $definitions): bool {
@@ -58,6 +65,13 @@ class TestClinicalTrialsGovConfigForm extends ClinicalTrialsGovConfigForm {
    */
   public function exposedHasSelectedDescendant(string $path, array $selected_rows): bool {
     return $this->hasSelectedDescendant($path, $selected_rows);
+  }
+
+  /**
+   * Exposes hasRequiredDescendant() for testing.
+   */
+  public function exposedHasRequiredDescendant(string $path, array $definitions): bool {
+    return $this->hasRequiredDescendant($path, $definitions);
   }
 
 }
