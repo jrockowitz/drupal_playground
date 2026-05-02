@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "63caaf5230f300371f1666ae00996407",
+    "content-hash": "41e540577feb8020d81c5d19060353b2",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4615,10 +4615,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_base",
-                "reference": "cf816da5994c02e9eec70adfc626dc1625a5cb58"
+                "reference": "3c6101da54e589cd2c8aa45d9f0aab673901e2df"
             },
             "require": {
-                "drupal/asset_injector": "^2",
+                "drupal/asset_injector": "^2.21",
                 "drupal/core": "^11.3",
                 "drupal/key": "^1",
                 "drupal/token": "^1"
@@ -4679,14 +4679,17 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_elasticsearch",
-                "reference": "f17bc28289bd6407a12163bb96472f3ebc9db06b"
+                "reference": "843f3354c7a96bbd2eee5d61f50cc290bcd9a479"
             },
             "require": {
                 "drupal/better_exposed_filters": "^7.0",
                 "drupal/core": "^11.3",
-                "drupal/elasticsearch_connector": "^8.0@alpha",
-                "drupal/facets": "^3.0",
-                "drupal/search_api": "^1"
+                "drupal/elasticsearch_connector": "^8",
+                "drupal/facets": "^3",
+                "drupal/search_api": "^1",
+                "drupal/search_api_autocomplete": "^1",
+                "drupal/search_api_spellcheck": "^4",
+                "drupal/views_ajax_history": "^1"
             },
             "type": "drupal-recipe",
             "license": [
@@ -7894,6 +7897,114 @@
             }
         },
         {
+            "name": "drupal/search_api_autocomplete",
+            "version": "1.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/search_api_autocomplete.git",
+                "reference": "8.x-1.11"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/search_api_autocomplete-8.x-1.11.zip",
+                "reference": "8.x-1.11",
+                "shasum": "9c1d287cde328511f4e84dfd49bea401f5eddc6a"
+            },
+            "require": {
+                "drupal/core": "^10.2 || ^11",
+                "drupal/search_api": "^1.0"
+            },
+            "require-dev": {
+                "drupal/search_api_page": "1.x-dev"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.11",
+                    "datestamp": "1762031747",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Seidl",
+                    "homepage": "https://www.drupal.org/u/drunken-monkey"
+                },
+                {
+                    "name": "See other contributors",
+                    "homepage": "https://www.drupal.org/node/1142202/committers"
+                }
+            ],
+            "description": "Adds autocomplete functionality to searches.",
+            "homepage": "https://www.drupal.org/project/search_api_autocomplete",
+            "support": {
+                "source": "http://git.drupal.org/project/search_api_autocomplete.git",
+                "issues": "https://www.drupal.org/project/issues/search_api_autocomplete",
+                "irc": "irc://irc.freenode.org/drupal-search-api"
+            }
+        },
+        {
+            "name": "drupal/search_api_spellcheck",
+            "version": "4.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/search_api_spellcheck.git",
+                "reference": "4.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/search_api_spellcheck-4.0.1.zip",
+                "reference": "4.0.1",
+                "shasum": "71c8dd4641c161ede730860b57f79a9b025f5c55"
+            },
+            "require": {
+                "drupal/core": "^10.1 || ^11.0",
+                "drupal/search_api": "~1.35"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "4.0.1",
+                    "datestamp": "1718897462",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Contributors",
+                    "homepage": "https://www.drupal.org/node/1150950/committers"
+                },
+                {
+                    "name": "mkalkbrenner",
+                    "homepage": "https://www.drupal.org/user/124705"
+                },
+                {
+                    "name": "welly",
+                    "homepage": "https://www.drupal.org/user/354705"
+                }
+            ],
+            "description": "Allows you to display search spellcheck suggestions in views.",
+            "homepage": "https://www.drupal.org/project/search_api_spellcheck",
+            "support": {
+                "source": "http://git.drupal.org/project/search_api_spellcheck.git",
+                "issues": "https://www.drupal.org/project/issues/search_api_spellcheck"
+            }
+        },
+        {
             "name": "drupal/simple_sitemap",
             "version": "4.2.3",
             "source": {
@@ -8502,6 +8613,66 @@
             }
         },
         {
+            "name": "drupal/views_ajax_history",
+            "version": "1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/views_ajax_history.git",
+                "reference": "8.x-1.8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/views_ajax_history-8.x-1.8.zip",
+                "reference": "8.x-1.8",
+                "shasum": "94242393b5ce610c3b5d7ec6dc0ac08da947aff6"
+            },
+            "require": {
+                "drupal/core": "^8.8 || ^9 || ^10 || ^11"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.8",
+                    "datestamp": "1735593764",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "amateescu",
+                    "homepage": "https://www.drupal.org/user/729614"
+                },
+                {
+                    "name": "i-trokhanenko",
+                    "homepage": "https://www.drupal.org/user/3546872"
+                },
+                {
+                    "name": "joelpittet",
+                    "homepage": "https://www.drupal.org/user/160302"
+                },
+                {
+                    "name": "kalman.hosszu",
+                    "homepage": "https://www.drupal.org/user/267481"
+                },
+                {
+                    "name": "nod_",
+                    "homepage": "https://www.drupal.org/user/598310"
+                }
+            ],
+            "description": "Add bookmarking abilities to AJAX Views.",
+            "homepage": "https://www.drupal.org/project/views_ajax_history",
+            "support": {
+                "source": "https://git.drupalcode.org/project/views_ajax_history"
+            }
+        },
+        {
             "name": "drupal/views_data_export",
             "version": "1.9.0",
             "source": {
@@ -8573,6 +8744,82 @@
             "homepage": "https://www.drupal.org/project/views_data_export",
             "support": {
                 "source": "https://git.drupalcode.org/project/views_data_export"
+            }
+        },
+        {
+            "name": "drupal/views_filters_summary",
+            "version": "3.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/views_filters_summary.git",
+                "reference": "3.4.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/views_filters_summary-3.4.0.zip",
+                "reference": "3.4.0",
+                "shasum": "2a0790050ae937bfdc408be6bf17162fcefd1e65"
+            },
+            "require": {
+                "drupal/core": "^10 || ^11"
+            },
+            "require-dev": {
+                "drupal/address": "*",
+                "drupal/better_exposed_filters": "*",
+                "drupal/commerce": "*",
+                "drupal/configurable_views_filter_block": "*",
+                "drupal/entity_browser": "*",
+                "drupal/entity_reference_exposed_filters": "*",
+                "drupal/verf": "*",
+                "drupal/views_core_entity_reference": "*",
+                "drupal/views_selective_filters": "^2.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "3.4.0",
+                    "datestamp": "1774011410",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "alexshor",
+                    "homepage": "https://www.drupal.org/user/281770"
+                },
+                {
+                    "name": "asherry",
+                    "homepage": "https://www.drupal.org/user/941916"
+                },
+                {
+                    "name": "droath",
+                    "homepage": "https://www.drupal.org/user/718562"
+                },
+                {
+                    "name": "irinaz",
+                    "homepage": "https://www.drupal.org/user/225592"
+                },
+                {
+                    "name": "joelsteidl",
+                    "homepage": "https://www.drupal.org/user/658038"
+                },
+                {
+                    "name": "mably",
+                    "homepage": "https://www.drupal.org/user/3375160"
+                }
+            ],
+            "description": "Plugin to display summary of selected exposed filters in header or footer area of a view.",
+            "homepage": "https://www.drupal.org/project/views_filters_summary",
+            "support": {
+                "source": "https://git.drupalcode.org/project/views_filters_summary",
+                "issues": "https://www.drupal.org/project/issues/views_filters_summary"
             }
         },
         {

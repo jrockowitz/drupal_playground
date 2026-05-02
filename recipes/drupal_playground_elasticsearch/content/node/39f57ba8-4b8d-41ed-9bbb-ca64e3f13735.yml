@@ -1,0 +1,41 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 39f57ba8-4b8d-41ed-9bbb-ca64e3f13735
+  bundle: article
+  default_langcode: en
+  depends:
+    ed25d85d-fbbc-4037-90ad-411bc9f31d01: taxonomy_term
+    2e7cb81f-d421-4a3e-8920-4f847e88ac5b: taxonomy_term
+    13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'When to use the Elasticsearch connector module'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: ed25d85d-fbbc-4037-90ad-411bc9f31d01
+    -
+      entity: 2e7cb81f-d421-4a3e-8920-4f847e88ac5b
+    -
+      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+  body:
+    -
+      value: |-
+        <h2>What a Connector Module Is For</h2>
+        <p>A connector module exists to bridge Drupal’s search framework with a specific backend. In this case, the Elasticsearch Connector module gives Search API a way to treat Elasticsearch as a server option inside Drupal. That means Drupal can keep its own concepts of indexes, datasources, fields, and processors while still delegating storage and querying to Elasticsearch.</p>
+        <p>This separation is helpful because it keeps backend-specific details from leaking into every part of the Drupal site. Search API stays responsible for defining the search model. The connector stays responsible for translating that model into backend operations. That division makes the system easier to reason about and easier to swap or reconfigure later.</p>
+        <h2>When It Becomes the Right Choice</h2>
+        <p>The connector becomes valuable when a Drupal project wants the scalability and search features of Elasticsearch but does not want to abandon Drupal-native configuration. Instead of writing custom application code for every indexing and query task, the site can rely on the established Search API patterns that Drupal teams already understand. That makes the setup much easier to manage for site builders and developers alike.</p>
+        <p>It is especially useful when search is becoming an important product feature rather than a small convenience. Better full-text behavior, stronger relevance tuning, and a more scalable backend are all reasons to move beyond a simpler setup. The connector gives Drupal access to those backend strengths without turning search into a one-off integration.</p>
+        <h2>What It Does Not Replace</h2>
+        <p>The connector does not replace Search API, Views, or Drupal content modeling. It works because those pieces already exist. If a project expects the connector alone to solve every search problem, it will probably end up misdiagnosing issues. Poor field selection, unclear processors, or an awkward result page are still Drupal-side concerns. The connector helps once the Drupal search model is coherent enough to send to Elasticsearch.</p>
+        <p>That is why connector modules are most effective as part of a layered approach. Drupal defines the content and search structure. The connector handles backend integration. Elasticsearch handles search execution. When each layer keeps its responsibilities clear, the overall search system stays easier to maintain.</p>
+      format: basic_html
+      summary: 'The Elasticsearch Connector module is most useful when Drupal wants Elasticsearch as a backend without giving up Search API’s native way of modeling search.'

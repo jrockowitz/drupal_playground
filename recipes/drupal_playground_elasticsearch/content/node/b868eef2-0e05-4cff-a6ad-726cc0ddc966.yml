@@ -1,0 +1,44 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: b868eef2-0e05-4cff-a6ad-726cc0ddc966
+  bundle: article
+  default_langcode: en
+  depends:
+    ed25d85d-fbbc-4037-90ad-411bc9f31d01: taxonomy_term
+    fa6fb2fb-2619-4eba-b238-227402aa18a2: taxonomy_term
+    13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+    bae844cc-9578-4123-b3d2-8bd9dd5fa59c: taxonomy_term
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Search relevance in Drupal with Elasticsearch'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: ed25d85d-fbbc-4037-90ad-411bc9f31d01
+    -
+      entity: fa6fb2fb-2619-4eba-b238-227402aa18a2
+    -
+      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+    -
+      entity: bae844cc-9578-4123-b3d2-8bd9dd5fa59c
+  body:
+    -
+      value: |-
+        <h2>Why Relevance Tuning Matters</h2>
+        <p>A search page feels useful when the first few results match what the visitor probably meant, not merely what the system can technically find. In Drupal projects that use Search API with an Elasticsearch backend, relevance becomes a shared concern between the site’s content model and the backend’s ranking behavior. Titles, body text, tags, and other fields do not all deserve the same importance. A direct title match often signals intent more strongly than a passing mention inside a long body field, so tuning relevance usually begins by deciding which fields should count most.</p>
+        <p>That is one reason Search API and Elasticsearch work well together. Search API lets Drupal define the fields and processors that matter, while Elasticsearch applies the matching and scoring. The search experience can stay Drupal-friendly at the configuration level while still taking advantage of backend ranking features. When teams think about relevance this way, search quality becomes something they can shape deliberately instead of accepting as a black box.</p>
+        <h2>How Drupal Influences Ranking</h2>
+        <p>Search API already gives Drupal teams a few practical levers for improving result quality. A title field can receive a higher boost than a body field. Processors can normalize text before it is indexed. Tags can add strong topical hints that support both filtering and better matching. Even when the backend performs the actual ranking, those Drupal-side choices strongly influence the data being sent and the weight attached to each field.</p>
+        <p>That means relevance work does not always require backend-specific complexity. Sometimes the right fix is simply better field selection or clearer indexing strategy. If an article search feels noisy, the issue might be that too many low-signal fields are being indexed as if they were equally important. Search API gives site builders a way to make that distinction visible.</p>
+        <h2>How Elasticsearch Complements Search API</h2>
+        <p>Elasticsearch is especially good at turning those field decisions into a ranked result set. It can consider term frequency, field boosts, phrase matches, and other signals when calculating relevance. In practice, that means Drupal can send a structured query and Elasticsearch can return results in an order that feels smarter than simple exact matching. A site can prioritize title matches, keep body matches meaningful, and still support flexible full-text discovery across a broader corpus.</p>
+        <p>For Drupal teams, the larger lesson is that relevance is not a one-time setting. It is an ongoing design choice. Search analytics, editorial expectations, and content shape all affect what “good” results look like. Search API provides the Drupal-side structure for those decisions, and Elasticsearch provides the ranking engine that makes them effective at scale.</p>
+      format: basic_html
+      summary: 'Relevance in Drupal search improves when Search API field choices and Elasticsearch scoring work together around titles, body text, and topical signals.'

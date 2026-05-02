@@ -1,6 +1,6 @@
 # Drupal Playground Elasticsearch
 
-Sets up a simple Search API experience backed by Elasticsearch Connector for `article` content in Drupal Playground.
+Sets up a simple Search API experience backed by Elasticsearch Connector for `article` content in Drupal Playground, including autocomplete suggestions and spellcheck.
 
 ## What It Installs
 
@@ -9,11 +9,19 @@ Sets up a simple Search API experience backed by Elasticsearch Connector for `ar
 - Facets
 - Facets Exposed Filters
 - Better Exposed Filters
+- Search API Autocomplete
+- Search API Spellcheck
+- Views Exposed Filters Summary
+- Views Ajax History
 - A Search API server pointed at the local DDEV Elasticsearch service
 - A Search API index for `article` nodes
 - A simple Views search page at `/search/articles`
+- Autocomplete suggestions on the `/search/articles` keyword field
+- A `Did you mean:` spellcheck prompt on the `/search/articles` results page
+- A header summary of the active exposed filters on `/search/articles`
+- AJAX search state that updates the browser URL and back/forward history
 - An `Articles` shortcut that links to `/search/articles`
-- Three default-content demo articles stored in the recipe
+- Ten default-content demo articles stored in the recipe
 
 ## Local DDEV Elasticsearch
 
@@ -51,6 +59,61 @@ Run indexing after applying the recipe so the recipe-provided demo articles appe
 ddev drush search-api:index drupal_playground_articles
 ```
 
+## Autocomplete
+
+This recipe includes `drupal/search_api_autocomplete:^1.11`.
+
+The current Elasticsearch Connector backend in this project supports Search API spellcheck but does not advertise the `search_api_autocomplete` backend feature. Because of that, the recipe configures Search API Autocomplete with the **live results** suggester for the article search view instead of the server-backed suggester.
+
+That gives the `/search/articles` keyword field autocomplete suggestions based on the indexed article content without depending on backend-native autocomplete support.
+
+The autocomplete search entity is:
+
+- `search_api_autocomplete.search.drupal_playground_article_search`
+
+The recipe grants the generated autocomplete permission to:
+
+- anonymous users
+- authenticated users
+
+That keeps the public article search page working for both visitors and signed-in users.
+
+## Spellcheck
+
+This recipe includes `drupal/search_api_spellcheck:^4.0`.
+
+The article search view adds the `Search API Spellcheck "Did You Mean"` header plugin so misspelled queries can suggest a corrected search. In this recipe the spellcheck prompt is configured to:
+
+- show a single best correction
+- hide itself when the search already has results
+- use collation when available from the backend
+
+## Exposed Filter Summary
+
+This recipe includes `drupal/views_filters_summary:^3.4`.
+
+Because the article search page is backed by a Search API index, the recipe also enables the bundled `views_filters_summary_search_api` submodule so the selected fulltext and Search API filter values are summarized correctly.
+
+The article search view replaces the plain result-count header with a Views Exposed Filters Summary header configured to:
+
+- display the result count
+- summarize the `Search` and `Tags` exposed filters
+- show filter labels
+- avoid per-filter remove links
+- keep the summary compatible with the AJAX search page
+
+## AJAX History
+
+This recipe includes `drupal/views_ajax_history:^1.8`.
+
+The article search view already uses AJAX for filtering and paging. This module adds browser history support to that AJAX behavior so users can:
+
+- share the current filtered search URL
+- use the browser back button after changing filters or paging results
+- use the browser forward button to return to a later AJAX search state
+
+The recipe enables the `ajax_history` display extender on the article search view.
+
 ## Facets
 
 This recipe includes `drupal/facets:^3.0` and uses the `facets_exposed_filters` submodule to turn the `Tags` filter on `/search/articles` into a real tag facet.
@@ -78,7 +141,10 @@ The facet target is the indexed tags field in the `drupal_playground_articles` S
 Current behavior:
 
 - keyword search remains in place
-- the `Authored by` filter remains in place
+- keyword search supports autocomplete suggestions
+- misspelled keywords can show a spellcheck correction
+- the header summarizes the active search and tag filters
+- AJAX filter and pager changes update browser history
 - the `Tags` filter is a choice-based tags facet
 - Search API relevance remains the default sort
 
@@ -126,15 +192,23 @@ The `ddev install elastic` preset clears the Search API index before reindexing 
 - ⚫ Confirm the indexed fields also include `Author name` and `Tags`.
 - ⚫ Confirm the server is `Drupal Playground Elasticsearch`.
 - ⚫ Confirm the index is enabled.
-- ⚫ Confirm the index shows `3` items indexed, or run `ddev drush search-api:index drupal_playground_articles` and refresh.
+- ⚫ Confirm the index shows `10` items indexed, or run `ddev drush search-api:index drupal_playground_articles` and refresh.
 
 ### Default content review
 
 - ⚫ Go to **Content** at `/admin/content`.
-- ⚫ Confirm the three article titles are:
-  - `Elasticsearch`
-  - `Drupal Search API`
-  - `Elasticsearch connector for Drupal & DDEV`
+- ⚫ Confirm the original three article titles are:
+- `Elasticsearch`
+- `Drupal Search API`
+- `Elasticsearch connector for Drupal & DDEV`
+- ⚫ Confirm the additional article titles are:
+  - `Search relevance in Drupal with Elasticsearch`
+  - `How indexing works in Drupal Search API`
+  - `Running Elasticsearch locally with DDEV`
+  - `Building a Views-based search page with Search API`
+  - `When to use the Elasticsearch connector module`
+  - `Debugging failed indexing in a local Drupal search setup`
+  - `Autocomplete, facets, and spellcheck in Drupal search`
 - ⚫ Open each article and confirm it has a summary.
 - ⚫ Confirm each article has multiple `<h2>` headings in the body.
 - ⚫ Confirm the articles have relevant tags attached:
@@ -157,24 +231,38 @@ The `ddev install elastic` preset clears the Search API index before reindexing 
 - ⚫ Confirm the view uses `drupal_playground_articles` as its Search API data source.
 - ⚫ Confirm the page path is `/search/articles`.
 - ⚫ Confirm the exposed fulltext filter labeled `Search` is present.
-- ⚫ Confirm the exposed filters also include `Authored by` and a Facets-powered `Tags` filter.
+- ⚫ Confirm the `Search` field uses Search API Autocomplete.
+- ⚫ Type `Drupal` into the search field and confirm autocomplete suggestions appear.
+- ⚫ Confirm the exposed filters also include a Facets-powered `Tags` filter.
 - ⚫ Edit the `Tags` filter and confirm the filter plugin is `Facets filter`.
 - ⚫ Confirm the facet settings are attached to the current page display and tag field.
 - ⚫ Confirm the default sort is Search API relevance descending.
 - ⚫ Confirm the tags facet renders as a multi-select list of tag names, not raw term IDs.
 - ⚫ Visit `/search/articles`.
+- ⚫ Search for a misspelled version of `Elasticsearch` and confirm a `Did you mean:` correction appears.
 - ⚫ Search for `Drupal`.
 - ⚫ Narrow the results with the `Tags` facet by selecting `Drupal`.
 - ⚫ Confirm the filtered page keeps the keyword query and reduces the results to the Drupal-tagged articles.
-- ⚫ Narrow the results with the `Authored by` filter.
-- ⚫ Confirm the search results page shows the three demo articles with teaser content.
+- ⚫ Confirm the search results page shows the demo articles with teaser content.
 - ⚫ Confirm the result teasers show article preview content without errors.
 
 - ⚫ Confirm the `facets` module is enabled.
 - ⚫ Confirm the `facets_exposed_filters` module is enabled.
 - ⚫ Confirm the `better_exposed_filters` module is enabled.
+- ⚫ Confirm the `search_api_autocomplete` module is enabled.
+- ⚫ Confirm the `search_api_spellcheck` module is enabled.
+- ⚫ Confirm the `views_filters_summary` module is enabled.
+- ⚫ Confirm the `views_filters_summary_search_api` submodule is enabled.
+- ⚫ Confirm the `views_ajax_history` module is enabled.
 - ⚫ Confirm the tags facet is attached to `search_api:views_page__drupal_playground_article_search__page_1`.
 - ⚫ Confirm `/search/articles` shows tag choices instead of a free-text `Tags` input.
+- ⚫ Confirm `/search/articles` attaches the Search API Autocomplete JavaScript and endpoint for `drupal_playground_article_search`.
+- ⚫ Confirm `/search/articles` attaches the Views Exposed Filters Summary JavaScript.
+- ⚫ Search for `Drupal` and select the `Drupal` tag.
+- ⚫ Confirm the header summarizes the active filters and result count.
+- ⚫ Confirm `/search/articles` attaches the Views Ajax History JavaScript and `viewsAjaxHistory` Drupal settings.
+- ⚫ Change the search keywords, tags, or pager with AJAX and confirm the browser URL updates.
+- ⚫ Use the browser back button and confirm the previous AJAX search state is restored.
 - ⚫ Confirm selecting a tag narrows the results correctly.
 
 ### Command-line review
@@ -202,11 +290,18 @@ Or use the one-time login URL after `ddev install elastic` and browse to:
 
 - `/search/articles`
 
-The recipe ships three `article` nodes as default content:
+The recipe ships ten `article` nodes as default content:
 
 - Elasticsearch
 - Drupal Search API
 - Elasticsearch connector for Drupal & DDEV
+- Search relevance in Drupal with Elasticsearch
+- How indexing works in Drupal Search API
+- Running Elasticsearch locally with DDEV
+- Building a Views-based search page with Search API
+- When to use the Elasticsearch connector module
+- Debugging failed indexing in a local Drupal search setup
+- Autocomplete, facets, and spellcheck in Drupal search
 
 The recipe also ships one shortcut in the default shortcut set:
 
@@ -215,7 +310,6 @@ The recipe also ships one shortcut in the default shortcut set:
 The current search page uses exposed filters for:
 
 - `Search`
-- `Authored by`
 - `Tags`
 
 The `Tags` filter is implemented as a Facets 3 exposed filter rather than a separate facet block.
@@ -230,8 +324,6 @@ This first version intentionally keeps the setup small:
 
 Out of scope for v1:
 
-- autocomplete
-- spellcheck
 - production authentication or hardening
 
 ## References

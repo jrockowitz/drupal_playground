@@ -9,6 +9,11 @@ install:
   - facets_exposed_filters
   - shortcut
   - search_api
+  - search_api_autocomplete
+  - search_api_spellcheck
+  - views_filters_summary
+  - views_filters_summary_search_api
+  - views_ajax_history
   - elasticsearch_connector
 config:
   strict: false
@@ -19,9 +24,15 @@ config:
     search_api:
       - search_api.server.drupal_playground_elasticsearch
       - search_api.index.drupal_playground_articles
+    search_api_autocomplete:
+      - search_api_autocomplete.search.drupal_playground_article_search
     views:
       - views.view.drupal_playground_article_search
   actions:
     node.type.article:
       simpleConfigUpdate:
         display_submitted: false
+    user.role.anonymous:
+      grantPermission: 'use search_api_autocomplete for drupal_playground_article_search'
+    user.role.authenticated:
+      grantPermission: 'use search_api_autocomplete for drupal_playground_article_search'

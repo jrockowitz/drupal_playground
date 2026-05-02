@@ -1,0 +1,41 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 002f650f-8a88-44b4-83b7-911e3fa24e42
+  bundle: article
+  default_langcode: en
+  depends:
+    fa6fb2fb-2619-4eba-b238-227402aa18a2: taxonomy_term
+    13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+    bae844cc-9578-4123-b3d2-8bd9dd5fa59c: taxonomy_term
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Building a Views-based search page with Search API'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: fa6fb2fb-2619-4eba-b238-227402aa18a2
+    -
+      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+    -
+      entity: bae844cc-9578-4123-b3d2-8bd9dd5fa59c
+  body:
+    -
+      value: |-
+        <h2>Why Views Is a Strong Search UI Layer</h2>
+        <p>Once Search API has an index, Drupal Views can turn that index into a practical search page without custom rendering code. This is one of the most useful parts of the Drupal search ecosystem. Teams that already know how to build listings with Views can apply the same skills to search results, exposed filters, paging, and result summaries. The interface feels native to Drupal because it is built with the same display tooling used elsewhere on the site.</p>
+        <p>That matters for maintainability. A search page is not an isolated system that needs its own presentation stack. It can reuse the site’s existing theme, result view modes, and filter patterns. Search stays integrated with Drupal instead of becoming a separate application hidden inside the site.</p>
+        <h2>How Search API and Views Work Together</h2>
+        <p>Search API provides the indexed data source, while Views handles presentation and interaction. A search page can expose a full-text filter, sort by relevance, display results in teaser mode, and support paging. Because the source is an index rather than direct content tables, the page can also benefit from backend ranking and search-specific field preparation without losing the flexibility of Views.</p>
+        <p>This arrangement is especially valuable when a project wants to iterate on search experience. Filters can be added or removed, headers can show result counts, and result presentation can evolve without rebuilding the underlying search engine integration. The search experience becomes easier to refine over time.</p>
+        <h2>Why This Works Well for Full-text Search</h2>
+        <p>Full-text search often needs more than a text box. People also expect visible results, helpful summaries, and a way to narrow content further. Views gives site builders a familiar place to compose those pieces. Search API handles the search model, and Views turns that model into an interface people can actually use. That division keeps Drupal search powerful without making it feel overly technical to maintain.</p>
+        <p>For teams building editorial search pages, a Views-based approach is often the fastest route to a usable result experience. It starts simple, but it also leaves room for later features such as facets, autocomplete, and backend-specific relevance tuning.</p>
+      format: basic_html
+      summary: 'Search API and Views work well together because the index powers the query while Views turns that indexed data into a maintainable Drupal search page.'

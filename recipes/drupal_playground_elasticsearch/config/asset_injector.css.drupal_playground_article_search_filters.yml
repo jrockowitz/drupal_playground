@@ -41,6 +41,10 @@ code: |-
     margin: 0;
   }
 
+  body.path-search .view-content .teaser__meta:empty {
+    display: none;
+  }
+
   @media (min-width: 900px) {
     body.path-search .view {
       display: grid;
@@ -48,7 +52,8 @@ code: |-
       grid-template-areas:
         "filters summary"
         "filters results";
-      gap: 2rem;
+      column-gap: 2rem;
+      row-gap: 0.5rem;
       align-items: start;
     }
 

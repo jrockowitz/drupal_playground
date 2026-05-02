@@ -1,0 +1,41 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 1c57b0ae-5fcc-4aad-ae52-cf89292ba778
+  bundle: article
+  default_langcode: en
+  depends:
+    fa6fb2fb-2619-4eba-b238-227402aa18a2: taxonomy_term
+    13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+    084f13d6-bed6-4406-a286-c3c9413f5650: taxonomy_term
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'How indexing works in Drupal Search API'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: fa6fb2fb-2619-4eba-b238-227402aa18a2
+    -
+      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+    -
+      entity: 084f13d6-bed6-4406-a286-c3c9413f5650
+  body:
+    -
+      value: |-
+        <h2>Indexing Starts with Content Selection</h2>
+        <p>Indexing in Drupal Search API begins when a site decides which content should become searchable. That choice sounds simple, but it defines the entire shape of the search experience. A Search API index can include a single bundle such as articles, or it can combine multiple entity types into one searchable collection. Once the datasource is chosen, Drupal can select fields, apply processors, and track changes so the backend stays aligned with editorial updates.</p>
+        <p>That structure matters because indexing is not just storage. It is preparation. Drupal is deciding what parts of its content model are important enough to send to a backend and how those values should be typed. The index becomes a search-oriented representation of Drupal content rather than a direct copy of raw field storage.</p>
+        <h2>What Happens Before Data Reaches the Backend</h2>
+        <p>Search API can run processors before data is indexed. These processors can strip markup, tokenize fields, normalize case, add URLs, and respect access rules. By the time content is ready to be sent to a backend, it has usually been cleaned up and shaped around search use cases rather than editorial input alone. That is a big part of why Search API is more useful than a low-level integration that simply forwards stored field values as-is.</p>
+        <p>Field type decisions also matter at this stage. A text field behaves differently from a date, integer, or reference field. If a field is meant for keyword matching, it should be modeled for that purpose. If a field is meant for sorting or filtering, it should be typed accordingly. These choices help search remain predictable as an index grows.</p>
+        <h2>How Change Tracking Keeps an Index Current</h2>
+        <p>After an index is created, Search API keeps track of content changes so reindexing can happen incrementally. New content, edits, and deletions are all part of the indexing lifecycle. Rather than rebuilding everything after every change, the system can send only the items that need updating. That keeps indexing practical for day-to-day Drupal content work and makes it easier to maintain search quality over time.</p>
+        <p>For local development, this also gives teams a clearer debugging path. If a search result looks stale, they can ask whether the content changed, whether the index tracked that change, and whether the backend received the update. Understanding indexing as a process rather than a single event makes Search API easier to reason about.</p>
+      format: basic_html
+      summary: 'Drupal Search API indexing is the process of selecting content, preparing fields, applying processors, and tracking changes so searchable data stays current.'

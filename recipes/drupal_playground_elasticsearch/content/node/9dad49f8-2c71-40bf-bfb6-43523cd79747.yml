@@ -1,0 +1,44 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 9dad49f8-2c71-40bf-bfb6-43523cd79747
+  bundle: article
+  default_langcode: en
+  depends:
+    084f13d6-bed6-4406-a286-c3c9413f5650: taxonomy_term
+    13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+    d2fc5189-b64f-4032-bdf7-b42036572436: taxonomy_term
+    fa6fb2fb-2619-4eba-b238-227402aa18a2: taxonomy_term
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Debugging failed indexing in a local Drupal search setup'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: 084f13d6-bed6-4406-a286-c3c9413f5650
+    -
+      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+    -
+      entity: d2fc5189-b64f-4032-bdf7-b42036572436
+    -
+      entity: fa6fb2fb-2619-4eba-b238-227402aa18a2
+  body:
+    -
+      value: |-
+        <h2>Start by Separating the Layers</h2>
+        <p>When indexing fails in a local Drupal search setup, the most helpful first step is to separate the system into layers. Drupal content, Search API configuration, the local environment, and the backend service can all fail in different ways. If those layers get mixed together too early, debugging becomes noisy and frustrating. A more reliable approach is to ask narrow questions: is the service running, is the Search API server enabled, does the index know content has changed, and can the site still query the backend successfully?</p>
+        <p>This method matters because search problems often look similar from the outside. A missing result might mean an unhealthy backend, a stale index, a field mapping issue, or simply content that was never selected for indexing. Separating the layers makes each possibility easier to test.</p>
+        <h2>What to Check in Drupal</h2>
+        <p>Inside Drupal, Search API should show an enabled server and an enabled index. The index should know which content bundles it is tracking and which fields are included. If content recently changed, Drupal should also report items queued for indexing or confirm that the index is already current. These checks help answer whether the application layer still understands its own search model.</p>
+        <p>It is also useful to test known search terms against known content. If a specific article should match and does not, that narrows the problem dramatically. Debugging becomes easier when it starts from expected behavior rather than abstract configuration alone.</p>
+        <h2>What to Check in DDEV</h2>
+        <p>At the environment layer, DDEV should report the Elasticsearch service as healthy and reachable from the web container. This is where local reproducibility matters. If the service is not running or if the expected URL changed, Drupal can be configured correctly and still fail. Because DDEV keeps service definitions in the repository, it gives teams a better baseline for verifying the environment quickly.</p>
+        <p>For a local Drupal search setup, that means infrastructure and application checks should always travel together. A healthy container does not guarantee a healthy index, and a clean Drupal configuration screen does not guarantee the service is responding. Debugging works best when both sides are verified.</p>
+      format: basic_html
+      summary: 'Failed indexing is easier to debug when Drupal configuration, Search API state, DDEV service health, and expected search results are checked as separate layers.'

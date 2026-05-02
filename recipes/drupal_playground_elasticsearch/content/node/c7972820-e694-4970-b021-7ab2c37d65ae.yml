@@ -1,0 +1,44 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: c7972820-e694-4970-b021-7ab2c37d65ae
+  bundle: article
+  default_langcode: en
+  depends:
+    fa6fb2fb-2619-4eba-b238-227402aa18a2: taxonomy_term
+    13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+    bae844cc-9578-4123-b3d2-8bd9dd5fa59c: taxonomy_term
+    ed25d85d-fbbc-4037-90ad-411bc9f31d01: taxonomy_term
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Autocomplete, facets, and spellcheck in Drupal search'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: fa6fb2fb-2619-4eba-b238-227402aa18a2
+    -
+      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+    -
+      entity: bae844cc-9578-4123-b3d2-8bd9dd5fa59c
+    -
+      entity: ed25d85d-fbbc-4037-90ad-411bc9f31d01
+  body:
+    -
+      value: |-
+        <h2>Search Experience Is More Than a Text Box</h2>
+        <p>A strong search experience usually combines several small features rather than relying on one large feature alone. Keyword matching is the foundation, but people often need help refining a query, correcting a typo, or narrowing a broad result set. That is where autocomplete, facets, and spellcheck become especially valuable. Each one supports a different part of the search journey, and together they can make a Drupal search page feel far more usable.</p>
+        <p>In Drupal, Search API provides a good framework for combining those features because it already manages the index, result source, and Views integration. Enhancements can then be layered onto the search page without rewriting the entire experience. That makes search improvements feel incremental and maintainable instead of disruptive.</p>
+        <h2>What Each Feature Contributes</h2>
+        <p>Autocomplete helps users while they are still typing. It can surface likely queries, recognizable titles, or live result hints before the search is submitted. Facets help after a broad query has returned results. They let users narrow by topical groupings such as tags without forcing them to invent the exact next query themselves. Spellcheck helps when the query fails because the user misspelled an important term. Instead of returning a dead end, the search page can suggest a better version of what the user probably meant.</p>
+        <p>These three features solve different problems, which is why they complement each other so well. Autocomplete helps with query formation. Facets help with result refinement. Spellcheck helps with recovery from typing mistakes. A search page becomes more forgiving and more discoverable when all three are present.</p>
+        <h2>Why This Matters in Drupal Projects</h2>
+        <p>Drupal sites often have structured content, shared vocabularies, and editorial models that benefit from guided discovery. Search should reflect that structure. Search API and Elasticsearch can provide the indexing and query foundation, but the quality of the search experience is often defined by the surrounding interactions. Facets can expose content relationships clearly, autocomplete can reveal useful terms quickly, and spellcheck can reduce friction for visitors who do not know the exact wording used by the site.</p>
+        <p>For Drupal teams, that makes search improvement feel practical rather than abstract. Instead of asking only whether a backend can find content, they can ask whether the interface helps people succeed. Those are related questions, but they are not the same. Good search needs both.</p>
+      format: basic_html
+      summary: 'Autocomplete, facets, and spellcheck each improve a different stage of Drupal search, from forming a query to narrowing results to recovering from typos.'

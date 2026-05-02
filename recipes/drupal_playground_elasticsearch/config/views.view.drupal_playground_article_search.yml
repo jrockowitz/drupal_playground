@@ -1,3 +1,4 @@
+uuid: 5ba41058-f68d-447a-a6f0-0ec1f139fc22
 langcode: en
 status: true
 dependencies:
@@ -7,6 +8,10 @@ dependencies:
     - better_exposed_filters
     - facets_exposed_filters
     - search_api
+    - search_api_spellcheck
+    - views_filters_summary
+_core:
+  default_config_hash: PaD9OtCtcufbIRVKTF7Ga17Tst5lZ3z8bMMEAJVlWUo
 id: drupal_playground_article_search
 label: 'Drupal Playground Article Search'
 module: views
@@ -258,18 +263,46 @@ display:
       relationships: {  }
       use_ajax: true
       header:
-        result:
-          id: result
+        search_api_spellcheck_did_you_mean:
+          id: search_api_spellcheck_did_you_mean
           table: views
-          field: result
+          field: search_api_spellcheck_did_you_mean
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: result
+          plugin_id: search_api_spellcheck_did_you_mean
+          empty: true
+          search_api_spellcheck_count: 1
+          search_api_spellcheck_hide_on_result: true
+          search_api_spellcheck_collate: true
+        views_filters_summary:
+          id: views_filters_summary
+          table: views
+          field: views_filters_summary
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: views_filters_summary
           empty: false
-          content: 'Displaying results @start - @end of @total'
+          filters:
+            search_api_fulltext: search_api_fulltext
+            facets_field_tags: facets_field_tags
+          show_labels: false
+          show_remove_link: true
+          show_reset_link: false
+          group_values: false
+          content: 'Displaying @total @result_label @exposed_filter_summary'
+          filters_reset_link_title: Reset
+          filters_summary_separator: ', '
+          filters_summary_prefix: 'for '
+          filters_result_label:
+            plural: results
+            singular: result
       footer: {  }
-      display_extenders: {  }
+      display_extenders:
+        ajax_history:
+          enable_history: true
+          exclude_args: ''
     cache_metadata:
       max-age: -1
       contexts:
@@ -288,7 +321,10 @@ display:
     position: 1
     display_options:
       exposed_block: false
-      display_extenders: {  }
+      display_extenders:
+        ajax_history:
+          enable_history: true
+          exclude_args: ''
       path: search/articles
     cache_metadata:
       max-age: -1

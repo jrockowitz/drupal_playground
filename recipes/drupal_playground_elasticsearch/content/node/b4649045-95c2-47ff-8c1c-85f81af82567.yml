@@ -1,0 +1,41 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: b4649045-95c2-47ff-8c1c-85f81af82567
+  bundle: article
+  default_langcode: en
+  depends:
+    ed25d85d-fbbc-4037-90ad-411bc9f31d01: taxonomy_term
+    d2fc5189-b64f-4032-bdf7-b42036572436: taxonomy_term
+    13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Running Elasticsearch locally with DDEV'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: ed25d85d-fbbc-4037-90ad-411bc9f31d01
+    -
+      entity: d2fc5189-b64f-4032-bdf7-b42036572436
+    -
+      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+  body:
+    -
+      value: |-
+        <h2>Why Local Search Services Matter</h2>
+        <p>Search features are easier to build and debug when the backend exists in every developer environment instead of only in shared higher environments. DDEV makes that possible by defining extra services alongside the Drupal application. Elasticsearch can be started as part of the project itself, which means contributors can work with realistic search infrastructure without installing and managing it separately on their own machines.</p>
+        <p>That consistency is especially helpful when a team is iterating on search configuration. If everyone uses the same containerized service, then backend URLs, startup order, and version assumptions are all part of the repository instead of hidden personal setup. That reduces “works on my machine” problems and makes search work more reproducible.</p>
+        <h2>How the Local Stack Fits Together</h2>
+        <p>In a Drupal project, the web container needs to be able to reach Elasticsearch through a predictable service name and port. Once DDEV starts the environment, Drupal Search API can point at a URL such as <code>http://elasticsearch:9200</code>. The backend configuration becomes straightforward because the service contract is already defined by the local environment. Search configuration and environment configuration reinforce each other instead of drifting apart.</p>
+        <p>This arrangement also gives developers a clean mental model. DDEV handles service orchestration. Drupal handles the application-level search setup. Elasticsearch handles indexing and query execution. When those layers are separated clearly, debugging becomes much easier.</p>
+        <h2>What to Verify in a Local Setup</h2>
+        <p>A reliable local search setup should be verified at more than one layer. DDEV should report the service as healthy. Drupal should show an enabled Search API server and an enabled index. The search page should return expected content for known terms. Running through those checks makes it easier to tell whether a problem is environmental, configurational, or content-related.</p>
+        <p>For Drupal teams, that verification habit is as valuable as the service itself. It turns local search work into something observable and repeatable. Instead of assuming the backend is fine, the project can prove it quickly and keep contributors focused on actual search behavior.</p>
+      format: basic_html
+      summary: 'DDEV makes local Elasticsearch development more reliable by defining the search service in the project and keeping Drupal search work reproducible across the team.'
