@@ -127,4 +127,61 @@ class ClinicalTrialsGovApiTest extends UnitTestCase {
     $this->assertSame([], $result);
   }
 
+  /**
+   * Tests that get() retries once when the API responds with HTTP 429.
+   *
+   * @covers ::get
+   */
+  public function testGetRetriesOnTooManyRequests(): void {
+    $delays = [];
+    $this->api = new class($this->httpClient, $this->logger, $delays) extends ClinicalTrialsGovApi {
+
+      /**
+       * Constructs a retry-observing API test double.
+       */
+      public function __construct(
+        ClientInterface $httpClient,
+        LoggerInterface $logger,
+        protected array &$delays,
+      ) {
+        parent::__construct($httpClient, $logger);
+      }
+
+      /**
+       * {@inheritdoc}
+       */
+      protected function delayRequest(int $microseconds): void {
+        $this->delays[] = $microseconds;
+      }
+
+    };
+
+    $too_many_requests = new RequestException(
+      'Too many requests',
+      new Request('GET', '/studies'),
+      new Response(429, ['Retry-After' => '1'])
+    );
+    $data = ['studies' => [['nctId' => 'NCT001']]];
+
+    $this->httpClient
+      ->expects($this->exactly(2))
+      ->method('request')
+      ->willReturnOnConsecutiveCalls(
+        $this->throwException($too_many_requests),
+        new Response(200, [], json_encode($data))
+      );
+
+    $this->logger
+      ->expects($this->never())
+      ->method('error');
+
+    $result = $this->api->get('/studies');
+
+    // Check that a 429 response is retried and eventually succeeds.
+    $this->assertSame($data, $result);
+
+    // Check that Retry-After is converted into a one-second delay.
+    $this->assertSame([1000000], $delays);
+  }
+
 }

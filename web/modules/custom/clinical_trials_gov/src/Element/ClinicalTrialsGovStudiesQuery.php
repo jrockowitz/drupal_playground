@@ -104,8 +104,8 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
     array &$complete_form,
   ): array {
     $defaults = static::parseQueryString($element['#default_value'] ?? '');
-    $manager = \Drupal::service('clinical_trials_gov.manager');
-    $field_definitions = static::fieldDefinitions($manager->getEnum('Status'));
+    $study_manager = \Drupal::service('clinical_trials_gov.study_manager');
+    $field_definitions = static::fieldDefinitions($study_manager->getEnum('Status'));
     $include_fields = $element['#include_fields'] ?? [];
 
     $element['#attached']['library'][] = 'clinical_trials_gov/studies_query';

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovMetadataBaseController;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -23,12 +24,13 @@ class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadat
   protected bool $filter = FALSE;
 
   public function __construct(
-    ClinicalTrialsGovManagerInterface $manager,
+    ClinicalTrialsGovStudyManagerInterface $studyManager,
     ConfigFactoryInterface $configFactory,
+    ClinicalTrialsGovPathsManagerInterface $pathsManager,
     MessengerInterface $messenger,
     protected DateFormatterInterface $dateFormatter,
   ) {
-    parent::__construct($manager, $configFactory, $messenger);
+    parent::__construct($studyManager, $configFactory, $pathsManager, $messenger);
   }
 
   /**
@@ -37,8 +39,9 @@ class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadat
   public static function create(ContainerInterface $container): static {
     /** @phpstan-ignore-next-line */
     return new self(
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.study_manager'),
       $container->get('config.factory'),
+      $container->get('clinical_trials_gov.paths_manager'),
       $container->get('messenger'),
       $container->get('date.formatter'),
     );
@@ -58,7 +61,7 @@ class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadat
    * {@inheritdoc}
    */
   protected function buildFooter(): array {
-    $version = $this->manager->getVersion();
+    $version = $this->studyManager->getVersion();
     $api_url = ClinicalTrialsGovApi::BASE_URL . '/studies/metadata';
 
     return [

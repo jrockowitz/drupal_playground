@@ -5,15 +5,15 @@ services:
   clinical_trials_gov.api:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovApi
     arguments: ["@http_client", "@logger.channel.clinical_trials_gov"]
-
-  logger.channel.clinical_trials_gov:
-    parent: logger.channel_base
-    arguments: ["clinical_trials_gov"]
   Drupal\clinical_trials_gov\ClinicalTrialsGovApiInterface: "@clinical_trials_gov.api"
 
-  clinical_trials_gov.manager:
-    class: Drupal\clinical_trials_gov\ClinicalTrialsGovManager
-  Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface: "@clinical_trials_gov.manager"
+  clinical_trials_gov.study_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface: "@clinical_trials_gov.study_manager"
+
+  clinical_trials_gov.paths_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface: "@clinical_trials_gov.paths_manager"
 
   clinical_trials_gov.names:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovNames
@@ -37,5 +37,9 @@ services:
 
   clinical_trials_gov.migration_manager:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManager
-    arguments: ["@config.factory", "@plugin.manager.migration", "@clinical_trials_gov.field_manager", "@clinical_trials_gov.entity_manager", "@logger.channel.clinical_trials_gov"]
+    arguments: ["@config.factory", "@plugin.manager.migration", "@clinical_trials_gov.paths_manager", "@clinical_trials_gov.field_manager", "@clinical_trials_gov.entity_manager", "@logger.channel.clinical_trials_gov"]
   Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface: "@clinical_trials_gov.migration_manager"
+
+  logger.channel.clinical_trials_gov:
+    parent: logger.channel_base
+    arguments: ["clinical_trials_gov"]

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Plugin\Validation\Constraint;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
@@ -19,7 +19,7 @@ class ClinicalTrialsGovMetadataPathConstraintValidator extends ConstraintValidat
    * Constructs a new validator.
    */
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
   ) {}
 
   /**
@@ -27,7 +27,7 @@ class ClinicalTrialsGovMetadataPathConstraintValidator extends ConstraintValidat
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.study_manager'),
     );
   }
 
@@ -40,7 +40,7 @@ class ClinicalTrialsGovMetadataPathConstraintValidator extends ConstraintValidat
     }
     assert($constraint instanceof ClinicalTrialsGovMetadataPathConstraint);
 
-    $metadata = $this->manager->getMetadataByPath();
+    $metadata = $this->studyManager->getMetadataByPath();
     if (!isset($metadata[$value])) {
       $this->context->addViolation($constraint->message, [
         '%value' => $value,

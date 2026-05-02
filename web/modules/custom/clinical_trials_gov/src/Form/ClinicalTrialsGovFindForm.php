@@ -6,7 +6,7 @@ namespace Drupal\clinical_trials_gov\Form;
 
 use Drupal\clinical_trials_gov\Batch\ClinicalTrialsGovPathDiscoveryBatch;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\clinical_trials_gov\Traits\ClinicalTrialsGovMessageTrait;
@@ -27,7 +27,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
   protected const PREVIEW_PAGE_SIZE = 10;
 
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovBuilderInterface $builder,
     protected ClinicalTrialsGovMigrationManagerInterface $migrationManager,
   ) {}
@@ -37,7 +37,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.study_manager'),
       $container->get('clinical_trials_gov.builder'),
       $container->get('clinical_trials_gov.migration_manager'),
     );
@@ -215,7 +215,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     }
     $parameters['countTotal'] = 'true';
     $parameters['pageSize'] = self::PREVIEW_PAGE_SIZE;
-    $response = $this->manager->getStudies($parameters);
+    $response = $this->studyManager->getStudies($parameters);
     $studies = $response['studies'] ?? [];
     $total = $response['totalCount'] ?? $form_state->get('preview_total_count');
     if (isset($response['totalCount'])) {

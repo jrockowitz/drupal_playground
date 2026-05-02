@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\clinical_trials_gov_report\Unit;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -29,13 +29,13 @@ class ClinicalTrialsGovReportStudiesControllerTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $manager = $this->createMock(ClinicalTrialsGovManagerInterface::class);
+    $study_manager = $this->createMock(ClinicalTrialsGovStudyManagerInterface::class);
     $builder = $this->createMock(ClinicalTrialsGovBuilderInterface::class);
     $date_formatter = $this->createMock(DateFormatterInterface::class);
     $date_formatter->method('format')
       ->willReturnCallback(fn($timestamp) => date('F j Y', $timestamp));
 
-    $this->controller = new TestClinicalTrialsGovReportStudiesController($manager, $builder, $date_formatter);
+    $this->controller = new TestClinicalTrialsGovReportStudiesController($study_manager, $builder, $date_formatter);
     $this->controller->setStringTranslation($this->getStringTranslationStub());
   }
 

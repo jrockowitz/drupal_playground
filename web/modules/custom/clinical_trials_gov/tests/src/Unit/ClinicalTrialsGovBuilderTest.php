@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Unit;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -27,8 +27,8 @@ class ClinicalTrialsGovBuilderTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $manager = $this->createMock(ClinicalTrialsGovManagerInterface::class);
-    $this->builder = new TestClinicalTrialsGovBuilder($manager);
+    $study_manager = $this->createMock(ClinicalTrialsGovStudyManagerInterface::class);
+    $this->builder = new TestClinicalTrialsGovBuilder($study_manager);
     $this->builder->setStringTranslation($this->getStringTranslationStub());
   }
 

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov_report\Unit;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportMetadataController;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -29,11 +30,11 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
   protected $controller;
 
   /**
-   * The metadata manager mock.
+   * The metadata study manager mock.
    *
-   * @var \Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface|\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface|\PHPUnit\Framework\MockObject\MockObject
    */
-  protected $manager;
+  protected $studyManager;
 
   /**
    * The date formatter mock.
@@ -47,13 +48,14 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->manager = $this->createMock(ClinicalTrialsGovManagerInterface::class);
+    $this->studyManager = $this->createMock(ClinicalTrialsGovStudyManagerInterface::class);
+    $paths_manager = $this->createMock(ClinicalTrialsGovPathsManagerInterface::class);
     $this->dateFormatter = $this->createMock(DateFormatterInterface::class);
 
     $config_factory = $this->createMock(ConfigFactoryInterface::class);
     $messenger = $this->createMock(MessengerInterface::class);
 
-    $this->controller = new class($this->manager, $config_factory, $messenger, $this->dateFormatter) extends ClinicalTrialsGovReportMetadataController {
+    $this->controller = new class($this->studyManager, $config_factory, $paths_manager, $messenger, $this->dateFormatter) extends ClinicalTrialsGovReportMetadataController {
 
       /**
        * Exposes buildMetadataTable() for testing.
@@ -136,7 +138,7 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
    * Tests that the report page includes the report-only footer details.
    */
   public function testIndexIncludesApiAndVersionFooter(): void {
-    $this->manager->method('getMetadataByPath')
+    $this->studyManager->method('getMetadataByPath')
       ->willReturn([
         'protocolSection.identificationModule.briefTitle' => [
           'path' => 'protocolSection.identificationModule.briefTitle',
@@ -154,7 +156,7 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
           'dedLinkUrl' => '',
         ],
       ]);
-    $this->manager->method('getVersion')
+    $this->studyManager->method('getVersion')
       ->willReturn([
         'apiVersion' => '2.0.0',
         'dataTimestamp' => '2024-01-02T03:04:05',

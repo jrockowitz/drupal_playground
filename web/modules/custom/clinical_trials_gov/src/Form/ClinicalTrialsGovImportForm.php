@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Form;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Form\FormBase;
@@ -27,6 +28,7 @@ class ClinicalTrialsGovImportForm extends FormBase {
     protected TimeInterface $time,
     protected TranslationInterface $translation,
     protected DateFormatterInterface $dateFormatter,
+    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
   ) {}
 
   /**
@@ -39,6 +41,7 @@ class ClinicalTrialsGovImportForm extends FormBase {
       $container->get('datetime.time'),
       $container->get('string_translation'),
       $container->get('date.formatter'),
+      $container->get('clinical_trials_gov.paths_manager'),
     );
   }
 
@@ -55,7 +58,7 @@ class ClinicalTrialsGovImportForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('clinical_trials_gov.settings');
     $query = $config->get('query');
-    $paths = $config->get('query_paths');
+    $paths = $this->pathsManager->getQueryPathsRaw();
     $type = $config->get('type');
     $field_mappings = $config->get('fields');
     $fields = array_values($field_mappings);

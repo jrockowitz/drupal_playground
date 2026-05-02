@@ -97,8 +97,11 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
    */
   protected const GROUP_NAME_MAX_LENGTH = 64;
 
+  /**
+   * Constructs a new ClinicalTrialsGovNames service.
+   */
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ConfigFactoryInterface $configFactory,
   ) {}
 
@@ -140,7 +143,7 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
    * {@inheritdoc}
    */
   public function getDisplayLabel(string $piece): string {
-    $metadata = $this->manager->getMetadataByPiece($piece);
+    $metadata = $this->studyManager->getMetadataByPiece($piece);
     $title = (string) ($metadata['title'] ?? '');
     if ($title) {
       return $title;

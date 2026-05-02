@@ -23,7 +23,8 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
     protected ModuleHandlerInterface $moduleHandler,
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
+    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
     protected ClinicalTrialsGovNamesInterface $names,
     protected ClinicalTrialsGovCustomFieldManagerInterface $customFieldManager,
   ) {}
@@ -32,40 +33,17 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    * {@inheritdoc}
    */
   public function getRequiredFieldKeys(): array {
-    return $this->configFactory->get('clinical_trials_gov.settings')->get('required_paths');
+    return $this->pathsManager->getRequiredPaths();
   }
 
   /**
    * {@inheritdoc}
    */
   public function getAvailableFieldKeys(): array {
-    if ($this->availableFieldKeys !== NULL) {
-      return $this->availableFieldKeys;
+    if ($this->availableFieldKeys === NULL) {
+      $this->availableFieldKeys = $this->pathsManager->getQueryPaths();
     }
 
-    $metadata = $this->manager->getMetadataByPath();
-    $available_keys = [];
-
-    foreach ($this->getConfiguredAvailableFieldKeys() as $path) {
-      if (!isset($metadata[$path])) {
-        continue;
-      }
-      $available_keys[$path] = TRUE;
-
-      foreach ($this->getAncestorFieldKeys($path, $metadata) as $ancestor_key) {
-        $available_keys[$ancestor_key] = TRUE;
-      }
-    }
-
-    $ordered_keys = [];
-    foreach (array_keys($metadata) as $path) {
-      if (!isset($available_keys[$path])) {
-        continue;
-      }
-      $ordered_keys[] = $path;
-    }
-
-    $this->availableFieldKeys = $ordered_keys;
     return $this->availableFieldKeys;
   }
 
@@ -86,7 +64,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    * {@inheritdoc}
    */
   public function resolveFieldDefinition(string $path): array {
-    $metadata = $this->manager->getMetadataByPath($path);
+    $metadata = $this->studyManager->getMetadataByPath($path);
     $piece = (string) ($metadata['piece'] ?? $path);
     $type = $metadata['type'] ?? '';
     $source_type = $metadata['sourceType'] ?? '';
@@ -146,7 +124,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
     if ($is_enum) {
       $definition['field_type'] = 'list_string';
       $definition['storage_settings'] = [
-        'allowed_values' => $this->manager->getEnumAsAllowedValues($type),
+        'allowed_values' => $this->studyManager->getEnumAsAllowedValues($type),
         'allowed_values_function' => '',
       ];
       $definition['type_label'] = 'list_string';
@@ -223,41 +201,6 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
     }
 
     return $definitions;
-  }
-
-  /**
-   * Returns ancestor keys for one identifier path.
-   */
-  protected function getAncestorFieldKeys(string $path, array $metadata): array {
-    $ancestor_keys = [];
-    $last_dot = strrpos($path, '.');
-
-    while ($last_dot !== FALSE) {
-      $path = substr($path, 0, $last_dot);
-      if (isset($metadata[$path])) {
-        $ancestor_keys[] = $path;
-      }
-      $last_dot = strrpos($path, '.');
-    }
-
-    return array_reverse($ancestor_keys);
-  }
-
-  /**
-   * Returns configured metadata paths.
-   */
-  protected function getConfiguredAvailableFieldKeys(): array {
-    $paths = $this->configFactory->get('clinical_trials_gov.settings')->get('query_paths');
-
-    if (!$paths) {
-      return [];
-    }
-
-    return array_values(array_unique(array_merge(
-      $paths,
-      [$this->getTitleFieldPath()],
-      $this->getRequiredFieldKeys(),
-    )));
   }
 
   /**

@@ -21,7 +21,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
    * Constructs a new ClinicalTrialsGovBuilder.
    */
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
   ) {}
 
   /**
@@ -100,7 +100,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
    * {@inheritdoc}
    */
   public function buildStudy(array $study, string $nct_id): array {
-    $metadata = $this->manager->getMetadataByPath();
+    $metadata = $this->studyManager->getMetadataByPath();
 
     return [
       '#type' => 'container',

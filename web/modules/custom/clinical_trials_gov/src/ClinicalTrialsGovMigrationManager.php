@@ -36,6 +36,7 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
     protected MigrationPluginManagerInterface $migrationPluginManager,
+    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
     protected ClinicalTrialsGovEntityManagerInterface $entityManager,
     protected LoggerInterface $logger,
@@ -47,7 +48,7 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
   public function updateMigration(): void {
     $settings = $this->configFactory->get('clinical_trials_gov.settings');
     $query = $settings->get('query');
-    $paths = $settings->get('query_paths');
+    $paths = $this->pathsManager->getQueryPathsRaw();
     $type = $settings->get('type');
     $field_mappings = $settings->get('fields');
     $fields = array_values($field_mappings);

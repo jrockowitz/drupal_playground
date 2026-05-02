@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovNames;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovNamesInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -55,15 +56,19 @@ class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMeta
     return $build;
   }
 
+  /**
+   * Constructs a new ClinicalTrialsGovReportNamesController.
+   */
   public function __construct(
-    ClinicalTrialsGovManagerInterface $manager,
+    ClinicalTrialsGovStudyManagerInterface $studyManager,
     ConfigFactoryInterface $configFactory,
+    ClinicalTrialsGovPathsManagerInterface $pathsManager,
     MessengerInterface $messenger,
     DateFormatterInterface $dateFormatter,
     protected ClinicalTrialsGovNamesInterface $names,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
   ) {
-    parent::__construct($manager, $configFactory, $messenger, $dateFormatter);
+    parent::__construct($studyManager, $configFactory, $pathsManager, $messenger, $dateFormatter);
   }
 
   /**
@@ -72,8 +77,9 @@ class ClinicalTrialsGovReportNamesController extends ClinicalTrialsGovReportMeta
   public static function create(ContainerInterface $container): static {
     /** @phpstan-ignore-next-line */
     return new self(
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.study_manager'),
       $container->get('config.factory'),
+      $container->get('clinical_trials_gov.paths_manager'),
       $container->get('messenger'),
       $container->get('date.formatter'),
       $container->get('clinical_trials_gov.names'),

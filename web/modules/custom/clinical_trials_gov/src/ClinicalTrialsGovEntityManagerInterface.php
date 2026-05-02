@@ -10,6 +10,16 @@ namespace Drupal\clinical_trials_gov;
 interface ClinicalTrialsGovEntityManagerInterface {
 
   /**
+   * Default label used when creating the configured content type.
+   */
+  public const DEFAULT_CONTENT_TYPE_LABEL = 'Trial';
+
+  /**
+   * Default description used when creating the configured content type.
+   */
+  public const DEFAULT_CONTENT_TYPE_DESCRIPTION = 'Imported ClinicalTrials.gov studies.';
+
+  /**
    * Creates the content type when needed.
    */
   public function createContentType(string $type, string $label, string $description): void;
@@ -18,6 +28,46 @@ interface ClinicalTrialsGovEntityManagerInterface {
    * Creates selected fields for the destination content type.
    */
   public function createFields(string $type, array $fields): void;
+
+  /**
+   * Builds selected-row state from submitted field-mapping form values.
+   */
+  public function buildSelectedRows(array $rows, ?string $type = NULL): array;
+
+  /**
+   * Returns the field definitions that should be displayed in Configure.
+   */
+  public function getDisplayedFieldDefinitions(): array;
+
+  /**
+   * Builds the saved field mapping from selected metadata row state.
+   */
+  public function buildFieldMappings(array $selected_rows): array;
+
+  /**
+   * Builds the default selected-row state from configured path settings.
+   */
+  public function buildDefaultSelectedRows(?string $type = NULL, ?array $saved_field_mappings = NULL): array;
+
+  /**
+   * Builds the default saved field mapping from configured path settings.
+   */
+  public function buildDefaultFieldMappings(?string $type = NULL, ?array $saved_field_mappings = NULL): array;
+
+  /**
+   * Saves generated field mappings to module settings.
+   */
+  public function saveFieldMappings(array $field_mappings): void;
+
+  /**
+   * Creates the configured content type using saved settings.
+   */
+  public function createConfiguredContentType(): void;
+
+  /**
+   * Creates configured fields using saved settings.
+   */
+  public function createConfiguredFields(): void;
 
   /**
    * Returns whether the field_group module can be used for nested structs.

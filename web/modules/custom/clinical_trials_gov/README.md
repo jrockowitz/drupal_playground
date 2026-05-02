@@ -4,6 +4,34 @@
 
 This README is the human-facing companion to [AGENTS.md](/modules/custom/clinical_trials_gov/AGENTS.md). `AGENTS.md` is the implementation guide for coding agents and developers. This file focuses on the product concepts, workflow, and the URLs you are most likely to need.
 
+## Drush Setup
+
+The module now includes a Drush setup command:
+
+```bash
+ddev drush clinical-trials-gov:setup 'query.cond=Cancer&query.term=New%20York&filter.overallStatus=RECRUITING'
+```
+
+What it does:
+
+- saves the raw query to `clinical_trials_gov.settings:query`
+- discovers and saves `clinical_trials_gov.settings:query_paths`
+- derives the default `clinical_trials_gov.settings:fields` mapping using the same default-selection behavior as the Configure UI
+- creates the configured content type and fields
+- regenerates the `clinical_trials_gov` migration
+
+After the setup command completes, run:
+
+```bash
+ddev drush migrate:import clinical_trials_gov
+```
+
+If you want the install script to do both steps for you, use:
+
+```bash
+ddev install trials-setup
+```
+
 ## Key Concepts
 
 ### The module is a guided wizard
@@ -57,6 +85,7 @@ The `Configure` step can create or update:
 - Drupal field storage and field instances
 - field groups for nested study sections
 - a generated `migrate_plus` migration named `clinical_trials_gov`
+- the `clinical-trials-gov:setup` Drush command for CLI-driven setup
 
 When the destination ClinicalTrials.gov content type exists, Drupal users cannot create those nodes manually through `/node/add`. Trial content is intended to be created by the import workflow.
 
@@ -167,7 +196,7 @@ From here you run the generated migration.
 
 Important behavior:
 
-- the migration only exists when `query`, `paths`, `type`, and `fields` are all populated
+- the migration only exists when `query`, `query_paths`, `type`, and `fields` are all populated
 - if one of those is missing, the generated migration is deleted and the import step is not ready
 
 ### 5. Manage
@@ -337,7 +366,7 @@ Check whether:
 
 - the query has been saved from `Find`
 - the save batch finished successfully
-- `clinical_trials_gov.settings:paths` has been populated
+- `clinical_trials_gov.settings:query_paths` has been populated
 
 ### A field is missing
 

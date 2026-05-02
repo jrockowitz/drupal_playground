@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ClinicalTrialsGovReportStudyController extends ControllerBase {
 
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovBuilderInterface $builder,
   ) {}
 
@@ -24,7 +24,7 @@ class ClinicalTrialsGovReportStudyController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.study_manager'),
       $container->get('clinical_trials_gov.builder'),
     );
   }
@@ -36,7 +36,7 @@ class ClinicalTrialsGovReportStudyController extends ControllerBase {
    *   The NCT ID from the route.
    */
   public function view(string $nctId): array {
-    $study = $this->manager->getStudy($nctId);
+    $study = $this->studyManager->getStudy($nctId);
 
     if (empty($study)) {
       return [
@@ -58,7 +58,7 @@ class ClinicalTrialsGovReportStudyController extends ControllerBase {
    *   The NCT ID from the route.
    */
   public function title(string $nctId): string {
-    $study = $this->manager->getStudy($nctId);
+    $study = $this->studyManager->getStudy($nctId);
     return (string) ($study['protocolSection.identificationModule.briefTitle'] ?? $nctId);
   }
 

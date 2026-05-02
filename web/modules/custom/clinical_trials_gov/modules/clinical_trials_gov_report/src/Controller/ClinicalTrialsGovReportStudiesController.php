@@ -6,7 +6,7 @@ namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -23,7 +23,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
    * Constructs a new ClinicalTrialsGovReportStudiesController.
    */
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovBuilderInterface $builder,
     protected DateFormatterInterface $dateFormatter,
   ) {}
@@ -33,7 +33,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.study_manager'),
       $container->get('clinical_trials_gov.builder'),
       $container->get('date.formatter'),
     );
@@ -54,7 +54,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
     ];
     $query_string = $request->getQueryString() ?? '';
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query_string);
-    $version = $this->manager->getVersion();
+    $version = $this->studyManager->getVersion();
 
     $build['intro'] = [
       '#type' => 'item',
@@ -70,7 +70,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
     unset($parameters['pageOffset']);
     $api_parameters = $this->buildApiParameters($parameters);
 
-    $response = $this->manager->getStudies($api_parameters);
+    $response = $this->studyManager->getStudies($api_parameters);
     $studies = $response['studies'] ?? [];
     $api_url = $this->buildApiUrl($api_parameters);
 

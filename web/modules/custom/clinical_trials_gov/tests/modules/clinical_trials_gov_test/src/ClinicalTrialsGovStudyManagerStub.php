@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov_test;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 
 /**
  * Stub ClinicalTrials.gov manager that returns fixture data for testing.
  *
- * Installed by clinical_trials_gov_test to replace clinical_trials_gov.manager
+ * Installed by clinical_trials_gov_test to replace clinical_trials_gov.study_manager
  * in the service container, eliminating live API calls in all test types.
  */
-class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface {
+class ClinicalTrialsGovStudyManagerStub implements ClinicalTrialsGovStudyManagerInterface {
 
   /**
    * Records the study-search parameters passed to getStudies().
@@ -205,7 +205,7 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
   }
 
   /**
-   * Mirrors ClinicalTrialsGovManager::flattenStudy().
+   * Mirrors ClinicalTrialsGovStudyManager::flattenStudy().
    */
   protected function flattenStudy(mixed $data, string $prefix = ''): array {
     if (is_array($data) && !array_is_list($data)) {
@@ -232,7 +232,7 @@ class ClinicalTrialsGovManagerStub implements ClinicalTrialsGovManagerInterface 
   }
 
   /**
-   * Mirrors ClinicalTrialsGovManager::flattenMetadata().
+   * Mirrors ClinicalTrialsGovStudyManager::flattenMetadata().
    */
   protected function flattenMetadata(array $items, string $parent = ''): array {
     $rows = [];

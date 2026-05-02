@@ -2,7 +2,7 @@
 
 ## Description: Install Drupal, optionally with one or more presets or all presets
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install all
+## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-setup\nddev install all
 ## ProjectTypes: drupal,drupal11
 
 if [ "$#" -gt 1 ]; then
@@ -70,7 +70,11 @@ for PRESET in "$@"; do
   elif [ "$PRESET" = "trials" ]; then
     echo "Installing ClinicalTrials.gov module..."
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
-    drush config:set -y clinical_trials_gov.settings query 'query.cond=Cancer&query.term=New%20York&filter.overallStatus=RECRUITING'
+  elif [ "$PRESET" = "trials-setup" ]; then
+    echo "Setting up ClinicalTrials.gov import..."
+    drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
+    drush clinical-trials-gov:setup 'query.cond=Cancer&query.term=New%20York&filter.overallStatus=RECRUITING'
+    drush migrate:import clinical_trials_gov
   fi
 done
 

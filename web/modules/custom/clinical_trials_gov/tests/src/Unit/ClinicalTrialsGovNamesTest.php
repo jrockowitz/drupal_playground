@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Unit;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovNames;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
@@ -22,11 +22,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ClinicalTrialsGovNamesTest extends UnitTestCase {
 
   /**
-   * The mocked ClinicalTrials.gov manager.
+   * The mocked ClinicalTrials.gov study manager.
    *
-   * @var \Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface&\PHPUnit\Framework\MockObject\MockObject
+   * @var \Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface&\PHPUnit\Framework\MockObject\MockObject
    */
-  protected ClinicalTrialsGovManagerInterface|MockObject $manager;
+  protected ClinicalTrialsGovStudyManagerInterface|MockObject $studyManager;
 
   /**
    * The names service under test.
@@ -38,7 +38,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->manager = $this->createMock(ClinicalTrialsGovManagerInterface::class);
+    $this->studyManager = $this->createMock(ClinicalTrialsGovStudyManagerInterface::class);
     $config_factory = $this->createMock(ConfigFactoryInterface::class);
     $config = $this->getMockBuilder(ImmutableConfig::class)
       ->disableOriginalConstructor()
@@ -53,7 +53,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
       ->with('clinical_trials_gov.settings')
       ->willReturn($config);
 
-    $this->names = new ClinicalTrialsGovNames($this->manager, $config_factory);
+    $this->names = new ClinicalTrialsGovNames($this->studyManager, $config_factory);
   }
 
   /**
@@ -85,7 +85,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    * @covers ::getDisplayLabel
    */
   public function testGetDisplayLabelPrefersMetadataTitle(): void {
-    $this->manager
+    $this->studyManager
       ->expects($this->once())
       ->method('getMetadataByPiece')
       ->willReturn([
@@ -105,7 +105,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    * @covers ::getDisplayLabel
    */
   public function testGetDisplayLabelFallsBackToPiece(): void {
-    $this->manager
+    $this->studyManager
       ->expects($this->once())
       ->method('getMetadataByPiece')
       ->willReturn([]);

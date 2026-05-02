@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -22,8 +23,10 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    */
   public function __construct(
     protected ModuleHandlerInterface $moduleHandler,
+    protected ConfigFactoryInterface $configFactory,
     protected EntityTypeManagerInterface $entityTypeManager,
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
+    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
   ) {}
 
@@ -118,6 +121,142 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
 
     $this->createFieldDisplayComponents($type, $field_definitions);
     $this->createFieldGroups($type, $fields);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildSelectedRows(array $rows, ?string $type = NULL): array {
+    $definitions = $this->fieldManager->getAvailableFieldDefinitions();
+    $type ??= $this->getConfiguredType();
+    $selected_rows = [];
+
+    foreach ($rows as $row) {
+      if (!is_array($row) || empty($row['path'])) {
+        continue;
+      }
+
+      $path = (string) $row['path'];
+      $definition = $definitions[$path] ?? $this->fieldManager->getFieldDefinition($path);
+      $is_required = !empty($definition['required']) || $this->hasRequiredDescendant($path, $definitions);
+      $existing = (($definition['destination_property'] ?? NULL) === 'title')
+        || (!empty($definition['field_name']) && FieldConfig::loadByName('node', $type, $definition['field_name']));
+      $selected_rows[$path] = $is_required || $existing || !empty($row['selected']);
+    }
+
+    return $selected_rows;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDisplayedFieldDefinitions(): array {
+    $definitions = $this->fieldManager->getAvailableFieldDefinitions();
+
+    foreach (array_keys($definitions) as $path) {
+      if ($this->shouldHideFieldRow($path, $definitions) || $this->shouldHideEmptyGroupRow($path, $definitions)) {
+        unset($definitions[$path]);
+      }
+    }
+
+    return $definitions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildFieldMappings(array $selected_rows): array {
+    $selected_fields = [];
+    $normalized_rows = $this->normalizeSelectedRows($selected_rows);
+
+    foreach (array_keys($normalized_rows) as $path) {
+      $definition = $this->fieldManager->getFieldDefinition($path);
+      $field_name = (string) ($definition['field_name'] ?? '');
+      if (!$field_name || empty($definition['available']) || empty($definition['selectable'])) {
+        continue;
+      }
+
+      if (!empty($definition['group_only'])) {
+        if ($this->hasSelectedDescendant($path, $normalized_rows)) {
+          $selected_fields[$field_name] = $path;
+        }
+        continue;
+      }
+
+      if (!empty($normalized_rows[$path])) {
+        $selected_fields[$field_name] = $path;
+      }
+    }
+
+    return $selected_fields;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildDefaultSelectedRows(?string $type = NULL, ?array $saved_field_mappings = NULL): array {
+    $definitions = $this->getDisplayedFieldDefinitions();
+    $type ??= $this->getConfiguredType();
+    $saved_field_mappings ??= $this->getConfiguredFieldMappings();
+    $saved_fields = array_values(array_filter($saved_field_mappings, 'is_string'));
+    $selected_rows = [];
+
+    foreach ($definitions as $path => $definition) {
+      $is_required = !empty($definition['required']) || $this->hasRequiredDescendant($path, $definitions);
+      $existing = (($definition['destination_property'] ?? NULL) === 'title')
+        || (!empty($definition['field_name']) && FieldConfig::loadByName('node', $type, $definition['field_name']));
+      $selected_rows[$path] = $is_required
+        || in_array($path, $saved_fields)
+        || !empty($definition['required'])
+        || $existing;
+    }
+
+    return $selected_rows;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildDefaultFieldMappings(?string $type = NULL, ?array $saved_field_mappings = NULL): array {
+    return $this->buildFieldMappings($this->buildDefaultSelectedRows($type, $saved_field_mappings));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function saveFieldMappings(array $field_mappings): void {
+    $this->configFactory->getEditable('clinical_trials_gov.settings')
+      ->set('fields', $field_mappings)
+      ->save();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createConfiguredContentType(): void {
+    $type = $this->getConfiguredType();
+    if (!$type) {
+      return;
+    }
+
+    $this->createContentType(
+      $type,
+      $this->getConfiguredContentTypeLabel($type),
+      $this->getConfiguredContentTypeDescription($type),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createConfiguredFields(): void {
+    $type = $this->getConfiguredType();
+    $field_mappings = $this->getConfiguredFieldMappings();
+    if (!$type || $field_mappings === []) {
+      return;
+    }
+
+    $this->createFields($type, array_values($field_mappings));
   }
 
   /**
@@ -375,6 +514,148 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   }
 
   /**
+   * Returns the configured destination bundle machine name.
+   */
+  protected function getConfiguredType(): string {
+    return (string) $this->configFactory->get('clinical_trials_gov.settings')->get('type');
+  }
+
+  /**
+   * Returns saved field mappings from module settings.
+   */
+  protected function getConfiguredFieldMappings(): array {
+    return $this->configFactory->get('clinical_trials_gov.settings')->get('fields') ?? [];
+  }
+
+  /**
+   * Returns the configured title metadata path.
+   */
+  protected function getTitleFieldPath(): string {
+    return (string) $this->configFactory->get('clinical_trials_gov.settings')->get('title_path');
+  }
+
+  /**
+   * Returns the required metadata paths.
+   */
+  protected function getRequiredPaths(): array {
+    return $this->pathsManager->getRequiredPaths();
+  }
+
+  /**
+   * Returns the label to use for the configured content type.
+   */
+  protected function getConfiguredContentTypeLabel(string $type): string {
+    $node_type = $this->entityTypeManager->getStorage('node_type')->load($type);
+    if ($node_type) {
+      return $node_type->label();
+    }
+
+    return ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE_LABEL;
+  }
+
+  /**
+   * Returns the description to use for the configured content type.
+   */
+  protected function getConfiguredContentTypeDescription(string $type): string {
+    $node_type = $this->entityTypeManager->getStorage('node_type')->load($type);
+    if ($node_type) {
+      return (string) $node_type->getDescription();
+    }
+
+    return ClinicalTrialsGovEntityManagerInterface::DEFAULT_CONTENT_TYPE_DESCRIPTION;
+  }
+
+  /**
+   * Ensures selected rows include required and title paths.
+   */
+  protected function normalizeSelectedRows(array $selected_rows): array {
+    foreach (array_merge($this->getRequiredPaths(), [$this->getTitleFieldPath()]) as $path) {
+      if (!is_string($path) || !$path) {
+        continue;
+      }
+      $selected_rows[$path] = TRUE;
+    }
+
+    return $selected_rows;
+  }
+
+  /**
+   * Determines whether a metadata path has any required descendants.
+   */
+  protected function hasRequiredDescendant(string $path, array $definitions): bool {
+    $prefix = $path . '.';
+
+    foreach ($definitions as $candidate_path => $candidate_definition) {
+      if (!str_starts_with($candidate_path, $prefix)) {
+        continue;
+      }
+      if (!empty($candidate_definition['required'])) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Determines whether a metadata row has any selected descendants.
+   */
+  protected function hasSelectedDescendant(string $path, array $selected_rows): bool {
+    $prefix = $path . '.';
+
+    foreach ($selected_rows as $candidate_key => $selected) {
+      if ($selected && str_starts_with($candidate_key, $prefix)) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Determines whether a row should be hidden beneath a promoted custom field.
+   */
+  protected function shouldHideFieldRow(string $path, array $definitions): bool {
+    $last_dot = strrpos($path, '.');
+    while ($last_dot !== FALSE) {
+      $parent_path = substr($path, 0, $last_dot);
+      $parent_definition = $definitions[$parent_path] ?? $this->fieldManager->getFieldDefinition($parent_path);
+      if (!empty($parent_definition['available']) && (($parent_definition['field_type'] ?? '') === 'custom') && empty($parent_definition['group_only'])) {
+        return TRUE;
+      }
+      $last_dot = strrpos($parent_path, '.');
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Determines whether a group-only row has any visible children.
+   */
+  protected function shouldHideEmptyGroupRow(string $path, array $definitions): bool {
+    $definition = $definitions[$path] ?? NULL;
+    if (empty($definition['group_only'])) {
+      return FALSE;
+    }
+
+    $prefix = $path . '.';
+    foreach (array_keys($definitions) as $candidate_path) {
+      if (!str_starts_with($candidate_path, $prefix)) {
+        continue;
+      }
+      if ($this->shouldHideFieldRow($candidate_path, $definitions)) {
+        continue;
+      }
+      if ($this->shouldHideEmptyGroupRow($candidate_path, $definitions)) {
+        continue;
+      }
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+
+  /**
    * Builds a generated system field name using the configured prefix.
    */
   protected function buildSystemFieldName(string $suffix): string {
@@ -388,7 +669,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    * Resolves the direct children for a field group.
    */
   protected function resolveFieldGroupChildren(string $path, array $selected_fields): array {
-    $metadata = $this->manager->getMetadataByPath($path);
+    $metadata = $this->studyManager->getMetadataByPath($path);
     $children = [];
 
     foreach (($metadata['children'] ?? []) as $child_path) {
@@ -419,7 +700,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    * Resolves the parent field-group name for a nested group.
    */
   protected function resolveParentGroupName(string $path, array $selected_fields): string {
-    $metadata = $this->manager->getMetadataByPath($path);
+    $metadata = $this->studyManager->getMetadataByPath($path);
     $parent = (string) ($metadata['parent'] ?? '');
     if (!$parent || !isset($selected_fields[$parent]) || empty($selected_fields[$parent]['group_only'])) {
       return '';

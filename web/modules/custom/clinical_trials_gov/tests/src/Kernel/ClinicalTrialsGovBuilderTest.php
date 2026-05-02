@@ -47,7 +47,7 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
     // Check that the duplicate runtime fixture copy is not present.
     $this->assertDirectoryDoesNotExist(DRUPAL_ROOT . '/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_test/fixtures');
 
-    $study = $this->container->get('clinical_trials_gov.manager')->getStudy($nct_id);
+    $study = $this->container->get('clinical_trials_gov.study_manager')->getStudy($nct_id);
     $this->assertNotEmpty($study, 'Stub returned a non-empty study array.');
 
     $build = $this->builder->buildStudy($study, $nct_id);
@@ -103,7 +103,7 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
    * Tests that buildStudiesList() produces a reusable studies table.
    */
   public function testBuildStudiesList(): void {
-    $studies = $this->container->get('clinical_trials_gov.manager')->getStudies([
+    $studies = $this->container->get('clinical_trials_gov.study_manager')->getStudies([
       'query.cond' => 'cancer',
     ])['studies'] ?? [];
 

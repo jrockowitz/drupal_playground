@@ -55,6 +55,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     parent::setUp();
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
+    $this->installConfig('clinical_trials_gov');
     $this->installConfig(['field', 'filter', 'node', 'system']);
     $this->installSchema('node', ['node_access']);
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
@@ -138,8 +139,9 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertGreaterThan($view_display->getComponent('trial_nct_url')['weight'] ?? -1, $view_display->getComponent('trial_nct_api')['weight'] ?? -1);
 
     // Check that the promoted custom field is added to the displays.
-    $this->assertSame('custom_stacked', $form_display->getComponent('trial_loc')['type'] ?? NULL);
-    $this->assertSame('custom_formatter', $view_display->getComponent('trial_loc')['type'] ?? NULL);
+    $location_field_name = $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations');
+    $this->assertSame('custom_stacked', $form_display->getComponent($location_field_name)['type'] ?? NULL);
+    $this->assertSame('custom_formatter', $view_display->getComponent($location_field_name)['type'] ?? NULL);
 
     // Check that remaining nested structure selections create a field group on the form display.
     $field_groups = $form_display->getThirdPartySettings('field_group');
@@ -195,8 +197,8 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that partial date structures resolve to custom fields.
     $this->assertSame('custom', $partial_date_struct_definition['field_type']);
     $this->assertSame([
-      'start_dt',
-      'start_dt_type',
+      'start_date',
+      'start_date_type',
     ], $partial_date_struct_definition['details']);
 
     // Check that text array fields resolve to unlimited multi-value scalar fields.
@@ -216,7 +218,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
       'type',
       'inv_full_name',
       'inv_title',
-      'inv_affil',
+      'inv_aff',
       'old_name_title',
       'old_org',
     ], $responsible_party_definition['details']);

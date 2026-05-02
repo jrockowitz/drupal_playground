@@ -44,8 +44,8 @@ class ClinicalTrialsGovStudiesQuerySummary extends RenderElementBase {
   public static function preRenderSummary(array $element): array {
     $query = (string) ($element['#query'] ?? '');
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query);
-    $manager = \Drupal::service('clinical_trials_gov.manager');
-    $definitions = ClinicalTrialsGovStudiesQuery::fieldDefinitions($manager->getEnum('Status'));
+    $study_manager = \Drupal::service('clinical_trials_gov.study_manager');
+    $definitions = ClinicalTrialsGovStudiesQuery::fieldDefinitions($study_manager->getEnum('Status'));
     $rows = [];
     $handled_parameters = [];
 

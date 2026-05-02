@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov;
 
 /**
- * Fetches and organizes data from the ClinicalTrials.gov API.
+ * Fetches and organizes ClinicalTrials.gov study data.
  */
-class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
+class ClinicalTrialsGovStudyManager implements ClinicalTrialsGovStudyManagerInterface {
 
   /**
    * Per-instance cache of flattened study arrays, keyed by NCT ID.
@@ -30,7 +30,7 @@ class ClinicalTrialsGovManager implements ClinicalTrialsGovManagerInterface {
   protected ?array $enumsCache = NULL;
 
   /**
-   * Constructs a new ClinicalTrialsGovManager.
+   * Constructs a new ClinicalTrialsGovStudyManager.
    */
   public function __construct(
     protected ClinicalTrialsGovApiInterface $api,

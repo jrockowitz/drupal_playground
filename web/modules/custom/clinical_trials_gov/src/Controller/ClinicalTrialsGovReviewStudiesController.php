@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
 
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovBuilderInterface $builder,
   ) {}
 
@@ -27,7 +27,7 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.study_manager'),
       $container->get('clinical_trials_gov.builder'),
     );
   }
@@ -50,7 +50,7 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
       return $this->buildListPage($request);
     }
 
-    $study = $this->manager->getStudy($nctId);
+    $study = $this->studyManager->getStudy($nctId);
     if ($study === []) {
       $this->messenger()->addWarning($this->t('Study %nct_id was not found. Review the saved query results below.', [
         '%nct_id' => $nctId,
@@ -69,7 +69,7 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
       return (string) $this->t('ClinicalTrials.gov');
     }
 
-    $study = $this->manager->getStudy($nctId);
+    $study = $this->studyManager->getStudy($nctId);
     return (string) ($study['protocolSection.identificationModule.briefTitle'] ?? $this->t('ClinicalTrials.gov'));
   }
 
@@ -94,7 +94,7 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
     $parameters['countTotal'] = 'true';
     $parameters['pageSize'] = 50;
 
-    $response = $this->manager->getStudies($parameters);
+    $response = $this->studyManager->getStudies($parameters);
     $studies = $response['studies'] ?? [];
     $count = count($studies);
     $start = $page_offset + 1;

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Controller;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -22,8 +23,9 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
   protected bool $filter = TRUE;
 
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ConfigFactoryInterface $configurationFactory,
+    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
     protected MessengerInterface $messageHandler,
   ) {}
 
@@ -91,7 +93,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Returns configured metadata paths.
    */
   protected function getConfiguredPaths(): array {
-    return $this->configurationFactory->get('clinical_trials_gov.settings')->get('query_paths');
+    return $this->pathsManager->getQueryPaths();
   }
 
   /**
@@ -105,7 +107,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Returns the metadata rows that should be displayed.
    */
   protected function getDisplayedMetadata(): array {
-    $metadata = $this->manager->getMetadataByPath();
+    $metadata = $this->studyManager->getMetadataByPath();
     if (!$this->filter) {
       return $metadata;
     }

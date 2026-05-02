@@ -40,7 +40,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
    * Constructs a new ClinicalTrialsGovCustomFieldManager.
    */
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovNamesInterface $names,
   ) {}
 
@@ -48,7 +48,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
    * {@inheritdoc}
    */
   public function resolveStructuredFieldDefinition(string $path): ?array {
-    $metadata = $this->manager->getMetadataByPath($path);
+    $metadata = $this->studyManager->getMetadataByPath($path);
     if ($this->isSimpleCustomFieldStruct($metadata)) {
       return $this->buildCustomFieldDefinition($metadata);
     }
@@ -75,7 +75,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       if (!is_string($child_key)) {
         continue;
       }
-      $child_metadata = $this->manager->getMetadataByPath($child_key);
+      $child_metadata = $this->studyManager->getMetadataByPath($child_key);
       $column_definition = $this->buildCustomFieldColumnDefinition($child_key, $child_metadata);
       if (!$column_definition) {
         continue;
@@ -123,7 +123,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       if (!is_string($child_key)) {
         return FALSE;
       }
-      $child_metadata = $this->manager->getMetadataByPath($child_key);
+      $child_metadata = $this->studyManager->getMetadataByPath($child_key);
       if (($child_metadata['sourceType'] ?? '') === 'STRUCT') {
         return FALSE;
       }
@@ -202,7 +202,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       $instance += [
         'prefix' => '',
         'suffix' => '',
-        'allowed_values' => $this->manager->getEnumAsAllowedValues($type, TRUE),
+        'allowed_values' => $this->studyManager->getEnumAsAllowedValues($type, TRUE),
       ];
       return [
         'column_name' => $column_name,

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov;
 
 /**
- * Interface for the ClinicalTrials.gov manager service.
+ * Interface for the ClinicalTrials.gov study manager service.
  */
-interface ClinicalTrialsGovManagerInterface {
+interface ClinicalTrialsGovStudyManagerInterface {
 
   /**
    * Fetches a list of studies from the API.

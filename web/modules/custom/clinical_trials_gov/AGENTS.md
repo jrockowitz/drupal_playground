@@ -17,12 +17,19 @@ Core services:
 | Service | Responsibility |
 |---|---|
 | `ClinicalTrialsGovApi` | HTTP client for `/studies`, `/studies/{nctId}`, `/studies/metadata`, `/studies/enums`, `/version` |
-| `ClinicalTrialsGovManager` | Fetches and flattens study data and metadata into dot-notation keys; in-memory cache per request |
+| `ClinicalTrialsGovStudyManager` | Fetches and flattens study data and metadata into dot-notation keys; in-memory cache per request |
+| `ClinicalTrialsGovPathsManager` | Owns raw/effective `query_paths` and `required_paths`; discovers, normalizes, expands, and orders metadata paths |
 | `ClinicalTrialsGovNames` | Converts API `piece` values to Drupal machine names and labels |
 | `ClinicalTrialsGovBuilder` | Converts study arrays into render arrays (list tables and study detail) |
 | `ClinicalTrialsGovFieldManager` | Curates which metadata keys appear in Configure; resolves metadata into Drupal field definitions |
-| `ClinicalTrialsGovEntityManager` | Creates content types, field storage/config, display components, and field groups |
+| `ClinicalTrialsGovEntityManager` | Creates content types, field storage/config, display components, field groups, and shared default field-selection behavior |
 | `ClinicalTrialsGovMigrationManager` | Generates and updates the active `migrate_plus.migration.clinical_trials_gov` config |
+
+Drush commands:
+
+- Place module Drush commands in `src/Drush/Commands/`.
+- Use Drush 13 PSR-4 discovery with `Drush\\Commands\\AutowireTrait` for dependency injection.
+- Do not add a legacy `drush.services.yml` file for this module unless there is a proven discovery or autowiring limitation that cannot be solved with the Drush 13 command pattern.
 
 ## Wizard Flow
 
@@ -42,9 +49,9 @@ Routes:
 
 Step behaviour:
 
-**1. Find** — stores the raw query string in `clinical_trials_gov.settings:query`. On save, it starts a batch that scans up to 500 studies, fetches each study individually, and writes the discovered field paths to `clinical_trials_gov.settings:paths`. Limited to `query.*`, `filter.overallStatus`, `filter.ids`. Includes an Ajax preview section that auto-loads on first render if a saved query exists. The save message is `The studies query has been saved. Please review the selected studies below.`
+**1. Find** — stores the raw query string in `clinical_trials_gov.settings:query`. On save, it starts a batch that scans up to 500 studies, fetches each study individually, and writes the discovered field paths to `clinical_trials_gov.settings:query_paths`. Limited to `query.*`, `filter.overallStatus`, `filter.ids`. Includes an Ajax preview section that auto-loads on first render if a saved query exists. The save message is `The studies query has been saved. Please review the selected studies below.`
 
-**2. Review** — splits into `Studies` and `Metadata`. Studies lists studies from the saved query and uses `clinical_trials_gov.review.study` for modal study links. Pagination is UI-only via `nextPageToken`. Metadata shows only the exact saved `clinical_trials_gov.settings:paths`, includes the same `Studies query` details element as the Studies page, and includes a `Field paths` footer details element with the saved paths. The study detail title callback returns the study's `briefTitle`, falling back to `'ClinicalTrials.gov'`.
+**2. Review** — splits into `Studies` and `Metadata`. Studies lists studies from the saved query and uses `clinical_trials_gov.review.study` for modal study links. Pagination is UI-only via `nextPageToken`. Metadata shows only the effective saved `clinical_trials_gov.settings:query_paths`, includes the same `Studies query` details element as the Studies page, and includes a `Field paths` footer details element with the saved paths. The study detail title callback returns the study's `briefTitle`, falling back to `'ClinicalTrials.gov'`.
 
 **3. Configure** — creates or reuses a destination content type; shows curated field definitions from `ClinicalTrialsGovFieldManager`. Field-group rows are structural only. Empty group-only rows are hidden. Child rows beneath a promoted `custom` field are hidden. The configured ClinicalTrials.gov bundle is import-managed and cannot be manually created through Drupal node add routes.
 
@@ -54,12 +61,12 @@ Step behaviour:
 
 ## Configuration
 
-Primary config: `clinical_trials_gov.settings` — keys: `query`, `paths`, `type`, `field_prefix`, `readonly`, `fields`. `fields` is stored as a mapping of generated Drupal field or group name to metadata path.
+Primary config: `clinical_trials_gov.settings` — keys: `query`, `query_paths`, `required_paths`, `title_path`, `type`, `field_prefix`, `readonly`, `fields`. `fields` is stored as a mapping of generated Drupal field or group name to metadata path.
 Install defaults live in `config/install/clinical_trials_gov.settings.yml`.
 
 `field_prefix` is used directly as the generated Drupal field-name prefix. For example, a saved value of `trial_version_holder` generates Drupal field names beginning with `trial_version_holder_`.
 
-Generated migration: `migrate_plus.migration.clinical_trials_gov`. Deleted when query/paths/type/fields are incomplete.
+Generated migration: `migrate_plus.migration.clinical_trials_gov`. Deleted when query/query_paths/type/fields are incomplete.
 
 The configured `type` is also used by the node access override that blocks manual node creation for the ClinicalTrials.gov destination bundle, including when the Trash module swaps in its own node access handler.
 
@@ -81,7 +88,7 @@ Field resolution lives in `ClinicalTrialsGovFieldManager::resolveFieldDefinition
 2. `field_group` — nested container structs when `field_group` module is available; `group_only: true`, not directly saved as a field
 3. unsupported — everything else; hidden from Configure
 
-**Available field list:** `ClinicalTrialsGovFieldManager::getAvailableFieldKeys()` reads the saved `clinical_trials_gov.settings:paths` allow-list, always unions in required paths, and then adds ancestor paths so group structures still resolve correctly. There is no legacy fallback list anymore; if `paths` is empty, Configure is blocked until Find discovers fields.
+**Available field list:** `ClinicalTrialsGovFieldManager::getAvailableFieldKeys()` now derives from `ClinicalTrialsGovPathsManager::getQueryPaths()`. The paths manager owns raw/effective `query_paths` and `required_paths`, adds ancestors, and keeps ordering aligned with metadata. There is no legacy fallback list anymore; if `query_paths` is empty, Configure is blocked until Find discovers fields.
 
 **Field names** are generated from the metadata `piece`, normalised to snake_case, and prefixed with `{field_prefix}_` when a custom prefix is configured. Long names are capped at 32 characters, truncated, and suffixed with an 8-character SHA-256 hash. Overrides live in `ClinicalTrialsGovNames::FIELD_NAMES`.
 
@@ -120,7 +127,7 @@ UI preview/review fetches only one page at a time; the migration source fetches 
 
 Test support:
 
-- `tests/modules/clinical_trials_gov_test/` — stub service (`ClinicalTrialsGovManagerStub`) and JSON fixtures; this is the real test logic
+- `tests/modules/clinical_trials_gov_test/` — stub service (`ClinicalTrialsGovStudyManagerStub`) and JSON fixtures; this is the real test logic
 - `modules/clinical_trials_gov_test/` — lightweight service-substitution wrapper
 
 The stub simulates paginated `/studies` responses (two studies on page 1, one on page 2) and exposes `getStudiesRequests()` to assert pagination behaviour.
@@ -151,10 +158,12 @@ ddev drush migrate:status clinical_trials_gov
 
 - Update tests when changing: field-path discovery, metadata table layout, field curation, struct resolution, migration generation, source pagination, or Configure table behaviour.
 - Curated field-list changes ripple into the Functional test — check `ClinicalTrialsGovTest::testWizardFlow` assertions against the Configure table.
-- If a field seems "missing", check `clinical_trials_gov.settings:paths` and the Find discovery batch before touching the resolver.
-- If a repeated struct child path seems missing, inspect both `ClinicalTrialsGovManager::flattenStudy()` and `ClinicalTrialsGovSource::flattenStudy()` before changing the batch.
-- If Configure is blocked, check whether `clinical_trials_gov.settings:paths` is empty; there is no fallback allow-list anymore.
+- If a field seems "missing", check `clinical_trials_gov.settings:query_paths` and the Find discovery batch before touching the resolver.
+- If a repeated struct child path seems missing, inspect both `ClinicalTrialsGovStudyManager::flattenStudy()` and `ClinicalTrialsGovSource::flattenStudy()` before changing the batch.
+- If Configure is blocked, check whether `clinical_trials_gov.settings:query_paths` is empty; there is no fallback allow-list anymore.
 - If a struct seems wrong, inspect: metadata `type`, `sourceType`, `children`, and which outcome (`custom_field`, `field_group`, unsupported) is intended.
 - Preserve the distinction between UI preview/review (one page) and migration source (all pages).
 - Do not use `0` for unlimited cardinality — use `-1`.
 - Do not revert `PartialDateStruct` to JSON storage — the `custom_field` approach is intentional.
+- New Drush commands should live in `src/Drush/Commands/` and use Drush autowiring instead of legacy service-file registration.
+- Only `ClinicalTrialsGovPathsManager` and `ClinicalTrialsGovSettingsForm` should read `query_paths` or `required_paths` directly from config. Other runtime code should use the paths manager.

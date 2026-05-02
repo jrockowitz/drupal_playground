@@ -7,6 +7,7 @@ namespace Drupal\clinical_trials_gov\Form;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -27,6 +28,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
    */
   public function __construct(
     protected EntityTypeManagerInterface $entityTypeManager,
+    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
     protected ClinicalTrialsGovEntityManagerInterface $entityManager,
     protected ClinicalTrialsGovMigrationManagerInterface $migrationManager,
@@ -38,6 +40,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
+      $container->get('clinical_trials_gov.paths_manager'),
       $container->get('clinical_trials_gov.field_manager'),
       $container->get('clinical_trials_gov.entity_manager'),
       $container->get('clinical_trials_gov.migration_manager'),
@@ -66,10 +69,10 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $form['#attached']['library'][] = 'clinical_trials_gov/clinical_trials_gov';
 
     $config = $this->config('clinical_trials_gov.settings');
-    $paths = $config->get('query_paths');
+    $paths = $this->pathsManager->getQueryPathsRaw();
     $saved_type = $config->get('type');
     $saved_field_mappings = $config->get('fields');
-    $saved_fields = array_values($saved_field_mappings);
+    $selected_rows = $this->entityManager->buildDefaultSelectedRows($saved_type, $saved_field_mappings);
     $node_type = $this->entityTypeManager->getStorage('node_type')->load($saved_type);
 
     if (!$paths) {
@@ -167,13 +170,9 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       ],
     ];
 
-    $definitions = $this->fieldManager->getAvailableFieldDefinitions();
+    $definitions = $this->entityManager->getDisplayedFieldDefinitions();
 
     foreach ($definitions as $path => $definition) {
-      if ($this->shouldHideFieldRow($path, $definitions) || $this->shouldHideEmptyGroupRow($path, $definitions)) {
-        continue;
-      }
-
       $row_key = md5($path);
       $existing = FALSE;
       if (($definition['destination_property'] ?? NULL) === 'title') {
@@ -184,7 +183,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       }
 
       $is_required = !empty($definition['required']) || $this->hasRequiredDescendant($path, $definitions);
-      $selected = $this->isFieldSelectedByDefault($path, $definition, $saved_fields, $existing, $is_required);
+      $selected = !empty($selected_rows[$path]);
       $disabled = $is_required || $existing || empty($definition['selectable']);
       $depth = $this->calculateHierarchyDepth($path);
 
@@ -245,7 +244,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $paths = $this->config('clinical_trials_gov.settings')->get('query_paths');
+    $paths = $this->pathsManager->getQueryPathsRaw();
     if (!$paths) {
       $this->messenger()->addWarning($this->t('Save a studies query from the <a href=":find_url">Find</a> step before configuring the destination content type and fields.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
@@ -258,43 +257,13 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     $type = (string) ($form_state->getValue('existing_type') ?: $this->config('clinical_trials_gov.settings')->get('type'));
     $label = (string) ($form_state->getValue('label') ?: 'Trial');
     $description = (string) ($form_state->getValue('description') ?: '');
-    $definitions = $this->fieldManager->getAvailableFieldDefinitions();
-
-    $selected_rows = [];
-    foreach (($form_state->getValue(['field_mapping', 'rows']) ?? []) as $row) {
-      if (!is_array($row) || empty($row['path'])) {
-        continue;
-      }
-      $path = (string) $row['path'];
-      $definition = $definitions[$path] ?? $this->fieldManager->getFieldDefinition($path);
-      $is_required = !empty($definition['required']) || $this->hasRequiredDescendant($path, $definitions);
-      $existing = (($definition['destination_property'] ?? NULL) === 'title')
-        || (!empty($definition['field_name']) && FieldConfig::loadByName('node', $type, $definition['field_name']));
-      $selected_rows[$path] = $is_required || $existing || !empty($row['selected']);
-    }
-
-    $selected_fields = [];
-    foreach (array_keys($selected_rows) as $path) {
-      $definition = $this->fieldManager->getFieldDefinition($path);
-      $field_name = (string) ($definition['field_name'] ?? '');
-      if (!$field_name) {
-        continue;
-      }
-      if (!empty($definition['group_only'])) {
-        if ($this->hasSelectedDescendant($path, $selected_rows)) {
-          $selected_fields[$field_name] = $path;
-        }
-        continue;
-      }
-      if (!empty($selected_rows[$path])) {
-        $selected_fields[$field_name] = $path;
-      }
-    }
+    $selected_rows = $this->entityManager->buildSelectedRows($form_state->getValue(['field_mapping', 'rows']) ?? [], $type);
+    $selected_fields = $this->entityManager->buildFieldMappings($selected_rows);
 
     $config
       ->set('type', $type)
-      ->set('fields', $selected_fields)
       ->save();
+    $this->entityManager->saveFieldMappings($selected_fields);
 
     $this->entityManager->createContentType($type, $label, $description);
     $this->entityManager->createFields($type, array_values($selected_fields));
@@ -431,16 +400,6 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
   }
 
   /**
-   * Determines whether a metadata field should be selected by default.
-   */
-  protected function isFieldSelectedByDefault(string $path, array $definition, array $saved_fields, bool $existing, bool $is_required = FALSE): bool {
-    return $is_required
-      || in_array($path, $saved_fields, TRUE)
-      || !empty($definition['required'])
-      || $existing;
-  }
-
-  /**
    * Determines whether a metadata path has any required descendants.
    */
   protected function hasRequiredDescendant(string $path, array $definitions): bool {
@@ -456,63 +415,6 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
     }
 
     return FALSE;
-  }
-
-  /**
-   * Determines whether a metadata row has any selected descendants.
-   */
-  protected function hasSelectedDescendant(string $path, array $selected_rows): bool {
-    $prefix = $path . '.';
-    foreach ($selected_rows as $candidate_key => $selected) {
-      if ($selected && str_starts_with($candidate_key, $prefix)) {
-        return TRUE;
-      }
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * Determines whether a row should be hidden beneath a promoted custom field.
-   */
-  protected function shouldHideFieldRow(string $path, array $definitions): bool {
-    $last_dot = strrpos($path, '.');
-    while ($last_dot !== FALSE) {
-      $parent_path = substr($path, 0, $last_dot);
-      $parent_definition = $definitions[$parent_path] ?? $this->fieldManager->getFieldDefinition($parent_path);
-      if (!empty($parent_definition['available']) && ($parent_definition['field_type'] ?? '') === 'custom' && empty($parent_definition['group_only'])) {
-        return TRUE;
-      }
-      $last_dot = strrpos($parent_path, '.');
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * Determines whether a group-only row has any visible children.
-   */
-  protected function shouldHideEmptyGroupRow(string $path, array $definitions): bool {
-    $definition = $definitions[$path] ?? NULL;
-    if (empty($definition['group_only'])) {
-      return FALSE;
-    }
-
-    $prefix = $path . '.';
-    foreach (array_keys($definitions) as $candidate_path) {
-      if (!str_starts_with($candidate_path, $prefix)) {
-        continue;
-      }
-      if ($this->shouldHideFieldRow($candidate_path, $definitions)) {
-        continue;
-      }
-      if ($this->shouldHideEmptyGroupRow($candidate_path, $definitions)) {
-        continue;
-      }
-      return FALSE;
-    }
-
-    return TRUE;
   }
 
 }

@@ -5,24 +5,24 @@ declare(strict_types=1);
 namespace Drupal\Tests\clinical_trials_gov\Unit;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovApiInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManager;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManager;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
- * Unit tests for ClinicalTrialsGovManager.
+ * Unit tests for ClinicalTrialsGovStudyManager.
  *
- * @coversDefaultClass \Drupal\clinical_trials_gov\ClinicalTrialsGovManager
+ * @coversDefaultClass \Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManager
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovManagerTest extends UnitTestCase {
+class ClinicalTrialsGovStudyManagerTest extends UnitTestCase {
 
   /**
    * The system under test.
    */
-  protected ClinicalTrialsGovManager $manager;
+  protected ClinicalTrialsGovStudyManager $studyManager;
 
   /**
    * The mocked API.
@@ -35,7 +35,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
   protected function setUp(): void {
     parent::setUp();
     $this->api = $this->createMock(ClinicalTrialsGovApiInterface::class);
-    $this->manager = new ClinicalTrialsGovManager($this->api);
+    $this->studyManager = new ClinicalTrialsGovStudyManager($this->api);
   }
 
   /**
@@ -54,7 +54,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
       ->with('/studies', ['query.cond' => 'cancer', 'countTotal' => 'true'])
       ->willReturn($response);
 
-    $result = $this->manager->getStudies(['query.cond' => 'cancer', 'countTotal' => 'true']);
+    $result = $this->studyManager->getStudies(['query.cond' => 'cancer', 'countTotal' => 'true']);
 
     // Check that the raw response is returned with no transformation.
     $this->assertSame($response, $result);
@@ -76,7 +76,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
       ->with('/version')
       ->willReturn($response);
 
-    $result = $this->manager->getVersion();
+    $result = $this->studyManager->getVersion();
 
     // Check that the raw version response is returned with no transformation.
     $this->assertSame($response, $result);
@@ -105,7 +105,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         'hasResults' => FALSE,
       ]);
 
-    $result = $this->manager->getStudy('NCT001');
+    $result = $this->studyManager->getStudy('NCT001');
 
     // Check that nested assoc arrays are flattened to dot-notation keys.
     $this->assertSame('NCT001', $result['protocolSection.identificationModule.nctId']);
@@ -149,7 +149,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getStudy('NCT001');
+    $result = $this->studyManager->getStudy('NCT001');
 
     // Check that repeated struct parents are preserved as the original list value.
     $this->assertSame([
@@ -201,7 +201,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getMetadataByPath();
+    $result = $this->studyManager->getMetadataByPath();
 
     // Check that the top-level section is keyed by its name.
     $this->assertArrayHasKey('protocolSection', $result);
@@ -247,7 +247,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getMetadataByPath('protocolSection.identificationModule');
+    $result = $this->studyManager->getMetadataByPath('protocolSection.identificationModule');
 
     // Check that a single metadata row can be loaded by path.
     $this->assertSame('Identification', $result['piece']);
@@ -294,7 +294,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getMetadataByPath();
+    $result = $this->studyManager->getMetadataByPath();
 
     // Check that optional root-level DED link data is preserved.
     $this->assertSame('Study Protocol', $result['protocolSection']['dedLinkLabel']);
@@ -337,7 +337,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getMetadataByPath('protocolSection.identificationModule');
+    $result = $this->studyManager->getMetadataByPath('protocolSection.identificationModule');
 
     // Check that missing optional raw fields normalize to empty values.
     $this->assertSame('', $result['rules']);
@@ -376,7 +376,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getMetadataByPiece();
+    $result = $this->studyManager->getMetadataByPiece();
 
     // Check that the metadata can be looked up by piece.
     $this->assertArrayHasKey('ProtocolSection', $result);
@@ -414,7 +414,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getMetadataByPiece('Identification');
+    $result = $this->studyManager->getMetadataByPiece('Identification');
 
     // Check that a single metadata row can be loaded by piece.
     $this->assertSame('protocolSection.identificationModule', $result['path']);
@@ -448,7 +448,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getEnum('OverallStatus');
+    $result = $this->studyManager->getEnum('OverallStatus');
 
     // Check that the value strings are extracted from the enum objects.
     $this->assertSame(['RECRUITING', 'COMPLETED', 'TERMINATED'], $result);
@@ -463,7 +463,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
     $this->api->method('get')->willReturn([]);
 
     // Check that an empty array is returned when the type is not found.
-    $this->assertSame([], $this->manager->getEnum('UnknownType'));
+    $this->assertSame([], $this->studyManager->getEnum('UnknownType'));
   }
 
   /**
@@ -486,7 +486,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getEnumAsAllowedValues('OverallStatus');
+    $result = $this->studyManager->getEnumAsAllowedValues('OverallStatus');
 
     // Check that allowed values use the API value as the key and legacy label.
     $this->assertSame([
@@ -515,7 +515,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         ],
       ]);
 
-    $result = $this->manager->getEnumAsAllowedValues('Phase', TRUE);
+    $result = $this->studyManager->getEnumAsAllowedValues('Phase', TRUE);
 
     // Check that custom field rows are normalized to key/label pairs.
     $this->assertSame([
@@ -549,7 +549,7 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
         'a' => ['b' => 'second'],
       ]);
 
-    $result = $this->manager->getStudy('NCT001');
+    $result = $this->studyManager->getStudy('NCT001');
 
     // Check that the first-encountered value is kept when paths collide.
     $this->assertSame('first', $result['a.b']);
@@ -571,8 +571,8 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
       ->willReturn($raw);
 
     // Check that the first and second calls return identical flattened data.
-    $first = $this->manager->getStudy('NCT001');
-    $second = $this->manager->getStudy('NCT001');
+    $first = $this->studyManager->getStudy('NCT001');
+    $second = $this->studyManager->getStudy('NCT001');
     $this->assertSame($first, $second);
   }
 
@@ -589,8 +589,8 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
       ->willReturn([]);
 
     // Check that an empty response is stored and the API is not called again.
-    $first = $this->manager->getMetadataByPath();
-    $second = $this->manager->getMetadataByPath();
+    $first = $this->studyManager->getMetadataByPath();
+    $second = $this->studyManager->getMetadataByPath();
     $this->assertSame([], $first);
     $this->assertSame($first, $second);
   }
@@ -608,8 +608,8 @@ class ClinicalTrialsGovManagerTest extends UnitTestCase {
       ->willReturn([]);
 
     // Check that an empty enums response is stored and the API is not called again.
-    $first = $this->manager->getEnums();
-    $second = $this->manager->getEnums();
+    $first = $this->studyManager->getEnums();
+    $second = $this->studyManager->getEnums();
     $this->assertSame([], $first);
     $this->assertSame($first, $second);
   }

@@ -39,8 +39,8 @@ class ClinicalTrialsGovPathDiscoveryBatchTest extends KernelTestBase {
    * Tests that path discovery scans studies and saves discovered paths.
    */
   public function testDiscoverAndFinish(): void {
-    /** @var \Drupal\clinical_trials_gov_test\ClinicalTrialsGovManagerStub $manager */
-    $manager = $this->container->get('clinical_trials_gov.manager');
+    /** @var \Drupal\clinical_trials_gov_test\ClinicalTrialsGovStudyManagerStub $study_manager */
+    $study_manager = $this->container->get('clinical_trials_gov.study_manager');
 
     $context = [];
     do {
@@ -64,12 +64,12 @@ class ClinicalTrialsGovPathDiscoveryBatchTest extends KernelTestBase {
       'fields' => 'NCTId',
       'pageSize' => '100',
       'pageToken' => 'page-2',
-    ], $manager->getStudiesRequests()[count($manager->getStudiesRequests()) - 1]);
+    ], $study_manager->getStudiesRequests()[count($study_manager->getStudiesRequests()) - 1]);
     $this->assertSame([
       'NCT05088187',
       'NCT05189171',
       'NCT01205711',
-    ], $manager->getStudyRequests());
+    ], $study_manager->getStudyRequests());
   }
 
 }

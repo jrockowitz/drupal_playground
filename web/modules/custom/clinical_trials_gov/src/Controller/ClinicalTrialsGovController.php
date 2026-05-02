@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Controller;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Displays the ClinicalTrials.gov import wizard landing page.
@@ -14,12 +16,28 @@ use Drupal\Core\Url;
 class ClinicalTrialsGovController extends ControllerBase {
 
   /**
+   * Constructs a new ClinicalTrialsGovController.
+   */
+  public function __construct(
+    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
+  ) {}
+
+  /**
+   * Creates the controller from the service container.
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('clinical_trials_gov.paths_manager'),
+    );
+  }
+
+  /**
    * Returns the wizard index page.
    */
   public function index(): array {
     $config = $this->config('clinical_trials_gov.settings');
     $query = $config->get('query');
-    $paths = $config->get('query_paths');
+    $paths = $this->pathsManager->getQueryPathsRaw();
     $type = $config->get('type');
     $field_mappings = $config->get('fields');
     $import_ready = ($query && $paths && $type && $field_mappings);

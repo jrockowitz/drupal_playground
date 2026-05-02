@@ -6,7 +6,7 @@ namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -19,7 +19,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
 
   public function __construct(
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected DateFormatterInterface $dateFormatter,
   ) {}
 
@@ -30,7 +30,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
     /** @phpstan-ignore-next-line */
     return new self(
       $container->get('clinical_trials_gov.field_manager'),
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.study_manager'),
       $container->get('date.formatter'),
     );
   }
@@ -39,10 +39,10 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
    * Renders the structs report page.
    */
   public function index(): array {
-    $metadata = $this->manager->getMetadataByPath();
+    $metadata = $this->studyManager->getMetadataByPath();
     $used_paths = $this->fieldManager->getAvailableFieldKeys();
     $struct_rows = $this->buildStructRows($metadata, $used_paths);
-    $version = $this->manager->getVersion();
+    $version = $this->studyManager->getVersion();
     $api_url = ClinicalTrialsGovApi::BASE_URL . '/studies/metadata';
 
     return [

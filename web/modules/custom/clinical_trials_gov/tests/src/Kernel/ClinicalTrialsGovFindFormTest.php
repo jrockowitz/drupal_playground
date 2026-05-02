@@ -46,8 +46,8 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
       ->save();
 
     $form_object = ClinicalTrialsGovFindForm::create($this->container);
-    /** @var \Drupal\clinical_trials_gov_test\ClinicalTrialsGovManagerStub $manager */
-    $manager = $this->container->get('clinical_trials_gov.manager');
+    /** @var \Drupal\clinical_trials_gov_test\ClinicalTrialsGovStudyManagerStub $study_manager */
+    $study_manager = $this->container->get('clinical_trials_gov.study_manager');
 
     // Check that Find no longer exposes manual path settings.
     $empty_form = $form_object->buildForm([], new FormState());
@@ -84,7 +84,7 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
         'countTotal' => 'true',
         'pageSize' => 10,
       ],
-    ], array_slice($manager->getStudiesRequests(), -2));
+    ], array_slice($study_manager->getStudiesRequests(), -2));
 
     $form_state->setValue('query', 'query.cond=cancer&filter.overallStatus=RECRUITING');
     $form_object->updatePreviewSubmit($paged_form, $form_state);
@@ -98,7 +98,7 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
       'filter.overallStatus' => 'RECRUITING',
       'countTotal' => 'true',
       'pageSize' => 10,
-    ], $manager->getStudiesRequests()[count($manager->getStudiesRequests()) - 1]);
+    ], $study_manager->getStudiesRequests()[count($study_manager->getStudiesRequests()) - 1]);
 
     $submit_form_state = new FormState();
     $submit_form_state->setValue('query', 'query.cond=lung');

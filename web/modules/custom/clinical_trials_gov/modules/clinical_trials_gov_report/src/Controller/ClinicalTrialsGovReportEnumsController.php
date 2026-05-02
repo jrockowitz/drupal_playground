@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ClinicalTrialsGovReportEnumsController extends ControllerBase {
 
   public function __construct(
-    protected ClinicalTrialsGovManagerInterface $manager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected DateFormatterInterface $dateFormatter,
   ) {}
 
@@ -27,7 +27,7 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     /** @phpstan-ignore-next-line */
     return new self(
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.study_manager'),
       $container->get('date.formatter'),
     );
   }
@@ -36,8 +36,8 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
    * Renders the enums report page.
    */
   public function index(): array {
-    $enums = $this->manager->getEnums();
-    $version = $this->manager->getVersion();
+    $enums = $this->studyManager->getEnums();
+    $version = $this->studyManager->getVersion();
     $api_url = ClinicalTrialsGovApi::BASE_URL . '/studies/enums';
 
     return [

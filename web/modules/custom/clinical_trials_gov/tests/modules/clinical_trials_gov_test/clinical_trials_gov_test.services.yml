@@ -2,5 +2,5 @@ services:
   clinical_trials_gov.api:
     class: Drupal\clinical_trials_gov_test\ClinicalTrialsGovApiStub
 
-  clinical_trials_gov.manager:
-    class: Drupal\clinical_trials_gov_test\ClinicalTrialsGovManagerStub
+  clinical_trials_gov.study_manager:
+    class: Drupal\clinical_trials_gov_test\ClinicalTrialsGovStudyManagerStub

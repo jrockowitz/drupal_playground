@@ -13,7 +13,7 @@ interface ClinicalTrialsGovBuilderInterface {
    * Builds a studies results table render array.
    *
    * @param array $studies
-   *   Raw studies array from ClinicalTrialsGovManagerInterface::getStudies().
+   *   Raw studies array from ClinicalTrialsGovStudyManagerInterface::getStudies().
    * @param string|null $study_route
    *   Route name for study detail links. NULL renders NCT IDs as plain text.
    * @param array $options
@@ -30,7 +30,7 @@ interface ClinicalTrialsGovBuilderInterface {
    *
    * @param array $study
    *   Flat array keyed by Index field paths, as returned by
-   *   ClinicalTrialsGovManagerInterface::getStudy(). This is NOT compatible
+   *   ClinicalTrialsGovStudyManagerInterface::getStudy(). This is NOT compatible
    *   with the nested entries inside getStudies()['studies'].
    * @param string $nct_id
    *   The NCT ID used to build the upstream API URL.

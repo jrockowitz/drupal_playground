@@ -17,8 +17,9 @@ class ClinicalTrialsGovReviewMetadataController extends ClinicalTrialsGovMetadat
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('clinical_trials_gov.manager'),
+      $container->get('clinical_trials_gov.study_manager'),
       $container->get('config.factory'),
+      $container->get('clinical_trials_gov.paths_manager'),
       $container->get('messenger'),
     );
   }
