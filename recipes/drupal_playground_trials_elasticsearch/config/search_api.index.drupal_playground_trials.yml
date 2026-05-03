@@ -2,7 +2,14 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.trial.trial_cond
+    - field.field.node.trial.trial_healthy_volunteers
     - field.field.node.trial.trial_nct_id
+    - field.field.node.trial.trial_overall_status
+    - field.field.node.trial.trial_phase
+    - field.field.node.trial.trial_sex
+    - field.field.node.trial.trial_std_age
+    - field.field.node.trial.trial_study_type
     - node.type.trial
     - search_api.server.drupal_playground_trials
   module:
@@ -30,6 +37,22 @@ field_settings:
     dependencies:
       module:
         - node
+  trial_cond:
+    label: 'Condition/Disease'
+    datasource_id: 'entity:node'
+    property_path: trial_cond
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_cond
+  trial_healthy_volunteers:
+    label: 'Healthy volunteers'
+    datasource_id: 'entity:node'
+    property_path: trial_healthy_volunteers
+    type: boolean
+    dependencies:
+      config:
+        - field.field.node.trial.trial_healthy_volunteers
   trial_nct_id:
     label: 'NCT ID'
     datasource_id: 'entity:node'
@@ -38,6 +61,46 @@ field_settings:
     dependencies:
       config:
         - field.field.node.trial.trial_nct_id
+  trial_overall_status:
+    label: 'Overall status'
+    datasource_id: 'entity:node'
+    property_path: trial_overall_status
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_overall_status
+  trial_phase:
+    label: Phase
+    datasource_id: 'entity:node'
+    property_path: trial_phase
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_phase
+  trial_sex:
+    label: Sex
+    datasource_id: 'entity:node'
+    property_path: trial_sex
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_sex
+  trial_study_type:
+    label: 'Study type'
+    datasource_id: 'entity:node'
+    property_path: trial_study_type
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_study_type
+  trial_std_age:
+    label: 'Age group'
+    datasource_id: 'entity:node'
+    property_path: trial_std_age
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_std_age
 processor_settings:
   add_url:
     weights:
@@ -72,7 +135,13 @@ processor_settings:
       preprocess_query: -8
     fields:
       - title
+      - trial_cond
       - trial_nct_id
+      - trial_overall_status
+      - trial_phase
+      - trial_sex
+      - trial_std_age
+      - trial_study_type
   tokenizer:
     weights:
       preprocess_index: -2
@@ -88,7 +157,13 @@ processor_settings:
       preprocess_query: -7
     fields:
       - title
+      - trial_cond
       - trial_nct_id
+      - trial_overall_status
+      - trial_phase
+      - trial_sex
+      - trial_std_age
+      - trial_study_type
 datasource_settings:
   'entity:node':
     bundles:

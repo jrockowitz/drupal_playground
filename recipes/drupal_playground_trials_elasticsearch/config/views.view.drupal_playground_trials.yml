@@ -1,7 +1,7 @@
 uuid: ba6f7692-1e41-433f-a6d3-219add63efff
 langcode: en
 status: true
-# cspell:ignore autosubmit
+# cspell:ignore autosubmit Lymphoblastic Myelogenous Oropharyngeal Fibrosarcoma RISS AJCC Unresectable
 dependencies:
   config:
     - search_api.index.drupal_playground_trials
@@ -68,7 +68,7 @@ display:
               input_required: false
               allow_secondary: false
               secondary_label: 'Advanced options'
-              secondary_open: false
+              secondary_open: true
               reset_button_always_show: true
             filter:
               search_api_fulltext:
@@ -85,6 +85,127 @@ display:
                   hide_label: true
                   field_classes: ''
                   sort_options_unsupported: ''
+              trial_overall_status:
+                plugin_id: bef
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: ''
+                soft_limit_label_more: ''
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+              trial_cond:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+              trial_phase:
+                plugin_id: default
+                advanced:
+                  placeholder_text: ''
+                  rewrite:
+                    filter_rewrite_values: "PHASE1|Phase 1\nPHASE2|Phase 2\nPHASE3|Phase 3"
+                    filter_rewrite_values_key: true
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+              trial_sex:
+                plugin_id: bef
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: ''
+                soft_limit_label_more: ''
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+              trial_std_age:
+                plugin_id: bef
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: ''
+                soft_limit_label_more: ''
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: "CHILD|Child\nADULT|Adult\nOLDER_ADULT|Older adult"
+                    filter_rewrite_values_key: true
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+              trial_study_type:
+                plugin_id: bef
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: ''
+                soft_limit_label_more: ''
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+              trial_healthy_volunteers:
+                plugin_id: bef
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: ''
+                soft_limit_label_more: ''
+                advanced:
+                  sort_options: false
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
       access:
         type: none
         options: {  }
@@ -230,6 +351,401 @@ display:
           parse_mode: terms
           min_length: 3
           fields: {  }
+        trial_overall_status:
+          id: trial_overall_status
+          table: search_api_index_drupal_playground_trials
+          field: trial_overall_status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_options
+          operator: or
+          group: 1
+          exposed: true
+          expose:
+            operator_id: trial_overall_status_op
+            label: 'Overall status'
+            description: ''
+            use_operator: false
+            operator: trial_overall_status_op
+            identifier: overall_status
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+            reduce: true
+          is_grouped: false
+          value:
+            RECRUITING: RECRUITING
+            NOT_YET_RECRUITING: NOT_YET_RECRUITING
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        trial_cond:
+          id: trial_cond
+          table: search_api_index_drupal_playground_trials
+          field: trial_cond
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_string
+          operator: '='
+          group: 1
+          exposed: true
+          expose:
+            operator_id: trial_cond_op
+            label: 'Condition/Disease'
+            description: ''
+            use_operator: false
+            operator: trial_cond_op
+            identifier: condition
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: true
+          group_info:
+            label: 'Condition/Disease'
+            description: ''
+            identifier: condition
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: 'B Acute Lymphoblastic Leukemia'
+                operator: '='
+                value: 'B Acute Lymphoblastic Leukemia'
+              2:
+                title: 'B-cell Lymphoma'
+                operator: '='
+                value: 'B-cell Lymphoma'
+              3:
+                title: 'Breast Cancer'
+                operator: '='
+                value: 'Breast Cancer'
+              4:
+                title: 'Chronic Leukemia Myelogenous'
+                operator: '='
+                value: 'Chronic Leukemia Myelogenous'
+              5:
+                title: 'Diffuse Intrinsic Pontine Glioma'
+                operator: '='
+                value: 'Diffuse Intrinsic Pontine Glioma'
+              6:
+                title: 'Diffuse Midline Glioma, H3 K27M-Mutant'
+                operator: '='
+                value: 'Diffuse Midline Glioma, H3 K27M-Mutant'
+              7:
+                title: 'HPV Positive Oropharyngeal Squamous Cell Carcinoma'
+                operator: '='
+                value: 'HPV Positive Oropharyngeal Squamous Cell Carcinoma'
+              8:
+                title: 'Low-grade Glioma'
+                operator: '='
+                value: 'Low-grade Glioma'
+              9:
+                title: 'Lymphoma, Follicular'
+                operator: '='
+                value: 'Lymphoma, Follicular'
+              10:
+                title: 'Lymphoma, Large B-Cell, Diffuse'
+                operator: '='
+                value: 'Lymphoma, Large B-Cell, Diffuse'
+              11:
+                title: 'Lymphoma, Non-Hodgkin'
+                operator: '='
+                value: 'Lymphoma, Non-Hodgkin'
+              12:
+                title: 'Metastatic Renal Cell Carcinoma'
+                operator: '='
+                value: 'Metastatic Renal Cell Carcinoma'
+              13:
+                title: 'Multiple Myeloma'
+                operator: '='
+                value: 'Multiple Myeloma'
+              14:
+                title: 'Oropharyngeal Carcinoma'
+                operator: '='
+                value: 'Oropharyngeal Carcinoma'
+              15:
+                title: 'Pediatric Low-grade Glioma'
+                operator: '='
+                value: 'Pediatric Low-grade Glioma'
+              16:
+                title: 'Plasma Cell Myeloma'
+                operator: '='
+                value: 'Plasma Cell Myeloma'
+              17:
+                title: 'Rapidly Accelerated Fibrosarcoma (RAF) Altered Glioma'
+                operator: '='
+                value: 'Rapidly Accelerated Fibrosarcoma (RAF) Altered Glioma'
+              18:
+                title: 'Recurrent Diffuse Intrinsic Pontine Glioma'
+                operator: '='
+                value: 'Recurrent Diffuse Intrinsic Pontine Glioma'
+              19:
+                title: 'Recurrent Diffuse Midline Glioma, H3 K27M-Mutant'
+                operator: '='
+                value: 'Recurrent Diffuse Midline Glioma, H3 K27M-Mutant'
+              20:
+                title: 'Recurrent WHO Grade III Glioma'
+                operator: '='
+                value: 'Recurrent WHO Grade III Glioma'
+              21:
+                title: 'RISS Stage I Plasma Cell Myeloma'
+                operator: '='
+                value: 'RISS Stage I Plasma Cell Myeloma'
+              22:
+                title: 'RISS Stage II Plasma Cell Myeloma'
+                operator: '='
+                value: 'RISS Stage II Plasma Cell Myeloma'
+              23:
+                title: 'Stage III Renal Cell Cancer AJCC v8'
+                operator: '='
+                value: 'Stage III Renal Cell Cancer AJCC v8'
+              24:
+                title: 'Stage IV Renal Cell Cancer AJCC v8'
+                operator: '='
+                value: 'Stage IV Renal Cell Cancer AJCC v8'
+              25:
+                title: 'Unresectable Renal Cell Carcinoma'
+                operator: '='
+                value: 'Unresectable Renal Cell Carcinoma'
+              26:
+                title: 'WHO Grade III Glioma'
+                operator: '='
+                value: 'WHO Grade III Glioma'
+        trial_sex:
+          id: trial_sex
+          table: search_api_index_drupal_playground_trials
+          field: trial_sex
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_options
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: trial_sex_op
+            label: Sex
+            description: ''
+            use_operator: false
+            operator: trial_sex_op
+            identifier: sex
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+          group_items: {  }
+          reduce_duplicates: false
+        trial_phase:
+          id: trial_phase
+          table: search_api_index_drupal_playground_trials
+          field: trial_phase
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_string
+          operator: '='
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: Phase
+            description: ''
+            use_operator: false
+            operator: trial_phase_op
+            identifier: phase
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: true
+          group_info:
+            label: Phase
+            description: ''
+            identifier: phase
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: 'Phase 1'
+                operator: '='
+                value: PHASE1
+              2:
+                title: 'Phase 2'
+                operator: '='
+                value: PHASE2
+              3:
+                title: 'Phase 3'
+                operator: '='
+                value: PHASE3
+        trial_std_age:
+          id: trial_std_age
+          table: search_api_index_drupal_playground_trials
+          field: trial_std_age
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_string
+          operator: '='
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Age group'
+            description: ''
+            use_operator: false
+            operator: trial_std_age_op
+            identifier: age_group
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: true
+          group_info:
+            label: 'Age group'
+            description: ''
+            identifier: age_group
+            optional: true
+            widget: select
+            multiple: true
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: Child
+                operator: '='
+                value: CHILD
+              2:
+                title: Adult
+                operator: '='
+                value: ADULT
+              3:
+                title: 'Older adult'
+                operator: '='
+                value: OLDER_ADULT
+        trial_study_type:
+          id: trial_study_type
+          table: search_api_index_drupal_playground_trials
+          field: trial_study_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_options
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: trial_study_type_op
+            label: 'Study type'
+            description: ''
+            use_operator: false
+            operator: trial_study_type_op
+            identifier: study_type
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+        trial_healthy_volunteers:
+          id: trial_healthy_volunteers
+          table: search_api_index_drupal_playground_trials
+          field: trial_healthy_volunteers
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_boolean
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Healthy volunteers'
+            description: ''
+            use_operator: false
+            operator: trial_healthy_volunteers_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: healthy_volunteers
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: true
+          group_info:
+            label: 'Healthy volunteers'
+            description: ''
+            identifier: healthy_volunteers
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: 'Accepts healthy volunteers'
+                operator: '='
+                value: '1'
+              2:
+                title: 'Does not accept healthy volunteers'
+                operator: '='
+                value: '0'
       filter_groups:
         operator: AND
         groups:
@@ -271,6 +787,13 @@ display:
           empty: false
           filters:
             search_api_fulltext: search_api_fulltext
+            trial_overall_status: trial_overall_status
+            trial_cond: trial_cond
+            trial_phase: trial_phase
+            trial_sex: trial_sex
+            trial_std_age: trial_std_age
+            trial_study_type: trial_study_type
+            trial_healthy_volunteers: trial_healthy_volunteers
           show_labels: false
           show_remove_link: true
           show_reset_link: false

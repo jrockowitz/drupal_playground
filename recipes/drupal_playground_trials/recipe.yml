@@ -16,4 +16,4 @@ config:
   actions:
     clinical_trials_gov.settings:
       setUp:
-        query: 'query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING'
+        query: 'query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'

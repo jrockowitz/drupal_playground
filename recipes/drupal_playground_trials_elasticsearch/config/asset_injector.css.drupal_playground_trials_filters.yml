@@ -69,6 +69,51 @@ code: |-
     margin: 0;
   }
 
+  /* Keep sidebar filters in a clear clinical-search order. */
+  body.path-trials .view-filters .form-item-condition {
+    order: 3;
+    margin: 0;
+  }
+
+  body.path-trials .view-filters #edit-phase--2--wrapper {
+    order: 4;
+    margin: 0;
+  }
+
+  body.path-trials .view-filters #edit-sex--2--wrapper {
+    order: 5;
+    margin: 0;
+  }
+
+  body.path-trials .view-filters #edit-age-group--2--wrapper,
+  body.path-trials .view-filters .form-item-age-group {
+    order: 6;
+    margin: 0;
+  }
+
+  body.path-trials .view-filters #edit-overall-status--2--wrapper {
+    order: 7;
+    margin: 0;
+  }
+
+  body.path-trials .view-filters #edit-study-type--2--wrapper {
+    order: 8;
+    margin: 0;
+  }
+
+  body.path-trials .view-filters #edit-healthy-volunteers--2--wrapper {
+    order: 9;
+    margin: 0;
+  }
+
+  /* Remove default list styling from nested Better Exposed Filters checkboxes. */
+  body.path-trials .form-checkboxes.bef-checkboxes.bef-nested ul,
+  body.path-trials .form-checkboxes.bef-checkboxes.bef-nested li {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
   /* Hide empty teaser metadata blocks to reduce visual noise in results. */
   body.path-trials .view-content .teaser__meta:empty {
     display: none;
