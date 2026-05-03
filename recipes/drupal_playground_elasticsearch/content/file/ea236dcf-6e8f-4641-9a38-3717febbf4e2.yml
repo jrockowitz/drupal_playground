@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: ea236dcf-6e8f-4641-9a38-3717febbf4e2
+  default_langcode: en
+default:
+  filename:
+    -
+      value: views-search-page-plush-builder.png
+  uri:
+    -
+      value: 'public://views-search-page-plush-builder.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2638466
+  status:
+    -
+      value: true

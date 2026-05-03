@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: c0923d46-8f5e-47c3-91ba-d5afd8ef3277
+  default_langcode: en
+default:
+  filename:
+    -
+      value: connector-module-plush-choice.png
+  uri:
+    -
+      value: 'public://connector-module-plush-choice.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2550053
+  status:
+    -
+      value: true

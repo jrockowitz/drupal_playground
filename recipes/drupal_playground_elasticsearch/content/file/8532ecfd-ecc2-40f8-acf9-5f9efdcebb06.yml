@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 8532ecfd-ecc2-40f8-acf9-5f9efdcebb06
+  default_langcode: en
+default:
+  filename:
+    -
+      value: elasticsearch-plush-study.png
+  uri:
+    -
+      value: 'public://elasticsearch-plush-study.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2353754
+  status:
+    -
+      value: true

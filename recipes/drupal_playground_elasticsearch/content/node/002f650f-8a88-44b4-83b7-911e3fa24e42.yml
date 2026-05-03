@@ -8,6 +8,7 @@ _meta:
     fa6fb2fb-2619-4eba-b238-227402aa18a2: taxonomy_term
     13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
     bae844cc-9578-4123-b3d2-8bd9dd5fa59c: taxonomy_term
+    ea236dcf-6e8f-4641-9a38-3717febbf4e2: file
 default:
   status:
     -
@@ -25,6 +26,13 @@ default:
       entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
     -
       entity: bae844cc-9578-4123-b3d2-8bd9dd5fa59c
+  field_image:
+    -
+      alt: 'Plush Drupal character assembling a soft Views-based search page with result and filter panels.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: ea236dcf-6e8f-4641-9a38-3717febbf4e2
   body:
     -
       value: |-

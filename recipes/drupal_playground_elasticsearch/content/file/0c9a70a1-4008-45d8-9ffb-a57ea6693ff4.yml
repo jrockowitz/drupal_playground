@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 0c9a70a1-4008-45d8-9ffb-a57ea6693ff4
+  default_langcode: en
+default:
+  filename:
+    -
+      value: debugging-indexing-plush-detective.png
+  uri:
+    -
+      value: 'public://debugging-indexing-plush-detective.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2348538
+  status:
+    -
+      value: true

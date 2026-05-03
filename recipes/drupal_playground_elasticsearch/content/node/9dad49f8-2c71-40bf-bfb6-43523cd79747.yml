@@ -9,6 +9,7 @@ _meta:
     13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
     d2fc5189-b64f-4032-bdf7-b42036572436: taxonomy_term
     fa6fb2fb-2619-4eba-b238-227402aa18a2: taxonomy_term
+    0c9a70a1-4008-45d8-9ffb-a57ea6693ff4: file
 default:
   status:
     -
@@ -28,6 +29,13 @@ default:
       entity: d2fc5189-b64f-4032-bdf7-b42036572436
     -
       entity: fa6fb2fb-2619-4eba-b238-227402aa18a2
+  field_image:
+    -
+      alt: 'Plush Drupal character investigating indexing clues in a cozy detective workspace.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: 0c9a70a1-4008-45d8-9ffb-a57ea6693ff4
   body:
     -
       value: |-

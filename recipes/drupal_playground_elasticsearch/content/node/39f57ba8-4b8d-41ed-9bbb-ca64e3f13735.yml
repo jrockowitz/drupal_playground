@@ -8,6 +8,7 @@ _meta:
     ed25d85d-fbbc-4037-90ad-411bc9f31d01: taxonomy_term
     2e7cb81f-d421-4a3e-8920-4f847e88ac5b: taxonomy_term
     13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+    c0923d46-8f5e-47c3-91ba-d5afd8ef3277: file
 default:
   status:
     -
@@ -25,6 +26,13 @@ default:
       entity: 2e7cb81f-d421-4a3e-8920-4f847e88ac5b
     -
       entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+  field_image:
+    -
+      alt: 'Plush Drupal character comparing search tools and choosing the Elasticsearch connector path.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: c0923d46-8f5e-47c3-91ba-d5afd8ef3277
   body:
     -
       value: |-

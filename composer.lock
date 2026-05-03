@@ -4680,7 +4680,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_elasticsearch",
-                "reference": "7ad0a8bb29d0506b4171b3d9f69650327feb3281"
+                "reference": "c594e1d199081b3871deea18d34171f2536d0d5b"
             },
             "require": {
                 "drupal/better_exposed_filters": "^7.0",
@@ -4688,9 +4688,9 @@
                 "drupal/elasticsearch_connector": "^8",
                 "drupal/facets": "^3",
                 "drupal/search_api": "^1",
-                "drupal/search_api_autocomplete": "^1",
                 "drupal/search_api_spellcheck": "^4",
                 "drupal/views_ajax_history": "^1",
+                "drupal/views_autocomplete_filters": "^2.0",
                 "drupal/views_filters_summary": "^3.4"
             },
             "type": "drupal-recipe",
@@ -8153,60 +8153,6 @@
             }
         },
         {
-            "name": "drupal/search_api_autocomplete",
-            "version": "1.11.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/search_api_autocomplete.git",
-                "reference": "8.x-1.11"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/search_api_autocomplete-8.x-1.11.zip",
-                "reference": "8.x-1.11",
-                "shasum": "9c1d287cde328511f4e84dfd49bea401f5eddc6a"
-            },
-            "require": {
-                "drupal/core": "^10.2 || ^11",
-                "drupal/search_api": "^1.0"
-            },
-            "require-dev": {
-                "drupal/search_api_page": "1.x-dev"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-1.11",
-                    "datestamp": "1762031747",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Thomas Seidl",
-                    "homepage": "https://www.drupal.org/u/drunken-monkey"
-                },
-                {
-                    "name": "See other contributors",
-                    "homepage": "https://www.drupal.org/node/1142202/committers"
-                }
-            ],
-            "description": "Adds autocomplete functionality to searches.",
-            "homepage": "https://www.drupal.org/project/search_api_autocomplete",
-            "support": {
-                "source": "http://git.drupal.org/project/search_api_autocomplete.git",
-                "issues": "https://www.drupal.org/project/issues/search_api_autocomplete",
-                "irc": "irc://irc.freenode.org/drupal-search-api"
-            }
-        },
-        {
             "name": "drupal/search_api_spellcheck",
             "version": "4.0.1",
             "source": {
@@ -9049,6 +8995,67 @@
             "homepage": "https://www.drupal.org/project/views_ajax_history",
             "support": {
                 "source": "https://git.drupalcode.org/project/views_ajax_history"
+            }
+        },
+        {
+            "name": "drupal/views_autocomplete_filters",
+            "version": "2.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/views_autocomplete_filters.git",
+                "reference": "2.0.3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/views_autocomplete_filters-2.0.3.zip",
+                "reference": "2.0.3",
+                "shasum": "764dea9da6ac6e3a843d7fd5a64cb86d6720404e"
+            },
+            "require": {
+                "drupal/core": "^10 || ^11"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.3",
+                    "datestamp": "1745842632",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "colan",
+                    "homepage": "https://www.drupal.org/user/58704"
+                },
+                {
+                    "name": "heddn",
+                    "homepage": "https://www.drupal.org/user/1463982"
+                },
+                {
+                    "name": "robloach",
+                    "homepage": "https://www.drupal.org/user/61114"
+                },
+                {
+                    "name": "vasike",
+                    "homepage": "https://www.drupal.org/user/156237"
+                }
+            ],
+            "description": "Add autocomplete functionality to the views filter text fields.",
+            "homepage": "https://www.drupal.org/project/views_autocomplete_filters",
+            "keywords": [
+                "Drupal",
+                "views_autocomplete_filters"
+            ],
+            "support": {
+                "source": "https://git.drupalcode.org/project/views_autocomplete_filters",
+                "issues": "https://www.drupal.org/project/issues/views_autocomplete_filters"
             }
         },
         {

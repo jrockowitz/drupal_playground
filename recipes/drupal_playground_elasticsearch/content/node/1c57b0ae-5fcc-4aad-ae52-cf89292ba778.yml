@@ -8,6 +8,7 @@ _meta:
     fa6fb2fb-2619-4eba-b238-227402aa18a2: taxonomy_term
     13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
     084f13d6-bed6-4406-a286-c3c9413f5650: taxonomy_term
+    8f14a4a1-6f16-495f-b64f-6ebe1df21bfc: file
 default:
   status:
     -
@@ -25,6 +26,13 @@ default:
       entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
     -
       entity: 084f13d6-bed6-4406-a286-c3c9413f5650
+  field_image:
+    -
+      alt: 'Plush Drupal character filing content cards into neat index shelves and baskets.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: 8f14a4a1-6f16-495f-b64f-6ebe1df21bfc
   body:
     -
       value: |-

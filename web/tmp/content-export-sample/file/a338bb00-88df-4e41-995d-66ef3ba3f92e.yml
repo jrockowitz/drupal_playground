@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: a338bb00-88df-4e41-995d-66ef3ba3f92e
+  default_langcode: en
+default:
+  filename:
+    -
+      value: sample-elasticsearch-recipe.png
+  uri:
+    -
+      value: 'public://sample-elasticsearch-recipe.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2552373
+  status:
+    -
+      value: true

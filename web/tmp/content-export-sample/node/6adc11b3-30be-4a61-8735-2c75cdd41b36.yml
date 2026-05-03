@@ -5,34 +5,36 @@ _meta:
   bundle: article
   default_langcode: en
   depends:
+    a338bb00-88df-4e41-995d-66ef3ba3f92e: file
     fa6fb2fb-2619-4eba-b238-227402aa18a2: taxonomy_term
     13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
     084f13d6-bed6-4406-a286-c3c9413f5650: taxonomy_term
-    6c84225b-0c40-4fb2-bacb-98524e482b87: file
 default:
+  revision_uid:
+    -
+      target_id: 1
   status:
     -
       value: true
+  uid:
+    -
+      target_id: 1
   title:
     -
       value: 'Drupal Search API'
   promote:
     -
       value: true
-  field_tags:
+  sticky:
     -
-      entity: fa6fb2fb-2619-4eba-b238-227402aa18a2
+      value: false
+  revision_translation_affected:
     -
-      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+      value: true
+  path:
     -
-      entity: 084f13d6-bed6-4406-a286-c3c9413f5650
-  field_image:
-    -
-      alt: 'Plush Drupal character organizing search content pieces with a Search API magnifying glass.'
-      title: ''
-      width: 1254
-      height: 1254
-      entity: 6c84225b-0c40-4fb2-bacb-98524e482b87
+      langcode: en
+      alias: null
   body:
     -
       value: |-
@@ -53,3 +55,25 @@ default:
         <p>In short, Drupal Search API is not just a connector module. It is the search framework that lets Drupal content become searchable in a deliberate, structured way. It handles the content modeling side of search so backend-specific modules can focus on transport and storage. That division of responsibility keeps search maintainable, portable, and much easier to reason about over time.</p>
       format: basic_html
       summary: 'Drupal Search API provides the Drupal-side framework for defining servers, indexes, fields, processors, and Views-powered search interfaces across different backends.'
+  comment:
+    -
+      status: 2
+      cid: 0
+      last_comment_timestamp: 1777802279
+      last_comment_name: ''
+      last_comment_uid: 1
+      comment_count: 0
+  field_image:
+    -
+      alt: 'Sample plush Drupal search illustration'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: a338bb00-88df-4e41-995d-66ef3ba3f92e
+  field_tags:
+    -
+      entity: fa6fb2fb-2619-4eba-b238-227402aa18a2
+    -
+      entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+    -
+      entity: 084f13d6-bed6-4406-a286-c3c9413f5650

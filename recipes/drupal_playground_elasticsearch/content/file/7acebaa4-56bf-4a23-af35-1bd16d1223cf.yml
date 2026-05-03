@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 7acebaa4-56bf-4a23-af35-1bd16d1223cf
+  default_langcode: en
+default:
+  filename:
+    -
+      value: elasticsearch-ddev-plush-local-setup.png
+  uri:
+    -
+      value: 'public://elasticsearch-ddev-plush-local-setup.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2234845
+  status:
+    -
+      value: true

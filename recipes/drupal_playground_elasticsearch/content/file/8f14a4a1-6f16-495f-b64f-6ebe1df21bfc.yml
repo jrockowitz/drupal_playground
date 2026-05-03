@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 8f14a4a1-6f16-495f-b64f-6ebe1df21bfc
+  default_langcode: en
+default:
+  filename:
+    -
+      value: search-api-indexing-plush-shelves.png
+  uri:
+    -
+      value: 'public://search-api-indexing-plush-shelves.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2416260
+  status:
+    -
+      value: true

@@ -1,6 +1,6 @@
 # Drupal Playground Elasticsearch
 
-Sets up a simple Elasticsearch-backed Search API demo for Drupal content in Drupal Playground, including autocomplete suggestions and spellcheck.
+Sets up a simple Elasticsearch-backed Search API demo for Drupal content in Drupal Playground, including Views-based autocomplete suggestions and spellcheck.
 
 ## What It Installs
 
@@ -11,7 +11,7 @@ Sets up a simple Elasticsearch-backed Search API demo for Drupal content in Drup
 - [Facets](https://www.drupal.org/project/facets)
 - `facets_exposed_filters` from [Facets](https://www.drupal.org/project/facets)
 - [Better Exposed Filters](https://www.drupal.org/project/better_exposed_filters)
-- [Search API Autocomplete](https://www.drupal.org/project/search_api_autocomplete)
+- [Views Autocomplete Filters](https://www.drupal.org/project/views_autocomplete_filters)
 - [Search API Spellcheck](https://www.drupal.org/project/search_api_spellcheck)
 - [Views Exposed Filters Summary](https://www.drupal.org/project/views_filters_summary)
 - `views_filters_summary_search_api` from [Views Exposed Filters Summary](https://www.drupal.org/project/views_filters_summary)
@@ -31,6 +31,7 @@ Sets up a simple Elasticsearch-backed Search API demo for Drupal content in Drup
 
 - An `Elasticsearch` shortcut that links to `/elasticsearch`
 - Ten default-content demo articles stored in the recipe
+- One custom square plush illustration for each demo article
 
 ## Local DDEV Elasticsearch
 
@@ -70,22 +71,13 @@ ddev drush search-api:index drupal_playground_elasticsearch
 
 ## Autocomplete
 
-This recipe includes `drupal/search_api_autocomplete:^1.11`.
+This recipe includes `drupal/views_autocomplete_filters:^2.0`.
 
-The current Elasticsearch Connector backend in this project supports Search API spellcheck but does not advertise the `search_api_autocomplete` backend feature. Because of that, the recipe configures Search API Autocomplete with the **live results** suggester for the demo content search view instead of the server-backed suggester.
+The current Elasticsearch Connector backend in this project supports Search API spellcheck, but this recipe no longer depends on backend-native Search API autocomplete support.
 
-That gives the `/elasticsearch` keyword field autocomplete suggestions based on the indexed demo content without depending on backend-native autocomplete support.
+Instead, the recipe configures the exposed `Search` fulltext filter on the `/elasticsearch` View to use Views Autocomplete Filters and source its suggestions from a hidden indexed `Title` field already present in the Search API index.
 
-The autocomplete search entity is:
-
-- `search_api_autocomplete.search.drupal_playground_elasticsearch`
-
-The recipe grants the generated autocomplete permission to:
-
-- anonymous users
-- authenticated users
-
-That keeps the public Elasticsearch demo page working for both visitors and signed-in users.
+That gives the `/elasticsearch` keyword field title-based autocomplete suggestions while keeping the submitted query mapped to the existing fulltext `keys` filter.
 
 ## Spellcheck
 
@@ -220,6 +212,7 @@ The `ddev install elastic` preset clears the Search API index before reindexing 
   - `Autocomplete, facets, and spellcheck in Drupal search`
 - ⚫ Open each article and confirm it has a summary.
 - ⚫ Confirm each article has multiple `<h2>` headings in the body.
+- ⚫ Confirm each article displays a square plush illustration image.
 - ⚫ Confirm the articles have relevant tags attached:
   - `Elasticsearch`
   - `Search API`
@@ -240,7 +233,9 @@ The `ddev install elastic` preset clears the Search API index before reindexing 
 - ⚫ Confirm the view uses `drupal_playground_elasticsearch` as its Search API data source.
 - ⚫ Confirm the page path is `/elasticsearch`.
 - ⚫ Confirm the exposed fulltext filter labeled `Search` is present.
-- ⚫ Confirm the `Search` field uses Search API Autocomplete.
+- ⚫ Confirm the `Search` field uses Views Autocomplete Filters.
+- ⚫ Edit the `Search` filter and confirm `Use Autocomplete` is enabled.
+- ⚫ Confirm `Field with autocomplete results` is set to `Title`.
 - ⚫ Type `Drupal` into the search field and confirm autocomplete suggestions appear.
 - ⚫ Confirm the exposed filters also include a Facets-powered `Tags` filter.
 - ⚫ Edit the `Tags` filter and confirm the filter plugin is `Facets filter`.
@@ -258,14 +253,14 @@ The `ddev install elastic` preset clears the Search API index before reindexing 
 - ⚫ Confirm the `facets` module is enabled.
 - ⚫ Confirm the `facets_exposed_filters` module is enabled.
 - ⚫ Confirm the `better_exposed_filters` module is enabled.
-- ⚫ Confirm the `search_api_autocomplete` module is enabled.
+- ⚫ Confirm the `views_autocomplete_filters` module is enabled.
 - ⚫ Confirm the `search_api_spellcheck` module is enabled.
 - ⚫ Confirm the `views_filters_summary` module is enabled.
 - ⚫ Confirm the `views_filters_summary_search_api` submodule is enabled.
 - ⚫ Confirm the `views_ajax_history` module is enabled.
 - ⚫ Confirm the tags facet is attached to `search_api:views_page__drupal_playground_elasticsearch__page_1`.
 - ⚫ Confirm `/elasticsearch` shows tag choices instead of a free-text `Tags` input.
-- ⚫ Confirm `/elasticsearch` attaches the Search API Autocomplete JavaScript and endpoint for `drupal_playground_elasticsearch`.
+- ⚫ Confirm `/elasticsearch` attaches the Views Autocomplete Filters JavaScript and autocomplete endpoint.
 - ⚫ Confirm `/elasticsearch` attaches the Views Exposed Filters Summary JavaScript.
 - ⚫ Search for `Drupal` and select the `Drupal` tag.
 - ⚫ Confirm the header summarizes the active filters and result count.

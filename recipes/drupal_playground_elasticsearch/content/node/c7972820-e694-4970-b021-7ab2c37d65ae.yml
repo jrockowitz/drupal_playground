@@ -9,6 +9,7 @@ _meta:
     13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
     bae844cc-9578-4123-b3d2-8bd9dd5fa59c: taxonomy_term
     ed25d85d-fbbc-4037-90ad-411bc9f31d01: taxonomy_term
+    2f61b094-f1d4-4077-a915-5deb11e1bef1: file
 default:
   status:
     -
@@ -28,6 +29,13 @@ default:
       entity: bae844cc-9578-4123-b3d2-8bd9dd5fa59c
     -
       entity: ed25d85d-fbbc-4037-90ad-411bc9f31d01
+  field_image:
+    -
+      alt: 'Plush Drupal character juggling autocomplete bubbles, facet tokens, and a spellcheck sparkle.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: 2f61b094-f1d4-4077-a915-5deb11e1bef1
   body:
     -
       value: |-

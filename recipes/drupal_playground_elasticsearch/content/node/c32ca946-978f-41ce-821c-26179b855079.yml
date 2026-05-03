@@ -8,6 +8,7 @@ _meta:
     ed25d85d-fbbc-4037-90ad-411bc9f31d01: taxonomy_term
     bae844cc-9578-4123-b3d2-8bd9dd5fa59c: taxonomy_term
     084f13d6-bed6-4406-a286-c3c9413f5650: taxonomy_term
+    8532ecfd-ecc2-40f8-acf9-5f9efdcebb06: file
 default:
   status:
     -
@@ -25,6 +26,13 @@ default:
       entity: bae844cc-9578-4123-b3d2-8bd9dd5fa59c
     -
       entity: 084f13d6-bed6-4406-a286-c3c9413f5650
+  field_image:
+    -
+      alt: 'Plush Drupal character studying soft Elasticsearch shapes in a cozy reading nook.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: 8532ecfd-ecc2-40f8-acf9-5f9efdcebb06
   body:
     -
       value: |-

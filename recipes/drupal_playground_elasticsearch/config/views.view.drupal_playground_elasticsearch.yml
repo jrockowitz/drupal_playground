@@ -9,6 +9,7 @@ dependencies:
     - facets_exposed_filters
     - search_api
     - search_api_spellcheck
+    - views_autocomplete_filters
     - views_filters_summary
 _core:
   default_config_hash: PaD9OtCtcufbIRVKTF7Ga17Tst5lZ3z8bMMEAJVlWUo
@@ -62,7 +63,7 @@ display:
               autosubmit: true
               auto_submit_sort_only: false
               autosubmit_breakpoint: ''
-              autosubmit_exclude_textfield: false
+              autosubmit_exclude_textfield: true
               autosubmit_textfield_delay: 500
               autosubmit_textfield_minimum_length: 3
               autosubmit_hide: false
@@ -112,6 +113,76 @@ display:
         type: search_api_none
         options: {  }
       empty: {  }
+      fields:
+        title:
+          id: title
+          table: search_api_index_drupal_playground_elasticsearch
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: 'Autocomplete title'
+          plugin_id: search_api_field
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          field_rendering: true
+          fallback_handler: search_api
+          fallback_options:
+            link_to_item: false
+            use_highlighting: false
+            multi_type: separator
+            multi_separator: ', '
       sorts:
         search_api_relevance:
           id: search_api_relevance
@@ -154,6 +225,15 @@ display:
             expose_fields: false
             placeholder: ''
             searched_fields_id: ''
+            autocomplete_filter: 1
+            autocomplete_min_chars: 3
+            autocomplete_items: 5
+            autocomplete_field: title
+            autocomplete_raw_suggestion: 1
+            autocomplete_raw_dropdown: 1
+            autocomplete_dependent: 0
+            autocomplete_contextual: 0
+            autocomplete_autosubmit: 0
             value_maxlength: 128
             value_max_words: null
           is_grouped: false

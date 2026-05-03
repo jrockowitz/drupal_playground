@@ -18,7 +18,11 @@ ddev code-review <file|directory>
 
 # Runs all fix utilities (phpcbf, eslint, stylelint)
 ddev code-fix <file|directory>
+```
 
+## Config
+
+```bash
 # Execute partial config import. Use this to test config changes.
 ddev drush config:import -y --partial --source=<directory>
 ```

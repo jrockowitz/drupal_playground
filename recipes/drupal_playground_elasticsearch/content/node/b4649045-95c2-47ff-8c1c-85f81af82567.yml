@@ -8,6 +8,7 @@ _meta:
     ed25d85d-fbbc-4037-90ad-411bc9f31d01: taxonomy_term
     d2fc5189-b64f-4032-bdf7-b42036572436: taxonomy_term
     13c6d953-d547-4ca1-8baa-fa07615f13dc: taxonomy_term
+    7acebaa4-56bf-4a23-af35-1bd16d1223cf: file
 default:
   status:
     -
@@ -25,6 +26,13 @@ default:
       entity: d2fc5189-b64f-4032-bdf7-b42036572436
     -
       entity: 13c6d953-d547-4ca1-8baa-fa07615f13dc
+  field_image:
+    -
+      alt: 'Plush Drupal character wiring a tiny local search workstation with DDEV and Elasticsearch props.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: 7acebaa4-56bf-4a23-af35-1bd16d1223cf
   body:
     -
       value: |-
