@@ -118,9 +118,15 @@ display:
                   hide_label: false
                   field_classes: ''
               trial_phase:
-                plugin_id: default
+                plugin_id: bef
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: ''
+                soft_limit_label_more: ''
                 advanced:
-                  placeholder_text: ''
+                  sort_options: false
                   rewrite:
                     filter_rewrite_values: "PHASE1|Phase 1\nPHASE2|Phase 2\nPHASE3|Phase 3"
                     filter_rewrite_values_key: true
@@ -212,7 +218,18 @@ display:
       cache:
         type: search_api_none
         options: {  }
-      empty: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: true
+          content: '<h2>No records found.</h2><p>Please try different keywords and search again.</p>'
+          tokenize: true
       fields:
         title:
           id: title
@@ -530,44 +547,6 @@ display:
                 title: 'WHO Grade III Glioma'
                 operator: '='
                 value: 'WHO Grade III Glioma'
-        trial_sex:
-          id: trial_sex
-          table: search_api_index_drupal_playground_trials
-          field: trial_sex
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: search_api_options
-          operator: or
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: trial_sex_op
-            label: Sex
-            description: ''
-            use_operator: false
-            operator: trial_sex_op
-            identifier: sex
-            required: false
-            remember: false
-            multiple: true
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-          group_items: {  }
-          reduce_duplicates: false
         trial_phase:
           id: trial_phase
           table: search_api_index_drupal_playground_trials
@@ -615,6 +594,44 @@ display:
                 title: 'Phase 3'
                 operator: '='
                 value: PHASE3
+        trial_sex:
+          id: trial_sex
+          table: search_api_index_drupal_playground_trials
+          field: trial_sex
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_options
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: trial_sex_op
+            label: Sex
+            description: ''
+            use_operator: false
+            operator: trial_sex_op
+            identifier: sex
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+          group_items: {  }
+          reduce_duplicates: false
         trial_std_age:
           id: trial_std_age
           table: search_api_index_drupal_playground_trials
@@ -635,7 +652,7 @@ display:
             identifier: age_group
             required: false
             remember: false
-            multiple: true
+            multiple: false
             remember_roles:
               authenticated: authenticated
           is_grouped: true
@@ -645,7 +662,7 @@ display:
             identifier: age_group
             optional: true
             widget: select
-            multiple: true
+            multiple: false
             remember: false
             default_group: All
             default_group_multiple: {  }

@@ -43,6 +43,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       'type' => $type,
       'name' => $label,
       'description' => $description,
+      'display_submitted' => FALSE,
     ])->save();
   }
 

@@ -75,34 +75,45 @@ code: |-
     margin: 0;
   }
 
-  body.path-trials .view-filters #edit-phase--2--wrapper {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-phase"] {
     order: 4;
     margin: 0;
   }
 
-  body.path-trials .view-filters #edit-sex--2--wrapper {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-sex"] {
     order: 5;
     margin: 0;
   }
 
-  body.path-trials .view-filters #edit-age-group--2--wrapper,
-  body.path-trials .view-filters .form-item-age-group {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-age-group"] {
     order: 6;
     margin: 0;
   }
 
-  body.path-trials .view-filters #edit-overall-status--2--wrapper {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-overall-status"] {
     order: 7;
     margin: 0;
   }
 
-  body.path-trials .view-filters #edit-study-type--2--wrapper {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-study-type"] {
     order: 8;
     margin: 0;
   }
 
-  body.path-trials .view-filters #edit-healthy-volunteers--2--wrapper {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-healthy-volunteers"] {
     order: 9;
+    margin: 0;
+  }
+
+  /* Give age-group radios the same vertical rhythm as the healthy-volunteers set. */
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-phase"] .form-radios,
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-age-group"] .form-radios {
+    display: grid;
+    gap: 0.625rem;
+  }
+
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-phase"] .form-type-radio,
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-age-group"] .form-type-radio {
     margin: 0;
   }
 
@@ -119,14 +130,17 @@ code: |-
     display: none;
   }
 
+  /* Keep the empty state visually separated from the filter stack on narrow screens. */
+  body.path-trials .view-empty {
+    display: block;
+    margin-top: 1.5rem;
+  }
+
   /* Switch to a two-column search layout once there is room for a sidebar. */
-  @media (min-width: 900px) {
+  @media (min-width: 700px) {
     body.path-trials .view {
       display: grid;
       grid-template-columns: minmax(280px, 35%) minmax(0, 65%);
-      grid-template-areas:
-        "filters summary"
-        "filters results";
       column-gap: 2rem;
       row-gap: 0.5rem;
       align-items: start;
@@ -134,7 +148,7 @@ code: |-
 
     /* Pin the exposed filters into the left column of the desktop layout. */
     body.path-trials .view-filters {
-      grid-area: filters;
+      grid-column: 1;
       margin: 0;
     }
 
@@ -145,15 +159,18 @@ code: |-
 
     /* Place the filter summary above the results column. */
     body.path-trials .view-header {
-      grid-area: summary;
+      grid-column: 2;
+      align-self: start;
       margin: 0 0 1rem 0;
     }
 
     /* Keep result content in the right column and allow long text to shrink. */
     body.path-trials .view-content,
     body.path-trials .view-empty {
-      grid-area: results;
+      grid-column: 2;
+      align-self: start;
       min-width: 0;
+      margin-top: 0;
     }
   }
 conditions_require_all: true
