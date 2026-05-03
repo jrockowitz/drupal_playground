@@ -381,7 +381,7 @@ display:
           exposed: true
           expose:
             operator_id: trial_overall_status_op
-            label: 'Overall status'
+            label: 'Study status'
             description: ''
             use_operator: false
             operator: trial_overall_status_op
@@ -560,7 +560,7 @@ display:
           exposed: true
           expose:
             operator_id: ''
-            label: Phase
+            label: 'Study phase'
             description: ''
             use_operator: false
             operator: trial_phase_op
@@ -572,7 +572,7 @@ display:
               authenticated: authenticated
           is_grouped: true
           group_info:
-            label: Phase
+            label: 'Study phase'
             description: ''
             identifier: phase
             optional: true
@@ -645,7 +645,7 @@ display:
           exposed: true
           expose:
             operator_id: ''
-            label: 'Age group'
+            label: Age
             description: ''
             use_operator: false
             operator: trial_std_age_op
@@ -657,7 +657,7 @@ display:
               authenticated: authenticated
           is_grouped: true
           group_info:
-            label: 'Age group'
+            label: Age
             description: ''
             identifier: age_group
             optional: true

@@ -75,27 +75,27 @@ code: |-
     margin: 0;
   }
 
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-phase"] {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-overall-status"] {
     order: 4;
     margin: 0;
   }
 
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-sex"] {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-phase"] {
     order: 5;
     margin: 0;
   }
 
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-age-group"] {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-study-type"] {
     order: 6;
     margin: 0;
   }
 
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-overall-status"] {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-sex"] {
     order: 7;
     margin: 0;
   }
 
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-study-type"] {
+  body.path-trials .view-filters fieldset[data-drupal-selector="edit-age-group"] {
     order: 8;
     margin: 0;
   }
