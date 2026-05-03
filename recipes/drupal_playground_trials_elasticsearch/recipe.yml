@@ -1,0 +1,29 @@
+name: 'Drupal Playground Trials Elasticsearch'
+description: 'Sets up Search API with Elasticsearch Connector for Clinical Trials search.'
+type: 'Site'
+recipes:
+  - drupal_playground_base
+  - drupal_playground_trials
+install:
+  - better_exposed_filters
+  - facets
+  - facets_exposed_filters
+  - shortcut
+  - search_api
+  - search_api_spellcheck
+  - views_autocomplete_filters
+  - views_filters_summary
+  - views_filters_summary_search_api
+  - views_ajax_history
+  - elasticsearch_connector
+config:
+  strict: false
+  import:
+    asset_injector:
+      - asset_injector.css.drupal_playground_trials_filters
+    shortcut: '*'
+    search_api:
+      - search_api.server.drupal_playground_trials
+      - search_api.index.drupal_playground_trials
+    views:
+      - views.view.drupal_playground_trials

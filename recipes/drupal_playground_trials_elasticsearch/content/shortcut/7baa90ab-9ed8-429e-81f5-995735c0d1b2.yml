@@ -1,0 +1,18 @@
+_meta:
+  version: '1.0'
+  entity_type: shortcut
+  uuid: 7baa90ab-9ed8-429e-81f5-995735c0d1b2
+  bundle: default
+  default_langcode: en
+default:
+  title:
+    -
+      value: 'Clinical Trials'
+  weight:
+    -
+      value: -10
+  link:
+    -
+      uri: 'internal:/trials'
+      title: ''
+      options: {  }

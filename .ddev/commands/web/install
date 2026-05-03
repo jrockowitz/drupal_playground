@@ -80,10 +80,13 @@ for PRESET in "$@"; do
 
   elif [ "$PRESET" = "trials-setup" ]; then
 
-    echo "Setting up ClinicalTrials.gov import..."
+    echo "Applying ClinicalTrials.gov setup recipe..."
     drush recipe ../recipes/drupal_playground_trials
+    echo "Applying Clinical Trials Elasticsearch recipe..."
+    drush recipe ../recipes/drupal_playground_trials_elasticsearch
+    echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit=10
-    uli_path="/admin/config/services/clinical-trials-gov"
+    uli_path="/trials"
 
   fi
 done

@@ -87,7 +87,11 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
       'protocolSection.identificationModule.briefTitle',
       'protocolSection.identificationModule.nctId',
       'protocolSection.descriptionModule.briefSummary',
+      'protocolSection.conditionsModule.keywords',
       'protocolSection.eligibilityModule',
+      'protocolSection.eligibilityModule.minimumAge',
+      'protocolSection.eligibilityModule.maximumAge',
+      'protocolSection.eligibilityModule.stdAges',
       'protocolSection.referencesModule.references',
       'protocolSection.statusModule.overallStatus',
       'protocolSection.identificationModule.organization',
@@ -154,7 +158,28 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that remaining nested structure selections create a fieldset on the view display.
     $view_field_groups = $view_display->getThirdPartySettings('field_group');
     $this->assertArrayHasKey('group_id_mod', $view_field_groups);
-    $this->assertSame('fieldset', $view_field_groups['group_id_mod']['format_type']);
+    $this->assertSame('details', $view_field_groups['group_id_mod']['format_type']);
+
+    // Check that the teaser display only contains the selected summary fields.
+    $teaser_display = EntityViewDisplay::load('node.trial.teaser');
+    $this->assertNotNull($teaser_display);
+
+    $brief_summary_field_name = $this->entityManager->generateFieldName('protocolSection.descriptionModule.briefSummary');
+    $condition_field_name = $this->entityManager->generateFieldName('protocolSection.conditionsModule.conditions');
+    $keyword_field_name = $this->entityManager->generateFieldName('protocolSection.conditionsModule.keywords');
+    $minimum_age_field_name = $this->entityManager->generateFieldName('protocolSection.eligibilityModule.minimumAge');
+    $maximum_age_field_name = $this->entityManager->generateFieldName('protocolSection.eligibilityModule.maximumAge');
+    $standard_ages_field_name = $this->entityManager->generateFieldName('protocolSection.eligibilityModule.stdAges');
+
+    $this->assertSame('text_summary_or_trimmed', $teaser_display->getComponent($brief_summary_field_name)['type'] ?? NULL);
+    $this->assertSame('string', $teaser_display->getComponent($condition_field_name)['type'] ?? NULL);
+    $this->assertSame('string', $teaser_display->getComponent($keyword_field_name)['type'] ?? NULL);
+    $this->assertSame('string', $teaser_display->getComponent($minimum_age_field_name)['type'] ?? NULL);
+    $this->assertSame('string', $teaser_display->getComponent($maximum_age_field_name)['type'] ?? NULL);
+    $this->assertSame('list_default', $teaser_display->getComponent($standard_ages_field_name)['type'] ?? NULL);
+    $this->assertNull($teaser_display->getComponent('trial_nct_url'));
+    $this->assertNull($teaser_display->getComponent('trial_resp_party'));
+    $this->assertSame([], $teaser_display->getThirdPartySettings('field_group'));
   }
 
   /**
