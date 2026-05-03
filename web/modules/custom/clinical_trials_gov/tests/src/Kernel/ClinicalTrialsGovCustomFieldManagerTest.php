@@ -69,7 +69,7 @@ class ClinicalTrialsGovCustomFieldManagerTest extends KernelTestBase {
       'type',
       'inv_full_name',
       'inv_title',
-      'inv_affil',
+      'inv_aff',
       'old_name_title',
       'old_org',
     ], $responsible_party_definition['details']);
@@ -82,6 +82,10 @@ class ClinicalTrialsGovCustomFieldManagerTest extends KernelTestBase {
     $this->assertSame('plain_text', $eligibility_definition['instance_settings']['field_settings']['eligibilityCriteria']['default_format']);
     $this->assertSame('map_string', $eligibility_definition['storage_settings']['columns']['stdAges']['type']);
     $this->assertSame('', $eligibility_definition['instance_settings']['field_settings']['stdAges']['table_empty']);
+    $this->assertSame('string', $eligibility_definition['storage_settings']['columns']['minimumAge']['type']);
+    $this->assertSame('string', $eligibility_definition['storage_settings']['columns']['maximumAge']['type']);
+    $this->assertNotContains('minimumAge', $eligibility_definition['yaml_columns']);
+    $this->assertNotContains('maximumAge', $eligibility_definition['yaml_columns']);
 
     // Check that policy-backed max length overrides promote long citation text.
     $this->assertIsArray($references_definition);

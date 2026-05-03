@@ -356,6 +356,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       'ContactRole',
       'OfficialRole',
       'GeoName',
+      'NormalizedTime',
       'text',
       'boolean',
       'integer',

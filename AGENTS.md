@@ -18,6 +18,9 @@ ddev code-review <file|directory>
 
 # Runs all fix utilities (phpcbf, eslint, stylelint)
 ddev code-fix <file|directory>
+
+# Execute partial config import. Use this to test config changes.
+ddev drush config:import -y --partial --source=<directory>
 ```
 
 # Architecture

@@ -1,22 +1,9 @@
 #!/bin/bash
 
-## Description: Install Drupal, optionally with one or more presets or all presets
+## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-setup\nddev install all
+## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-setup
 ## ProjectTypes: drupal,drupal11
-
-if [ "$#" -gt 1 ]; then
-  for PRESET in "$@"; do
-    if [ "$PRESET" = "all" ]; then
-      echo "The all preset must be used by itself."
-      exit 1
-    fi
-  done
-fi
-
-if [ "$1" = "all" ]; then
-  set -- ai schemadotorg eca translation
-fi
 
 uli_path="/"
 
@@ -94,9 +81,8 @@ for PRESET in "$@"; do
   elif [ "$PRESET" = "trials-setup" ]; then
 
     echo "Setting up ClinicalTrials.gov import..."
-    drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
-    drush clinical-trials-gov:setup 'query.cond=Cancer&query.term=New%20York&filter.overallStatus=RECRUITING'
-    drush migrate:import clinical_trials_gov
+    drush recipe ../recipes/drupal_playground_trials
+    drush migrate:import clinical_trials_gov --limit=10
     uli_path="/admin/config/services/clinical-trials-gov"
 
   fi

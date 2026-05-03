@@ -328,13 +328,15 @@ The module includes a test helper module and fixtures for Kernel and Functional 
 
 Key locations:
 
-- [Test fixtures and stub manager](/modules/custom/clinical_trials_gov/tests/modules/clinical_trials_gov_test)
+- [Test fixtures and stub services](/modules/custom/clinical_trials_gov/tests/modules/clinical_trials_gov_test)
 - [Kernel tests](/modules/custom/clinical_trials_gov/tests/src/Kernel)
 - [Functional tests](/modules/custom/clinical_trials_gov/tests/src/Functional)
 
 Notable coverage includes:
 
 - `ClinicalTrialsGovManagerDiscoveryTest` for query-path discovery from the recent studies sample
+- `ClinicalTrialsGovSetupManagerTest` for the reusable setup workflow service
+- `ClinicalTrialsGovSettingsSetUpConfigActionTest` for the recipe-facing `setUp` config action
 - `ClinicalTrialsGovReviewMetadataControllerTest` for the filtered review metadata page
 - `ClinicalTrialsGovSourceTest` for flattened migrate source rows, including repeated struct child paths
 

@@ -1,0 +1,15 @@
+{
+  "name": "drupal/drupal_playground_trials",
+  "description": "Installs the ClinicalTrials.gov workflow for Drupal Playground.",
+  "type": "drupal-recipe",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "require": {
+    "drupal/core": "^11.3",
+    "drupal/custom_field": "^4.0",
+    "drupal/field_group": "^4.0",
+    "drupal/migrate_plus": "^6.0",
+    "drupal/migrate_tools": "^6.0",
+    "drupal/readonly_field_widget": "^2.1"
+  }
+}

@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Drush\Commands;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
-use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovSetupManagerInterface;
 use Drush\Attributes as CLI;
 use Drush\Commands\AutowireTrait;
 use Drush\Commands\DrushCommands;
@@ -23,10 +20,7 @@ class ClinicalTrialsGovCommands extends DrushCommands {
    * Constructs a new ClinicalTrialsGovCommands instance.
    */
   public function __construct(
-    protected ConfigFactoryInterface $configFactory,
-    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
-    protected ClinicalTrialsGovEntityManagerInterface $entityManager,
-    protected ClinicalTrialsGovMigrationManagerInterface $migrationManager,
+    protected ClinicalTrialsGovSetupManagerInterface $setupManager,
   ) {
     parent::__construct();
   }
@@ -38,26 +32,14 @@ class ClinicalTrialsGovCommands extends DrushCommands {
   #[CLI\Argument(name: 'query', description: 'ClinicalTrials.gov studies query string.')]
   #[CLI\Usage(name: 'drush clinical-trials-gov:setup query.cond=Cancer', description: 'Prepare the ClinicalTrials.gov import workflow from a saved query string.')]
   public function setup(string $query): void {
-    $paths = $this->pathsManager->discoverQueryPaths($query);
-
-    $this->configFactory->getEditable('clinical_trials_gov.settings')
-      ->set('query', $query)
-      ->set('query_paths', $paths)
-      ->save();
-    $field_mappings = $this->entityManager->buildDefaultFieldMappings();
-    $this->entityManager->saveFieldMappings($field_mappings);
-    $this->entityManager->createConfiguredContentType();
-    $this->entityManager->createConfiguredFields();
-    $this->migrationManager->updateMigration();
-
-    $type = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('type');
+    $summary = $this->setupManager->setUp(['query' => $query]);
 
     $this->io()->writeln('ClinicalTrials.gov setup complete.');
-    $this->io()->writeln('Query: ' . $query);
-    $this->io()->writeln('Bundle: ' . $type);
-    $this->io()->writeln('Discovery sample: first 250 most recently updated studies');
-    $this->io()->writeln('Discovered paths: ' . (string) count($paths));
-    $this->io()->writeln('Saved fields: ' . (string) count($field_mappings));
+    $this->io()->writeln('Query: ' . $summary['query']);
+    $this->io()->writeln('Bundle: ' . $summary['type']);
+    $this->io()->writeln('Discovery sample: first ' . $summary['page_size'] . ' most recently updated studies');
+    $this->io()->writeln('Discovered paths: ' . $summary['query_paths_count']);
+    $this->io()->writeln('Saved fields: ' . $summary['fields_count']);
     $this->io()->writeln('Run `drush migrate:import clinical_trials_gov` next.');
   }
 

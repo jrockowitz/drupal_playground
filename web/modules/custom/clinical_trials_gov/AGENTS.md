@@ -127,12 +127,11 @@ UI preview/review fetches only one page at a time; the migration source fetches 
 
 Test support:
 
-- `tests/modules/clinical_trials_gov_test/` — stub service (`ClinicalTrialsGovStudyManagerStub`) and JSON fixtures; this is the real test logic
-- `modules/clinical_trials_gov_test/` — lightweight service-substitution wrapper
+- `tests/modules/clinical_trials_gov_test/` — stub services (`ClinicalTrialsGovStudyManagerStub`, `ClinicalTrialsGovApiStub`) and JSON fixtures
 
 The stub simulates paginated `/studies` responses (two studies on page 1, one on page 2) and exposes `getStudiesRequests()` to assert pagination behaviour.
 
-Test classes: `ClinicalTrialsGovApiTest`, `ClinicalTrialsGovManagerTest`, `ClinicalTrialsGovNamesTest`, `ClinicalTrialsGovBuilderTest`, `ClinicalTrialsGovFieldManagerTest`, `ClinicalTrialsGovEntityManagerTest`, `ClinicalTrialsGovMigrationManagerTest`, `ClinicalTrialsGovManagerDiscoveryTest`, `ClinicalTrialsGovReviewMetadataControllerTest`, `ClinicalTrialsGovSourceTest`, `ClinicalTrialsGovStudiesQueryTest`, `ClinicalTrialsGovTest` (functional).
+Test classes: `ClinicalTrialsGovApiTest`, `ClinicalTrialsGovManagerTest`, `ClinicalTrialsGovNamesTest`, `ClinicalTrialsGovBuilderTest`, `ClinicalTrialsGovCommandsTest`, `ClinicalTrialsGovFieldManagerTest`, `ClinicalTrialsGovEntityManagerTest`, `ClinicalTrialsGovMigrationManagerTest`, `ClinicalTrialsGovManagerDiscoveryTest`, `ClinicalTrialsGovReviewMetadataControllerTest`, `ClinicalTrialsGovSettingsSetUpConfigActionTest`, `ClinicalTrialsGovSetupManagerTest`, `ClinicalTrialsGovSourceTest`, `ClinicalTrialsGovStudiesQueryTest`, `ClinicalTrialsGovTest` (functional).
 
 ## Useful Commands
 

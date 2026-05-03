@@ -44,9 +44,6 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
   public function testBuildStudy(): void {
     $nct_id = 'NCT05088187';
 
-    // Check that the duplicate runtime fixture copy is not present.
-    $this->assertDirectoryDoesNotExist(DRUPAL_ROOT . '/modules/custom/clinical_trials_gov/modules/clinical_trials_gov_test/fixtures');
-
     $study = $this->container->get('clinical_trials_gov.study_manager')->getStudy($nct_id);
     $this->assertNotEmpty($study, 'Stub returned a non-empty study array.');
 

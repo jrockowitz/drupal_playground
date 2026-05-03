@@ -1,0 +1,19 @@
+name: 'Drupal Playground ClinicalTrials.gov'
+description: >
+  Installs and configures the ClinicalTrials.gov workflow for Drupal
+  Playground using the reusable setup config action.
+type: 'Site'
+install:
+  - custom_field
+  - field_group
+  - migrate_plus
+  - migrate_tools
+  - readonly_field_widget
+  - clinical_trials_gov
+  - clinical_trials_gov_report
+config:
+  strict: false
+  actions:
+    clinical_trials_gov.settings:
+      setUp:
+        query: 'query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING'

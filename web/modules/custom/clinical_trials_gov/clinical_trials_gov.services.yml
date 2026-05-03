@@ -40,6 +40,10 @@ services:
     arguments: ["@config.factory", "@plugin.manager.migration", "@clinical_trials_gov.paths_manager", "@clinical_trials_gov.field_manager", "@clinical_trials_gov.entity_manager", "@logger.channel.clinical_trials_gov"]
   Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface: "@clinical_trials_gov.migration_manager"
 
+  clinical_trials_gov.setup_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovSetupManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovSetupManagerInterface: "@clinical_trials_gov.setup_manager"
+
   logger.channel.clinical_trials_gov:
     parent: logger.channel_base
     arguments: ["clinical_trials_gov"]
