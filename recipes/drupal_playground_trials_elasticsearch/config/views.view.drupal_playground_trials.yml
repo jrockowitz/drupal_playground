@@ -7,6 +7,7 @@ dependencies:
     - search_api.index.drupal_playground_trials
   module:
     - better_exposed_filters
+    - facets_exposed_filters
     - search_api
     - search_api_spellcheck
     - views_autocomplete_filters
@@ -97,7 +98,7 @@ display:
                   sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
+                    filter_rewrite_values_key: true
                   collapsible: false
                   collapsible_disable_automatic_open: false
                   open_by_default: true
@@ -128,7 +129,7 @@ display:
                 advanced:
                   sort_options: false
                   rewrite:
-                    filter_rewrite_values: "PHASE1|Phase 1\nPHASE2|Phase 2\nPHASE3|Phase 3"
+                    filter_rewrite_values: ''
                     filter_rewrite_values_key: true
                   collapsible: false
                   collapsible_disable_automatic_open: false
@@ -148,7 +149,7 @@ display:
                   sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
+                    filter_rewrite_values_key: true
                   collapsible: false
                   collapsible_disable_automatic_open: false
                   open_by_default: true
@@ -166,7 +167,7 @@ display:
                 advanced:
                   sort_options: false
                   rewrite:
-                    filter_rewrite_values: "CHILD|Child\nADULT|Adult\nOLDER_ADULT|Older adult"
+                    filter_rewrite_values: ''
                     filter_rewrite_values_key: true
                   collapsible: false
                   collapsible_disable_automatic_open: false
@@ -186,7 +187,7 @@ display:
                   sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
+                    filter_rewrite_values_key: true
                   collapsible: false
                   collapsible_disable_automatic_open: false
                   open_by_default: true
@@ -205,7 +206,7 @@ display:
                   sort_options: false
                   rewrite:
                     filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
+                    filter_rewrite_values_key: true
                   collapsible: false
                   collapsible_disable_automatic_open: false
                   open_by_default: true
@@ -371,31 +372,28 @@ display:
         trial_overall_status:
           id: trial_overall_status
           table: search_api_index_drupal_playground_trials
-          field: trial_overall_status
+          field: facets_trial_overall_status
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: search_api_options
-          operator: or
+          plugin_id: facets_filter
+          operator: '='
+          value: ''
           group: 1
           exposed: true
           expose:
-            operator_id: trial_overall_status_op
+            operator_id: ''
             label: 'Study status'
             description: ''
             use_operator: false
-            operator: trial_overall_status_op
+            operator: ''
             identifier: overall_status
             required: false
             remember: false
             multiple: true
             remember_roles:
               authenticated: authenticated
-            reduce: true
           is_grouped: false
-          value:
-            RECRUITING: RECRUITING
-            NOT_YET_RECRUITING: NOT_YET_RECRUITING
           group_info:
             label: ''
             description: ''
@@ -407,7 +405,21 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          reduce_duplicates: false
+          hierarchy: false
+          label_display: visible
+          facet:
+            query_operator: or
+            min_count: 1
+            missing: false
+            missing_label: others
+            show_numbers: true
+            processor_configs:
+              replace:
+                processor_id: replace
+                settings:
+                  replacements: "not_yet_recruiting|Not yet recruiting\nrecruiting|Recruiting"
+                weights:
+                  post_query: 50
         trial_cond:
           id: trial_cond
           table: search_api_index_drupal_playground_trials
@@ -550,12 +562,13 @@ display:
         trial_phase:
           id: trial_phase
           table: search_api_index_drupal_playground_trials
-          field: trial_phase
+          field: facets_trial_phase
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: search_api_string
+          plugin_id: facets_filter
           operator: '='
+          value: ''
           group: 1
           exposed: true
           expose:
@@ -563,147 +576,13 @@ display:
             label: 'Study phase'
             description: ''
             use_operator: false
-            operator: trial_phase_op
+            operator: ''
             identifier: phase
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: true
-          group_info:
-            label: 'Study phase'
-            description: ''
-            identifier: phase
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items:
-              1:
-                title: 'Phase 1'
-                operator: '='
-                value: PHASE1
-              2:
-                title: 'Phase 2'
-                operator: '='
-                value: PHASE2
-              3:
-                title: 'Phase 3'
-                operator: '='
-                value: PHASE3
-        trial_sex:
-          id: trial_sex
-          table: search_api_index_drupal_playground_trials
-          field: trial_sex
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: search_api_options
-          operator: or
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: trial_sex_op
-            label: Sex
-            description: ''
-            use_operator: false
-            operator: trial_sex_op
-            identifier: sex
             required: false
             remember: false
             multiple: true
             remember_roles:
               authenticated: authenticated
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-          group_items: {  }
-          reduce_duplicates: false
-        trial_std_age:
-          id: trial_std_age
-          table: search_api_index_drupal_playground_trials
-          field: trial_std_age
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: search_api_string
-          operator: '='
-          group: 1
-          exposed: true
-          expose:
-            operator_id: ''
-            label: Age
-            description: ''
-            use_operator: false
-            operator: trial_std_age_op
-            identifier: age_group
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: true
-          group_info:
-            label: Age
-            description: ''
-            identifier: age_group
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items:
-              1:
-                title: Child
-                operator: '='
-                value: CHILD
-              2:
-                title: Adult
-                operator: '='
-                value: ADULT
-              3:
-                title: 'Older adult'
-                operator: '='
-                value: OLDER_ADULT
-        trial_study_type:
-          id: trial_study_type
-          table: search_api_index_drupal_playground_trials
-          field: trial_study_type
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: search_api_options
-          operator: or
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: trial_study_type_op
-            label: 'Study type'
-            description: ''
-            use_operator: false
-            operator: trial_study_type_op
-            identifier: study_type
-            required: false
-            remember: false
-            multiple: true
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -716,17 +595,184 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          reduce_duplicates: false
-        trial_healthy_volunteers:
-          id: trial_healthy_volunteers
+          hierarchy: false
+          label_display: visible
+          facet:
+            query_operator: or
+            min_count: 1
+            missing: false
+            missing_label: others
+            show_numbers: true
+            processor_configs:
+              replace:
+                processor_id: replace
+                settings:
+                  replacements: "phase1|Phase 1\nphase2|Phase 2\nphase3|Phase 3"
+                weights:
+                  post_query: 50
+        trial_sex:
+          id: trial_sex
           table: search_api_index_drupal_playground_trials
-          field: trial_healthy_volunteers
+          field: facets_trial_sex
           relationship: none
           group_type: group
           admin_label: ''
-          plugin_id: search_api_boolean
+          plugin_id: facets_filter
           operator: '='
-          value: '1'
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: Sex
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: sex
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          hierarchy: false
+          label_display: visible
+          facet:
+            query_operator: or
+            min_count: 1
+            missing: false
+            missing_label: others
+            show_numbers: true
+            processor_configs:
+              replace:
+                processor_id: replace
+                settings:
+                  replacements: "female|Female\nmale|Male\nall|All"
+                weights:
+                  post_query: 50
+        trial_std_age:
+          id: trial_std_age
+          table: search_api_index_drupal_playground_trials
+          field: facets_trial_std_age
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: facets_filter
+          operator: '='
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: Age
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: age_group
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          hierarchy: false
+          label_display: visible
+          facet:
+            query_operator: or
+            min_count: 1
+            missing: false
+            missing_label: others
+            show_numbers: true
+            processor_configs:
+              replace:
+                processor_id: replace
+                settings:
+                  replacements: "child|Child\nadult|Adult\nolder_adult|Older adult"
+                weights:
+                  post_query: 50
+        trial_study_type:
+          id: trial_study_type
+          table: search_api_index_drupal_playground_trials
+          field: facets_trial_study_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: facets_filter
+          operator: '='
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Study type'
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: study_type
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          hierarchy: false
+          label_display: visible
+          facet:
+            query_operator: or
+            min_count: 1
+            missing: false
+            missing_label: others
+            show_numbers: true
+            processor_configs:
+              replace:
+                processor_id: replace
+                settings:
+                  replacements: "expanded_access|Expanded Access\ninterventional|Interventional\nobservational|Observational"
+                weights:
+                  post_query: 50
+        trial_healthy_volunteers:
+          id: trial_healthy_volunteers
+          table: search_api_index_drupal_playground_trials
+          field: facets_trial_healthy_volunteers
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: facets_filter
+          operator: '='
+          value: ''
           group: 1
           exposed: true
           expose:
@@ -734,35 +780,41 @@ display:
             label: 'Healthy volunteers'
             description: ''
             use_operator: false
-            operator: trial_healthy_volunteers_op
-            operator_limit_selection: false
-            operator_list: {  }
+            operator: ''
             identifier: healthy_volunteers
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
-          is_grouped: true
+          is_grouped: false
           group_info:
-            label: 'Healthy volunteers'
+            label: ''
             description: ''
-            identifier: healthy_volunteers
+            identifier: ''
             optional: true
             widget: select
             multiple: false
             remember: false
             default_group: All
             default_group_multiple: {  }
-            group_items:
-              1:
-                title: 'Accepts healthy volunteers'
-                operator: '='
-                value: '1'
-              2:
-                title: 'Does not accept healthy volunteers'
-                operator: '='
-                value: '0'
+            group_items: {  }
+          hierarchy: false
+          label_display: visible
+          facet:
+            query_operator: or
+            min_count: 1
+            missing: false
+            missing_label: others
+            show_numbers: true
+            processor_configs:
+              boolean_item:
+                processor_id: boolean_item
+                settings:
+                  on_value: 'Accepts healthy volunteers'
+                  off_value: 'Does not accept healthy volunteers'
+                weights:
+                  build: 35
       filter_groups:
         operator: AND
         groups:

@@ -1,0 +1,52 @@
+uuid: 75f9f8d5-53a3-4bf3-8704-f3e3b278a4f3
+langcode: en
+status: true
+dependencies:
+  config:
+    - search_api.index.drupal_playground_trials
+    - views.view.drupal_playground_trials
+  module:
+    - search_api
+id: drupal_playground_trials_healthy_volunteers
+name: 'Drupal Playground Trials Healthy Volunteers'
+weight: 0
+min_count: 1
+missing: false
+missing_label: others
+url_alias: healthy_volunteers
+facet_source_id: 'search_api:views_page__drupal_playground_trials__page_1'
+field_identifier: trial_healthy_volunteers
+query_operator: or
+hard_limit: 0
+exclude: false
+use_hierarchy: false
+keep_hierarchy_parents_active: false
+hierarchy:
+  type: taxonomy
+  config: {  }
+expand_hierarchy: false
+enable_parent_when_child_gets_disabled: true
+widget:
+  type: links
+  config:
+    soft_limit: 0
+    soft_limit_settings:
+      show_less_label: 'Show less'
+      show_more_label: 'Show more'
+    show_reset_link: false
+    hide_reset_when_no_selection: false
+    reset_text: 'Show all'
+    show_numbers: true
+empty_behavior:
+  behavior: none
+only_visible_when_facet_source_is_visible: false
+show_only_one_result: false
+show_title: false
+processor_configs:
+  boolean_item:
+    processor_id: boolean_item
+    weights:
+      build: 35
+    settings:
+      on_value: 'Accepts healthy volunteers'
+      off_value: 'Does not accept healthy volunteers'

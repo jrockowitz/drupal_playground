@@ -21,6 +21,13 @@ config:
   import:
     asset_injector:
       - asset_injector.css.drupal_playground_trials_filters
+    facets:
+      - facets.facet.drupal_playground_trials_overall_status
+      - facets.facet.drupal_playground_trials_phase
+      - facets.facet.drupal_playground_trials_sex
+      - facets.facet.drupal_playground_trials_age
+      - facets.facet.drupal_playground_trials_study_type
+      - facets.facet.drupal_playground_trials_healthy_volunteers
     shortcut: '*'
     search_api:
       - search_api.server.drupal_playground_trials
