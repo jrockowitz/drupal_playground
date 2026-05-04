@@ -22,6 +22,7 @@ Sets up a Clinical Trials search experience backed by Elasticsearch for the `tri
 - A Search API server pointed at the local DDEV Elasticsearch service
 - A Search API index for `trial` nodes
 - A Views search page at `/trials`
+- Views-based exposed facet filters powered by `facets_exposed_filters`
 - Autocomplete suggestions on the `/trials` keyword field
 - A `Did you mean:` spellcheck prompt on the `/trials` results page
 - A header summary of the active exposed filters on `/trials`
@@ -34,6 +35,8 @@ Sets up a Clinical Trials search experience backed by Elasticsearch for the `tri
 ## Prerequisite
 
 This recipe depends on the `drupal_playground_trials` recipe so the `trial` bundle and generated ClinicalTrials.gov fields already exist before Search API configuration is imported.
+
+The recipe uses `facets_exposed_filters` directly in the View configuration rather than separate facet blocks or separately managed facet entities.
 
 ## Installation
 
