@@ -112,6 +112,8 @@ class ClinicalTrialsGovStudyManager implements ClinicalTrialsGovStudyManagerInte
    * {@inheritdoc}
    */
   public function getEnum(string $enum_type): array {
+    $enum_type = str_replace('[]', '', $enum_type);
+
     foreach ($this->getEnums() as $enum) {
       if (!is_array($enum)) {
         continue;
@@ -133,6 +135,8 @@ class ClinicalTrialsGovStudyManager implements ClinicalTrialsGovStudyManagerInte
    * {@inheritdoc}
    */
   public function getEnumAsAllowedValues(string $enum_type, bool $key_label = FALSE): array {
+    $enum_type = str_replace('[]', '', $enum_type);
+
     foreach ($this->getEnums() as $enum_definition) {
       if (!is_array($enum_definition) || ($enum_definition['type'] ?? '') !== $enum_type) {
         continue;

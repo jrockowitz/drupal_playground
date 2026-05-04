@@ -82,6 +82,20 @@ class ClinicalTrialsGovCustomFieldManagerTest extends KernelTestBase {
     $this->assertSame('plain_text', $eligibility_definition['instance_settings']['field_settings']['eligibilityCriteria']['default_format']);
     $this->assertSame('map_string', $eligibility_definition['storage_settings']['columns']['stdAges']['type']);
     $this->assertSame('', $eligibility_definition['instance_settings']['field_settings']['stdAges']['table_empty']);
+    $this->assertSame([
+      [
+        'key' => 'CHILD',
+        'label' => 'Child',
+      ],
+      [
+        'key' => 'ADULT',
+        'label' => 'Adult',
+      ],
+      [
+        'key' => 'OLDER_ADULT',
+        'label' => 'Older Adult',
+      ],
+    ], $eligibility_definition['instance_settings']['field_settings']['stdAges']['allowed_values']);
     $this->assertSame('string', $eligibility_definition['storage_settings']['columns']['minimumAge']['type']);
     $this->assertSame('string', $eligibility_definition['storage_settings']['columns']['maximumAge']['type']);
     $this->assertNotContains('minimumAge', $eligibility_definition['yaml_columns']);

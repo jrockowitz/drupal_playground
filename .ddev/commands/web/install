@@ -55,6 +55,7 @@ for PRESET in "$@"; do
 
   elif [ "$PRESET" = "elastic" ]; then
 
+    # ddev exec curl -X DELETE http://elasticsearch:9200/drupal_playground_elasticsearch
     echo "Applying Elasticsearch recipe..."
     drush recipe ../recipes/drupal_playground_elasticsearch
     uli_path="/elasticsearch"
@@ -78,6 +79,7 @@ for PRESET in "$@"; do
 
   elif [ "$PRESET" = "trials-setup" ]; then
 
+    # ddev exec curl -X DELETE http://elasticsearch:9200/drupal_playground_trials
     echo "Applying ClinicalTrials.gov setup recipe..."
     drush recipe ../recipes/drupal_playground_trials
     echo "Applying Clinical Trials Elasticsearch recipe..."

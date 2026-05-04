@@ -184,6 +184,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
 
     if ($is_multi && $this->supportsCustomFieldStringArray($source_type, $type, $is_enum)) {
       $instance += [
+        'allowed_values' => $is_enum ? $this->studyManager->getEnumAsAllowedValues($type, TRUE) : [],
         'table_empty' => '',
       ];
 
