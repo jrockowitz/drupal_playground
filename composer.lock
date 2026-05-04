@@ -4406,11 +4406,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_admin",
-                "reference": "0e509ac1f8d2b5b05b378a55972abc7bbbc1e043"
+                "reference": "5cffed784a0084ceb4ea41bda315161bff94eff0"
             },
             "require": {
                 "drupal/coffee": "^2",
-                "drupal/core": "^11.3",
+                "drupal/core": "^11",
                 "drupal/dashboard": "^2",
                 "drupal/gin": "^5",
                 "drupal/gin_toolbar": "^3",
@@ -4462,14 +4462,14 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai",
-                "reference": "865cf6b951375046210077e0bc2f8f8eed10749e"
+                "reference": "63a47096dcd18b5ad336c48a94e0ea51a3f4e424"
             },
             "require": {
                 "drupal/ai": "^1",
                 "drupal/ai_dashboard": "^1",
                 "drupal/ai_provider_anthropic": "^1",
                 "drupal/ai_provider_openai": "^1",
-                "drupal/core": "^11.3",
+                "drupal/core": "^11",
                 "drupal/key": "^1"
             },
             "type": "drupal-recipe",
@@ -4487,10 +4487,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_automators",
-                "reference": "a0c081e22c790b6e3d4b69990f39210fd3e7198e"
+                "reference": "ec87a96e09676409b4002546f097f7397a7750f7"
             },
             "require": {
-                "drupal/core": "^11.3",
+                "drupal/core": "^11",
                 "drupal/field_widget_actions": "^1"
             },
             "type": "drupal-recipe",
@@ -4508,12 +4508,12 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_chat",
-                "reference": "8cfa088ffa647c30a9d7258df5abe26e18b2d2db"
+                "reference": "f7751a142a56a2aaed6d8df6082bdf0e9ffec089"
             },
             "require": {
                 "drupal/ai_agents": "^1",
                 "drupal/ai_chatbot": "^1",
-                "drupal/core": "^11.3"
+                "drupal/core": "^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4530,11 +4530,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_ckeditor",
-                "reference": "3d841810892bd310d6bfcadb3ac7621ca4a3e869"
+                "reference": "0ba412512bbc012068a6cffc4d1630ad4bce24b6"
             },
             "require": {
                 "drupal/ai_ckeditor": "^1",
-                "drupal/core": "^11.3"
+                "drupal/core": "^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4551,10 +4551,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_ckeditor_explain",
-                "reference": "03fbd6de2dc00425b3a6ba57bfd7f632d1951535"
+                "reference": "c7d564bd9e2c4a6d3042b8680af3c0ecb4949db4"
             },
             "require": {
-                "drupal/core": "^11.3"
+                "drupal/core": "^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4571,11 +4571,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_content_suggestions",
-                "reference": "276ee38efde4fa943201d247c18d36377a9fdffd"
+                "reference": "e841df98f964ad0edec11e7ee2672ba2467917ef"
             },
             "require": {
                 "drupal/ai_content_suggestions": "^1",
-                "drupal/core": "^11.3"
+                "drupal/core": "^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4592,13 +4592,13 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_devel",
-                "reference": "54176b47b20ac6ff2b84b52a42a7b7573ed43e0e"
+                "reference": "171a7b187af680de0a742fd216884334cff57653"
             },
             "require": {
                 "drupal/ai_api_explorer": "^1",
                 "drupal/ai_assistant_api": "^1",
                 "drupal/ai_logging": "^1",
-                "drupal/core": "^11.3"
+                "drupal/core": "^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4615,11 +4615,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_base",
-                "reference": "3c6101da54e589cd2c8aa45d9f0aab673901e2df"
+                "reference": "090122bf4e7302cf5a29c26bf361e50768b7a463"
             },
             "require": {
-                "drupal/asset_injector": "^2.21",
-                "drupal/core": "^11.3",
+                "drupal/asset_injector": "^2",
+                "drupal/core": "^11",
                 "drupal/key": "^1",
                 "drupal/token": "^1"
             },
@@ -4637,10 +4637,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_devel",
-                "reference": "1829aff2324fe7922fb9949e83b932806cef72a5"
+                "reference": "14d09d8571725ec85f33ff45cc783aa31ab1ddf5"
             },
             "require": {
-                "drupal/core": "^11.3",
+                "drupal/core": "^11",
                 "drupal/devel": "^5"
             },
             "type": "drupal-recipe",
@@ -4680,18 +4680,18 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_elasticsearch",
-                "reference": "c594e1d199081b3871deea18d34171f2536d0d5b"
+                "reference": "544b26fb308f5d3345c892d45c680fb2cb236bf4"
             },
             "require": {
-                "drupal/better_exposed_filters": "^7.0",
-                "drupal/core": "^11.3",
-                "drupal/elasticsearch_connector": "^8",
+                "drupal/better_exposed_filters": "^7",
+                "drupal/core": "^11",
+                "drupal/elasticsearch_connector": "^9@alpha",
                 "drupal/facets": "^3",
                 "drupal/search_api": "^1",
                 "drupal/search_api_spellcheck": "^4",
                 "drupal/views_ajax_history": "^1",
-                "drupal/views_autocomplete_filters": "^2.0",
-                "drupal/views_filters_summary": "^3.4"
+                "drupal/views_autocomplete_filters": "^2",
+                "drupal/views_filters_summary": "^3"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4708,12 +4708,12 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_schemadotorg",
-                "reference": "2897c3f8c003d17f2c2b13963e4f2f717053aacb"
+                "reference": "d306bf7ca3648dca40c139d09b65adfb1b08dc7b"
             },
             "require": {
-                "drupal/core": "^11.3",
-                "drupal/schemadotorg": "^1.0@alpha",
-                "drupal/schemadotorg_experimental": "^1.0@alpha"
+                "drupal/core": "^11",
+                "drupal/schemadotorg": "^1@alpha",
+                "drupal/schemadotorg_experimental": "^1@alpha"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4730,10 +4730,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_translation",
-                "reference": "fe48b4ecf08ebc33320a4cec2e0b9cf96a41c963"
+                "reference": "28564c7b670e9f1d1ad1e71b703acef927d14f6b"
             },
             "require": {
-                "drupal/core": "^11.3"
+                "drupal/core": "^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4749,21 +4749,49 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_trials",
-                "reference": "a5c49d945dcab8de36422df19e36047cd9bc84e3"
+                "reference": "0c70f3fe0084ef673b8099e4ec35ff3e744b03e4"
             },
             "require": {
-                "drupal/core": "^11.3",
-                "drupal/custom_field": "^4.0",
-                "drupal/field_group": "^4.0",
-                "drupal/migrate_plus": "^6.0",
-                "drupal/migrate_tools": "^6.0",
-                "drupal/readonly_field_widget": "^2.1"
+                "drupal/core": "^11",
+                "drupal/custom_field": "^4",
+                "drupal/field_group": "^4",
+                "drupal/migrate_plus": "^6",
+                "drupal/migrate_tools": "^6",
+                "drupal/readonly_field_widget": "^2"
             },
             "type": "drupal-recipe",
             "license": [
                 "GPL-2.0-or-later"
             ],
             "description": "Installs the ClinicalTrials.gov workflow for Drupal Playground.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "drupal/drupal_playground_trials_elasticsearch",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_trials_elasticsearch",
+                "reference": "d22018a2f0daa874b66c6270cdb5dfb757469683"
+            },
+            "require": {
+                "drupal/better_exposed_filters": "^7",
+                "drupal/core": "^11",
+                "drupal/elasticsearch_connector": "^9@alpha",
+                "drupal/facets": "^3",
+                "drupal/search_api": "^1",
+                "drupal/search_api_spellcheck": "^4",
+                "drupal/views_ajax_history": "^1",
+                "drupal/views_autocomplete_filters": "^2",
+                "drupal/views_filters_summary": "^3"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Installs Search API and Elasticsearch Connector with a Clinical Trials search experience for Drupal Playground.",
             "transport-options": {
                 "relative": true
             }
@@ -4969,33 +4997,31 @@
         },
         {
             "name": "drupal/elasticsearch_connector",
-            "version": "8.0.0-alpha7",
+            "version": "9.0.0-alpha3",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/elasticsearch_connector.git",
-                "reference": "8.0.0-alpha7"
+                "reference": "9.0.0-alpha3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/elasticsearch_connector-8.0.0-alpha7.zip",
-                "reference": "8.0.0-alpha7",
-                "shasum": "70fc386ddc164dffdde8da57b479c3f6d959f18f"
+                "url": "https://ftp.drupal.org/files/projects/elasticsearch_connector-9.0.0-alpha3.zip",
+                "reference": "9.0.0-alpha3",
+                "shasum": "c90892af06932e5481e2474a276f6a3b8d004dbf"
             },
             "require": {
-                "drupal/core": "^10.2 || ^11",
-                "drupal/search_api": "^1.23",
-                "elasticsearch/elasticsearch": "^8",
+                "drupal/core": "^10.5 || ^11",
+                "drupal/search_api": "^1.40.0",
+                "elasticsearch/elasticsearch": "^9.0.0",
                 "makinacorpus/php-lucene": "^1.1",
-                "php": "^8"
+                "php": "^8.1.34"
             },
             "require-dev": {
-                "drupal/coder": "^8.3",
-                "drupal/devel": "^4.0|^5.0",
-                "drupal/facets": "^3",
-                "drupal/geofield": "^1",
-                "drupal/key": "^1",
-                "drush/drush": "^12.0 || ^13",
-                "phayes/geophp": "^1.2"
+                "drupal/coder": "^8.3.31",
+                "drupal/facets": "^3.0.2",
+                "drupal/geofield": "^1.66.0",
+                "drupal/key": "^1.21.0",
+                "drush/drush": "^12.5.3 || ^13.7.0 || ^14.0.0"
             },
             "suggest": {
                 "drupal/facets": "Provides facetted search.",
@@ -5007,8 +5033,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.0.0-alpha7",
-                    "datestamp": "1777393324",
+                    "version": "9.0.0-alpha3",
+                    "datestamp": "1777393191",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Project has not opted into security advisory coverage!"
@@ -9532,36 +9558,36 @@
         },
         {
             "name": "elastic/transport",
-            "version": "v8.11.0",
+            "version": "v9.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elastic/elastic-transport-php.git",
-                "reference": "1d476af5dc0b74530d59b67d5dd96ee39768d5a4"
+                "reference": "3488b9d070e220f2a1ebdb500e6c588069f1897f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elastic/elastic-transport-php/zipball/1d476af5dc0b74530d59b67d5dd96ee39768d5a4",
-                "reference": "1d476af5dc0b74530d59b67d5dd96ee39768d5a4",
+                "url": "https://api.github.com/repos/elastic/elastic-transport-php/zipball/3488b9d070e220f2a1ebdb500e6c588069f1897f",
+                "reference": "3488b9d070e220f2a1ebdb500e6c588069f1897f",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.0",
+                "nyholm/psr7": "^1.8",
                 "open-telemetry/api": "^1.0",
-                "php": "^7.4 || ^8.0",
+                "php": "^8.1",
                 "php-http/discovery": "^1.14",
-                "php-http/httplug": "^2.3",
+                "php-http/httplug": "^2.4",
                 "psr/http-client": "^1.0",
                 "psr/http-factory": "^1.0",
-                "psr/http-message": "^1.0 || ^2.0",
-                "psr/log": "^1 || ^2 || ^3"
+                "psr/http-message": "^2.0",
+                "psr/log": "^2.0 || ^3.0"
             },
             "require-dev": {
-                "nyholm/psr7": "^1.5",
                 "open-telemetry/sdk": "^1.0",
                 "php-http/mock-client": "^1.5",
                 "phpstan/phpstan": "^2.1",
-                "phpunit/phpunit": "^9.5",
-                "symfony/http-client": "^5.4"
+                "phpunit/phpunit": "^10",
+                "symfony/http-client": "^6.0"
             },
             "type": "library",
             "autoload": {
@@ -9584,43 +9610,44 @@
             ],
             "support": {
                 "issues": "https://github.com/elastic/elastic-transport-php/issues",
-                "source": "https://github.com/elastic/elastic-transport-php/tree/v8.11.0"
+                "source": "https://github.com/elastic/elastic-transport-php/tree/v9.0.1"
             },
-            "time": "2025-04-02T08:20:33+00:00"
+            "time": "2025-05-08T12:31:50+00:00"
         },
         {
             "name": "elasticsearch/elasticsearch",
-            "version": "v8.19.0",
+            "version": "v9.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elastic/elasticsearch-php.git",
-                "reference": "1771284cb43a7b653634d418b6f5f0ec84ff8a6d"
+                "reference": "c79031c427260c8b5a583e4fe76fad330a5177cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elastic/elasticsearch-php/zipball/1771284cb43a7b653634d418b6f5f0ec84ff8a6d",
-                "reference": "1771284cb43a7b653634d418b6f5f0ec84ff8a6d",
+                "url": "https://api.github.com/repos/elastic/elasticsearch-php/zipball/c79031c427260c8b5a583e4fe76fad330a5177cc",
+                "reference": "c79031c427260c8b5a583e4fe76fad330a5177cc",
                 "shasum": ""
             },
             "require": {
-                "elastic/transport": "^8.11",
-                "guzzlehttp/guzzle": "^7.0",
-                "php": "^7.4 || ^8.0",
+                "elastic/transport": "^9.0",
+                "php": "^8.1",
                 "psr/http-client": "^1.0",
-                "psr/http-message": "^1.1 || ^2.0",
-                "psr/log": "^1|^2|^3"
+                "psr/http-message": "^2.0",
+                "psr/log": "^2.0|^3.0"
             },
             "require-dev": {
                 "ext-yaml": "*",
                 "ext-zip": "*",
-                "mockery/mockery": "^1.5",
-                "nyholm/psr7": "^1.5",
-                "php-http/mock-client": "^1.5",
+                "guzzlehttp/guzzle": "^7.0",
+                "mockery/mockery": "^1.6",
+                "nette/php-generator": "^4.0",
+                "nyholm/psr7": "^1.8",
+                "php-http/mock-client": "^1.6",
                 "phpstan/phpstan": "^2.1",
-                "phpunit/phpunit": "^9.5",
+                "phpunit/phpunit": "^10.0",
                 "psr/http-factory": "^1.0",
-                "symfony/finder": "~4.0",
-                "symfony/http-client": "^5.0|^6.0|^7.0"
+                "symfony/finder": "^6.0",
+                "symfony/http-client": "^6.0|^7.0"
             },
             "type": "library",
             "autoload": {
@@ -9641,9 +9668,9 @@
             ],
             "support": {
                 "issues": "https://github.com/elastic/elasticsearch-php/issues",
-                "source": "https://github.com/elastic/elasticsearch-php/tree/v8.19.0"
+                "source": "https://github.com/elastic/elasticsearch-php/tree/v9.3.0"
             },
-            "time": "2025-08-06T16:58:06+00:00"
+            "time": "2026-02-04T09:49:19+00:00"
         },
         {
             "name": "grasmash/expander",
@@ -11284,6 +11311,84 @@
                 "source": "https://github.com/nikic/PHP-Parser/tree/v5.7.0"
             },
             "time": "2025-12-06T11:56:16+00:00"
+        },
+        {
+            "name": "nyholm/psr7",
+            "version": "1.8.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Nyholm/psr7.git",
+                "reference": "a71f2b11690f4b24d099d6b16690a90ae14fc6f3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/a71f2b11690f4b24d099d6b16690a90ae14fc6f3",
+                "reference": "a71f2b11690f4b24d099d6b16690a90ae14fc6f3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.1 || ^2.0"
+            },
+            "provide": {
+                "php-http/message-factory-implementation": "1.0",
+                "psr/http-factory-implementation": "1.0",
+                "psr/http-message-implementation": "1.0"
+            },
+            "require-dev": {
+                "http-interop/http-factory-tests": "^0.9",
+                "php-http/message-factory": "^1.0",
+                "php-http/psr7-integration-tests": "^1.0",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.4",
+                "symfony/error-handler": "^4.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nyholm\\Psr7\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tobias Nyholm",
+                    "email": "tobias.nyholm@gmail.com"
+                },
+                {
+                    "name": "Martijn van der Ven",
+                    "email": "martijn@vanderven.se"
+                }
+            ],
+            "description": "A fast PHP7 implementation of PSR-7",
+            "homepage": "https://tnyholm.se",
+            "keywords": [
+                "psr-17",
+                "psr-7"
+            ],
+            "support": {
+                "issues": "https://github.com/Nyholm/psr7/issues",
+                "source": "https://github.com/Nyholm/psr7/tree/1.8.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Zegnat",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nyholm",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-09-09T07:06:30+00:00"
         },
         {
             "name": "open-telemetry/api",

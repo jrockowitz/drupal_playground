@@ -4,9 +4,9 @@
   "license": "GPL-2.0-or-later",
   "version": "1.0.0",
   "require": {
-    "drupal/core": "^11.3",
+    "drupal/core": "^11",
     "drupal/key": "^1",
     "drupal/token": "^1",
-    "drupal/asset_injector": "^2.21"
+    "drupal/asset_injector": "^2"
   }
 }
