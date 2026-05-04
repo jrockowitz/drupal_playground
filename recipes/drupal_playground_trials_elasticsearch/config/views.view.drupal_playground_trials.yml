@@ -169,7 +169,7 @@ display:
                 select_all_none: false
                 select_all_none_nested: false
                 display_inline: false
-                soft_limit: 10
+                soft_limit: 15
                 soft_limit_label_less: 'Show less'
                 soft_limit_label_more: 'Show more'
               trial_overall_status:
@@ -765,8 +765,8 @@ display:
           filters_summary_separator: ', '
           filters_summary_prefix: 'for '
           filters_result_label:
-            plural: results
-            singular: result
+            plural: trials
+            singular: trial
       footer: {  }
       display_extenders:
         ajax_history:

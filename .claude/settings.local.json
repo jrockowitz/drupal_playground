@@ -62,7 +62,9 @@
       "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&filter.overallStatus=COMPLETED&query.term=hasResults:true&pageSize=1\")",
       "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies?query.cond=cancer&pageSize=3&countTotal=true\")",
       "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies/NCT05088187\")",
-      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies/metadata\")"
+      "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies/metadata\")",
+      "mcp__plugin_playwright_playwright__browser_resize",
+      "mcp__plugin_playwright_playwright__browser_evaluate"
     ],
     "deny": [
       "Bash(ddev delete *)",

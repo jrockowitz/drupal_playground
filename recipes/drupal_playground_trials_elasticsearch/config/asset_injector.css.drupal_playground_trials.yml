@@ -1,0 +1,285 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+id: drupal_playground_trials
+label: 'Drupal Playground Trials'
+code: |-
+  /* Stack the exposed form controls in a predictable order on smaller screens. */
+  body.path-trials .view-filters form.views-exposed-form.bef-exposed-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* Keep the keyword search at the top and let it span the full filter width. */
+  body.path-trials .view-filters .form-item-keys {
+    order: -2;
+    width: 100%;
+    margin: 0;
+  }
+
+  /* Let the search input fill the available column without overflow. */
+  body.path-trials .view-filters .form-item-keys input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Keep the submit and reset buttons directly below the keyword field, side-by-side. */
+  body.path-trials .view-filters .form-actions {
+    order: -1;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.75rem;
+    margin-top: 0;
+  }
+
+  /* Expand buttons equally so Reset's right edge aligns with the search input. Remove Olivero's right margin. */
+  body.path-trials .view-filters .form-actions .button {
+    flex: 1;
+    margin-inline-end: 0;
+  }
+
+  /* Remove Olivero's fieldset top margin so the gap below buttons equals the form gap. */
+  body.path-trials .view-filters fieldset {
+    margin-top: 0;
+  }
+
+  /* Style the autocomplete dropdown to feel closer to Olivero's form language. */
+  body.path-trials .ui-autocomplete {
+    padding: 0.5rem 0;
+    border: 1px solid var(--color--gray-30, #c4d0dc);
+    border-radius: 0 0 0.5rem 0.5rem;
+    background: var(--color--white, #fff);
+    box-shadow: 0 0.75rem 1.5rem rgba(27, 39, 51, 0.12);
+  }
+
+  /* Add breathing room to each suggestion and use Olivero's primary blue. */
+  body.path-trials .ui-autocomplete .ui-menu-item-wrapper,
+  body.path-trials .ui-autocomplete .ui-menu-item a {
+    display: block;
+    padding: 0.7rem 1rem;
+    color: var(--color--primary-40);
+    line-height: 1.35;
+    text-decoration: none;
+  }
+
+  /* Highlight the active autocomplete row with Olivero-aligned contrast. */
+  body.path-trials .ui-autocomplete .ui-menu-item-wrapper.ui-state-active,
+  body.path-trials .ui-autocomplete .ui-menu-item-wrapper:focus,
+  body.path-trials .ui-autocomplete .ui-menu-item a.ui-state-active,
+  body.path-trials .ui-autocomplete .ui-menu-item a:focus {
+    margin: 0;
+    border: 0;
+    background: var(--color--primary-80);
+    color: var(--color--primary-30);
+  }
+
+  /* Separate stacked suggestions without adding heavy borders around the menu. */
+  body.path-trials .ui-autocomplete .ui-menu-item + .ui-menu-item {
+    border-top: 1px solid rgba(19, 58, 88, 0.08);
+  }
+
+  /* Hide empty teaser metadata blocks to reduce visual noise in results. */
+  body.path-trials .view-content .teaser__meta:empty {
+    display: none;
+  }
+
+  /* Reduce Olivero's default 54px grid gap between result rows. */
+  body.path-trials .view-content {
+    gap: 0.5rem;
+  }
+
+  /* Reduce Olivero's default 54px padding-bottom on each teaser article. */
+  body.path-trials .view-content article {
+    padding-bottom: 0.5rem;
+  }
+
+  /* Keep the empty state visually separated from the filter stack on narrow screens. */
+  body.path-trials .view-empty {
+    display: block;
+    margin-top: 1.5rem;
+  }
+
+  /* Reduce teaser title size for better result density. */
+  body.path-trials .view-content .teaser__title {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    margin-bottom: 0.15rem;
+  }
+
+  /* Clamp long titles to two lines with an ellipsis. */
+  body.path-trials .view-content .teaser__title a {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Two-column grid for teaser metadata: conditions left, age/keyword right. */
+  body.path-trials .view-content .teaser__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1.5rem;
+    row-gap: 0;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    margin-top: 0.15rem;
+  }
+
+  /* Brief summary spans both columns and sits above the two-column metadata. */
+  body.path-trials .view-content .field--name-trial-brief-summary {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    margin-bottom: 0.4rem;
+  }
+
+  /* Hide the "Brief Summary" label — the context makes it self-evident. */
+  body.path-trials .view-content .field--name-trial-brief-summary .field__label {
+    display: none;
+  }
+
+  /* Show only the first paragraph of the brief summary. */
+  body.path-trials .view-content .field--name-trial-brief-summary .field__item p:not(:first-child) {
+    display: none;
+  }
+
+  /* Remove margin on the first summary paragraph for tight spacing. */
+  body.path-trials .view-content .field--name-trial-brief-summary .field__item p:first-child {
+    margin-block-start: 0;
+    margin-block-end: 0;
+    font-size: 0.875rem;
+    line-height: 1.3;
+  }
+
+  /* Condition/Disease in left column, explicit row so right-column items don't stretch to match its height. */
+  body.path-trials .view-content .field--name-trial-cond {
+    grid-column: 1;
+    grid-row: 2 / span 10;
+    align-self: start;
+  }
+
+  /* Cap the condition list at 8 items so results with many conditions stay compact. */
+  body.path-trials .view-content .field--name-trial-cond .field__item:nth-child(n+9) {
+    display: none;
+  }
+
+  /* Right-column fields each get an explicit row so they pack tightly regardless of how tall the conditions column is. */
+  body.path-trials .view-content .field--name-trial-minimum-age {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+  }
+
+  body.path-trials .view-content .field--name-trial-maximum-age {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: start;
+  }
+
+  body.path-trials .view-content .field--name-trial-std-age {
+    grid-column: 2;
+    grid-row: 4;
+    align-self: start;
+  }
+
+  body.path-trials .view-content .field--name-trial-keyword {
+    grid-column: 2;
+    grid-row: 5;
+    align-self: start;
+  }
+
+  /* Cap keyword list at 5 items so results with many keywords stay compact. */
+  body.path-trials .view-content .field--name-trial-keyword .field__item:nth-child(n+6) {
+    display: none;
+  }
+
+  /* Compact checkbox labels in the filter sidebar. */
+  body.path-trials .view-filters .form-checkboxes .form-item {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+
+  /* Truncate long filter summary tags so they don't overflow the header row. */
+  body.path-trials .view-header .views-filters-summary .value-container {
+    display: inline-flex;
+    align-items: center;
+    max-width: 40rem;
+    gap: 0.3rem;
+  }
+
+  body.path-trials .view-header .views-filters-summary .value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  /* Switch to a two-column search layout once there is room for a sidebar. */
+  @media (min-width: 700px) {
+    body.path-trials .view {
+      display: grid;
+      grid-template-columns: minmax(260px, 30%) minmax(0, 70%);
+      column-gap: 2rem;
+      row-gap: 0.5rem;
+      align-items: start;
+    }
+
+    /* Pin the exposed filters into the left column, sticky so they stay visible while scrolling. */
+    body.path-trials .view-filters {
+      grid-column: 1;
+      grid-row: 1 / span 100;
+      margin: 0;
+      position: sticky;
+      top: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+    }
+
+    /* Remove extra form margin so the filter column aligns with the grid. */
+    body.path-trials form.views-exposed-form.bef-exposed-form {
+      margin: 0;
+    }
+
+    /* Place the filter summary (Displaying X trials) at the top of the right column, aligned with the filter top. */
+    body.path-trials .view-header {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: start;
+      margin: 0 0 0.5rem 0;
+    }
+
+    /* Keep result content in the right column and allow long text to shrink. */
+    body.path-trials .view-content,
+    body.path-trials .view-empty {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: start;
+      min-width: 0;
+      margin-top: 0;
+    }
+
+    body.path-trials .pager {
+      grid-column: 2;
+      align-self: start;
+      min-width: 0;
+      margin-top: 0;
+    }
+  }
+media: all
+preprocess: true
+conditions:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /trials
+  current_theme:
+    id: current_theme
+    negate: false
+    theme: olivero
+contexts: {  }
+conditions_require_all: true

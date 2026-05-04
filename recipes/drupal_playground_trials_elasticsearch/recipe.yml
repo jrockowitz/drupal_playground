@@ -20,7 +20,7 @@ config:
   strict: false
   import:
     asset_injector:
-      - asset_injector.css.drupal_playground_trials_filters
+      - asset_injector.css.drupal_playground_trials
     shortcut: '*'
     search_api:
       - search_api.server.drupal_playground_trials
