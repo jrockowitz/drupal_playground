@@ -100,12 +100,7 @@ code: |-
     margin: 0;
   }
 
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-healthy-volunteers"] {
-    order: 9;
-    margin: 0;
-  }
-
-  /* Give age-group radios the same vertical rhythm as the healthy-volunteers set. */
+  /* Give age-group radios the same vertical rhythm as the other single-choice sets. */
   body.path-trials .view-filters fieldset[data-drupal-selector="edit-phase"] .form-radios,
   body.path-trials .view-filters fieldset[data-drupal-selector="edit-age-group"] .form-radios {
     display: grid;

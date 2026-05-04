@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - field.field.node.trial.trial_cond
-    - field.field.node.trial.trial_healthy_volunteers
     - field.field.node.trial.trial_nct_id
     - field.field.node.trial.trial_overall_status
     - field.field.node.trial.trial_phase
@@ -45,14 +44,6 @@ field_settings:
     dependencies:
       config:
         - field.field.node.trial.trial_cond
-  trial_healthy_volunteers:
-    label: 'Healthy volunteers'
-    datasource_id: 'entity:node'
-    property_path: trial_healthy_volunteers
-    type: boolean
-    dependencies:
-      config:
-        - field.field.node.trial.trial_healthy_volunteers
   trial_nct_id:
     label: 'NCT ID'
     datasource_id: 'entity:node'

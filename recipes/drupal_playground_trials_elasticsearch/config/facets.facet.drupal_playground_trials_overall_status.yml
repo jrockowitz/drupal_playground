@@ -42,10 +42,3 @@ empty_behavior:
 only_visible_when_facet_source_is_visible: false
 show_only_one_result: false
 show_title: false
-processor_configs:
-  replace:
-    processor_id: replace
-    weights:
-      post_query: 50
-    settings:
-      replacements: "not_yet_recruiting|Not yet recruiting\nrecruiting|Recruiting"
