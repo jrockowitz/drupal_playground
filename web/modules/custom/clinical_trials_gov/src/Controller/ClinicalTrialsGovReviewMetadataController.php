@@ -74,7 +74,12 @@ class ClinicalTrialsGovReviewMetadataController extends ClinicalTrialsGovMetadat
    * {@inheritdoc}
    */
   protected function buildFooter(): array {
-    $paths = $this->getConfiguredPaths();
+    $paths = $this->getQueryPaths();
+    $path_items = array_map(static fn(string $path): array => [
+      '#type' => 'html_tag',
+      '#tag' => 'small',
+      '#value' => $path,
+    ], $paths);
 
     return [
       'field_paths' => [
@@ -86,7 +91,7 @@ class ClinicalTrialsGovReviewMetadataController extends ClinicalTrialsGovMetadat
         ],
         'paths' => [
           '#theme' => 'item_list',
-          '#items' => $paths,
+          '#items' => $path_items,
         ],
       ],
     ];

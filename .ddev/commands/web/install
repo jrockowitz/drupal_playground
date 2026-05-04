@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 ## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
 ## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-setup
@@ -80,6 +82,8 @@ for PRESET in "$@"; do
     drush recipe ../recipes/drupal_playground_trials
     echo "Applying Clinical Trials Elasticsearch recipe..."
     drush recipe ../recipes/drupal_playground_trials_elasticsearch
+    echo "Setting the ClinicalTrials.gov query..."
+    drush config:set -y clinical_trials_gov.settings query: 'query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING'
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov
     uli_path="/trials"

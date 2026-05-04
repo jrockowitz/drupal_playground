@@ -31,6 +31,7 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends KernelTestBase {
   public function testIndexFiltersByConfiguredPaths(): void {
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
+      ->set('required_paths', [])
       ->set('query_paths', [
         'protocolSection.identificationModule.briefTitle',
         'protocolSection.statusModule.overallStatus',
@@ -52,25 +53,25 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends KernelTestBase {
     $this->assertArrayHasKey('find', $build['studies_query']['links']);
     $this->assertSame('table', $build['results']['#type']);
     $this->assertContains('clinical-trials-gov-table', $build['results']['#attributes']['class']);
-    $this->assertStringContainsString('Showing 2 fields', (string) $build['summary']['#markup']);
+    $this->assertStringContainsString('Showing 5 fields', (string) $build['summary']['#markup']);
     $this->assertArrayHasKey('field_paths', $build['footer']);
     $this->assertSame('details', $build['footer']['field_paths']['#type']);
     $this->assertFalse($build['footer']['field_paths']['#open']);
-    $this->assertSame([
-      'protocolSection.identificationModule.briefTitle',
-      'protocolSection.statusModule.overallStatus',
-    ], $build['footer']['field_paths']['paths']['#items']);
+    $this->assertCount(5, $build['footer']['field_paths']['paths']['#items']);
+    $this->assertSame('small', $build['footer']['field_paths']['paths']['#items'][0]['#tag']);
+    $this->assertSame('protocolSection', $build['footer']['field_paths']['paths']['#items'][0]['#value']);
+    $this->assertSame('small', $build['footer']['field_paths']['paths']['#items'][4]['#tag']);
+    $this->assertSame('protocolSection.statusModule.overallStatus', $build['footer']['field_paths']['paths']['#items'][4]['#value']);
 
     // Check that the query details section sits between the intro and results summary.
     $keys = array_values(array_filter(array_keys($build), static fn(string $key): bool => !str_starts_with($key, '#')));
     $this->assertSame(['intro', 'studies_query', 'summary'], array_slice($keys, 0, 3));
 
     // Check that only configured metadata rows are rendered.
-    $this->assertCount(2, $build['results']['#rows']);
-    $this->assertSame('small', $build['results']['#rows'][0]['data'][2]['data']['#tag']);
-    $this->assertSame('protocolSection.identificationModule.briefTitle', $build['results']['#rows'][0]['data'][2]['data']['#value']);
-    $this->assertSame('small', $build['results']['#rows'][1]['data'][2]['data']['#tag']);
-    $this->assertSame('protocolSection.statusModule.overallStatus', $build['results']['#rows'][1]['data'][2]['data']['#value']);
+    $this->assertCount(5, $build['results']['#rows']);
+    $paths = array_map(static fn(array $row): string => (string) $row['data'][2]['data']['#value'], $build['results']['#rows']);
+    $this->assertContains('protocolSection.identificationModule.briefTitle', $paths);
+    $this->assertContains('protocolSection.statusModule.overallStatus', $paths);
   }
 
   /**

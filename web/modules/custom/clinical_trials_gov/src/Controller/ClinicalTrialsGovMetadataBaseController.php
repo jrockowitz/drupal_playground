@@ -92,7 +92,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
   /**
    * Returns configured metadata paths.
    */
-  protected function getConfiguredPaths(): array {
+  protected function getQueryPaths(): array {
     return $this->pathsManager->getQueryPaths();
   }
 
@@ -112,7 +112,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
       return $metadata;
     }
 
-    $path_lookup = array_fill_keys($this->getConfiguredPaths(), TRUE);
+    $path_lookup = array_fill_keys($this->getQueryPaths(), TRUE);
     if (!$path_lookup) {
       return [];
     }
