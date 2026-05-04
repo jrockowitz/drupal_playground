@@ -83,7 +83,7 @@ for PRESET in "$@"; do
     echo "Applying Clinical Trials Elasticsearch recipe..."
     drush recipe ../recipes/drupal_playground_trials_elasticsearch
     echo "Setting the ClinicalTrials.gov query..."
-    drush config:set -y clinical_trials_gov.settings query: 'query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING'
+    drush config:set -y clinical_trials_gov.settings query 'query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING'
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov
     uli_path="/trials"
