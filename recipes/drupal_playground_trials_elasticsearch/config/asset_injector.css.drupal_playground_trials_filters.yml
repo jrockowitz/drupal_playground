@@ -1,9 +1,8 @@
 langcode: en
 status: true
-# cspell:ignore minmax
 dependencies:
   module:
-    - asset_injector
+    - system
 id: drupal_playground_trials_filters
 label: 'Drupal Playground Trials Filters'
 code: |-
@@ -14,9 +13,10 @@ code: |-
     gap: 1rem;
   }
 
+
   /* Keep the keyword search at the top and let it span the full filter width. */
   body.path-trials .view-filters .form-item-keys {
-    order: 1;
+    order: -2;
     width: 100%;
     margin: 0;
   }
@@ -26,6 +26,11 @@ code: |-
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
+  }
+
+  /* Keep the manual submit button directly below the keyword field. */
+  body.path-trials .view-filters .form-actions {
+    order: -1;
   }
 
   /* Style the autocomplete dropdown to feel closer to Olivero's form language. */
@@ -63,62 +68,6 @@ code: |-
     border-top: 1px solid rgba(19, 58, 88, 0.08);
   }
 
-  /* Keep the manual submit button directly below the keyword field. */
-  body.path-trials .view-filters .form-actions {
-    order: 2;
-    margin: 0;
-  }
-
-  /* Keep sidebar filters in a clear clinical-search order. */
-  body.path-trials .view-filters .form-item-condition {
-    order: 3;
-    margin: 0;
-  }
-
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-overall-status"] {
-    order: 4;
-    margin: 0;
-  }
-
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-phase"] {
-    order: 5;
-    margin: 0;
-  }
-
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-study-type"] {
-    order: 6;
-    margin: 0;
-  }
-
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-sex"] {
-    order: 7;
-    margin: 0;
-  }
-
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-age-group"] {
-    order: 8;
-    margin: 0;
-  }
-
-  /* Give age-group radios the same vertical rhythm as the other single-choice sets. */
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-phase"] .form-radios,
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-age-group"] .form-radios {
-    display: grid;
-    gap: 0.625rem;
-  }
-
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-phase"] .form-type-radio,
-  body.path-trials .view-filters fieldset[data-drupal-selector="edit-age-group"] .form-type-radio {
-    margin: 0;
-  }
-
-  /* Remove default list styling from nested Better Exposed Filters checkboxes. */
-  body.path-trials .form-checkboxes.bef-checkboxes.bef-nested ul,
-  body.path-trials .form-checkboxes.bef-checkboxes.bef-nested li {
-    list-style: none;
-    margin-left: 0;
-    padding-left: 0;
-  }
 
   /* Hide empty teaser metadata blocks to reduce visual noise in results. */
   body.path-trials .view-content .teaser__meta:empty {
@@ -161,14 +110,16 @@ code: |-
 
     /* Keep result content in the right column and allow long text to shrink. */
     body.path-trials .view-content,
-    body.path-trials .view-empty {
+    body.path-trials .view-empty,
+    body.path-trials .pager {
       grid-column: 2;
       align-self: start;
       min-width: 0;
       margin-top: 0;
     }
   }
-conditions_require_all: true
+media: all
+preprocess: true
 conditions:
   request_path:
     id: request_path
@@ -179,5 +130,4 @@ conditions:
     negate: false
     theme: olivero
 contexts: {  }
-media: all
-preprocess: true
+conditions_require_all: true

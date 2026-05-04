@@ -1,7 +1,5 @@
-uuid: ba6f7692-1e41-433f-a6d3-219add63efff
 langcode: en
 status: true
-# cspell:ignore autosubmit Lymphoblastic Myelogenous Oropharyngeal Fibrosarcoma RISS AJCC Unresectable
 dependencies:
   config:
     - search_api.index.drupal_playground_trials
@@ -10,7 +8,6 @@ dependencies:
     - facets_exposed_filters
     - search_api
     - search_api_spellcheck
-    - views_autocomplete_filters
     - views_filters_summary
 id: drupal_playground_trials
 label: 'Clinical Trials'
@@ -27,191 +24,6 @@ display:
     position: 0
     display_options:
       title: 'Clinical Trials'
-      pager:
-        type: mini
-        options:
-          offset: 0
-          items_per_page: 10
-          total_pages: null
-          id: 0
-          tags:
-            next: 'next ›'
-            previous: '‹ previous'
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
-      exposed_form:
-        type: bef
-        options:
-          submit_button: Search
-          reset_button: true
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: false
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-          text_input_required: 'Enter keywords to search clinical trials.'
-          text_input_required_format: basic_html
-          bef:
-            general:
-              autosubmit: true
-              auto_submit_sort_only: false
-              autosubmit_breakpoint: ''
-              autosubmit_exclude_textfield: true
-              autosubmit_textfield_delay: 500
-              autosubmit_textfield_minimum_length: 3
-              autosubmit_hide: false
-              input_required: false
-              allow_secondary: false
-              secondary_label: 'Advanced options'
-              secondary_open: true
-              reset_button_always_show: true
-            filter:
-              search_api_fulltext:
-                plugin_id: default
-                advanced:
-                  placeholder_text: Search clinical trials
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  open_by_default: false
-                  is_secondary: false
-                  hide_label: true
-                  field_classes: ''
-                  sort_options_unsupported: ''
-              trial_overall_status:
-                plugin_id: bef
-                select_all_none: false
-                select_all_none_nested: false
-                display_inline: false
-                soft_limit: 0
-                soft_limit_label_less: ''
-                soft_limit_label_more: ''
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: true
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  open_by_default: true
-                  is_secondary: false
-                  hide_label: false
-                  field_classes: ''
-              trial_cond:
-                plugin_id: default
-                advanced:
-                  placeholder_text: ''
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: false
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  open_by_default: true
-                  is_secondary: false
-                  hide_label: false
-                  field_classes: ''
-              trial_phase:
-                plugin_id: bef
-                select_all_none: false
-                select_all_none_nested: false
-                display_inline: false
-                soft_limit: 0
-                soft_limit_label_less: ''
-                soft_limit_label_more: ''
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: true
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  open_by_default: true
-                  is_secondary: false
-                  hide_label: false
-                  field_classes: ''
-              trial_sex:
-                plugin_id: bef
-                select_all_none: false
-                select_all_none_nested: false
-                display_inline: false
-                soft_limit: 0
-                soft_limit_label_less: ''
-                soft_limit_label_more: ''
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: true
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  open_by_default: true
-                  is_secondary: false
-                  hide_label: false
-                  field_classes: ''
-              trial_std_age:
-                plugin_id: bef
-                select_all_none: false
-                select_all_none_nested: false
-                display_inline: false
-                soft_limit: 0
-                soft_limit_label_less: ''
-                soft_limit_label_more: ''
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: true
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  open_by_default: true
-                  is_secondary: false
-                  hide_label: false
-                  field_classes: ''
-              trial_study_type:
-                plugin_id: bef
-                select_all_none: false
-                select_all_none_nested: false
-                display_inline: false
-                soft_limit: 0
-                soft_limit_label_less: ''
-                soft_limit_label_more: ''
-                advanced:
-                  sort_options: false
-                  rewrite:
-                    filter_rewrite_values: ''
-                    filter_rewrite_values_key: true
-                  collapsible: false
-                  collapsible_disable_automatic_open: false
-                  open_by_default: true
-                  is_secondary: false
-                  hide_label: false
-                  field_classes: ''
-      access:
-        type: none
-        options: {  }
-      cache:
-        type: search_api_none
-        options: {  }
-      empty:
-        area_text_custom:
-          id: area_text_custom
-          table: views
-          field: area_text_custom
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: text_custom
-          empty: true
-          content: '<h2>No records found.</h2><p>Please try different keywords and search again.</p>'
-          tokenize: true
       fields:
         title:
           id: title
@@ -282,6 +94,197 @@ display:
             use_highlighting: false
             multi_type: separator
             multi_separator: ', '
+      pager:
+        type: mini
+        options:
+          offset: 0
+          items_per_page: 10
+          total_pages: null
+          id: 0
+          tags:
+            next: 'next ›'
+            previous: '‹ previous'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+      exposed_form:
+        type: bef
+        options:
+          submit_button: Search
+          reset_button: true
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: false
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          text_input_required: 'Enter keywords to search clinical trials.'
+          text_input_required_format: basic_html
+          bef:
+            general:
+              autosubmit: true
+              auto_submit_sort_only: false
+              autosubmit_breakpoint: ''
+              autosubmit_exclude_textfield: true
+              autosubmit_textfield_delay: 500
+              autosubmit_textfield_minimum_length: 3
+              autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: true
+              reset_button_always_show: true
+            filter:
+              search_api_fulltext:
+                plugin_id: default
+                advanced:
+                  placeholder_text: 'Search clinical trials'
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: false
+                  is_secondary: false
+                  hide_label: true
+                  field_classes: ''
+                  sort_options_unsupported: ''
+              facets_trial_cond:
+                plugin_id: bef
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: false
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: false
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+                  sort_options_unsupported: ''
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 10
+                soft_limit_label_less: 'Show less'
+                soft_limit_label_more: 'Show more'
+              trial_overall_status:
+                plugin_id: bef
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: true
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+                  sort_options_unsupported: ''
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: 'Show less'
+                soft_limit_label_more: 'Show more'
+              trial_phase:
+                plugin_id: bef
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: true
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+                  sort_options_unsupported: ''
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: 'Show less'
+                soft_limit_label_more: 'Show more'
+              trial_study_type:
+                plugin_id: bef
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: true
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+                  sort_options_unsupported: ''
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: 'Show less'
+                soft_limit_label_more: 'Show more'
+              trial_sex:
+                plugin_id: bef
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: true
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+                  sort_options_unsupported: ''
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: 'Show less'
+                soft_limit_label_more: 'Show more'
+              trial_std_age:
+                plugin_id: bef
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                    filter_rewrite_values_key: true
+                  collapsible: false
+                  collapsible_disable_automatic_open: false
+                  open_by_default: true
+                  is_secondary: false
+                  hide_label: false
+                  field_classes: ''
+                  sort_options_unsupported: ''
+                select_all_none: false
+                select_all_none_nested: false
+                display_inline: false
+                soft_limit: 0
+                soft_limit_label_less: 'Show less'
+                soft_limit_label_more: 'Show more'
+      access:
+        type: none
+        options: {  }
+      cache:
+        type: search_api_none
+        options: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text_custom
+          empty: true
+          content: '<h2>No records found.</h2><p>Please try different keywords and search again.</p>'
+          tokenize: true
       sorts:
         search_api_relevance:
           id: search_api_relevance
@@ -324,17 +327,17 @@ display:
             expose_fields: false
             placeholder: ''
             searched_fields_id: ''
+            value_maxlength: 128
+            value_max_words: null
             autocomplete_filter: 1
-            autocomplete_min_chars: 3
-            autocomplete_items: 5
+            autocomplete_min_chars: '3'
+            autocomplete_items: '5'
             autocomplete_field: title
             autocomplete_raw_suggestion: 1
             autocomplete_raw_dropdown: 1
             autocomplete_dependent: 0
             autocomplete_contextual: 0
             autocomplete_autosubmit: 0
-            value_maxlength: 128
-            value_max_words: null
           is_grouped: false
           group_info:
             label: ''
@@ -350,6 +353,60 @@ display:
           parse_mode: terms
           min_length: 3
           fields: {  }
+        facets_trial_cond:
+          id: facets_trial_cond
+          table: search_api_index_drupal_playground_trials
+          field: facets_trial_cond
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: facets_filter
+          operator: '='
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: Condition/Disease
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: condition
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          hierarchy: false
+          label_display: visible
+          facet:
+            query_operator: or
+            hard_limit: 20
+            min_count: 1
+            missing: false
+            missing_label: others
+            show_numbers: true
+            processor_configs:
+              count_widget_order:
+                processor_id: count_widget_order
+                weights:
+                  sort: 30
+                settings:
+                  sort: DESC
         trial_overall_status:
           id: trial_overall_status
           table: search_api_index_drupal_playground_trials
@@ -397,155 +454,18 @@ display:
             processor_configs:
               display_value_widget_order:
                 processor_id: display_value_widget_order
-                settings:
-                  sort: ASC
                 weights:
                   sort: 50
+                settings:
+                  sort: ASC
               replace:
                 processor_id: replace
-                settings:
-                  replacements: "not_yet_recruiting|Not yet recruiting\nrecruiting|Recruiting"
                 weights:
                   post_query: 50
-        trial_cond:
-          id: trial_cond
-          table: search_api_index_drupal_playground_trials
-          field: trial_cond
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: search_api_string
-          operator: '='
-          group: 1
-          exposed: true
-          expose:
-            operator_id: trial_cond_op
-            label: 'Condition/Disease'
-            description: ''
-            use_operator: false
-            operator: trial_cond_op
-            identifier: condition
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: true
-          group_info:
-            label: 'Condition/Disease'
-            description: ''
-            identifier: condition
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items:
-              1:
-                title: 'B Acute Lymphoblastic Leukemia'
-                operator: '='
-                value: 'B Acute Lymphoblastic Leukemia'
-              2:
-                title: 'B-cell Lymphoma'
-                operator: '='
-                value: 'B-cell Lymphoma'
-              3:
-                title: 'Breast Cancer'
-                operator: '='
-                value: 'Breast Cancer'
-              4:
-                title: 'Chronic Leukemia Myelogenous'
-                operator: '='
-                value: 'Chronic Leukemia Myelogenous'
-              5:
-                title: 'Diffuse Intrinsic Pontine Glioma'
-                operator: '='
-                value: 'Diffuse Intrinsic Pontine Glioma'
-              6:
-                title: 'Diffuse Midline Glioma, H3 K27M-Mutant'
-                operator: '='
-                value: 'Diffuse Midline Glioma, H3 K27M-Mutant'
-              7:
-                title: 'HPV Positive Oropharyngeal Squamous Cell Carcinoma'
-                operator: '='
-                value: 'HPV Positive Oropharyngeal Squamous Cell Carcinoma'
-              8:
-                title: 'Low-grade Glioma'
-                operator: '='
-                value: 'Low-grade Glioma'
-              9:
-                title: 'Lymphoma, Follicular'
-                operator: '='
-                value: 'Lymphoma, Follicular'
-              10:
-                title: 'Lymphoma, Large B-Cell, Diffuse'
-                operator: '='
-                value: 'Lymphoma, Large B-Cell, Diffuse'
-              11:
-                title: 'Lymphoma, Non-Hodgkin'
-                operator: '='
-                value: 'Lymphoma, Non-Hodgkin'
-              12:
-                title: 'Metastatic Renal Cell Carcinoma'
-                operator: '='
-                value: 'Metastatic Renal Cell Carcinoma'
-              13:
-                title: 'Multiple Myeloma'
-                operator: '='
-                value: 'Multiple Myeloma'
-              14:
-                title: 'Oropharyngeal Carcinoma'
-                operator: '='
-                value: 'Oropharyngeal Carcinoma'
-              15:
-                title: 'Pediatric Low-grade Glioma'
-                operator: '='
-                value: 'Pediatric Low-grade Glioma'
-              16:
-                title: 'Plasma Cell Myeloma'
-                operator: '='
-                value: 'Plasma Cell Myeloma'
-              17:
-                title: 'Rapidly Accelerated Fibrosarcoma (RAF) Altered Glioma'
-                operator: '='
-                value: 'Rapidly Accelerated Fibrosarcoma (RAF) Altered Glioma'
-              18:
-                title: 'Recurrent Diffuse Intrinsic Pontine Glioma'
-                operator: '='
-                value: 'Recurrent Diffuse Intrinsic Pontine Glioma'
-              19:
-                title: 'Recurrent Diffuse Midline Glioma, H3 K27M-Mutant'
-                operator: '='
-                value: 'Recurrent Diffuse Midline Glioma, H3 K27M-Mutant'
-              20:
-                title: 'Recurrent WHO Grade III Glioma'
-                operator: '='
-                value: 'Recurrent WHO Grade III Glioma'
-              21:
-                title: 'RISS Stage I Plasma Cell Myeloma'
-                operator: '='
-                value: 'RISS Stage I Plasma Cell Myeloma'
-              22:
-                title: 'RISS Stage II Plasma Cell Myeloma'
-                operator: '='
-                value: 'RISS Stage II Plasma Cell Myeloma'
-              23:
-                title: 'Stage III Renal Cell Cancer AJCC v8'
-                operator: '='
-                value: 'Stage III Renal Cell Cancer AJCC v8'
-              24:
-                title: 'Stage IV Renal Cell Cancer AJCC v8'
-                operator: '='
-                value: 'Stage IV Renal Cell Cancer AJCC v8'
-              25:
-                title: 'Unresectable Renal Cell Carcinoma'
-                operator: '='
-                value: 'Unresectable Renal Cell Carcinoma'
-              26:
-                title: 'WHO Grade III Glioma'
-                operator: '='
-                value: 'WHO Grade III Glioma'
+                settings:
+                  replacements: |-
+                    not_yet_recruiting|Not yet recruiting
+                    recruiting|Recruiting
         trial_phase:
           id: trial_phase
           table: search_api_index_drupal_playground_trials
@@ -593,130 +513,22 @@ display:
             processor_configs:
               display_value_widget_order:
                 processor_id: display_value_widget_order
-                settings:
-                  sort: ASC
                 weights:
                   sort: 50
-              replace:
-                processor_id: replace
-                settings:
-                  replacements: "early_phase1|⁠Early Phase 1\nphase1|⁠⁠Phase 1\nphase2|⁠⁠⁠Phase 2\nphase3|⁠⁠⁠⁠Phase 3\nphase4|⁠⁠⁠⁠⁠Phase 4\nna|⁠⁠⁠⁠⁠⁠Not applicable"
-                weights:
-                  post_query: 50
-        trial_sex:
-          id: trial_sex
-          table: search_api_index_drupal_playground_trials
-          field: facets_trial_sex
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: facets_filter
-          operator: '='
-          value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: ''
-            label: Sex
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: sex
-            required: false
-            remember: false
-            multiple: true
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          hierarchy: false
-          label_display: visible
-          facet:
-            query_operator: or
-            min_count: 1
-            missing: false
-            missing_label: others
-            show_numbers: true
-            processor_configs:
-              display_value_widget_order:
-                processor_id: display_value_widget_order
                 settings:
                   sort: ASC
-                weights:
-                  sort: 50
               replace:
                 processor_id: replace
-                settings:
-                  replacements: "female|Female\nmale|Male\nall|All"
                 weights:
                   post_query: 50
-        trial_std_age:
-          id: trial_std_age
-          table: search_api_index_drupal_playground_trials
-          field: facets_trial_std_age
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: facets_filter
-          operator: '='
-          value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: ''
-            label: Age
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: age_group
-            required: false
-            remember: false
-            multiple: true
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          hierarchy: false
-          label_display: visible
-          facet:
-            query_operator: or
-            min_count: 1
-            missing: false
-            missing_label: others
-            show_numbers: true
-            processor_configs:
-              display_value_widget_order:
-                processor_id: display_value_widget_order
                 settings:
-                  sort: ASC
-                weights:
-                  sort: 50
-              replace:
-                processor_id: replace
-                settings:
-                  replacements: "child|Child\nadult|Adult\nolder_adult|Older adult"
-                weights:
-                  post_query: 50
+                  replacements: |-
+                    early_phase1|⁠Early Phase 1
+                    phase1|⁠⁠Phase 1
+                    phase2|⁠⁠⁠Phase 2
+                    phase3|⁠⁠⁠⁠Phase 3
+                    phase4|⁠⁠⁠⁠⁠Phase 4
+                    na|⁠⁠⁠⁠⁠⁠Not applicable
         trial_study_type:
           id: trial_study_type
           table: search_api_index_drupal_playground_trials
@@ -764,16 +576,139 @@ display:
             processor_configs:
               display_value_widget_order:
                 processor_id: display_value_widget_order
-                settings:
-                  sort: ASC
                 weights:
                   sort: 50
+                settings:
+                  sort: ASC
               replace:
                 processor_id: replace
-                settings:
-                  replacements: "expanded_access|Expanded Access\ninterventional|Interventional\nobservational|Observational"
                 weights:
                   post_query: 50
+                settings:
+                  replacements: |-
+                    expanded_access|Expanded Access
+                    interventional|Interventional
+                    observational|Observational
+        trial_sex:
+          id: trial_sex
+          table: search_api_index_drupal_playground_trials
+          field: facets_trial_sex
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: facets_filter
+          operator: '='
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: Sex
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: sex
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          hierarchy: false
+          label_display: visible
+          facet:
+            query_operator: or
+            min_count: 1
+            missing: false
+            missing_label: others
+            show_numbers: true
+            processor_configs:
+              display_value_widget_order:
+                processor_id: display_value_widget_order
+                weights:
+                  sort: 50
+                settings:
+                  sort: ASC
+              replace:
+                processor_id: replace
+                weights:
+                  post_query: 50
+                settings:
+                  replacements: |-
+                    female|Female
+                    male|Male
+                    all|All
+        trial_std_age:
+          id: trial_std_age
+          table: search_api_index_drupal_playground_trials
+          field: facets_trial_std_age
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: facets_filter
+          operator: '='
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: Age
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: age_group
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          hierarchy: false
+          label_display: visible
+          facet:
+            query_operator: or
+            min_count: 1
+            missing: false
+            missing_label: others
+            show_numbers: true
+            processor_configs:
+              display_value_widget_order:
+                processor_id: display_value_widget_order
+                weights:
+                  sort: 50
+                settings:
+                  sort: ASC
+              replace:
+                processor_id: replace
+                weights:
+                  post_query: 50
+                settings:
+                  replacements: |-
+                    child|Child
+                    adult|Adult
+                    older_adult|Older adult
       filter_groups:
         operator: AND
         groups:
@@ -840,6 +775,7 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
+        - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
@@ -863,6 +799,7 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
+        - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
