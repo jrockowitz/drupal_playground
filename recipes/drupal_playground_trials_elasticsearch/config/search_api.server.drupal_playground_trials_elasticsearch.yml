@@ -3,7 +3,7 @@ status: true
 dependencies:
   module:
     - elasticsearch_connector
-id: drupal_playground_trials
+id: drupal_playground_trials_elasticsearch
 name: 'Drupal Playground Trials'
 description: 'Local Elasticsearch server for Clinical Trials search.'
 backend: elasticsearch

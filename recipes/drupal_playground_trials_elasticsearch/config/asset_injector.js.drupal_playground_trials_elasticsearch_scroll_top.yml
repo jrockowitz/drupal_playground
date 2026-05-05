@@ -1,0 +1,69 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+id: drupal_playground_trials_elasticsearch_scroll_top
+label: 'Drupal Playground Trials Scroll Top'
+code: |-
+  (function ($, Drupal) {
+    Drupal.behaviors.drupalPlaygroundTrialsElasticsearchScrollTop = {
+      attach: function (context) {
+        if (!context || context !== document) {
+          return;
+        }
+
+        if (document.documentElement.hasAttribute('data-drupal-playground-trials-scroll-top')) {
+          return;
+        }
+        document.documentElement.setAttribute('data-drupal-playground-trials-scroll-top', 'true');
+
+        $(document).on('ajaxComplete.drupalPlaygroundTrialsElasticsearchScrollTop', function (event, xhr, ajaxSettings) {
+          var requestUrl = ajaxSettings && ajaxSettings.url ? ajaxSettings.url : '';
+          var requestData = '';
+
+          if (ajaxSettings && ajaxSettings.data) {
+            requestData = (typeof ajaxSettings.data === 'string') ? ajaxSettings.data : $.param(ajaxSettings.data);
+          }
+
+          if (requestUrl.indexOf('views/ajax') === -1) {
+            return;
+          }
+
+          if (requestUrl.indexOf('page=') === -1 && requestData.indexOf('page=') === -1) {
+            return;
+          }
+
+          window.requestAnimationFrame(function () {
+            var view = document.querySelector('.view-drupal-playground-trials-elasticsearch');
+
+            if (!view) {
+              return;
+            }
+
+            var top = view.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({
+              top: Math.max(top - 16, 0),
+              behavior: 'smooth'
+            });
+          });
+        });
+      }
+    };
+  })(jQuery, Drupal);
+noscript: ''
+noscriptRegion: {  }
+jquery: true
+header: false
+preprocess: true
+conditions:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /trials
+  current_theme:
+    id: current_theme
+    negate: false
+    theme: olivero
+contexts: {  }
+conditions_require_all: true

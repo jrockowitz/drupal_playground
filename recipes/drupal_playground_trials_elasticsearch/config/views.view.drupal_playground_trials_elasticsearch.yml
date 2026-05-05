@@ -2,19 +2,19 @@ langcode: en
 status: true
 dependencies:
   config:
-    - search_api.index.drupal_playground_trials
+    - search_api.index.drupal_playground_trials_elasticsearch
   module:
     - better_exposed_filters
     - facets_exposed_filters
     - search_api
     - search_api_spellcheck
     - views_filters_summary
-id: drupal_playground_trials
-label: 'Clinical Trials'
+id: drupal_playground_trials_elasticsearch
+label: 'Clinical Trials (Elasticsearch)'
 module: views
 description: 'A simple Clinical Trials search page backed by Elasticsearch.'
 tag: ''
-base_table: search_api_index_drupal_playground_trials
+base_table: search_api_index_drupal_playground_trials_elasticsearch
 base_field: search_api_id
 display:
   default:
@@ -27,7 +27,7 @@ display:
       fields:
         title:
           id: title
-          table: search_api_index_drupal_playground_trials
+          table: search_api_index_drupal_playground_trials_elasticsearch
           field: title
           relationship: none
           group_type: group
@@ -288,7 +288,7 @@ display:
       sorts:
         search_api_relevance:
           id: search_api_relevance
-          table: search_api_index_drupal_playground_trials
+          table: search_api_index_drupal_playground_trials_elasticsearch
           field: search_api_relevance
           relationship: none
           group_type: group
@@ -300,7 +300,7 @@ display:
       filters:
         search_api_fulltext:
           id: search_api_fulltext
-          table: search_api_index_drupal_playground_trials
+          table: search_api_index_drupal_playground_trials_elasticsearch
           field: search_api_fulltext
           relationship: none
           group_type: group
@@ -332,7 +332,7 @@ display:
             autocomplete_filter: 1
             autocomplete_min_chars: '3'
             autocomplete_items: '5'
-            autocomplete_field: title
+            autocomplete_field: trial_keyword
             autocomplete_raw_suggestion: 1
             autocomplete_raw_dropdown: 1
             autocomplete_dependent: 0
@@ -355,7 +355,7 @@ display:
           fields: {  }
         facets_trial_cond:
           id: facets_trial_cond
-          table: search_api_index_drupal_playground_trials
+          table: search_api_index_drupal_playground_trials_elasticsearch
           field: facets_trial_cond
           relationship: none
           group_type: group
@@ -409,7 +409,7 @@ display:
                   sort: DESC
         trial_overall_status:
           id: trial_overall_status
-          table: search_api_index_drupal_playground_trials
+          table: search_api_index_drupal_playground_trials_elasticsearch
           field: facets_trial_overall_status
           relationship: none
           group_type: group
@@ -468,7 +468,7 @@ display:
                     recruiting|Recruiting
         trial_phase:
           id: trial_phase
-          table: search_api_index_drupal_playground_trials
+          table: search_api_index_drupal_playground_trials_elasticsearch
           field: facets_trial_phase
           relationship: none
           group_type: group
@@ -531,7 +531,7 @@ display:
                     na|⁠⁠⁠⁠⁠⁠Not applicable
         trial_study_type:
           id: trial_study_type
-          table: search_api_index_drupal_playground_trials
+          table: search_api_index_drupal_playground_trials_elasticsearch
           field: facets_trial_study_type
           relationship: none
           group_type: group
@@ -591,7 +591,7 @@ display:
                     observational|Observational
         trial_sex:
           id: trial_sex
-          table: search_api_index_drupal_playground_trials
+          table: search_api_index_drupal_playground_trials_elasticsearch
           field: facets_trial_sex
           relationship: none
           group_type: group
@@ -651,7 +651,7 @@ display:
                     all|All
         trial_std_age:
           id: trial_std_age
-          table: search_api_index_drupal_playground_trials
+          table: search_api_index_drupal_playground_trials_elasticsearch
           field: facets_trial_std_age
           relationship: none
           group_type: group
@@ -751,7 +751,7 @@ display:
           filters:
             search_api_fulltext: search_api_fulltext
             trial_overall_status: trial_overall_status
-            trial_cond: trial_cond
+            facets_trial_cond: facets_trial_cond
             trial_phase: trial_phase
             trial_sex: trial_sex
             trial_std_age: trial_std_age
@@ -760,7 +760,7 @@ display:
           show_remove_link: true
           show_reset_link: false
           group_values: false
-          content: 'Displaying @total @result_label @exposed_filter_summary'
+          content: 'Displaying @start-@end of @total @result_label @exposed_filter_summary'
           filters_reset_link_title: Reset
           filters_summary_separator: ', '
           filters_summary_prefix: 'for '
@@ -781,8 +781,8 @@ display:
         - url.query_args
         - 'user.node_grants:view'
       tags:
-        - 'config:search_api.index.drupal_playground_trials'
-        - 'search_api_list:drupal_playground_trials'
+        - 'config:search_api.index.drupal_playground_trials_elasticsearch'
+        - 'search_api_list:drupal_playground_trials_elasticsearch'
       cacheable: false
   page_1:
     id: page_1
@@ -805,6 +805,6 @@ display:
         - url.query_args
         - 'user.node_grants:view'
       tags:
-        - 'config:search_api.index.drupal_playground_trials'
-        - 'search_api_list:drupal_playground_trials'
+        - 'config:search_api.index.drupal_playground_trials_elasticsearch'
+        - 'search_api_list:drupal_playground_trials_elasticsearch'
       cacheable: false

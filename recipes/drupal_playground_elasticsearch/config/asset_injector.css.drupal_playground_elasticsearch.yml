@@ -3,7 +3,7 @@ status: true
 dependencies:
   module:
     - asset_injector
-id: drupal_playground_elasticsearch_filters
+id: drupal_playground_elasticsearch
 label: 'Drupal Playground Elasticsearch Filters'
 code: |-
   /* Remove default list styling from nested Better Exposed Filters checkboxes. */

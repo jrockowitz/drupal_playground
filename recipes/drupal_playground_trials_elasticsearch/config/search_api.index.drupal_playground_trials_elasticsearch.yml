@@ -9,12 +9,13 @@ dependencies:
     - field.field.node.trial.trial_sex
     - field.field.node.trial.trial_std_age
     - field.field.node.trial.trial_study_type
+    - field.field.node.trial.trial_keyword
     - node.type.trial
-    - search_api.server.drupal_playground_trials
+    - search_api.server.drupal_playground_trials_elasticsearch
   module:
     - node
     - search_api
-id: drupal_playground_trials
+id: drupal_playground_trials_elasticsearch
 name: 'Drupal Playground Trials'
 description: 'Clinical Trials search index powered by Elasticsearch.'
 read_only: false
@@ -92,6 +93,14 @@ field_settings:
     dependencies:
       config:
         - field.field.node.trial.trial_std_age
+  trial_keyword:
+    label: Keyword
+    datasource_id: 'entity:node'
+    property_path: trial_keyword
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_keyword
 processor_settings:
   add_url:
     weights:
@@ -132,6 +141,7 @@ processor_settings:
       - trial_sex
       - trial_std_age
       - trial_study_type
+      - trial_keyword
   tokenizer:
     weights:
       preprocess_index: -2
@@ -154,6 +164,7 @@ processor_settings:
       - trial_sex
       - trial_std_age
       - trial_study_type
+      - trial_keyword
 datasource_settings:
   'entity:node':
     bundles:
@@ -171,4 +182,4 @@ options:
   delete_on_fail: true
   index_directly: true
   track_changes_in_references: true
-server: drupal_playground_trials
+server: drupal_playground_trials_elasticsearch

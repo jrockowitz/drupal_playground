@@ -77,7 +77,7 @@ for PRESET in "$@"; do
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
     uli_path="/admin/config/services/clinical-trials-gov"
 
-  elif [ "$PRESET" = "trials-setup" ]; then
+  elif [ "$PRESET" = "trials-elastic" ]; then
 
     # ddev exec curl -X DELETE http://elasticsearch:9200/drupal_playground_trials
     echo "Applying ClinicalTrials.gov setup recipe..."

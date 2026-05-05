@@ -3,7 +3,7 @@ status: true
 dependencies:
   module:
     - system
-id: drupal_playground_trials
+id: drupal_playground_trials_elasticsearch
 label: 'Drupal Playground Trials'
 code: |-
   /* Stack the exposed form controls in a predictable order on smaller screens. */
@@ -202,6 +202,12 @@ code: |-
   body.path-trials .view-filters .form-checkboxes .form-item {
     font-size: 0.8rem;
     line-height: 1.3;
+  }
+
+  /* Reduce the checkbox control size to better match the compact filter labels. */
+  body.path-trials .view-filters .form-checkboxes .form-checkbox {
+    inline-size: 1.25em;
+    block-size: 1.25em;
   }
 
   /* Truncate long filter summary tags so they don't overflow the header row. */

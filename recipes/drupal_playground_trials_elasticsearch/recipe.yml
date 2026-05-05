@@ -20,10 +20,11 @@ config:
   strict: false
   import:
     asset_injector:
-      - asset_injector.css.drupal_playground_trials
+      - asset_injector.css.drupal_playground_trials_elasticsearch
+      - asset_injector.js.drupal_playground_trials_elasticsearch_scroll_top
     shortcut: '*'
     search_api:
-      - search_api.server.drupal_playground_trials
-      - search_api.index.drupal_playground_trials
+      - search_api.server.drupal_playground_trials_elasticsearch
+      - search_api.index.drupal_playground_trials_elasticsearch
     views:
-      - views.view.drupal_playground_trials
+      - views.view.drupal_playground_trials_elasticsearch
