@@ -83,6 +83,10 @@ code: |-
     overflow: hidden;
   }
 
+  body.path-trials .view-content .teaser__top {
+    margin-block-end: 0;
+  }
+
   /* Two-column grid for teaser metadata: conditions left, age/keyword right. */
   body.path-trials .view-content .teaser__content {
     display: grid;
@@ -100,7 +104,7 @@ code: |-
     grid-row: 1;
     font-size: 0.875rem;
     line-height: 1.3;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.875rem;
   }
 
   /* Hide the "Brief Summary" label — the context makes it self-evident. */
@@ -180,6 +184,7 @@ code: |-
     display: inline-flex;
     align-items: stretch;
     max-width: 40rem;
+    margin: .5rem .1rem 0;
     gap: 0.3rem;
   }
 
