@@ -10,10 +10,6 @@ indexing_options:
     field_name: title
     indexing_option: contextual_content
     max: -1
-  search_api_url:
-    field_name: search_api_url
-    indexing_option: contextual_content
-    max: 255
   trial_brief_summary:
     field_name: trial_brief_summary
     indexing_option: main_content

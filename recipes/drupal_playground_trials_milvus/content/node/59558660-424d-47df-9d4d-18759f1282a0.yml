@@ -1,0 +1,28 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 59558660-424d-47df-9d4d-18759f1282a0
+  bundle: page
+  default_langcode: en
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'What Is a Clinical Trial?'
+  path:
+    -
+      alias: /what-is-a-clinical-trial
+      langcode: en
+  body:
+    -
+      value: |-
+        <h2>A clinical trial is a research study with people</h2>
+        <p>Clinical trials are carefully planned studies that test medical treatments, diagnostic methods, prevention strategies, or care approaches in people. Some trials study brand-new therapies, while others compare existing treatments, evaluate new combinations, or look at better ways to deliver care.</p>
+        <h2>Trials follow a written plan</h2>
+        <p>Each trial is guided by a protocol that explains who can join, what participants receive, what researchers measure, and how safety is monitored. Eligibility criteria often include details like condition, age, disease stage, prior treatment history, or location. These rules are designed to protect participants and help researchers answer a clear question.</p>
+        <h2>Not all trials are the same</h2>
+        <p>Some clinical trials are interventional, meaning they test a treatment or procedure. Others are observational, meaning researchers collect information without assigning a new treatment. Trial phases also matter. Early-phase trials often focus more on safety, while later-phase trials often focus more on how well an approach works compared with current care.</p>
+      format: basic_html
+      summary: ''

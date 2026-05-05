@@ -1,8 +1,10 @@
+uuid: ff37c30e-3647-44d6-abd0-1317cfd95b5e
 langcode: en
 status: true
 dependencies:
   module:
     - ai_chatbot
+    - system
   theme:
     - olivero
 id: olivero_drupal_playground_trials_milvus_chat
@@ -25,16 +27,16 @@ settings:
   default_avatar: ''
   first_message: 'Ask our AI Assistant to help you search for a clinical trials.'
   loading_message: ''
-  stream: null
+  stream: 0
   toggle_state: open
-  width: 420px
-  height: 640px
+  width: 400px
+  height: 500px
   placement: bottom-right
   show_structured_results: false
   show_copy_icon: true
   collapse_minimal: false
   style_file: 'module:ai_chatbot:chatgpt.yml'
-  verbose_mode: true
+  verbose_mode: false
   expansion_method: none
 visibility:
   request_path:

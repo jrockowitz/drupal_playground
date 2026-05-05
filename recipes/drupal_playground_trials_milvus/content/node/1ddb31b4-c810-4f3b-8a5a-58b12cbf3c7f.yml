@@ -1,0 +1,32 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 1ddb31b4-c810-4f3b-8a5a-58b12cbf3c7f
+  bundle: page
+  default_langcode: en
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Quick Facts about Clinical Trials?'
+  path:
+    -
+      alias: /quick-facts-about-clinical-trials
+      langcode: en
+  body:
+    -
+      value: |-
+        <h2>Quick facts</h2>
+        <ul>
+          <li>Clinical trials study safety, effectiveness, dosing, side effects, and how treatments compare with current care.</li>
+          <li>Eligibility criteria determine who can join and often include condition, age, phase, prior treatment, and location.</li>
+          <li>Some trials are recruiting now, while others are active but not recruiting, completed, suspended, or withdrawn.</li>
+          <li>Participation is voluntary, and people can ask questions about risks, benefits, time commitment, and alternatives before enrolling.</li>
+          <li>Not every trial is a treatment trial. Some focus on diagnosis, prevention, symptom management, quality of life, or long-term follow-up.</li>
+          <li>ClinicalTrials.gov records often include study summary, status, phase, interventions, age range, locations, and contact details.</li>
+        </ul>
+        <p>These facts can help patients, caregivers, and medical professionals quickly understand what a trial record is describing before looking more closely at eligibility and study details.</p>
+      format: basic_html
+      summary: ''

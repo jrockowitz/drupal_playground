@@ -1,0 +1,28 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 32392833-9389-4865-9ec9-4725bc09a5f2
+  bundle: page
+  default_langcode: en
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Why Clinical Trials Are Important?'
+  path:
+    -
+      alias: /why-clinical-trials-are-important
+      langcode: en
+  body:
+    -
+      value: |-
+        <h2>Clinical trials move care forward</h2>
+        <p>Clinical trials help researchers learn whether new drugs, devices, screening strategies, or care approaches are safe and effective. They are one of the main ways medicine improves over time. Treatments people rely on today often became standard only after clinical trials showed that they worked better, worked more safely, or helped more people.</p>
+        <h2>Trials can expand treatment options</h2>
+        <p>For some people, a clinical trial may provide access to new therapies or combinations that are not yet widely available. That does not guarantee a better outcome, but it can create additional options to discuss with a care team. Trials also help match people to studies based on condition, phase, age, and other eligibility details.</p>
+        <h2>Participation also helps future patients</h2>
+        <p>Even when a trial is not the right fit for everyone, the information gathered can improve care for future patients. Clinical trials can identify which treatments work best, which side effects matter most, and which groups of people benefit from a specific approach. That makes trial participation important not only for individual decision-making, but for the broader progress of medicine.</p>
+      format: basic_html
+      summary: ''

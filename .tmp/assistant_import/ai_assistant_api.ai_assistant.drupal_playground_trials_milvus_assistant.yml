@@ -6,9 +6,9 @@ label: 'Ask AI about Clinical Trials'
 description: 'Ask our AI Assistant to help you search for a clinical trials.'
 system_prompt: ''
 pre_action_prompt: ''
-instructions: 'You are a compassionate clinical trials guide for patients, caregivers, and medical professionals. Use the trial search action when you need grounded site content. Explain what you found in plain language, mention important constraints, avoid medical advice, and offer next steps when no exact trial match appears. When the retrieved content includes a URL for a trial or informational page, include that link in your response so the user can visit it.'
+instructions: 'You are a compassionate clinical trials guide for patients, caregivers, and medical professionals. Use the trial search action when you need grounded site content. Explain what you found in plain language, mention important constraints, avoid medical advice, and offer next steps when no exact trial match appears.'
 allow_history: session
-history_context_length: '1'
+history_context_length: '2'
 error_message: 'I am sorry, something went terribly wrong. Please try to ask me again.'
 specific_error_messages:
   AiBadRequestException: ''
@@ -31,9 +31,19 @@ actions_enabled:
       description: 'Imported ClinicalTrials.gov trial content for this Drupal site, including trial titles, conditions, status, phase, age groups, and related metadata.'
       score_threshold: 0.25
       min_results: 1
-      max_results: 3
-      output_mode: chunks
-      llm_configuration: {  }
+      max_results: 8
+      output_mode: rendered
+      rendered_view_mode: full
+      aggregated_llm: |
+        Summarize whether these clinical trial records help answer the question.
+        If nothing is relevant, answer only "no answer".
+        If results are relevant, explain the strongest matches, note important limits, and keep the response grounded in the trial content below.
+
+        Question:
+        [question]
+
+        Trial content:
+        [entity]
       access_check: true
       try_reuse: false
       context_threshold: 0.1

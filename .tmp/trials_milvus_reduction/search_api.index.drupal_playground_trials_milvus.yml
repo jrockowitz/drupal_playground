@@ -5,6 +5,7 @@ dependencies:
     - field.field.node.page.body
     - field.field.node.trial.trial_brief_summary
     - field.field.node.trial.trial_cond
+    - field.field.node.trial.trial_eligibility_criteria
     - field.field.node.trial.trial_keyword
     - field.field.node.trial.trial_nct_id
     - field.field.node.trial.trial_overall_status
@@ -41,11 +42,6 @@ field_settings:
     dependencies:
       module:
         - node
-  search_api_url:
-    label: URI
-    datasource_id: null
-    property_path: search_api_url
-    type: string
   trial_brief_summary:
     label: 'Brief summary'
     datasource_id: 'entity:node'
@@ -62,6 +58,14 @@ field_settings:
     dependencies:
       config:
         - field.field.node.trial.trial_cond
+  trial_eligibility_criteria:
+    label: 'Eligibility criteria'
+    datasource_id: 'entity:node'
+    property_path: trial_eligibility_criteria
+    type: text
+    dependencies:
+      config:
+        - field.field.node.trial.trial_eligibility_criteria
   trial_keyword:
     label: Keyword
     datasource_id: 'entity:node'
@@ -119,9 +123,6 @@ field_settings:
       config:
         - field.field.node.trial.trial_study_type
 processor_settings:
-  add_url:
-    weights:
-      preprocess_index: -30
   content_access:
     weights:
       preprocess_index: -6
