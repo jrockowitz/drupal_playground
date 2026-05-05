@@ -4,10 +4,53 @@ set -euo pipefail
 
 ## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-setup
+## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-elastic\nddev install trials-milvus
 ## ProjectTypes: drupal,drupal11
 
 uli_path="/"
+trials_imported=0
+
+configure_trials_query() {
+  echo "Setting the ClinicalTrials.gov query..."
+  drush config:set -y clinical_trials_gov.settings query 'query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING'
+}
+
+import_trials_if_needed() {
+  if [ "$trials_imported" -eq 1 ]; then
+    echo "ClinicalTrials.gov studies already imported in this install run. Skipping duplicate import..."
+    return
+  fi
+
+  echo "Importing ClinicalTrials.gov studies..."
+  drush migrate:import clinical_trials_gov --limit=30
+  trials_imported=1
+}
+
+index_trials_milvus() {
+  local index_id="drupal_playground_trials_milvus"
+  local progress=""
+  local indexed=""
+  local total=""
+
+  while true; do
+    progress=$(drush php:eval '$index = \Drupal\search_api\Entity\Index::load("drupal_playground_trials_milvus"); if (!$index) { throw new \RuntimeException("Missing Search API index."); } $tracker = $index->getTrackerInstance(); $total = $tracker->getTotalItemsCount(); $remaining = $tracker->getRemainingItemsCount(); print (($total - $remaining) . "/" . $total);')
+    indexed="${progress%%/*}"
+    total="${progress##*/}"
+
+    if [ "$indexed" -ge "$total" ]; then
+      echo "Milvus indexing complete: $indexed/$total"
+      break
+    fi
+
+    echo "Milvus indexing progress: $indexed/$total"
+    if drush search-api:index "$index_id" --limit=10 --batch-size=5 --time-limit=30; then
+      sleep 2
+    else
+      echo "Milvus indexing hit a transient error. Waiting 30 seconds before retrying..."
+      sleep 30
+    fi
+  done
+}
 
 drush site:install standard \
   --db-url=mysql://db:db@db/db \
@@ -84,11 +127,23 @@ for PRESET in "$@"; do
     drush recipe ../recipes/drupal_playground_trials
     echo "Applying Clinical Trials Elasticsearch recipe..."
     drush recipe ../recipes/drupal_playground_trials_elasticsearch
-    echo "Setting the ClinicalTrials.gov query..."
-    drush config:set -y clinical_trials_gov.settings query 'query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING'
-    echo "Importing ClinicalTrials.gov studies..."
-    drush migrate:import clinical_trials_gov
+    configure_trials_query
+    import_trials_if_needed
     uli_path="/trials"
+
+  elif [ "$PRESET" = "trials-milvus" ]; then
+
+    echo "Applying AI recipe..."
+    drush recipe ../recipes/drupal_playground_ai
+    echo "Applying ClinicalTrials.gov setup recipe..."
+    drush recipe ../recipes/drupal_playground_trials
+    echo "Applying Clinical Trials Milvus recipe..."
+    drush recipe ../recipes/drupal_playground_trials_milvus
+    configure_trials_query
+    import_trials_if_needed
+    echo "Indexing ClinicalTrials.gov studies in Milvus..."
+    drush search-api:clear drupal_playground_trials_milvus -y
+    index_trials_milvus
 
   fi
 done

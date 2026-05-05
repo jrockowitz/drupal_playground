@@ -3,7 +3,7 @@ status: true
 dependencies:
   module:
     - system
-id: drupal_playground_trials_elasticsearch_scroll_top
+id: drupal_playground_trials_elasticsearch
 label: 'Drupal Playground Trials Scroll Top'
 code: |-
   (function ($, Drupal) {

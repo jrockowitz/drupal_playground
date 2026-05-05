@@ -20,7 +20,7 @@ config:
   import:
     asset_injector:
       - asset_injector.css.drupal_playground_trials_elasticsearch
-      - asset_injector.js.drupal_playground_trials_elasticsearch_scroll_top
+      - asset_injector.js.drupal_playground_trials_elasticsearch
     shortcut: '*'
     search_api:
       - search_api.server.drupal_playground_trials_elasticsearch

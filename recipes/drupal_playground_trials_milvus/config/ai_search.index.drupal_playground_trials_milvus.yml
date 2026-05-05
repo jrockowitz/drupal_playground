@@ -1,0 +1,40 @@
+index_id: drupal_playground_trials_milvus
+control_field_max_length: true
+exclude_chunk_from_metadata: false
+indexing_options:
+  title:
+    field_name: title
+    indexing_option: main_content
+    max: -1
+  trial_cond:
+    field_name: trial_cond
+    indexing_option: contextual_content
+    max: -1
+  trial_keyword:
+    field_name: trial_keyword
+    indexing_option: contextual_content
+    max: -1
+  trial_nct_id:
+    field_name: trial_nct_id
+    indexing_option: attributes
+    max: 255
+  trial_overall_status:
+    field_name: trial_overall_status
+    indexing_option: attributes
+    max: 255
+  trial_phase:
+    field_name: trial_phase
+    indexing_option: attributes
+    max: 255
+  trial_sex:
+    field_name: trial_sex
+    indexing_option: attributes
+    max: 255
+  trial_std_age:
+    field_name: trial_std_age
+    indexing_option: attributes
+    max: 255
+  trial_study_type:
+    field_name: trial_study_type
+    indexing_option: attributes
+    max: 255

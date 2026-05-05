@@ -69,6 +69,10 @@
             "url": "recipes/drupal_playground_trials_elasticsearch"
         },
         {
+            "type": "path",
+            "url": "recipes/drupal_playground_trials_milvus"
+        },
+        {
             "type": "package",
             "package": {
                 "name": "recipes/schemadotorg_recipes",
@@ -98,6 +102,7 @@
         "drupal/drupal_playground_schemadotorg": "*",
         "drupal/drupal_playground_trials": "*",
         "drupal/drupal_playground_trials_elasticsearch": "*",
+        "drupal/drupal_playground_trials_milvus": "*",
         "drupal/drupal_playground_translation": "*",
         "recipes/schemadotorg_recipes": "*"
     }

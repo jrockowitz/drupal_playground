@@ -1,0 +1,43 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - ai_chatbot
+  theme:
+    - olivero
+id: olivero_drupal_playground_trials_milvus_chat
+theme: olivero
+region: content_above
+weight: -10
+provider: null
+plugin: ai_deepchat_block
+settings:
+  id: ai_deepchat_block
+  label: 'Ask AI about Clinical Trials'
+  label_display: visible
+  provider: ai_chatbot
+  ai_assistant: drupal_playground_trials_milvus_assistant
+  bot_name: 'Clinical Trials AI'
+  bot_image: /modules/contrib/ai/modules/ai_chatbot/assets/ai-icon-gradient.svg
+  use_username: 0
+  default_username: ''
+  use_avatar: 0
+  default_avatar: ''
+  first_message: 'Ask our AI Assistant to help you search for a clinical trials.'
+  loading_message: ''
+  stream: null
+  toggle_state: open
+  width: 420px
+  height: 640px
+  placement: bottom-right
+  show_structured_results: false
+  show_copy_icon: true
+  collapse_minimal: false
+  style_file: 'module:ai_chatbot:chatgpt.yml'
+  verbose_mode: true
+  expansion_method: none
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: "<front>\r\n/trials"

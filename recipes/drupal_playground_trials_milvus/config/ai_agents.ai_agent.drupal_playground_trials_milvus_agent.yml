@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies: {  }
+id: drupal_playground_trials_milvus_agent
+label: 'Ask AI about Clinical Trials'
+description: 'Ask our AI Assistant to help you search for a clinical trials.'
+system_prompt: 'You help patients, caregivers, and medical professionals explore imported clinical trials on this Drupal site. Be compassionate, stay grounded in the site''s trial content, explain uncertainty clearly, never claim enrollment or eligibility, and always offer practical next steps when no exact match appears.'
+secured_system_prompt: null
+tools: {  }
+tool_settings: null
+orchestration_agent: true
+triage_agent: false
+max_loops: 3
+default_information_tools: null
+tool_usage_limits: {  }
+exclude_users_role: false
+masquerade_roles: {  }
+structured_output_enabled: null
+structured_output_schema: null
