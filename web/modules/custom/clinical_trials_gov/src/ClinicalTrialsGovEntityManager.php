@@ -523,6 +523,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   protected function getTeaserFieldPaths(): array {
     return [
       'protocolSection.descriptionModule.briefSummary',
+      // 'protocolSection.identificationModule.nctId',
       'protocolSection.conditionsModule.conditions',
       'protocolSection.eligibilityModule.minimumAge',
       'protocolSection.eligibilityModule.maximumAge',

@@ -46,6 +46,8 @@ field_settings:
     datasource_id: null
     property_path: search_api_url
     type: string
+    configuration:
+      absolute: true
   trial_brief_summary:
     label: 'Brief summary'
     datasource_id: 'entity:node'
