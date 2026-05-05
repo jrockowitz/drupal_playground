@@ -4774,7 +4774,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_trials_elasticsearch",
-                "reference": "d22018a2f0daa874b66c6270cdb5dfb757469683"
+                "reference": "afc726aa5cc8306342779811d83c80a10ecfbf5f"
             },
             "require": {
                 "drupal/better_exposed_filters": "^7",
@@ -4784,7 +4784,6 @@
                 "drupal/search_api": "^1",
                 "drupal/search_api_spellcheck": "^4",
                 "drupal/views_ajax_history": "^1",
-                "drupal/views_autocomplete_filters": "^2",
                 "drupal/views_filters_summary": "^3"
             },
             "type": "drupal-recipe",
@@ -7613,20 +7612,20 @@
         },
         {
             "name": "drupal/pathauto",
-            "version": "1.14.0",
+            "version": "1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/pathauto.git",
-                "reference": "8.x-1.14"
+                "reference": "8.x-1.15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/pathauto-8.x-1.14.zip",
-                "reference": "8.x-1.14",
-                "shasum": "07f0d2efcf0bfb450e2ab69a43921fa39dc5f25b"
+                "url": "https://ftp.drupal.org/files/projects/pathauto-8.x-1.15.zip",
+                "reference": "8.x-1.15",
+                "shasum": "de86fb2c00bb78a449ea5ae2249a5eb96367f05c"
             },
             "require": {
-                "drupal/core": "^10 || ^11",
+                "drupal/core": "^10.2 || ^11",
                 "drupal/ctools": "*",
                 "drupal/token": "*"
             },
@@ -7642,8 +7641,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.14",
-                    "datestamp": "1759838097",
+                    "version": "8.x-1.15",
+                    "datestamp": "1777931327",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -10256,16 +10255,16 @@
         },
         {
             "name": "justinrainbow/json-schema",
-            "version": "6.8.0",
+            "version": "6.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jsonrainbow/json-schema.git",
-                "reference": "89ac92bcfe5d0a8a4433c7b89d394553ae7250cc"
+                "reference": "318bd68da5b5a431a345b2e19abcad728e24a86a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jsonrainbow/json-schema/zipball/89ac92bcfe5d0a8a4433c7b89d394553ae7250cc",
-                "reference": "89ac92bcfe5d0a8a4433c7b89d394553ae7250cc",
+                "url": "https://api.github.com/repos/jsonrainbow/json-schema/zipball/318bd68da5b5a431a345b2e19abcad728e24a86a",
+                "reference": "318bd68da5b5a431a345b2e19abcad728e24a86a",
                 "shasum": ""
             },
             "require": {
@@ -10325,9 +10324,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jsonrainbow/json-schema/issues",
-                "source": "https://github.com/jsonrainbow/json-schema/tree/6.8.0"
+                "source": "https://github.com/jsonrainbow/json-schema/tree/6.8.1"
             },
-            "time": "2026-04-02T12:43:11+00:00"
+            "time": "2026-05-04T21:31:23+00:00"
         },
         {
             "name": "laravel/prompts",

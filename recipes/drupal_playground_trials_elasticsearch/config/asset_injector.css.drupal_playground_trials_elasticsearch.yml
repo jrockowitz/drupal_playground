@@ -47,41 +47,6 @@ code: |-
     margin-top: 0;
   }
 
-  /* Style the autocomplete dropdown to feel closer to Olivero's form language. */
-  body.path-trials .ui-autocomplete {
-    padding: 0.5rem 0;
-    border: 1px solid var(--color--gray-30, #c4d0dc);
-    border-radius: 0 0 0.5rem 0.5rem;
-    background: var(--color--white, #fff);
-    box-shadow: 0 0.75rem 1.5rem rgba(27, 39, 51, 0.12);
-  }
-
-  /* Add breathing room to each suggestion and use Olivero's primary blue. */
-  body.path-trials .ui-autocomplete .ui-menu-item-wrapper,
-  body.path-trials .ui-autocomplete .ui-menu-item a {
-    display: block;
-    padding: 0.7rem 1rem;
-    color: var(--color--primary-40);
-    line-height: 1.35;
-    text-decoration: none;
-  }
-
-  /* Highlight the active autocomplete row with Olivero-aligned contrast. */
-  body.path-trials .ui-autocomplete .ui-menu-item-wrapper.ui-state-active,
-  body.path-trials .ui-autocomplete .ui-menu-item-wrapper:focus,
-  body.path-trials .ui-autocomplete .ui-menu-item a.ui-state-active,
-  body.path-trials .ui-autocomplete .ui-menu-item a:focus {
-    margin: 0;
-    border: 0;
-    background: var(--color--primary-80);
-    color: var(--color--primary-30);
-  }
-
-  /* Separate stacked suggestions without adding heavy borders around the menu. */
-  body.path-trials .ui-autocomplete .ui-menu-item + .ui-menu-item {
-    border-top: 1px solid rgba(19, 58, 88, 0.08);
-  }
-
   /* Hide empty teaser metadata blocks to reduce visual noise in results. */
   body.path-trials .view-content .teaser__meta:empty {
     display: none;
