@@ -11,7 +11,6 @@ install:
   - shortcut
   - search_api
   - search_api_spellcheck
-  - views_autocomplete_filters
   - views_filters_summary
   - views_filters_summary_search_api
   - views_ajax_history

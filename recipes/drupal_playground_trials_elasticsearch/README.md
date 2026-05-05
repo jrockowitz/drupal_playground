@@ -11,7 +11,6 @@ Sets up a Clinical Trials search experience backed by Elasticsearch for the `tri
 - [Facets](https://www.drupal.org/project/facets)
 - `facets_exposed_filters` from [Facets](https://www.drupal.org/project/facets)
 - [Better Exposed Filters](https://www.drupal.org/project/better_exposed_filters)
-- [Views Autocomplete Filters](https://www.drupal.org/project/views_autocomplete_filters)
 - [Search API Spellcheck](https://www.drupal.org/project/search_api_spellcheck)
 - [Views Exposed Filters Summary](https://www.drupal.org/project/views_filters_summary)
 - `views_filters_summary_search_api` from [Views Exposed Filters Summary](https://www.drupal.org/project/views_filters_summary)
@@ -23,7 +22,6 @@ Sets up a Clinical Trials search experience backed by Elasticsearch for the `tri
 - A Search API index for `trial` nodes
 - A Views search page at `/trials`
 - Views-based exposed facet filters powered by `facets_exposed_filters`
-- Autocomplete suggestions on the `/trials` keyword field
 - A `Did you mean:` spellcheck prompt on the `/trials` results page
 - A header summary of the active exposed filters on `/trials`
 - AJAX search state that updates the browser URL and back/forward history
@@ -93,7 +91,6 @@ ddev drush search-api:index drupal_playground_trials_elasticsearch
 - ⚫ Confirm the facet-backed filters render human-friendly labels such as `Recruiting`, `Phase 2`, and `Adult`.
 - ⚫ Confirm the facet-backed filters show result counts next to each item.
 - ⚫ Visit `/trials`.
-- ⚫ Type a keyword into `Search` and confirm autocomplete suggestions appear.
 - ⚫ Search for a misspelled keyword and confirm a `Did you mean:` correction appears when appropriate.
 - ⚫ Apply multiple facet selections and confirm the result count updates.
 - ⚫ Confirm the header summarizes the active filters and result count.

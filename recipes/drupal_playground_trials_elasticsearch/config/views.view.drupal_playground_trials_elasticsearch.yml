@@ -329,15 +329,6 @@ display:
             searched_fields_id: ''
             value_maxlength: 128
             value_max_words: null
-            autocomplete_filter: 1
-            autocomplete_min_chars: '3'
-            autocomplete_items: '5'
-            autocomplete_field: trial_keyword
-            autocomplete_raw_suggestion: 1
-            autocomplete_raw_dropdown: 1
-            autocomplete_dependent: 0
-            autocomplete_contextual: 0
-            autocomplete_autosubmit: 0
           is_grouped: false
           group_info:
             label: ''

@@ -12,7 +12,6 @@
     "drupal/search_api": "^1",
     "drupal/search_api_spellcheck": "^4",
     "drupal/views_ajax_history": "^1",
-    "drupal/views_autocomplete_filters": "^2",
     "drupal/views_filters_summary": "^3"
   }
 }
