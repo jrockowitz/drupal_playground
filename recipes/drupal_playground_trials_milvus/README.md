@@ -165,3 +165,4 @@ These are the steps used to add Milvus to the local DDEV environment:
 - [QED42 semantic search article](https://www.qed42.com/insights/setting-up-ai-powered-semantic-search-in-drupal)
 - [Vardot RAG chatbot article](https://www.vardot.com/en-us/ideas/blog/step-step-guide-creating-rag-based-drupal-ai-chatbot)
 - [Giving Drupal's Search Superpowers](https://www.davidlab.co/blog/2025-06/giving-drupals-search-superpowers-my-adventure-vector-databases-and-milvus)
+- [Building Semantic Search in Drupal with Milvus: A Complete Step-by-Step Guide](https://bonnici.co.nz/blog/drupal-semantic-search-milvus-guide)

@@ -4653,7 +4653,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai",
-                "reference": "63a47096dcd18b5ad336c48a94e0ea51a3f4e424"
+                "reference": "7389fc71ebda885353d114a1810d053d74f92503"
             },
             "require": {
                 "drupal/ai": "^1",
@@ -4664,6 +4664,19 @@
                 "drupal/key": "^1"
             },
             "type": "drupal-recipe",
+            "extra": {
+                "patches": {
+                    "drupal/ai": [
+                        {
+                            "description": "Add Navigation TopBar integration for Gin toolbar",
+                            "url": "    https://git.drupalcode.org/project/ai/-/commit/1c574b36cdcb9e51070224f6de814ad7b7ef3581.patch    \n",
+                            "extra": {
+                                "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874"
+                            }
+                        }
+                    ]
+                }
+            },
             "license": [
                 "GPL-2.0-or-later"
             ],
@@ -4992,13 +5005,14 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_trials_milvus",
-                "reference": "92be4345cf9bd9be264e258ee9028341ecc78861"
+                "reference": "d793da4e604fb61ef30517bd0244f2d861150316"
             },
             "require": {
                 "drupal/ai_agents": "^1",
                 "drupal/ai_assistant_api": "^1",
                 "drupal/ai_chatbot": "^1",
                 "drupal/ai_vdb_provider_milvus": "^1.1@beta",
+                "drupal/asset_injector": "^2",
                 "drupal/core": "^11",
                 "drupal/search_api": "^1"
             },
@@ -5013,17 +5027,17 @@
         },
         {
             "name": "drupal/eca",
-            "version": "3.1.1",
+            "version": "3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/eca.git",
-                "reference": "3.1.1"
+                "reference": "3.1.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/eca-3.1.1.zip",
-                "reference": "3.1.1",
-                "shasum": "1575cf4e745bb85984f71535b13b30b51d000569"
+                "url": "https://ftp.drupal.org/files/projects/eca-3.1.2.zip",
+                "reference": "3.1.2",
+                "shasum": "fe8cb4ef22655ba14da8dbc059a1c806451368b8"
             },
             "require": {
                 "dragonmantank/cron-expression": "^3.1",
@@ -5038,8 +5052,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "3.1.1",
-                    "datestamp": "1776350887",
+                    "version": "3.1.2",
+                    "datestamp": "1777999263",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -5850,17 +5864,17 @@
         },
         {
             "name": "drupal/existing_values_autocomplete_widget",
-            "version": "2.0.0-beta3",
+            "version": "2.0.0-rc1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/existing_values_autocomplete_widget.git",
-                "reference": "2.0.0-beta3"
+                "reference": "2.0.0-rc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/existing_values_autocomplete_widget-2.0.0-beta3.zip",
-                "reference": "2.0.0-beta3",
-                "shasum": "fd1c0b705b6b44d3aefaa91ccba39c34220da25d"
+                "url": "https://ftp.drupal.org/files/projects/existing_values_autocomplete_widget-2.0.0-rc1.zip",
+                "reference": "2.0.0-rc1",
+                "shasum": "830360e3994b050032edc61998b7f49a040430ae"
             },
             "require": {
                 "drupal/core": "^10.1 || ^11"
@@ -5868,11 +5882,11 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.0-beta3",
-                    "datestamp": "1777469431",
+                    "version": "2.0.0-rc1",
+                    "datestamp": "1777978671",
                     "security-coverage": {
                         "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
+                        "message": "RC releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -17139,16 +17153,16 @@
         },
         {
             "name": "composer/class-map-generator",
-            "version": "1.7.2",
+            "version": "1.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/class-map-generator.git",
-                "reference": "6a9c2f0970022ab00dc58c07d0685dd712f2231b"
+                "reference": "86d8208fc3c649a3a999daf1a63c25201be2990f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/class-map-generator/zipball/6a9c2f0970022ab00dc58c07d0685dd712f2231b",
-                "reference": "6a9c2f0970022ab00dc58c07d0685dd712f2231b",
+                "url": "https://api.github.com/repos/composer/class-map-generator/zipball/86d8208fc3c649a3a999daf1a63c25201be2990f",
+                "reference": "86d8208fc3c649a3a999daf1a63c25201be2990f",
                 "shasum": ""
             },
             "require": {
@@ -17192,7 +17206,7 @@
             ],
             "support": {
                 "issues": "https://github.com/composer/class-map-generator/issues",
-                "source": "https://github.com/composer/class-map-generator/tree/1.7.2"
+                "source": "https://github.com/composer/class-map-generator/tree/1.7.3"
             },
             "funding": [
                 {
@@ -17204,7 +17218,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-30T15:36:56+00:00"
+            "time": "2026-05-05T09:17:07+00:00"
         },
         {
             "name": "composer/composer",

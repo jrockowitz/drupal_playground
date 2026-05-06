@@ -42,4 +42,4 @@ visibility:
   request_path:
     id: request_path
     negate: false
-    pages: "<front>\r\n/trials"
+    pages: "/trials"
