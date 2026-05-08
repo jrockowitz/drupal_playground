@@ -44,9 +44,9 @@ class ClinicalTrialsGovSettingsValidationTest extends KernelTestBase {
   }
 
   /**
-   * Tests valid settings pass typed config validation.
+   * Tests typed config validation accepts valid settings and rejects invalid ones.
    */
-  public function testValidSettings(): void {
+  public function testSettingsValidation(): void {
     $typed_config = $this->typedConfigManager->createFromNameAndData('clinical_trials_gov.settings', [
       'query' => '',
       'query_paths' => [
@@ -66,12 +66,6 @@ class ClinicalTrialsGovSettingsValidationTest extends KernelTestBase {
 
     // Check that the default metadata paths are accepted.
     $this->assertCount(0, $typed_config->validate());
-  }
-
-  /**
-   * Tests invalid metadata paths are rejected.
-   */
-  public function testInvalidMetadataPaths(): void {
     $typed_config = $this->typedConfigManager->createFromNameAndData('clinical_trials_gov.settings', [
       'query' => '',
       'query_paths' => [

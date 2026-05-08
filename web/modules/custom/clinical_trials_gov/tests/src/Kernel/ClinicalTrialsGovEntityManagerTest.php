@@ -66,9 +66,9 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
   }
 
   /**
-   * Tests content type and field creation plus field resolution.
+   * Tests content type creation, field creation, and field resolution.
    */
-  public function testCreateContentTypeAndFields(): void {
+  public function testEntityManager(): void {
     $this->entityManager->createContentType('trial', 'Trial', 'Clinical trial content type');
 
     // Check that the content type is created with the expected label.
@@ -180,12 +180,6 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     $this->assertNull($teaser_display->getComponent('trial_nct_url'));
     $this->assertNull($teaser_display->getComponent('trial_resp_party'));
     $this->assertSame([], $teaser_display->getThirdPartySettings('field_group'));
-  }
-
-  /**
-   * Tests field-name generation and metadata-driven resolution.
-   */
-  public function testResolveFieldDefinition(): void {
     $long_name = $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations.contacts.phoneExt');
     $alias_name = $this->entityManager->generateFieldName('protocolSection.identificationModule.nctIdAliases');
 
@@ -264,12 +258,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that whitelisted structured arrays resolve to custom fields.
     $this->assertSame('custom', $group_definition['field_type']);
     $this->assertFalse($group_definition['group_only']);
-  }
 
-  /**
-   * Tests that generated field names honor the configured field prefix.
-   */
-  public function testGenerateFieldNameUsesConfiguredPrefix(): void {
     // Check that the default prefix is used when no override is saved.
     $this->assertSame('trial_nct_id', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'));
 

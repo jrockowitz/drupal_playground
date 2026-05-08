@@ -37,9 +37,9 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
   }
 
   /**
-   * Tests preview paging and reset behavior.
+   * Tests preview paging, reset behavior, and save validation.
    */
-  public function testPreviewPaging(): void {
+  public function testFindFormFlow(): void {
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
       ->save();
@@ -117,14 +117,6 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
       'pageSize' => 1000,
       'sort' => 'LastUpdatePostDate:desc',
     ], $study_manager->getStudiesRequests()[count($study_manager->getStudiesRequests()) - 1]);
-
-  }
-
-  /**
-   * Tests that saving Find requires a defined query but preview does not.
-   */
-  public function testValidateFormRequiresQueryForSaveOnly(): void {
-    $form_object = ClinicalTrialsGovFindForm::create($this->container);
 
     $save_form_state = new FormState();
     $save_form_state->setValue('query', '');

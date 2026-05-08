@@ -14,7 +14,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovTrashCreateAccessTest extends BrowserTestBase {
+class ClinicalTrialsGovCreateAccessTrashTest extends BrowserTestBase {
 
   /**
    * {@inheritdoc}

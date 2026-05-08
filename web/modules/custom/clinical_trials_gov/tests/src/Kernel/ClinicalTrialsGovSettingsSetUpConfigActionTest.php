@@ -62,18 +62,18 @@ class ClinicalTrialsGovSettingsSetUpConfigActionTest extends KernelTestBase {
   }
 
   /**
-   * Tests that the config action requires a query.
+   * Tests that the config action validates input and provisions setup.
    */
-  public function testSetUpRequiresQuery(): void {
-    $this->expectException(ConfigActionException::class);
-    $this->expectExceptionMessage('The setUp config action requires a query.');
-    $this->configActionManager->applyAction('setUp', 'clinical_trials_gov.settings', []);
-  }
+  public function testSetUp(): void {
+    try {
+      $this->configActionManager->applyAction('setUp', 'clinical_trials_gov.settings', []);
+      $this->fail('Expected the config action to require a query.');
+    }
+    catch (ConfigActionException $exception) {
+      // Check that the config action rejects missing queries.
+      $this->assertSame('The setUp config action requires a query.', $exception->getMessage());
+    }
 
-  /**
-   * Tests that the config action provisions ClinicalTrials.gov setup.
-   */
-  public function testSetUpAppliesWorkflow(): void {
     $this->configActionManager->applyAction('setUp', 'clinical_trials_gov.settings', [
       'query' => 'query.cond=lung',
       'type' => 'study',

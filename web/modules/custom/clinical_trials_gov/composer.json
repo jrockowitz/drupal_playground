@@ -12,6 +12,7 @@
     },
     "require-dev": {
         "drupal/field_group": "^4.0",
-        "drupal/readonly_field_widget": "^2.1"
+        "drupal/readonly_field_widget": "^2.1",
+        "drupal/trash": "^3.0"
     }
 }

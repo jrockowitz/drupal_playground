@@ -54,7 +54,8 @@ ddev drush config:import -y --partial --source=<directory>
   - Use OOP hooks instead of procedural hooks with legacy support. @see https://www.drupal.org/node/3442349
 - PHPUnit
   - `::setUp` and `::test` methods should come before protected helper methods.
-  - For Functional and Kernel tests, try to have a single test method per class.
+  - Prefer a single test method per Kernel, Functional, and Browser test class when scenarios can share one Drupal install/bootstrap.
+  - Keep separate test methods only when scenarios require incompatible module sets, exception-driven control flow, or setup/reset sequences that would make one combined test misleading.
   - Tests for focus on checking expected behavior, instead of exact labels or markup, since these can easily change.
 - Markup
   - Use render arrays over Markup::create().
@@ -106,7 +107,7 @@ $array = [
 
 ### PHPUnit
 
-- For Browser and Kernel test, try to use one test method with assertion blocks to improve the test performance.
+- For Browser, Functional, and Kernel tests, prefer one test method with clear assertion blocks to improve performance when one bootstrap can cover the full scenario.
 - Assertion blocks should have comments that typically begin with `// Check that ...`.
   - Do not use `/* * {comments} * */` comments.
   - Look at existing tests in the module for the expected style.

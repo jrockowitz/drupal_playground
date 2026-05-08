@@ -71,9 +71,9 @@ class ClinicalTrialsGovYamlHooksTest extends KernelTestBase {
   }
 
   /**
-   * Tests YAML values render inside pre tags for matching custom field items.
+   * Tests YAML preprocess and widget validation behavior.
    */
-  public function testPreprocessCustomFieldItem(): void {
+  public function testYamlHooks(): void {
     $variables = [
       'elements' => [
         '#field_name' => 'trial_version_holder_location',
@@ -124,12 +124,6 @@ class ClinicalTrialsGovYamlHooksTest extends KernelTestBase {
     $this->assertSame([
       '#markup' => "name: Alice\n",
     ], $non_clinical_trials_gov_variables['value']);
-  }
-
-  /**
-   * Tests YAML validation is attached only to matching widget elements.
-   */
-  public function testFieldWidgetSingleElementFormAlter(): void {
     $matching_element = [
       'contacts' => [
         '#type' => 'textarea',

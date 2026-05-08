@@ -26,9 +26,9 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends KernelTestBase {
   ];
 
   /**
-   * Tests the filtered metadata page includes only configured paths.
+   * Tests the filtered metadata page and missing-query warning behavior.
    */
-  public function testIndexFiltersByConfiguredPaths(): void {
+  public function testIndex(): void {
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
       ->set('title_path', 'protocolSection.identificationModule.briefTitle')
@@ -73,12 +73,6 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends KernelTestBase {
     $paths = array_map(static fn(array $row): string => (string) $row['data'][2]['data']['#value'], $build['results']['#rows']);
     $this->assertContains('protocolSection.identificationModule.briefTitle', $paths);
     $this->assertContains('protocolSection.statusModule.overallStatus', $paths);
-  }
-
-  /**
-   * Tests that a missing saved query uses the same warning behavior as Studies.
-   */
-  public function testIndexWarnsWhenSavedQueryIsMissing(): void {
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('query', '')
       ->save();

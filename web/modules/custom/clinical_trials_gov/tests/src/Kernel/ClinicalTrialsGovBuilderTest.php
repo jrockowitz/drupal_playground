@@ -39,9 +39,9 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
   }
 
   /**
-   * Tests that buildStudy() produces the expected render array structure.
+   * Tests that study and studies-list builds produce the expected render arrays.
    */
-  public function testBuildStudy(): void {
+  public function testBuilds(): void {
     $nct_id = 'NCT05088187';
 
     $study = $this->container->get('clinical_trials_gov.study_manager')->getStudy($nct_id);
@@ -94,15 +94,9 @@ class ClinicalTrialsGovBuilderTest extends KernelTestBase {
 
     // Check that the study build uses the report-specific wrapper class.
     $this->assertContains('clinical-trials-gov-report-study', $build['#attributes']['class']);
-  }
-
-  /**
-   * Tests that buildStudiesList() produces a reusable studies table.
-   */
-  public function testBuildStudiesList(): void {
     $studies = $this->container->get('clinical_trials_gov.study_manager')->getStudies([
       'query.cond' => 'cancer',
-    ])['studies'] ?? [];
+    ])['studies'];
 
     $build = $this->builder->buildStudiesList($studies, 'clinical_trials_gov_report.study');
 

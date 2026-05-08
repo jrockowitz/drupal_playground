@@ -129,6 +129,12 @@ Test support:
 
 - `tests/modules/clinical_trials_gov_test/` — stub services (`ClinicalTrialsGovStudyManagerStub`, `ClinicalTrialsGovApiStub`) and JSON fixtures
 
+Testing guidance:
+
+- Prefer a single test method per Kernel, Functional, and Browser test class when one Drupal install/bootstrap can cover the scenario cleanly.
+- Use assertion blocks with `// Check that ...` comments inside the shared test method.
+- Keep separate test methods only when incompatible module sets, exception-driven flows, or setup/reset requirements would make one combined method misleading.
+
 The stub simulates paginated `/studies` responses (two studies on page 1, one on page 2) and exposes `getStudiesRequests()` to assert pagination behaviour.
 
 Test classes: `ClinicalTrialsGovApiTest`, `ClinicalTrialsGovManagerTest`, `ClinicalTrialsGovNamesTest`, `ClinicalTrialsGovBuilderTest`, `ClinicalTrialsGovCommandsTest`, `ClinicalTrialsGovFieldManagerTest`, `ClinicalTrialsGovEntityManagerTest`, `ClinicalTrialsGovMigrationManagerTest`, `ClinicalTrialsGovManagerDiscoveryTest`, `ClinicalTrialsGovReviewMetadataControllerTest`, `ClinicalTrialsGovSettingsSetUpConfigActionTest`, `ClinicalTrialsGovSetupManagerTest`, `ClinicalTrialsGovSourceTest`, `ClinicalTrialsGovStudiesQueryTest`, `ClinicalTrialsGovTest` (functional).

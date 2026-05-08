@@ -26,9 +26,9 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
   ];
 
   /**
-   * Tests the full process and validate lifecycle of the element.
+   * Tests the element lifecycle, include-field filtering, and parsing helpers.
    */
-  public function testProcessAndValidate(): void {
+  public function testStudiesQueryElement(): void {
     $element = [
       '#type' => 'clinical_trials_gov_studies_query',
       '#default_value' => 'query.cond=cancer&query.patient=heart disease&filter.overallStatus=RECRUITING|COMPLETED&filter.synonyms=ConditionSearch:1651367|BasicSearch:2013558&postFilter.overallStatus=COMPLETED&geoDecay=func:linear,scale:100km,offset:10km,decay:0.1&fields=NCTId|BriefTitle&sort=%40relevance|LastUpdatePostDate&pageSize=20',
@@ -144,12 +144,6 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
     $this->assertStringContainsString('countTotal=true', $assembled);
     $this->assertStringNotContainsString('format', $assembled);
     $this->assertStringNotContainsString('markupFormat', $assembled);
-  }
-
-  /**
-   * Tests that prefix-based include fields limit the rendered query inputs.
-   */
-  public function testIncludeFieldsPrefix(): void {
     $element = [
       '#type' => 'clinical_trials_gov_studies_query',
       '#default_value' => 'query.cond=cancer&query.patient=heart disease&filter.overallStatus=RECRUITING&pageSize=20&fields=NCTId',
@@ -187,12 +181,6 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
     $this->assertStringNotContainsString('filter.overallStatus', $assembled);
     $this->assertStringNotContainsString('pageSize', $assembled);
     $this->assertStringNotContainsString('fields', $assembled);
-  }
-
-  /**
-   * Tests that exact include fields render only those keys.
-   */
-  public function testIncludeFieldsExactMatch(): void {
     $element = [
       '#type' => 'clinical_trials_gov_studies_query',
       '#default_value' => 'query.cond=cancer&pageSize=20&query.patient=heart disease',
@@ -228,12 +216,6 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
     $this->assertStringContainsString('query.cond=cancer', $assembled);
     $this->assertStringContainsString('pageSize=20', $assembled);
     $this->assertStringNotContainsString('query.patient', $assembled);
-  }
-
-  /**
-   * Tests that parseQueryString() preserves dot-notation keys.
-   */
-  public function testParseQueryStringPreservesDots(): void {
     $result = ClinicalTrialsGovStudiesQuery::parseQueryString(
       'query.cond=heart+disease&filter.overallStatus=RECRUITING&pageSize=20'
     );
@@ -244,12 +226,6 @@ class ClinicalTrialsGovStudiesQueryTest extends KernelTestBase {
     $this->assertArrayHasKey('filter.overallStatus', $result);
     $this->assertArrayHasKey('pageSize', $result);
     $this->assertSame('20', $result['pageSize']);
-  }
-
-  /**
-   * Tests that an empty query string returns an empty array.
-   */
-  public function testParseQueryStringReturnsEmptyForEmptyInput(): void {
     // Check that an empty string produces an empty array.
     $this->assertSame([], ClinicalTrialsGovStudiesQuery::parseQueryString(''));
   }

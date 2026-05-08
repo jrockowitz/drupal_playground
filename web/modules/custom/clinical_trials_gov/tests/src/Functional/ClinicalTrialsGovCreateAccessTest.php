@@ -46,9 +46,9 @@ class ClinicalTrialsGovCreateAccessTest extends BrowserTestBase {
   }
 
   /**
-   * Tests that regular users cannot manually create trials.
+   * Tests that manual trial creation stays blocked for all user types.
    */
-  public function testTrialCreationBlockedForRegularUsers(): void {
+  public function testTrialCreationBlocked(): void {
     $this->drupalLogin($this->drupalCreateUser([
       'access content',
       'create trial content',
@@ -68,12 +68,8 @@ class ClinicalTrialsGovCreateAccessTest extends BrowserTestBase {
     // Check that unrelated bundles remain creatable.
     $this->drupalGet('node/add/page');
     $this->assertSession()->statusCodeEquals(200);
-  }
 
-  /**
-   * Tests that privileged users also cannot manually create trials.
-   */
-  public function testTrialCreationBlockedForBypassUsers(): void {
+    $this->drupalLogout();
     $this->drupalLogin($this->drupalCreateUser([
       'access content',
       'create trial content',

@@ -15,6 +15,9 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Hook\Attribute\ReorderHook;
+use Drupal\Core\Hook\Order\OrderBefore;
+use Drupal\trash\Hook\TrashEntityInfoHooks;
 
 /**
  * Entity-related hook implementations for the ClinicalTrials.gov module.
@@ -34,6 +37,7 @@ class ClinicalTrialsGovEntityHooks {
    * Implements hook_entity_type_alter().
    */
   #[Hook('entity_type_alter')]
+  #[ReorderHook('entity_type_alter', class: TrashEntityInfoHooks::class, method: 'entityTypeAlter', order: new OrderBefore(['clinical_trials_gov']))]
   public function entityTypeAlter(array &$entity_types): void {
     if (!isset($entity_types['node']) || !$entity_types['node'] instanceof EntityTypeInterface) {
       return;
