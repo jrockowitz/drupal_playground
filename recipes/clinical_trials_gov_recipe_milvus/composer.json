@@ -1,6 +1,6 @@
 {
-  "name": "drupal/drupal_playground_trials_milvus",
-  "description": "Installs a Milvus-backed AI Search and DeepChat clinical trials experience for Drupal Playground.",
+  "name": "drupal/clinical_trials_gov_recipe_milvus",
+  "description": "Installs a Milvus-backed AI Search and DeepChat clinical trials experience.",
   "type": "drupal-recipe",
   "license": "GPL-2.0-or-later",
   "version": "1.0.0",

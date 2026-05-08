@@ -1,6 +1,6 @@
 {
-  "name": "drupal/drupal_playground_trials",
-  "description": "Installs the ClinicalTrials.gov workflow for Drupal Playground.",
+  "name": "drupal/clinical_trials_gov_recipe",
+  "description": "Installs the ClinicalTrials.gov workflow recipe.",
   "type": "drupal-recipe",
   "license": "GPL-2.0-or-later",
   "version": "1.0.0",

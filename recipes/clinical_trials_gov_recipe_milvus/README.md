@@ -1,4 +1,4 @@
-# Drupal Playground Trials Milvus
+# Clinical Trials Recipe Milvus
 
 ## Goals
 
@@ -9,7 +9,7 @@
 ## Summary
 
 This recipe layers a Milvus-backed AI chat and RAG experience on top of the existing
-`drupal_playground_trials` and `drupal_playground_ai` foundations.
+`clinical_trials_gov_recipe` foundation.
 
 It installs:
 
@@ -28,7 +28,7 @@ It configures:
 - a DeepChat block labeled `Ask AI about Clinical Trials`
 - DeepChat visibility on `<front>` and `/trials`
 
-When combined with `drupal_playground_trials_elasticsearch`, the `/trials` page becomes hybrid:
+When combined with `clinical_trials_gov_recipe_elastic`, the `/trials` page becomes hybrid:
 
 - Elasticsearch powers listing, filtering, and faceting
 - Milvus powers the chat-based RAG assistant
@@ -46,7 +46,7 @@ When combined with `drupal_playground_trials_elasticsearch`, the `/trials` page 
 - This recipe is additive and does not replace `trials-elastic`.
 - Retrieval is grounded in imported Drupal `trial` nodes, not live ClinicalTrials.gov API calls.
 - This recipe does not provide its own `/trials` route or fallback page.
-- The canonical `/trials` page comes from `drupal_playground_trials_elasticsearch` when that recipe is installed.
+- The canonical `/trials` page comes from `clinical_trials_gov_recipe_elastic` when that recipe is installed.
 - The DeepChat block uses the exact user-facing copy:
   - Label: `Ask AI about Clinical Trials`
   - First message: `Ask our AI Assistant to help you search for a clinical trials.`
@@ -106,24 +106,24 @@ These are the steps used to add Milvus to the local DDEV environment:
 ### 4. Review the AI Search server and index
 
 - Go to `/admin/config/search/search-api`.
-- Confirm there is a server named `Drupal Playground Trials Milvus`.
-- Open `/admin/config/search/search-api/server/drupal_playground_trials_milvus/edit`.
+- Confirm there is a server named `Clinical Trials Milvus`.
+- Open `/admin/config/search/search-api/server/trials_milvus/edit`.
 - Confirm:
   - Backend is `AI Search`
   - Vector Database is `Milvus DB`
-  - Collection is `drupal_playground_trials_milvus`
-- Open `/admin/config/search/search-api/index/drupal_playground_trials_milvus/edit`.
+  - Collection is `trials_milvus`
+- Open `/admin/config/search/search-api/index/trials_milvus/edit`.
 - Confirm:
   - Datasource is node content
   - Bundle is limited to `trial`
-  - Server is `Drupal Playground Trials Milvus`
+  - Server is `Clinical Trials Milvus`
 
 ### 5. Verify indexing
 
-- Run `ddev drush search-api:clear drupal_playground_trials_milvus -y`.
-- Run `ddev drush search-api:index drupal_playground_trials_milvus --limit=10 --batch-size=5 --time-limit=30`.
+- Run `ddev drush search-api:clear trials_milvus -y`.
+- Run `ddev drush search-api:index trials_milvus --limit=10 --batch-size=5 --time-limit=30`.
 - Repeat the indexing command if your embeddings provider rate-limits large runs.
-- Run `ddev drush search-api:status drupal_playground_trials_milvus` and confirm the index reaches `100% Complete`.
+- Run `ddev drush search-api:status trials_milvus` and confirm the index reaches `100% Complete`.
 
 ## Verification Steps
 
@@ -153,9 +153,9 @@ These are the steps used to add Milvus to the local DDEV environment:
   - `ddev drush migrate:rollback clinical_trials_gov -y`
   - `ddev drush migrate:import clinical_trials_gov --limit=30`
 - Reindex Milvus content:
-  - `ddev drush search-api:clear drupal_playground_trials_milvus -y`
-  - `ddev drush search-api:index drupal_playground_trials_milvus --limit=10 --batch-size=5 --time-limit=30`
-  - `ddev drush search-api:status drupal_playground_trials_milvus`
+  - `ddev drush search-api:clear trials_milvus -y`
+  - `ddev drush search-api:index trials_milvus --limit=10 --batch-size=5 --time-limit=30`
+  - `ddev drush search-api:status trials_milvus`
 
 ## References
 
@@ -164,5 +164,5 @@ These are the steps used to add Milvus to the local DDEV environment:
 - [Milvus VDB Provider repository](https://git.drupalcode.org/project/ai_vdb_provider_milvus)
 - [QED42 semantic search article](https://www.qed42.com/insights/setting-up-ai-powered-semantic-search-in-drupal)
 - [Vardot RAG chatbot article](https://www.vardot.com/en-us/ideas/blog/step-step-guide-creating-rag-based-drupal-ai-chatbot)
-- [Giving Drupal's Search Superpowers](https://www.davidlab.co/blog/2025-06/giving-drupals-search-superpowers-my-adventure-vector-databases-and-milvus)
+- [Giving Drupal's Search Superpowers~~](https://www.davidlab.co/blog/2025-06/giving-drupals-search-superpowers-my-adventure-vector-databases-and-milvus)~~
 - [Building Semantic Search in Drupal with Milvus: A Complete Step-by-Step Guide](https://bonnici.co.nz/blog/drupal-semantic-search-milvus-guide)

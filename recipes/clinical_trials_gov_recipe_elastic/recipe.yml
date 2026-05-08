@@ -1,9 +1,8 @@
-name: 'Drupal Playground Trials Elasticsearch'
+name: 'Clinical Trials Recipe Elastic'
 description: 'Sets up Search API with Elasticsearch Connector for Clinical Trials search.'
 type: 'Site'
 recipes:
-  - drupal_playground_base
-  - drupal_playground_trials
+  - clinical_trials_gov_recipe
 install:
   - better_exposed_filters
   - facets
@@ -19,11 +18,11 @@ config:
   strict: false
   import:
     asset_injector:
-      - asset_injector.css.drupal_playground_trials_elasticsearch
-      - asset_injector.js.drupal_playground_trials_elasticsearch
+      - asset_injector.css.trials_elasticsearch_olivero
+      - asset_injector.js.trials_elasticsearch_olivero
     shortcut: '*'
     search_api:
-      - search_api.server.drupal_playground_trials_elasticsearch
-      - search_api.index.drupal_playground_trials_elasticsearch
+      - search_api.server.trials_elasticsearch
+      - search_api.index.trials_elasticsearch
     views:
-      - views.view.drupal_playground_trials_elasticsearch
+      - views.view.trials_elasticsearch

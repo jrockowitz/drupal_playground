@@ -1,6 +1,6 @@
-# Drupal Playground Trials Elasticsearch
+# Clinical Trials Recipe Elastic
 
-Sets up a Clinical Trials search experience backed by Elasticsearch for the `trial` content type created by the `drupal_playground_trials` recipe.
+Sets up a Clinical Trials search experience backed by Elasticsearch for the `trial` content type created by the `clinical_trials_gov_recipe` recipe.
 
 ## What It Installs
 
@@ -32,7 +32,7 @@ Sets up a Clinical Trials search experience backed by Elasticsearch for the `tri
 
 ## Prerequisite
 
-This recipe depends on the `drupal_playground_trials` recipe so the `trial` bundle and generated ClinicalTrials.gov fields already exist before Search API configuration is imported.
+This recipe depends on the `clinical_trials_gov_recipe` recipe so the `trial` bundle and generated ClinicalTrials.gov fields already exist before Search API configuration is imported.
 
 The recipe uses `facets_exposed_filters` directly in the View configuration rather than separate facet blocks or separately managed facet entities.
 
@@ -45,13 +45,13 @@ ddev install trials-setup
 
 ## Indexing
 
-The `trials-setup` preset clears and rebuilds the `drupal_playground_trials_elasticsearch` Search API index automatically.
+The `trials-setup` preset clears and rebuilds the `trials_elasticsearch` Search API index automatically.
 
 If you need to rebuild it manually later, run:
 
 ```shell
-ddev drush search-api:clear drupal_playground_trials_elasticsearch -y
-ddev drush search-api:index drupal_playground_trials_elasticsearch
+ddev drush search-api:clear trials_elasticsearch -y
+ddev drush search-api:index trials_elasticsearch
 ```
 
 ## Steps to review
@@ -68,22 +68,22 @@ ddev drush search-api:index drupal_playground_trials_elasticsearch
 ### Search API review
 
 - ⚫ Go to **Configuration → Search and metadata → Search API** at `/admin/config/search/search-api`.
-- ⚫ Confirm there is a server named `Drupal Playground Trials`.
-- ⚫ Open the server edit page at `/admin/config/search/search-api/server/drupal_playground_trials_elasticsearch/edit`.
+- ⚫ Confirm there is a server named `Clinical Trials`.
+- ⚫ Open the server edit page at `/admin/config/search/search-api/server/trials_elasticsearch/edit`.
 - ⚫ Confirm the backend is Elasticsearch.
 - ⚫ Confirm the URL is `http://elasticsearch:9200`.
 - ⚫ Confirm the server status is enabled.
-- ⚫ From `/admin/config/search/search-api`, open the index named `Drupal Playground Trials`.
-- ⚫ Or go directly to `/admin/config/search/search-api/index/drupal_playground_trials_elasticsearch/edit`.
+- ⚫ From `/admin/config/search/search-api`, open the index named `Clinical Trials`.
+- ⚫ Or go directly to `/admin/config/search/search-api/index/trials_elasticsearch/edit`.
 - ⚫ Confirm the datasource is node content limited to the `trial` bundle.
-- ⚫ Confirm the server is `Drupal Playground Trials`.
+- ⚫ Confirm the server is `Clinical Trials`.
 - ⚫ Confirm the index is enabled.
-- ⚫ Confirm the index shows imported trial content, or run `ddev drush search-api:index drupal_playground_trials_elasticsearch` and refresh.
+- ⚫ Confirm the index shows imported trial content, or run `ddev drush search-api:index trials_elasticsearch` and refresh.
 
 ### View and search page review
 
 - ⚫ Go to **Structure → Views** at `/admin/structure/views`.
-- ⚫ Open the view at `/admin/structure/views/view/drupal_playground_trials_elasticsearch`.
+- ⚫ Open the view at `/admin/structure/views/view/trials_elasticsearch`.
 - ⚫ Confirm the page path is `/trials`.
 - ⚫ Confirm the exposed keyword filter labeled `Search` is present.
 - ⚫ Confirm the exposed filters also include `Condition/Disease`, `Study status`, `Study phase`, `Study type`, `Sex`, and `Age`.
@@ -108,7 +108,7 @@ ddev drush search-api:index drupal_playground_trials_elasticsearch
 
 ### Command-line review
 
-- ⚫ Run `ddev drush search-api:server-list` and confirm `drupal_playground_trials_elasticsearch` is enabled.
-- ⚫ Run `ddev drush search-api:list` and confirm `drupal_playground_trials_elasticsearch` is enabled.
-- ⚫ Run `ddev drush search-api:search drupal_playground_trials_elasticsearch leukemia`.
+- ⚫ Run `ddev drush search-api:server-list` and confirm `trials_elasticsearch` is enabled.
+- ⚫ Run `ddev drush search-api:list` and confirm `trials_elasticsearch` is enabled.
+- ⚫ Run `ddev drush search-api:search trials_elasticsearch leukemia`.
 - ⚫ Confirm Search API returns trial results.

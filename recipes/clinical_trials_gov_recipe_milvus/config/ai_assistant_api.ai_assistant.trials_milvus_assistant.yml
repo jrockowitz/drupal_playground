@@ -1,7 +1,7 @@
 langcode: en
 status: true
 dependencies: {  }
-id: drupal_playground_trials_milvus_assistant
+id: trials_milvus_assistant
 label: 'Ask AI about Clinical Trials'
 description: 'Ask our AI Assistant to help you search for a clinical trials.'
 system_prompt: ''
@@ -27,7 +27,7 @@ llm_configuration:
 actions_enabled:
   rag_action:
     rag_0:
-      database: drupal_playground_trials_milvus
+      database: trials_milvus
       description: 'Imported ClinicalTrials.gov trial content for this Drupal site, including trial titles, conditions, status, phase, age groups, and related metadata.'
       score_threshold: 0.25
       min_results: 1

@@ -1,9 +1,8 @@
-name: 'Drupal Playground Trials Milvus'
+name: 'Clinical Trials Recipe Milvus'
 description: 'Sets up AI Search, Milvus, and DeepChat for Clinical Trials discovery.'
 type: 'Site'
 recipes:
-  - drupal_playground_ai
-  - drupal_playground_trials
+  - clinical_trials_gov_recipe
 install:
   - ai_agents
   - ai_assistant_api
@@ -17,20 +16,20 @@ config:
   strict: false
   import:
     asset_injector:
-      - asset_injector.css.drupal_playground_trials_milvus
-      - asset_injector.js.drupal_playground_trials_milvus
+      - asset_injector.css.trials_milvus_olivero
+      - asset_injector.js.trials_milvus_olivero
     ai_agents: '*'
     ai_assistant_api: '*'
     ai_vdb_provider_milvus:
       - ai_vdb_provider_milvus.settings
     block:
-      - block.block.olivero_drupal_playground_trials_milvus_chat
+      - block.block.olivero_trials_milvus_chat
     search_api:
-      - search_api.server.drupal_playground_trials_milvus
-      - search_api.index.drupal_playground_trials_milvus
+      - search_api.server.trials_milvus
+      - search_api.index.trials_milvus
     shortcut: '*'
     ai_search:
-      - ai_search.index.drupal_playground_trials_milvus
+      - ai_search.index.trials_milvus
   actions:
     ai.settings:
       simpleConfigUpdate:

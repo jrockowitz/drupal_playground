@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Drupal\clinical_trials_gov_report;
+namespace Drupal\clinical_trials_gov_report\Hooks;
 
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
- * Hook implementations for the ClinicalTrials.gov report module.
+ * Gin hook implementations for the ClinicalTrials.gov report module.
  */
-class Hooks {
+class ClinicalTrialsGovReportGinHooks {
 
   /**
    * Implements hook_gin_ignore_sticky_form_actions().

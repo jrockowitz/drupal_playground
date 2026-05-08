@@ -6,6 +6,7 @@ namespace Drupal\Tests\clinical_trials_gov_report\Unit;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
+use Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStructsController;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -183,6 +184,34 @@ class ClinicalTrialsGovReportStructsControllerTest extends UnitTestCase {
     $this->assertSame('html_tag', $sub_properties_cell['data']['#items'][1]['#type']);
     $this->assertSame('strong', $sub_properties_cell['data']['#items'][1]['#tag']);
     $this->assertSame('contacts[]', $sub_properties_cell['data']['#items'][1]['#value']);
+  }
+
+}
+
+/**
+ * Testable structs controller subclass.
+ */
+class TestClinicalTrialsGovReportStructsController extends ClinicalTrialsGovReportStructsController {
+
+  /**
+   * Exposes buildStructRows() for testing.
+   */
+  public function exposedBuildStructRows(array $metadata, array $used_paths = []): array {
+    return $this->buildStructRows($metadata, $used_paths);
+  }
+
+  /**
+   * Exposes buildStructsTable() for testing.
+   */
+  public function exposedBuildStructsTable(array $struct_rows): array {
+    return $this->buildStructsTable($struct_rows);
+  }
+
+  /**
+   * Exposes buildSubPropertiesCell() for testing.
+   */
+  public function exposedBuildSubPropertiesCell(array $values): array|string {
+    return $this->buildSubPropertiesCell($values);
   }
 
 }

@@ -79,11 +79,11 @@ for PRESET in "$@"; do
 
   elif [ "$PRESET" = "trials-elastic" ]; then
 
-    # ddev exec curl -X DELETE http://elasticsearch:9200/drupal_playground_trials
+    # ddev exec curl -X DELETE http://elasticsearch:9200/trials_elasticsearch
     echo "Applying ClinicalTrials.gov setup recipe..."
-    drush recipe ../recipes/drupal_playground_trials
+    drush recipe ../recipes/clinical_trials_gov_recipe
     echo "Applying Clinical Trials Elasticsearch recipe..."
-    drush recipe ../recipes/drupal_playground_trials_elasticsearch
+    drush recipe ../recipes/clinical_trials_gov_recipe_elastic
 #    echo "Setting the ClinicalTrials.gov query..."
 #    drush config:set -y clinical_trials_gov.settings query 'query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING'
     echo "Importing ClinicalTrials.gov studies..."
@@ -96,12 +96,12 @@ for PRESET in "$@"; do
     drush recipe ../recipes/drupal_playground_ai
     drush recipe ../recipes/drupal_playground_ai_devel
     echo "Applying ClinicalTrials.gov setup recipe..."
-    drush recipe ../recipes/drupal_playground_trials
+    drush recipe ../recipes/clinical_trials_gov_recipe
     echo "Applying Clinical Trials Milvus recipe..."
-    drush recipe ../recipes/drupal_playground_trials_milvus
+    drush recipe ../recipes/clinical_trials_gov_recipe_milvus
     echo "Indexing ClinicalTrials.gov studies in Milvus..."
-    drush search-api:clear drupal_playground_trials_milvus -y
-    drush search-api:index drupal_playground_trials_milvus -y;
+    drush search-api:clear trials_milvus -y
+    drush search-api:index trials_milvus -y;
 
   fi
 done

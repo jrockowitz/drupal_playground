@@ -3,13 +3,13 @@ status: true
 dependencies:
   module:
     - system
-id: drupal_playground_trials_milvus
-label: 'Drupal Playground Trials Milvus'
+id: trials_milvus_olivero
+label: 'Clinical Trials Milvus Olivero'
 code: ''
 noscript: ''
 noscriptRegion: {  }
-jquery: true
-header: false
+jquery: false
+header: true
 preprocess: true
 conditions:
   request_path:

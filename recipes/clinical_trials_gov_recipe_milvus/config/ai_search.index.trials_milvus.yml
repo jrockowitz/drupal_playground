@@ -1,4 +1,4 @@
-index_id: drupal_playground_trials_milvus
+index_id: trials_milvus
 control_field_max_length: true
 exclude_chunk_from_metadata: false
 indexing_options:

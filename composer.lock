@@ -3454,6 +3454,84 @@
             }
         },
         {
+            "name": "drupal/clinical_trials_gov_recipe",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/clinical_trials_gov_recipe",
+                "reference": "ecd8cbb7432fe464b718d1f093a29ba2a01f3f29"
+            },
+            "require": {
+                "drupal/core": "^11",
+                "drupal/custom_field": "^4",
+                "drupal/field_group": "^4",
+                "drupal/migrate_plus": "^6",
+                "drupal/migrate_tools": "^6",
+                "drupal/readonly_field_widget": "^2"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Installs the ClinicalTrials.gov workflow recipe.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "drupal/clinical_trials_gov_recipe_elastic",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/clinical_trials_gov_recipe_elastic",
+                "reference": "f93f6148743b42b2b7110291ec0c815b4cb8c0d7"
+            },
+            "require": {
+                "drupal/better_exposed_filters": "^7",
+                "drupal/core": "^11",
+                "drupal/elasticsearch_connector": "^9@alpha",
+                "drupal/facets": "^3",
+                "drupal/search_api": "^1",
+                "drupal/search_api_spellcheck": "^4",
+                "drupal/views_ajax_history": "^1",
+                "drupal/views_filters_summary": "^3"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Installs Search API and Elasticsearch Connector with a Clinical Trials search experience.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "drupal/clinical_trials_gov_recipe_milvus",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/clinical_trials_gov_recipe_milvus",
+                "reference": "d038906403701d972cb34f09b365ddd08a7a62b1"
+            },
+            "require": {
+                "drupal/ai_agents": "^1",
+                "drupal/ai_assistant_api": "^1",
+                "drupal/ai_chatbot": "^1",
+                "drupal/ai_vdb_provider_milvus": "^1.1@beta",
+                "drupal/asset_injector": "^2",
+                "drupal/core": "^11",
+                "drupal/search_api": "^1"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Installs a Milvus-backed AI Search and DeepChat clinical trials experience.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "drupal/coffee",
             "version": "2.0.1",
             "source": {
@@ -4653,7 +4731,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai",
-                "reference": "7389fc71ebda885353d114a1810d053d74f92503"
+                "reference": "63a47096dcd18b5ad336c48a94e0ea51a3f4e424"
             },
             "require": {
                 "drupal/ai": "^1",
@@ -4664,19 +4742,6 @@
                 "drupal/key": "^1"
             },
             "type": "drupal-recipe",
-            "extra": {
-                "patches": {
-                    "drupal/ai": [
-                        {
-                            "description": "Add Navigation TopBar integration for Gin toolbar",
-                            "url": "    https://git.drupalcode.org/project/ai/-/commit/1c574b36cdcb9e51070224f6de814ad7b7ef3581.patch    \n",
-                            "extra": {
-                                "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874"
-                            }
-                        }
-                    ]
-                }
-            },
             "license": [
                 "GPL-2.0-or-later"
             ],
@@ -4943,84 +5008,6 @@
             "license": [
                 "GPL-2.0-or-later"
             ],
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "drupal/drupal_playground_trials",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "recipes/drupal_playground_trials",
-                "reference": "0c70f3fe0084ef673b8099e4ec35ff3e744b03e4"
-            },
-            "require": {
-                "drupal/core": "^11",
-                "drupal/custom_field": "^4",
-                "drupal/field_group": "^4",
-                "drupal/migrate_plus": "^6",
-                "drupal/migrate_tools": "^6",
-                "drupal/readonly_field_widget": "^2"
-            },
-            "type": "drupal-recipe",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "description": "Installs the ClinicalTrials.gov workflow for Drupal Playground.",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "drupal/drupal_playground_trials_elasticsearch",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "recipes/drupal_playground_trials_elasticsearch",
-                "reference": "afc726aa5cc8306342779811d83c80a10ecfbf5f"
-            },
-            "require": {
-                "drupal/better_exposed_filters": "^7",
-                "drupal/core": "^11",
-                "drupal/elasticsearch_connector": "^9@alpha",
-                "drupal/facets": "^3",
-                "drupal/search_api": "^1",
-                "drupal/search_api_spellcheck": "^4",
-                "drupal/views_ajax_history": "^1",
-                "drupal/views_filters_summary": "^3"
-            },
-            "type": "drupal-recipe",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "description": "Installs Search API and Elasticsearch Connector with a Clinical Trials search experience for Drupal Playground.",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
-            "name": "drupal/drupal_playground_trials_milvus",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "recipes/drupal_playground_trials_milvus",
-                "reference": "d793da4e604fb61ef30517bd0244f2d861150316"
-            },
-            "require": {
-                "drupal/ai_agents": "^1",
-                "drupal/ai_assistant_api": "^1",
-                "drupal/ai_chatbot": "^1",
-                "drupal/ai_vdb_provider_milvus": "^1.1@beta",
-                "drupal/asset_injector": "^2",
-                "drupal/core": "^11",
-                "drupal/search_api": "^1"
-            },
-            "type": "drupal-recipe",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "description": "Installs a Milvus-backed AI Search and DeepChat clinical trials experience for Drupal Playground.",
             "transport-options": {
                 "relative": true
             }

@@ -77,6 +77,7 @@ cat >> .git/info/exclude << 'EOF'
 /.agents
 /CLAUDE.md
 /.claude
+/.codex
 /.junie
 /.playwright-mcp
 /skills-lock.json
@@ -118,6 +119,7 @@ cat >> .git/info/exclude << 'EOF'
 /.agents
 /CLAUDE.md
 /.claude
+/.codex
 /.junie
 /.playwright-mcp
 EOF

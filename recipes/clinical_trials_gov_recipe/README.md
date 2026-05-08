@@ -1,6 +1,6 @@
-# Drupal Playground ClinicalTrials.gov
+# ClinicalTrials.gov Recipe
 
-Applies the ClinicalTrials.gov setup workflow for Drupal Playground.
+Applies the ClinicalTrials.gov setup workflow.
 
 This recipe installs:
 

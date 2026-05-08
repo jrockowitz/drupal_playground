@@ -62,15 +62,15 @@
         },
         {
             "type": "path",
-            "url": "recipes/drupal_playground_trials"
+            "url": "recipes/clinical_trials_gov_recipe"
         },
         {
             "type": "path",
-            "url": "recipes/drupal_playground_trials_elasticsearch"
+            "url": "recipes/clinical_trials_gov_recipe_elastic"
         },
         {
             "type": "path",
-            "url": "recipes/drupal_playground_trials_milvus"
+            "url": "recipes/clinical_trials_gov_recipe_milvus"
         },
         {
             "type": "package",
@@ -100,9 +100,9 @@
         "drupal/drupal_playground_elasticsearch": "*",
         "drupal/drupal_playground_eca": "*",
         "drupal/drupal_playground_schemadotorg": "*",
-        "drupal/drupal_playground_trials": "*",
-        "drupal/drupal_playground_trials_elasticsearch": "*",
-        "drupal/drupal_playground_trials_milvus": "*",
+        "drupal/clinical_trials_gov_recipe": "*",
+        "drupal/clinical_trials_gov_recipe_elastic": "*",
+        "drupal/clinical_trials_gov_recipe_milvus": "*",
         "drupal/drupal_playground_translation": "*",
         "recipes/schemadotorg_recipes": "*"
     }

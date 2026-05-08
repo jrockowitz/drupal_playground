@@ -3,22 +3,22 @@ status: true
 dependencies:
   module:
     - system
-id: drupal_playground_trials_elasticsearch
-label: 'Drupal Playground Trials Scroll Top'
+id: trials_elasticsearch_olivero
+label: 'Clinical Trials Scroll Top Olivero'
 code: |-
   (function ($, Drupal) {
-    Drupal.behaviors.drupalPlaygroundTrialsElasticsearchScrollTop = {
+    Drupal.behaviors.trialsElasticsearchScrollTop = {
       attach: function (context) {
         if (!context || context !== document) {
           return;
         }
 
-        if (document.documentElement.hasAttribute('data-drupal-playground-trials-scroll-top')) {
+        if (document.documentElement.hasAttribute('data-trials-elasticsearch-scroll-top')) {
           return;
         }
-        document.documentElement.setAttribute('data-drupal-playground-trials-scroll-top', 'true');
+        document.documentElement.setAttribute('data-trials-elasticsearch-scroll-top', 'true');
 
-        $(document).on('ajaxComplete.drupalPlaygroundTrialsElasticsearchScrollTop', function (event, xhr, ajaxSettings) {
+        $(document).on('ajaxComplete.trialsElasticsearchScrollTop', function (event, xhr, ajaxSettings) {
           var requestUrl = ajaxSettings && ajaxSettings.url ? ajaxSettings.url : '';
           var requestData = '';
 
@@ -35,7 +35,7 @@ code: |-
           }
 
           window.requestAnimationFrame(function () {
-            var view = document.querySelector('.view-drupal-playground-trials-elasticsearch');
+            var view = document.querySelector('.view-trials-elasticsearch');
 
             if (!view) {
               return;

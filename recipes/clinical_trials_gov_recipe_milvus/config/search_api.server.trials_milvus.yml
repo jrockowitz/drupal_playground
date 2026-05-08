@@ -4,8 +4,8 @@ dependencies:
   module:
     - ai_search
     - ai_vdb_provider_milvus
-id: drupal_playground_trials_milvus
-name: 'Drupal Playground Trials Milvus'
+id: trials_milvus
+name: 'Clinical Trials Milvus'
 description: 'Local Milvus server for Clinical Trials AI search.'
 backend: search_api_ai_search
 backend_config:
@@ -13,7 +13,7 @@ backend_config:
   database: milvus
   database_settings:
     database_name: default
-    collection: drupal_playground_trials_milvus
+    collection: trials_milvus
     metric: cosine_similarity
   embeddings_engine: openai__text-embedding-3-small
   embeddings_engine_configuration:

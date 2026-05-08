@@ -6,6 +6,7 @@ namespace Drupal\Tests\clinical_trials_gov_report\Unit;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
+use Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStudiesController;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
@@ -104,6 +105,27 @@ class ClinicalTrialsGovReportStudiesControllerTest extends UnitTestCase {
 
     // Check that missing keys produce an empty but structurally valid markup string.
     $this->assertNotEmpty($markup);
+  }
+
+}
+
+/**
+ * Testable studies controller subclass.
+ */
+class TestClinicalTrialsGovReportStudiesController extends ClinicalTrialsGovReportStudiesController {
+
+  /**
+   * Exposes normalizeCountTotal() for testing.
+   */
+  public function exposedNormalizeCountTotal(mixed $value): string {
+    return $this->normalizeCountTotal($value);
+  }
+
+  /**
+   * Exposes buildVersionMarkup() for testing.
+   */
+  public function exposedBuildVersionMarkup(array $version): string {
+    return $this->buildVersionMarkup($version);
   }
 
 }

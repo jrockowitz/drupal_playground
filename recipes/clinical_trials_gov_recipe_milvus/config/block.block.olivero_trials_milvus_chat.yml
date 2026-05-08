@@ -7,7 +7,7 @@ dependencies:
     - system
   theme:
     - olivero
-id: olivero_drupal_playground_trials_milvus_chat
+id: olivero_trials_milvus_chat
 theme: olivero
 region: content_above
 weight: -10
@@ -18,7 +18,7 @@ settings:
   label: 'Ask AI about Clinical Trials'
   label_display: visible
   provider: ai_chatbot
-  ai_assistant: drupal_playground_trials_milvus_assistant
+  ai_assistant: trials_milvus_assistant
   bot_name: 'Clinical Trials AI'
   bot_image: /modules/contrib/ai/modules/ai_chatbot/assets/ai-icon-gradient.svg
   use_username: 0

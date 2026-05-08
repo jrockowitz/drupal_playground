@@ -1,6 +1,6 @@
 {
-  "name": "drupal/drupal_playground_trials_elasticsearch",
-  "description": "Installs Search API and Elasticsearch Connector with a Clinical Trials search experience for Drupal Playground.",
+  "name": "drupal/clinical_trials_gov_recipe_elastic",
+  "description": "Installs Search API and Elasticsearch Connector with a Clinical Trials search experience.",
   "type": "drupal-recipe",
   "license": "GPL-2.0-or-later",
   "version": "1.0.0",

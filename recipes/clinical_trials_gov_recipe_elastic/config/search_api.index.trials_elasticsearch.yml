@@ -2,60 +2,41 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.page.body
-    - field.field.node.trial.trial_brief_summary
     - field.field.node.trial.trial_cond
-    - field.field.node.trial.trial_keyword
     - field.field.node.trial.trial_nct_id
     - field.field.node.trial.trial_overall_status
     - field.field.node.trial.trial_phase
     - field.field.node.trial.trial_sex
     - field.field.node.trial.trial_std_age
     - field.field.node.trial.trial_study_type
-    - field.storage.node.body
-    - node.type.page
+    - field.field.node.trial.trial_keyword
     - node.type.trial
-    - search_api.server.drupal_playground_trials_milvus
+    - search_api.server.trials_elasticsearch
   module:
     - node
     - search_api
-id: drupal_playground_trials_milvus
-name: 'Drupal Playground Trials Milvus'
-description: 'Clinical Trials semantic search index powered by Milvus.'
+id: trials_elasticsearch
+name: 'Clinical Trials'
+description: 'Clinical Trials search index powered by Elasticsearch.'
 read_only: false
 field_settings:
-  body:
-    label: Body
+  created:
+    label: 'Created on'
     datasource_id: 'entity:node'
-    property_path: body
-    type: text
+    property_path: created
+    type: date
     dependencies:
-      config:
-        - field.field.node.page.body
-        - field.storage.node.body
+      module:
+        - node
   title:
     label: Title
     datasource_id: 'entity:node'
     property_path: title
     type: text
+    boost: 8
     dependencies:
       module:
         - node
-  search_api_url:
-    label: URI
-    datasource_id: null
-    property_path: search_api_url
-    type: string
-    configuration:
-      absolute: true
-  trial_brief_summary:
-    label: 'Brief summary'
-    datasource_id: 'entity:node'
-    property_path: trial_brief_summary
-    type: text
-    dependencies:
-      config:
-        - field.field.node.trial.trial_brief_summary
   trial_cond:
     label: 'Condition/Disease'
     datasource_id: 'entity:node'
@@ -64,14 +45,6 @@ field_settings:
     dependencies:
       config:
         - field.field.node.trial.trial_cond
-  trial_keyword:
-    label: Keyword
-    datasource_id: 'entity:node'
-    property_path: trial_keyword
-    type: string
-    dependencies:
-      config:
-        - field.field.node.trial.trial_keyword
   trial_nct_id:
     label: 'NCT ID'
     datasource_id: 'entity:node'
@@ -104,14 +77,6 @@ field_settings:
     dependencies:
       config:
         - field.field.node.trial.trial_sex
-  trial_std_age:
-    label: 'Age group'
-    datasource_id: 'entity:node'
-    property_path: trial_std_age
-    type: string
-    dependencies:
-      config:
-        - field.field.node.trial.trial_std_age
   trial_study_type:
     label: 'Study type'
     datasource_id: 'entity:node'
@@ -120,10 +85,29 @@ field_settings:
     dependencies:
       config:
         - field.field.node.trial.trial_study_type
+  trial_std_age:
+    label: 'Age group'
+    datasource_id: 'entity:node'
+    property_path: trial_std_age
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_std_age
+  trial_keyword:
+    label: Keyword
+    datasource_id: 'entity:node'
+    property_path: trial_keyword
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_keyword
 processor_settings:
   add_url:
     weights:
       preprocess_index: -30
+  aggregated_field:
+    weights:
+      add_properties: 20
   content_access:
     weights:
       preprocess_index: -6
@@ -131,12 +115,61 @@ processor_settings:
   entity_status:
     weights:
       preprocess_index: -10
+  html_filter:
+    weights:
+      preprocess_index: -3
+      preprocess_query: -6
+    fields:
+      - title
+    title: true
+    alt: true
+    tags:
+      h1: 5
+      h2: 3
+      h3: 2
+      string: 2
+      b: 2
+  ignorecase:
+    weights:
+      preprocess_index: -5
+      preprocess_query: -8
+    fields:
+      - title
+      - trial_nct_id
+      - trial_overall_status
+      - trial_phase
+      - trial_sex
+      - trial_std_age
+      - trial_study_type
+      - trial_keyword
+  tokenizer:
+    weights:
+      preprocess_index: -2
+      preprocess_query: -5
+    fields:
+      - title
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
+  transliteration:
+    weights:
+      preprocess_index: -4
+      preprocess_query: -7
+    fields:
+      - title
+      - trial_cond
+      - trial_nct_id
+      - trial_overall_status
+      - trial_phase
+      - trial_sex
+      - trial_std_age
+      - trial_study_type
+      - trial_keyword
 datasource_settings:
   'entity:node':
     bundles:
       default: false
       selected:
-        page: page
         trial: trial
     languages:
       default: true
@@ -147,6 +180,6 @@ tracker_settings:
 options:
   cron_limit: 50
   delete_on_fail: true
-  index_directly: false
+  index_directly: true
   track_changes_in_references: true
-server: drupal_playground_trials_milvus
+server: trials_elasticsearch

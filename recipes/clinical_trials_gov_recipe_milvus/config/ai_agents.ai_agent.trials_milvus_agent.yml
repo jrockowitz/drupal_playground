@@ -1,7 +1,7 @@
 langcode: en
 status: true
 dependencies: {  }
-id: drupal_playground_trials_milvus_agent
+id: trials_milvus_agent
 label: 'Ask AI about Clinical Trials'
 description: 'Ask our AI Assistant to help you search for a clinical trials.'
 system_prompt: 'You help patients, caregivers, and medical professionals explore imported clinical trials on this Drupal site. Be compassionate, stay grounded in the site''s trial content, explain uncertainty clearly, never claim enrollment or eligibility, and always offer practical next steps when no exact match appears.'

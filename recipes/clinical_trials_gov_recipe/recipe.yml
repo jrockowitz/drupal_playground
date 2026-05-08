@@ -1,7 +1,7 @@
-name: 'Drupal Playground ClinicalTrials.gov'
+name: 'ClinicalTrials.gov Recipe'
 description: >
-  Installs and configures the ClinicalTrials.gov workflow for Drupal
-  Playground using the reusable setup config action.
+  Installs and configures the ClinicalTrials.gov workflow using the reusable
+  setup config action.
 type: 'Site'
 install:
   - custom_field

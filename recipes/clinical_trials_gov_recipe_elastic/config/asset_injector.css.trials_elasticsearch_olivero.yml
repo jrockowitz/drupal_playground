@@ -3,8 +3,8 @@ status: true
 dependencies:
   module:
     - system
-id: drupal_playground_trials_elasticsearch
-label: 'Drupal Playground Trials'
+id: trials_elasticsearch_olivero
+label: 'Clinical Trials Olivero'
 code: |-
   /* Stack the exposed form controls in a predictable order on smaller screens. */
   body.path-trials .view-filters form.views-exposed-form.bef-exposed-form {
