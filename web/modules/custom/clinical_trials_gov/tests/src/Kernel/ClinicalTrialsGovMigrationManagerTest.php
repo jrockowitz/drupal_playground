@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
+use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -15,11 +18,29 @@ use PHPUnit\Framework\Attributes\Group;
 class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTestBase {
 
   /**
+   * The migration manager under test.
+   */
+  protected ClinicalTrialsGovMigrationManagerInterface $migrationManager;
+
+  /**
+   * The entity manager under test.
+   */
+  protected ClinicalTrialsGovEntityManagerInterface $entityManager;
+
+  /**
+   * The migration plugin manager under test.
+   */
+  protected MigrationPluginManagerInterface $migrationPluginManager;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig('clinical_trials_gov');
+    $this->migrationManager = $this->container->get('clinical_trials_gov.migration_manager');
+    $this->entityManager = $this->container->get('clinical_trials_gov.entity_manager');
+    $this->migrationPluginManager = $this->container->get('plugin.manager.migration');
   }
 
   /**
@@ -56,7 +77,7 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
       ])
       ->save();
 
-    $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
+    $this->migrationManager->updateMigration();
     $config = $this->container->get('config.factory')->get('migrate_plus.migration.clinical_trials_gov');
 
     // Check that the generated migration stores the expected source and destination settings.
@@ -79,11 +100,10 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
         ],
       ],
     ], $config->get('process.title'));
-    $entity_manager = $this->container->get('clinical_trials_gov.entity_manager');
-    $this->assertSame('protocolSection.identificationModule.briefTitle', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.briefTitle')));
-    $this->assertSame('protocolSection.identificationModule.nctId', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctId')));
-    $this->assertSame('protocolSection.conditionsModule.conditions', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.conditionsModule.conditions')));
-    $this->assertSame('protocolSection.identificationModule.nctIdAliases', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.identificationModule.nctIdAliases')));
+    $this->assertSame('protocolSection.identificationModule.briefTitle', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle')));
+    $this->assertSame('protocolSection.identificationModule.nctId', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
+    $this->assertSame('protocolSection.conditionsModule.conditions', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.conditionsModule.conditions')));
+    $this->assertSame('protocolSection.identificationModule.nctIdAliases', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.identificationModule.nctIdAliases')));
     $this->assertSame([
       [
         'plugin' => 'concat',
@@ -92,7 +112,7 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
           'nctId',
         ],
       ],
-    ], $config->get('process.' . $entity_manager->getStudyUrlFieldName() . '/uri'));
+    ], $config->get('process.' . $this->entityManager->getStudyUrlFieldName() . '/uri'));
     $this->assertSame([
       [
         'plugin' => 'concat',
@@ -101,18 +121,18 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
           'nctId',
         ],
       ],
-    ], $config->get('process.' . $entity_manager->getStudyApiFieldName() . '/uri'));
+    ], $config->get('process.' . $this->entityManager->getStudyApiFieldName() . '/uri'));
     $this->assertNull($config->get('process.group_location'));
     $this->assertSame([
       [
         'plugin' => 'clinical_trials_gov_custom_field',
         'source' => [
           'protocolSection.contactsLocationsModule.locations',
-          'constants/' . $entity_manager->generateFieldName('protocolSection.contactsLocationsModule.locations') . '_yaml_columns',
+          'constants/' . $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations') . '_yaml_columns',
         ],
       ],
-    ], $config->get('process.' . $entity_manager->generateFieldName('protocolSection.contactsLocationsModule.locations')));
-    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.' . $entity_manager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty')));
+    ], $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations')));
+    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty')));
 
     // Check that title truncation constants are available to the migration.
     $this->assertSame(255, $config->get('source.constants.title_max_length'));
@@ -123,22 +143,22 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
     $this->assertSame([
       'contacts',
       'geoPoint',
-    ], $config->get('source.constants.' . $entity_manager->generateFieldName('protocolSection.contactsLocationsModule.locations') . '_yaml_columns'));
+    ], $config->get('source.constants.' . $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations') . '_yaml_columns'));
 
     // Check that updating the saved query refreshes an already-cached migration definition.
-    $this->container->get('plugin.manager.migration')->createInstance('clinical_trials_gov');
+    $this->migrationPluginManager->createInstance('clinical_trials_gov');
     $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=diabetes')
       ->save();
-    $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
-    $migration = $this->container->get('plugin.manager.migration')->createInstance('clinical_trials_gov');
+    $this->migrationManager->updateMigration();
+    $migration = $this->migrationPluginManager->createInstance('clinical_trials_gov');
     $this->assertSame('query.cond=diabetes', $migration->getSourceConfiguration()['query']);
 
     // Check that clearing discovered paths removes the generated migration.
     $this->config('clinical_trials_gov.settings')
       ->set('query_paths', [])
       ->save();
-    $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
+    $this->migrationManager->updateMigration();
     $this->assertNull($this->container->get('config.factory')->get('migrate_plus.migration.clinical_trials_gov')->get('id'));
   }
 

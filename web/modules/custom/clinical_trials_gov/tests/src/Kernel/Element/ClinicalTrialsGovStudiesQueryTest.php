@@ -6,6 +6,7 @@ namespace Drupal\Tests\clinical_trials_gov\Kernel\Element;
 
 use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuery;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -17,6 +18,19 @@ use PHPUnit\Framework\Attributes\Group;
  */
 #[Group('clinical_trials_gov')]
 class ClinicalTrialsGovStudiesQueryTest extends ClinicalTrialsGovTestBase {
+
+  /**
+   * The renderer under test.
+   */
+  protected RendererInterface $renderer;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->renderer = $this->container->get('renderer');
+  }
 
   /**
    * Tests the element lifecycle, include-field filtering, and parsing helpers.
@@ -94,13 +108,13 @@ class ClinicalTrialsGovStudiesQueryTest extends ClinicalTrialsGovTestBase {
     $this->assertStringContainsString('(array of string)', $processed['filter__overallStatus']['#field_prefix']);
 
     // Check that descriptions render ClinicalTrials.gov links and omit CSV text.
-    $query_description = $this->container->get('renderer')->renderInIsolation($processed['query__cond']['#description']);
+    $query_description = $this->renderer->renderInIsolation($processed['query__cond']['#description']);
     $this->assertStringContainsString('https://clinicaltrials.gov/data-api/about-api/search-areas#ConditionSearch', (string) $query_description);
     $this->assertStringContainsString('Examples:', (string) $query_description);
-    $fields_description = $this->container->get('renderer')->renderInIsolation($processed['fields']['#description']);
+    $fields_description = $this->renderer->renderInIsolation($processed['fields']['#description']);
     $this->assertStringContainsString('https://clinicaltrials.gov/data-api/about-api/study-data-structure', (string) $fields_description);
     $this->assertStringNotContainsString('CSV', (string) $fields_description);
-    $page_token_description = $this->container->get('renderer')->renderInIsolation($processed['pageToken']['#description']);
+    $page_token_description = $this->renderer->renderInIsolation($processed['pageToken']['#description']);
     $this->assertStringNotContainsString('x-next-page-token', (string) $page_token_description);
     $this->assertStringNotContainsString('Do not specify it for first page', (string) $page_token_description);
     $this->assertInstanceOf(TranslatableMarkup::class, $processed['countTotal']['#options']['true']);

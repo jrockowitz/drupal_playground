@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel\Form;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
 use PHPUnit\Framework\Attributes\Group;
@@ -35,6 +37,25 @@ class ClinicalTrialsGovImportFormTest extends ClinicalTrialsGovTestBase {
   ];
 
   /**
+   * The migration manager under test.
+   */
+  protected ClinicalTrialsGovMigrationManagerInterface $migrationManager;
+
+  /**
+   * The form builder under test.
+   */
+  protected FormBuilderInterface $formBuilder;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->migrationManager = $this->container->get('clinical_trials_gov.migration_manager');
+    $this->formBuilder = $this->container->get('form_builder');
+  }
+
+  /**
    * Tests the import form section layout and action links.
    */
   public function testBuildFormSections(): void {
@@ -50,10 +71,10 @@ class ClinicalTrialsGovImportFormTest extends ClinicalTrialsGovTestBase {
       ->set('type', 'trial')
       ->set('fields', ['field_nct_id' => 'protocolSection.identificationModule.nctId'])
       ->save();
-    $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
+    $this->migrationManager->updateMigration();
 
     $form_state = new FormState();
-    $form = $this->container->get('form_builder')->buildForm('Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm', $form_state);
+    $form = $this->formBuilder->buildForm('Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm', $form_state);
 
     // Check that the import form is grouped into the expected fieldsets.
     $this->assertArrayHasKey('studies_query', $form);
@@ -115,7 +136,7 @@ class ClinicalTrialsGovImportFormTest extends ClinicalTrialsGovTestBase {
       ->set('fields', [])
       ->save();
     $not_ready_form_state = new FormState();
-    $not_ready_form = $this->container->get('form_builder')->buildForm('Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm', $not_ready_form_state);
+    $not_ready_form = $this->formBuilder->buildForm('Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm', $not_ready_form_state);
     $warning_messages = $this->container->get('messenger')->messagesByType('warning');
 
     // Check that the not-ready warning is displayed through the page messenger.

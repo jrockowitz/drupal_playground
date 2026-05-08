@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
+use Drupal\clinical_trials_gov_test\ClinicalTrialsGovStudyManagerStub;
 use Drupal\Core\Url;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -27,11 +28,17 @@ class ClinicalTrialsGovBuilderTest extends ClinicalTrialsGovTestBase {
   protected ClinicalTrialsGovBuilderInterface $builder;
 
   /**
+   * The stubbed ClinicalTrials.gov study manager.
+   */
+  protected ClinicalTrialsGovStudyManagerStub $studyManager;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
     $this->builder = $this->container->get('clinical_trials_gov.builder');
+    $this->studyManager = $this->container->get('clinical_trials_gov.study_manager');
   }
 
   /**
@@ -40,7 +47,7 @@ class ClinicalTrialsGovBuilderTest extends ClinicalTrialsGovTestBase {
   public function testBuilds(): void {
     $nct_id = 'NCT05088187';
 
-    $study = $this->container->get('clinical_trials_gov.study_manager')->getStudy($nct_id);
+    $study = $this->studyManager->getStudy($nct_id);
     $this->assertNotEmpty($study, 'Stub returned a non-empty study array.');
 
     $build = $this->builder->buildStudy($study, $nct_id);
@@ -90,7 +97,7 @@ class ClinicalTrialsGovBuilderTest extends ClinicalTrialsGovTestBase {
 
     // Check that the study build uses the report-specific wrapper class.
     $this->assertContains('clinical-trials-gov-report-study', $build['#attributes']['class']);
-    $studies = $this->container->get('clinical_trials_gov.study_manager')->getStudies([
+    $studies = $this->studyManager->getStudies([
       'query.cond' => 'cancer',
     ])['studies'];
 

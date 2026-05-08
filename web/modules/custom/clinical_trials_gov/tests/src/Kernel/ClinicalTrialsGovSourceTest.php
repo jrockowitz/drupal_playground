@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
+use Drupal\clinical_trials_gov_test\ClinicalTrialsGovApiStub;
+use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -32,6 +35,31 @@ class ClinicalTrialsGovSourceTest extends ClinicalTrialsGovTestBase {
   ];
 
   /**
+   * The migration manager under test.
+   */
+  protected ClinicalTrialsGovMigrationManagerInterface $migrationManager;
+
+  /**
+   * The migration plugin manager under test.
+   */
+  protected MigrationPluginManagerInterface $migrationPluginManager;
+
+  /**
+   * The stubbed ClinicalTrials.gov API service.
+   */
+  protected ClinicalTrialsGovApiStub $api;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->migrationManager = $this->container->get('clinical_trials_gov.migration_manager');
+    $this->migrationPluginManager = $this->container->get('plugin.manager.migration');
+    $this->api = $this->container->get('clinical_trials_gov.api');
+  }
+
+  /**
    * Tests that the source plugin yields flattened rows.
    */
   public function testSourceRows(): void {
@@ -42,17 +70,14 @@ class ClinicalTrialsGovSourceTest extends ClinicalTrialsGovTestBase {
       ->set('type', 'trial')
       ->set('fields', ['field_nct_id' => 'protocolSection.identificationModule.nctId'])
       ->save();
-    $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
+    $this->migrationManager->updateMigration();
 
-    $migration = $this->container->get('plugin.manager.migration')->createInstance('clinical_trials_gov');
+    $migration = $this->migrationPluginManager->createInstance('clinical_trials_gov');
     $source = $migration->getSourcePlugin();
     $source->rewind();
     $row = $source->current();
     $source->rewind();
     $rows = iterator_to_array($source, FALSE);
-    /** @var \Drupal\clinical_trials_gov_test\ClinicalTrialsGovApiStub $api */
-    $api = $this->container->get('clinical_trials_gov.api');
-
     // Check that the first source row is hydrated with flattened study values.
     $this->assertNotNull($row);
     $this->assertSame([
@@ -79,7 +104,7 @@ class ClinicalTrialsGovSourceTest extends ClinicalTrialsGovTestBase {
     $this->assertSame('NCT01205711', $rows[2]->getSourceProperty('protocolSection.identificationModule.nctId'));
 
     // Check that the source plugin pages through IDs, then loads studies per row.
-    $requests = $api->getRequests();
+    $requests = $this->api->getRequests();
     $this->assertSame([
       [
         'path' => '/studies',

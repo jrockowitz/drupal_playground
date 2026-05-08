@@ -37,6 +37,11 @@ class ClinicalTrialsGovSetupWorkflowTest extends ClinicalTrialsGovContentTestBas
   protected ClinicalTrialsGovMigrationManagerInterface $migrationManager;
 
   /**
+   * The config form under test.
+   */
+  protected ClinicalTrialsGovConfigForm $configForm;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -45,6 +50,7 @@ class ClinicalTrialsGovSetupWorkflowTest extends ClinicalTrialsGovContentTestBas
     $this->pathsManager = $this->container->get('clinical_trials_gov.paths_manager');
     $this->entityManager = $this->container->get('clinical_trials_gov.entity_manager');
     $this->migrationManager = $this->container->get('clinical_trials_gov.migration_manager');
+    $this->configForm = ClinicalTrialsGovConfigForm::create($this->container);
   }
 
   /**
@@ -59,8 +65,7 @@ class ClinicalTrialsGovSetupWorkflowTest extends ClinicalTrialsGovContentTestBas
       ->set('query_paths', $paths)
       ->save();
 
-    $form_object = ClinicalTrialsGovConfigForm::create($this->container);
-    $form = $form_object->buildForm([], new FormState());
+    $form = $this->configForm->buildForm([], new FormState());
     $submitted_rows = [];
 
     foreach (($form['field_mapping']['rows'] ?? []) as $row) {

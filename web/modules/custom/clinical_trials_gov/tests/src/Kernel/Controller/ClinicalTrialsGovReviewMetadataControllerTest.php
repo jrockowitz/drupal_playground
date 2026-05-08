@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\clinical_trials_gov\Controller;
+namespace Drupal\Tests\clinical_trials_gov\Kernel\Controller;
 
 use Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewMetadataController;
 use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
@@ -15,6 +15,19 @@ use PHPUnit\Framework\Attributes\Group;
  */
 #[Group('clinical_trials_gov')]
 class ClinicalTrialsGovReviewMetadataControllerTest extends ClinicalTrialsGovTestBase {
+
+  /**
+   * The controller under test.
+   */
+  protected ClinicalTrialsGovReviewMetadataController $controller;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->controller = ClinicalTrialsGovReviewMetadataController::create($this->container);
+  }
 
   /**
    * Tests the filtered metadata page and missing-query warning behavior.
@@ -30,8 +43,7 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends ClinicalTrialsGovTes
       ])
       ->save();
 
-    $controller = ClinicalTrialsGovReviewMetadataController::create($this->container);
-    $build = $controller->index();
+    $build = $this->controller->index();
 
     // Check that the intro, query details, summary, and footer are present.
     $this->assertArrayHasKey('intro', $build);
@@ -68,8 +80,7 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends ClinicalTrialsGovTes
       ->set('query', '')
       ->save();
 
-    $controller = ClinicalTrialsGovReviewMetadataController::create($this->container);
-    $build = $controller->index();
+    $build = $this->controller->index();
     $warning_messages = $this->container->get('messenger')->messagesByType('warning');
 
     // Check that the page warns through the messenger and returns an empty build.

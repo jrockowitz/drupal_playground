@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\clinical_trials_gov\Kernel;
+namespace Drupal\Tests\clinical_trials_gov\Kernel\Config;
 
 use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -13,7 +14,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovSettingsValidationTest extends ClinicalTrialsGovTestBase {
+class ClinicalTrialsGovSettingValidationTest extends ClinicalTrialsGovTestBase {
 
   /**
    * The typed config manager.

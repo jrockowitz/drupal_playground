@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel\Hook;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\field\Entity\FieldConfig;
@@ -28,6 +29,11 @@ class ClinicalTrialsGovReadonlyHooksTest extends ClinicalTrialsGovContentTestBas
   ];
 
   /**
+   * The entity manager under test.
+   */
+  protected ClinicalTrialsGovEntityManagerInterface $entityManager;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -36,6 +42,7 @@ class ClinicalTrialsGovReadonlyHooksTest extends ClinicalTrialsGovContentTestBas
     $this->config('clinical_trials_gov.settings')
       ->set('field_prefix', 'trial')
       ->save();
+    $this->entityManager = $this->container->get('clinical_trials_gov.entity_manager');
   }
 
   /**
@@ -44,9 +51,8 @@ class ClinicalTrialsGovReadonlyHooksTest extends ClinicalTrialsGovContentTestBas
    * Unrelated fields should stay editable.
    */
   public function testReadonlyMappedFieldsOnly(): void {
-    $entity_manager = $this->container->get('clinical_trials_gov.entity_manager');
-    $entity_manager->createContentType('trial', 'Trial', 'Clinical trial content type');
-    $entity_manager->createFields('trial', [
+    $this->entityManager->createContentType('trial', 'Trial', 'Clinical trial content type');
+    $this->entityManager->createFields('trial', [
       'protocolSection.identificationModule.briefTitle',
       'protocolSection.identificationModule.nctId',
     ]);

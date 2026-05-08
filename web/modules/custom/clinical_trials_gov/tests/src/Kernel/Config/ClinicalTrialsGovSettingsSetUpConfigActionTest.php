@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\clinical_trials_gov\Kernel;
+namespace Drupal\Tests\clinical_trials_gov\Kernel\Config;
 
 use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Config\Action\ConfigActionManager;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\FunctionalTests\Core\Recipe\RecipeTestTrait;
 use Drupal\node\Entity\NodeType;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovContentTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**

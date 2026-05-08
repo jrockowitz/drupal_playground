@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Unit;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovNames;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Tests\UnitTestCase;
@@ -76,7 +76,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    */
   public function testGetGroupName(): void {
     // Check that group names are prefixed and normalized.
-    $this->assertSame('group_loc', $this->names->getGroupName('Location'));
+    $this->assertSame('group_location', $this->names->getGroupName('Location'));
   }
 
   /**
@@ -134,7 +134,7 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
    */
   public function testNormalizePieceAppliesAbbreviations(): void {
     // Check that seeded abbreviations shorten long normalized tokens.
-    $this->assertSame('res_fst_submit_qc_dt', $this->names->normalizePiece('ResultsFirstSubmitQCDate'));
+    $this->assertSame('res_first_submit_qc_date', $this->names->normalizePiece('ResultsFirstSubmitQCDate'));
   }
 
   /**

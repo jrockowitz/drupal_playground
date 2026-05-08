@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
+use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
+use Drupal\clinical_trials_gov_test\ClinicalTrialsGovStudyManagerStub;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -23,23 +25,31 @@ class ClinicalTrialsGovManagerDiscoveryTest extends ClinicalTrialsGovTestBase {
   ];
 
   /**
+   * The ClinicalTrials.gov paths manager.
+   */
+  protected ClinicalTrialsGovPathsManagerInterface $pathsManager;
+
+  /**
+   * The stubbed ClinicalTrials.gov study manager.
+   */
+  protected ClinicalTrialsGovStudyManagerStub $studyManager;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
     $this->installConfig('clinical_trials_gov');
+
+    $this->pathsManager = $this->container->get('clinical_trials_gov.paths_manager');
+    $this->studyManager = $this->container->get('clinical_trials_gov.study_manager');
   }
 
   /**
    * Tests that query discovery returns normalized metadata-ordered paths.
    */
   public function testDiscoverQueryPaths(): void {
-    /** @var \Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface $paths_manager */
-    $paths_manager = $this->container->get('clinical_trials_gov.paths_manager');
-    /** @var \Drupal\clinical_trials_gov_test\ClinicalTrialsGovStudyManagerStub $study_manager */
-    $study_manager = $this->container->get('clinical_trials_gov.study_manager');
-
-    $paths = $paths_manager->discoverQueryPaths('query.cond=lung');
+    $paths = $this->pathsManager->discoverQueryPaths('query.cond=lung');
 
     // Check that ancestors, discovered leaves, and required paths are all kept.
     $this->assertContains('protocolSection', $paths);
@@ -56,8 +66,8 @@ class ClinicalTrialsGovManagerDiscoveryTest extends ClinicalTrialsGovTestBase {
       'query.cond' => 'lung',
       'pageSize' => 1000,
       'sort' => 'LastUpdatePostDate:desc',
-    ], $study_manager->getStudiesRequests()[count($study_manager->getStudiesRequests()) - 1]);
-    $this->assertSame([], $study_manager->getStudyRequests());
+    ], $this->studyManager->getStudiesRequests()[count($this->studyManager->getStudiesRequests()) - 1]);
+    $this->assertSame([], $this->studyManager->getStudyRequests());
   }
 
 }
