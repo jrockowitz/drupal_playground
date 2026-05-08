@@ -31,7 +31,7 @@ clinical_trials_gov.review.metadata:
     _permission: 'administer clinical_trials_gov'
 
 clinical_trials_gov.review.study:
-  path: '/admin/config/services/clinical-trials-gov/review/{nctId}'
+  path: '/admin/config/services/clinical-trials-gov/review/{nct_id}'
   defaults:
     _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController::study'
     _title_callback: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController::title'

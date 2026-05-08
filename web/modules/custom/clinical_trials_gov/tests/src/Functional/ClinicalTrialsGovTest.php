@@ -36,6 +36,11 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->config('clinical_trials_gov.settings')
+      ->set('query', '')
+      ->set('query_paths', [])
+      ->set('fields', [])
+      ->save();
     $this->drupalLogin($this->drupalCreateUser([
       'access administration pages',
       'access content overview',

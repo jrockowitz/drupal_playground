@@ -43,7 +43,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       $conditions = implode(', ', $this->normalizeStringList($conditions_module['conditions'] ?? NULL));
 
       if ($nct_id && $study_route) {
-        $url = Url::fromRoute($study_route, ['nctId' => $nct_id]);
+        $url = Url::fromRoute($study_route, ['nct_id' => $nct_id]);
         if ($modal) {
           $nct_cell = [
             'data' => [

@@ -33,14 +33,14 @@ class ClinicalTrialsGovReviewMetadataController extends ClinicalTrialsGovMetadat
       return $build;
     }
 
-    $saved_query = $this->getSavedQuery();
+    $query = $this->getQuery();
     $build['studies_query'] = [
       '#type' => 'details',
       '#title' => $this->t('Studies query'),
       '#open' => FALSE,
       'summary' => [
         '#type' => 'clinical_trials_gov_studies_query_summary',
-        '#query' => $saved_query,
+        '#query' => $query,
       ],
       'links' => $this->buildActionLinks([
         'find' => [

@@ -17,18 +17,17 @@ trait ClinicalTrialsGovMessageTrait {
   /**
    * Builds a theme-native inline message render array.
    *
-   * @param string|array|\Drupal\Component\Render\MarkupInterface $messages
+   * @param string|array|\Stringable|\Drupal\Component\Render\MarkupInterface $messages
    *   The message text, markup, or list of messages.
    * @param string $type
    *   The message type.
-   * @param string|\Drupal\Component\Render\MarkupInterface|null $heading
+   * @param string|\Stringable|\Drupal\Component\Render\MarkupInterface|null $heading
    *   The optional custom message heading.
    */
-  protected function buildMessages(string|array|MarkupInterface $messages, string $type = 'status', string|MarkupInterface|null $heading = NULL): array {
-    if ($messages instanceof MarkupInterface) {
-      $messages = (string) $messages;
+  protected function buildMessages(string|array|\Stringable|MarkupInterface $messages, string $type = 'status', string|\Stringable|MarkupInterface|null $heading = NULL): array {
+    if (!is_array($messages)) {
+      $messages = [$messages];
     }
-    $messages = (array) $messages;
 
     $type = match ($type) {
       'info',

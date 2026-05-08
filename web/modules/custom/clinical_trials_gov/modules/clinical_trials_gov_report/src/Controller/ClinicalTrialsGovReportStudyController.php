@@ -35,20 +35,20 @@ class ClinicalTrialsGovReportStudyController extends ControllerBase {
   /**
    * Renders the study detail page.
    *
-   * @param string $nctId
+   * @param string $nct_id
    *   The NCT ID from the route.
    */
-  public function view(string $nctId): array {
-    $study = $this->studyManager->getStudy($nctId);
+  public function view(string $nct_id): array {
+    $study = $this->studyManager->getStudy($nct_id);
 
     if (empty($study)) {
       return [
         '#type' => 'item',
-        '#markup' => $this->t('Study @nct_id not found.', ['@nct_id' => $nctId]),
+        '#markup' => $this->t('Study @nct_id not found.', ['@nct_id' => $nct_id]),
       ];
     }
 
-    $build = $this->builder->buildStudy($study, $nctId);
+    $build = $this->builder->buildStudy($study, $nct_id);
     $build['#attached']['library'][] = 'clinical_trials_gov_report/report';
 
     return $build;
@@ -57,13 +57,13 @@ class ClinicalTrialsGovReportStudyController extends ControllerBase {
   /**
    * Returns the page title from the study's brief title.
    *
-   * @param string $nctId
+   * @param string $nct_id
    *   The NCT ID from the route.
    */
-  public function title(string $nctId): string {
-    $study = $this->studyManager->getStudy($nctId);
+  public function title(string $nct_id): string {
+    $study = $this->studyManager->getStudy($nct_id);
     if ($study === []) {
-      return $nctId;
+      return $nct_id;
     }
     return $study['protocolSection.identificationModule.briefTitle'];
   }

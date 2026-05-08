@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\clinical_trials_gov\Kernel\Controller;
 
 use Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController;
+use Drupal\Core\Url;
 use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,6 +54,9 @@ class ClinicalTrialsGovReviewControllerTest extends ClinicalTrialsGovTestBase {
     // Check that the details section sits between the intro and results summary.
     $keys = array_values(array_filter(array_keys($build), static fn(string $key): bool => !str_starts_with($key, '#')));
     $this->assertSame(['intro', 'studies_query', 'summary'], array_slice($keys, 0, 3));
+
+    // Check that the review detail route uses the snake_case route parameter.
+    $this->assertSame('/admin/config/services/clinical-trials-gov/review/NCT05088187', Url::fromRoute('clinical_trials_gov.review.study', ['nct_id' => 'NCT05088187'])->toString());
 
     // Check that the study route title callback uses the study brief title.
     $this->assertSame('Cognition and QoL After Thyroid Surgery', $this->controller->title('NCT05088187'));

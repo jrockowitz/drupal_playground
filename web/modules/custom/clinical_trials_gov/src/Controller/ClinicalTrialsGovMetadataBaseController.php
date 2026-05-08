@@ -36,7 +36,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds the metadata page.
    */
   public function index(): array {
-    if ($this->filter && !$this->getSavedQuery()) {
+    if ($this->filter && !$this->getQuery()) {
       $this->messageHandler->addWarning($this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ]));
@@ -102,7 +102,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
   /**
    * Returns the saved query string.
    */
-  protected function getSavedQuery(): string {
+  protected function getQuery(): string {
     return $this->configurationFactory->get('clinical_trials_gov.settings')->get('query');
   }
 

@@ -122,7 +122,7 @@ class ClinicalTrialsGovBuilderTest extends ClinicalTrialsGovTestBase {
     $first_identification = $first_study['protocolSection']['identificationModule'] ?? [];
     $expected_nct_id = $first_identification['nctId'] ?? '';
     $expected_title = $first_identification['briefTitle'] ?? '';
-    $expected_url = Url::fromRoute('clinical_trials_gov_report.study', ['nctId' => $expected_nct_id])->toString();
+    $expected_url = Url::fromRoute('clinical_trials_gov_report.study', ['nct_id' => $expected_nct_id])->toString();
     $first_row = $build['#rows'][0];
     $this->assertStringContainsString($expected_url, (string) $first_row[0]);
     $this->assertSame($expected_title, (string) $first_row[1]);

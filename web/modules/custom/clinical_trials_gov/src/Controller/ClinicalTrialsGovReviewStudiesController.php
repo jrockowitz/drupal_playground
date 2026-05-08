@@ -45,34 +45,34 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
   /**
    * Returns the review study detail page.
    */
-  public function study(Request $request, string $nctId): array {
-    if (!preg_match('/^NCT\d+$/', $nctId)) {
+  public function study(Request $request, string $nct_id): array {
+    if (!preg_match('/^NCT\d+$/', $nct_id)) {
       $this->messenger()->addWarning($this->t('The study identifier %nct_id is not valid.', [
-        '%nct_id' => $nctId,
+        '%nct_id' => $nct_id,
       ]));
       return $this->buildListPage($request);
     }
 
-    $study = $this->studyManager->getStudy($nctId);
+    $study = $this->studyManager->getStudy($nct_id);
     if ($study === []) {
       $this->messenger()->addWarning($this->t('Study %nct_id was not found. Review the saved query results below.', [
-        '%nct_id' => $nctId,
+        '%nct_id' => $nct_id,
       ]));
       return $this->buildListPage($request);
     }
 
-    return $this->builder->buildStudy($study, $nctId);
+    return $this->builder->buildStudy($study, $nct_id);
   }
 
   /**
    * Returns the page title for the study detail route.
    */
-  public function title(string $nctId): string {
-    if (!preg_match('/^NCT\d+$/', $nctId)) {
+  public function title(string $nct_id): string {
+    if (!preg_match('/^NCT\d+$/', $nct_id)) {
       return (string) $this->t('ClinicalTrials.gov');
     }
 
-    $study = $this->studyManager->getStudy($nctId);
+    $study = $this->studyManager->getStudy($nct_id);
     return $study['protocolSection.identificationModule.briefTitle'];
   }
 
@@ -146,7 +146,7 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
       $build['pager'] = [
         '#type' => 'link',
         '#title' => $this->t('Next page'),
-        '#url' => Url::fromRoute('clinical_trials_gov.review', ['nctId' => ''], [
+        '#url' => Url::fromRoute('clinical_trials_gov.review', [], [
           'query' => [
             'pageToken' => $response['nextPageToken'],
             'pageOffset' => $page_offset + $count,
