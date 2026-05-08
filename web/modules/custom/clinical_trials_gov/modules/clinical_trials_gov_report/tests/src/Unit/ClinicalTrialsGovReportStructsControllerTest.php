@@ -34,7 +34,7 @@ class ClinicalTrialsGovReportStructsControllerTest extends UnitTestCase {
     $study_manager = $this->createMock(ClinicalTrialsGovStudyManagerInterface::class);
     $date_formatter = $this->createMock(DateFormatterInterface::class);
 
-    $this->controller = new TestClinicalTrialsGovReportStructsController($field_manager, $study_manager, $date_formatter);
+    $this->controller = new TestClinicalTrialsGovReportStructsController($date_formatter, $field_manager, $study_manager);
     $this->controller->setStringTranslation($this->getStringTranslationStub());
   }
 

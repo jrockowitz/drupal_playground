@@ -55,7 +55,7 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
     $config_factory = $this->createMock(ConfigFactoryInterface::class);
     $messenger = $this->createMock(MessengerInterface::class);
 
-    $this->controller = new class($this->studyManager, $config_factory, $paths_manager, $messenger, $this->dateFormatter) extends ClinicalTrialsGovReportMetadataController {
+    $this->controller = new class($messenger, $config_factory, $this->studyManager, $paths_manager, $this->dateFormatter) extends ClinicalTrialsGovReportMetadataController {
 
       /**
        * Exposes buildMetadataTable() for testing.

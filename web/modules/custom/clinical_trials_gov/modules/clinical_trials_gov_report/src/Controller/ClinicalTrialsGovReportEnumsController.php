@@ -22,8 +22,8 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
    * Constructs a new ClinicalTrialsGovReportEnumsController instance.
    */
   public function __construct(
-    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected DateFormatterInterface $dateFormatter,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
   ) {}
 
   /**
@@ -32,8 +32,8 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     /** @phpstan-ignore-next-line */
     return new self(
-      $container->get('clinical_trials_gov.study_manager'),
       $container->get('date.formatter'),
+      $container->get('clinical_trials_gov.study_manager'),
     );
   }
 
@@ -64,7 +64,7 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
       'results' => $this->buildEnumsTable($enums),
       'api_url' => [
         '#type' => 'item',
-        '#markup' => $this->t('ClinicalTrials.gov API: <a href=":url" class="font-monospace">@url</a>', [
+        '#markup' => $this->t('<small>ClinicalTrials.gov API: <a href=":url" class="font-monospace">@url</a></small>', [
           ':url' => $api_url,
           '@url' => $api_url,
         ]),

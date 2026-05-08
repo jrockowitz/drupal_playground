@@ -36,7 +36,7 @@ class ClinicalTrialsGovReportStudiesControllerTest extends UnitTestCase {
     $date_formatter->method('format')
       ->willReturnCallback(fn($timestamp) => date('F j Y', $timestamp));
 
-    $this->controller = new TestClinicalTrialsGovReportStudiesController($study_manager, $builder, $date_formatter);
+    $this->controller = new TestClinicalTrialsGovReportStudiesController($date_formatter, $builder, $study_manager);
     $this->controller->setStringTranslation($this->getStringTranslationStub());
   }
 

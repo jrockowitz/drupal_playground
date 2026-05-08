@@ -30,13 +30,13 @@ class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadat
    * Constructs a new ClinicalTrialsGovReportMetadataController instance.
    */
   public function __construct(
-    ClinicalTrialsGovStudyManagerInterface $studyManager,
-    ConfigFactoryInterface $configFactory,
-    ClinicalTrialsGovPathsManagerInterface $pathsManager,
     MessengerInterface $messenger,
+    ConfigFactoryInterface $configFactory,
+    ClinicalTrialsGovStudyManagerInterface $studyManager,
+    ClinicalTrialsGovPathsManagerInterface $pathsManager,
     protected DateFormatterInterface $dateFormatter,
   ) {
-    parent::__construct($studyManager, $configFactory, $pathsManager, $messenger);
+    parent::__construct($messenger, $configFactory, $studyManager, $pathsManager);
   }
 
   /**
@@ -45,10 +45,10 @@ class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadat
   public static function create(ContainerInterface $container): static {
     /** @phpstan-ignore-next-line */
     return new self(
-      $container->get('clinical_trials_gov.study_manager'),
-      $container->get('config.factory'),
-      $container->get('clinical_trials_gov.paths_manager'),
       $container->get('messenger'),
+      $container->get('config.factory'),
+      $container->get('clinical_trials_gov.study_manager'),
+      $container->get('clinical_trials_gov.paths_manager'),
       $container->get('date.formatter'),
     );
   }
@@ -73,7 +73,7 @@ class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadat
     return [
       'api_url' => [
         '#type' => 'item',
-        '#markup' => $this->t('ClinicalTrials.gov API: <a href=":url" class="font-monospace">@url</a>', [
+        '#markup' => $this->t('<small>ClinicalTrials.gov API: <a href=":url" class="font-monospace">@url</a></small>', [
           ':url' => $api_url,
           '@url' => $api_url,
         ]),

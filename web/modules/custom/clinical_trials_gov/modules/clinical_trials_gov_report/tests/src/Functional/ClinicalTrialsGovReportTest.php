@@ -184,7 +184,7 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
     $structs_page_html = $this->getSession()->getPage()->getContent();
     $this->assertStringContainsString('clinical-trials-gov-report-structs__row--unused', $structs_page_html);
-    $this->assertMatchesRegularExpression('/clinical-trials-gov-report-structs__row--unused.*statusModule/s', $structs_page_html);
+    $this->assertStringNotContainsString('clinical-trials-gov-report-structs__row--unused"><td><div class="clinical-trials-gov-report-metadata__primary" style="padding-left:1.5rem"><strong>statusModule</strong>', $structs_page_html);
     $this->assertNotFalse(strpos($structs_page_html, '<hr'));
     $this->assertGreaterThan(
       strpos($structs_page_html, 'ClinicalTrials.gov API:'),

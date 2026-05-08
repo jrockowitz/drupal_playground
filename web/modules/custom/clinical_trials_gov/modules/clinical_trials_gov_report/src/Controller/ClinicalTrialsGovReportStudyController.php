@@ -18,8 +18,8 @@ class ClinicalTrialsGovReportStudyController extends ControllerBase {
    * Constructs a new ClinicalTrialsGovReportStudyController instance.
    */
   public function __construct(
-    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovBuilderInterface $builder,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
   ) {}
 
   /**
@@ -27,8 +27,8 @@ class ClinicalTrialsGovReportStudyController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('clinical_trials_gov.study_manager'),
       $container->get('clinical_trials_gov.builder'),
+      $container->get('clinical_trials_gov.study_manager'),
     );
   }
 

@@ -24,9 +24,9 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
    * Constructs a new ClinicalTrialsGovReportStructsController instance.
    */
   public function __construct(
+    protected DateFormatterInterface $dateFormatter,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
     protected ClinicalTrialsGovStudyManagerInterface $studyManager,
-    protected DateFormatterInterface $dateFormatter,
   ) {}
 
   /**
@@ -35,9 +35,9 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     /** @phpstan-ignore-next-line */
     return new self(
+      $container->get('date.formatter'),
       $container->get('clinical_trials_gov.field_manager'),
       $container->get('clinical_trials_gov.study_manager'),
-      $container->get('date.formatter'),
     );
   }
 
@@ -70,7 +70,7 @@ class ClinicalTrialsGovReportStructsController extends ControllerBase {
       'results' => $this->buildStructsTable($struct_rows),
       'api_url' => [
         '#type' => 'item',
-        '#markup' => $this->t('ClinicalTrials.gov API: <a href=":url" class="font-monospace">@url</a>', [
+        '#markup' => $this->t('<small>ClinicalTrials.gov API: <a href=":url" class="font-monospace">@url</a></small>', [
           ':url' => $api_url,
           '@url' => $api_url,
         ]),

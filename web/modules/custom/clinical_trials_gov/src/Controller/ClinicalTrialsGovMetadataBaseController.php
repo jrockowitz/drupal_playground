@@ -26,10 +26,10 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Constructs a new ClinicalTrialsGovMetadataBaseController instance.
    */
   public function __construct(
-    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
-    protected ConfigFactoryInterface $configurationFactory,
-    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
     protected MessengerInterface $messageHandler,
+    protected ConfigFactoryInterface $configurationFactory,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
+    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
   ) {}
 
   /**
