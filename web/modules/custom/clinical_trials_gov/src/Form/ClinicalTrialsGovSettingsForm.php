@@ -70,7 +70,7 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('clinical_trials_gov.settings');
     $structure_locked = $this->isStructureLocked();
-    $query = (string) $config->get('query');
+    $query = $config->get('query');
     $query_paths = $config->get('query_paths');
     $find_url = Url::fromRoute('clinical_trials_gov.find')->toString();
 
@@ -205,7 +205,7 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
    */
   protected function isStructureLocked(): bool {
     $config = $this->config('clinical_trials_gov.settings');
-    $type = trim((string) $config->get('type'));
+    $type = trim($config->get('type'));
 
     if (!$type) {
       return FALSE;

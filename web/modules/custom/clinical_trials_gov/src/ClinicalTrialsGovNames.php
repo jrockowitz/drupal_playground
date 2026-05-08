@@ -190,8 +190,7 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
    * Returns the configured Drupal field prefix.
    */
   protected function getConfiguredFieldPrefix(): string {
-    $field_prefix = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('field_prefix');
-    $field_prefix = trim($field_prefix);
+    $field_prefix = trim($this->configFactory->get('clinical_trials_gov.settings')->get('field_prefix'));
 
     if (!$field_prefix) {
       return '';

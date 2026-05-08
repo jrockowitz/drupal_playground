@@ -31,6 +31,7 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends KernelTestBase {
   public function testIndexFiltersByConfiguredPaths(): void {
     $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
+      ->set('title_path', 'protocolSection.identificationModule.briefTitle')
       ->set('required_paths', [])
       ->set('query_paths', [
         'protocolSection.identificationModule.briefTitle',

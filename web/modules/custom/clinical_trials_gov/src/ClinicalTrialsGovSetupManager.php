@@ -69,7 +69,7 @@ class ClinicalTrialsGovSetupManager implements ClinicalTrialsGovSetupManagerInte
 
     return [
       'query' => $query,
-      'type' => (string) $this->configFactory->get('clinical_trials_gov.settings')->get('type'),
+      'type' => $this->configFactory->get('clinical_trials_gov.settings')->get('type'),
       'query_paths_count' => count($paths),
       'fields_count' => count($field_mappings),
       'page_size' => self::DISCOVERY_PAGE_SIZE,

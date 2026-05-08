@@ -618,21 +618,21 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    * Returns the configured destination bundle machine name.
    */
   protected function getConfiguredType(): string {
-    return (string) $this->configFactory->get('clinical_trials_gov.settings')->get('type');
+    return $this->configFactory->get('clinical_trials_gov.settings')->get('type');
   }
 
   /**
    * Returns saved field mappings from module settings.
    */
   protected function getConfiguredFieldMappings(): array {
-    return $this->configFactory->get('clinical_trials_gov.settings')->get('fields') ?? [];
+    return $this->configFactory->get('clinical_trials_gov.settings')->get('fields');
   }
 
   /**
    * Returns the configured title metadata path.
    */
   protected function getTitleFieldPath(): string {
-    return (string) $this->configFactory->get('clinical_trials_gov.settings')->get('title_path');
+    return $this->configFactory->get('clinical_trials_gov.settings')->get('title_path');
   }
 
   /**

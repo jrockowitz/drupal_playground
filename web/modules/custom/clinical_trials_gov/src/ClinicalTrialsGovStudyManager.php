@@ -82,10 +82,7 @@ class ClinicalTrialsGovStudyManager implements ClinicalTrialsGovStudyManagerInte
     if ($this->metadataByPieceCache === NULL) {
       $this->metadataByPieceCache = [];
       foreach ($this->getMetadataByPath() as $metadata) {
-        if (!is_array($metadata)) {
-          continue;
-        }
-        $metadata_piece = (string) ($metadata['piece'] ?? '');
+        $metadata_piece = $metadata['piece'];
         if (!$metadata_piece) {
           continue;
         }
@@ -115,17 +112,8 @@ class ClinicalTrialsGovStudyManager implements ClinicalTrialsGovStudyManagerInte
     $enum_type = str_replace('[]', '', $enum_type);
 
     foreach ($this->getEnums() as $enum) {
-      if (!is_array($enum)) {
-        continue;
-      }
-      if (($enum['type'] ?? '') === $enum_type) {
-        return array_values(array_filter(
-          array_map(
-            fn($item) => is_array($item) ? ($item['value'] ?? NULL) : (is_string($item) ? $item : NULL),
-            is_array($enum['values'] ?? NULL) ? $enum['values'] : []
-          ),
-          fn($value) => $value !== NULL
-        ));
+      if ($enum['type'] === $enum_type) {
+        return array_column($enum['values'], 'value');
       }
     }
     return [];
@@ -138,16 +126,12 @@ class ClinicalTrialsGovStudyManager implements ClinicalTrialsGovStudyManagerInte
     $enum_type = str_replace('[]', '', $enum_type);
 
     foreach ($this->getEnums() as $enum_definition) {
-      if (!is_array($enum_definition) || ($enum_definition['type'] ?? '') !== $enum_type) {
+      if ($enum_definition['type'] !== $enum_type) {
         continue;
       }
 
       $allowed_values = [];
-      foreach (($enum_definition['values'] ?? []) as $value) {
-        if (!is_array($value) || !isset($value['value'])) {
-          continue;
-        }
-
+      foreach ($enum_definition['values'] as $value) {
         $allowed_values[(string) $value['value']] = (string) ($value['legacyValue'] ?? $value['value']);
       }
 
@@ -220,17 +204,11 @@ class ClinicalTrialsGovStudyManager implements ClinicalTrialsGovStudyManagerInte
   protected function flattenMetadata(array $items, string $parent = ''): array {
     $rows = [];
     foreach ($items as $item) {
-      if (!is_array($item)) {
-        continue;
-      }
-      $name = (string) ($item['name'] ?? '');
+      $name = (string) $item['name'];
       $path = ($parent && $name) ? $parent . '.' . $name : $name;
       $children = [];
-      foreach (($item['children'] ?? []) as $child) {
-        if (!is_array($child)) {
-          continue;
-        }
-        $child_name = (string) ($child['name'] ?? '');
+      foreach ($item['children'] ?? [] as $child) {
+        $child_name = (string) $child['name'];
         if (!$child_name) {
           continue;
         }
@@ -240,24 +218,24 @@ class ClinicalTrialsGovStudyManager implements ClinicalTrialsGovStudyManagerInte
         'path' => $path,
         'parent' => $parent,
         'name' => $name,
-        'piece' => (string) ($item['piece'] ?? ''),
+        'piece' => (string) $item['piece'],
         'title' => (string) ($item['title'] ?? ''),
-        'type' => (string) ($item['type'] ?? ''),
-        'sourceType' => (string) ($item['sourceType'] ?? ''),
-        'maxChars' => isset($item['maxChars']) ? (int) $item['maxChars'] : NULL,
-        'isEnum' => !empty($item['isEnum']),
+        'type' => (string) $item['type'],
+        'sourceType' => (string) $item['sourceType'],
+        'maxChars' => $item['maxChars'] ?? NULL,
+        'isEnum' => (bool) ($item['isEnum'] ?? FALSE),
         'description' => (string) ($item['description'] ?? ''),
         'children' => $children,
         'rules' => (string) ($item['rules'] ?? ''),
         'altPieceNames' => array_values(array_filter(
-          is_array($item['altPieceNames'] ?? NULL) ? $item['altPieceNames'] : [],
+          $item['altPieceNames'] ?? [],
           fn(mixed $value): bool => is_string($value) && $value !== ''
         )),
-        'synonyms' => !empty($item['synonyms']),
+        'synonyms' => (bool) ($item['synonyms'] ?? FALSE),
         'dedLinkLabel' => (string) ($item['dedLink']['label'] ?? ''),
         'dedLinkUrl' => (string) ($item['dedLink']['url'] ?? ''),
       ];
-      if (!empty($item['children']) && is_array($item['children'])) {
+      if (($item['children'] ?? []) !== []) {
         $rows += $this->flattenMetadata($item['children'], $path);
       }
     }

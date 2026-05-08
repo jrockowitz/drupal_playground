@@ -31,16 +31,16 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
     $modal = !empty($options['modal']);
     $rows = [];
     foreach ($studies as $study) {
-      $identification = $study['protocolSection']['identificationModule'] ?? [];
-      $status_module = $study['protocolSection']['statusModule'] ?? [];
-      $design_module = $study['protocolSection']['designModule'] ?? [];
-      $conditions_module = $study['protocolSection']['conditionsModule'] ?? [];
+      $identification = $study['protocolSection']['identificationModule'];
+      $status_module = $study['protocolSection']['statusModule'];
+      $design_module = $study['protocolSection']['designModule'];
+      $conditions_module = $study['protocolSection']['conditionsModule'];
 
-      $nct_id = $identification['nctId'] ?? '';
-      $title = $identification['briefTitle'] ?? '';
-      $status = $status_module['overallStatus'] ?? '';
-      $phases = implode(', ', $design_module['phases'] ?? []);
-      $conditions = implode(', ', $conditions_module['conditions'] ?? []);
+      $nct_id = $identification['nctId'];
+      $title = $identification['briefTitle'];
+      $status = $status_module['overallStatus'];
+      $phases = implode(', ', $this->normalizeStringList($design_module['phases'] ?? NULL));
+      $conditions = implode(', ', $this->normalizeStringList($conditions_module['conditions'] ?? NULL));
 
       if ($nct_id && $study_route) {
         $url = Url::fromRoute($study_route, ['nctId' => $nct_id]);
@@ -127,11 +127,11 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       '#type' => 'container',
     ];
 
-    $status = (string) $this->getStudyValue($study, 'protocolSection.statusModule.overallStatus', '');
-    $phases = $this->normalizeStringList($this->getStudyValue($study, 'protocolSection.designModule.phases', []));
-    $study_type = (string) $this->getStudyValue($study, 'protocolSection.designModule.studyType', '');
-    $nct_id = (string) $this->getStudyValue($study, 'protocolSection.identificationModule.nctId', '');
-    $lead_sponsor = (string) $this->getStudyValue($study, 'protocolSection.sponsorCollaboratorsModule.leadSponsor.name', '');
+    $status = (string) $this->getStudyValue($study, 'protocolSection.statusModule.overallStatus');
+    $phases = $this->normalizeStringList($this->getOptionalStudyValue($study, 'protocolSection.designModule.phases'));
+    $study_type = (string) $this->getStudyValue($study, 'protocolSection.designModule.studyType');
+    $nct_id = (string) $this->getStudyValue($study, 'protocolSection.identificationModule.nctId');
+    $lead_sponsor = (string) $this->getStudyValue($study, 'protocolSection.sponsorCollaboratorsModule.leadSponsor.name');
 
     $overview_items = [];
     if ($status) {
@@ -157,7 +157,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       $build['overview'] = $this->buildSummaryFieldset((string) $this->t('Study overview'), $overview_items);
     }
 
-    $conditions = $this->normalizeStringList($this->getStudyValue($study, 'protocolSection.conditionsModule.conditions', []));
+    $conditions = $this->normalizeStringList($this->getOptionalStudyValue($study, 'protocolSection.conditionsModule.conditions'));
     if ($conditions) {
       $build['conditions'] = [
         '#type' => 'fieldset',
@@ -169,7 +169,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       ];
     }
 
-    $brief_summary = (string) $this->getStudyValue($study, 'protocolSection.descriptionModule.briefSummary', '');
+    $brief_summary = (string) ($this->getOptionalStudyValue($study, 'protocolSection.descriptionModule.briefSummary') ?? '');
     if ($brief_summary) {
       $build['brief_summary'] = [
         '#type' => 'fieldset',
@@ -180,7 +180,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       ];
     }
 
-    $interventions = $this->getStudyValue($study, 'protocolSection.armsInterventionsModule.interventions', []);
+    $interventions = $this->getOptionalStudyValue($study, 'protocolSection.armsInterventionsModule.interventions');
     if (is_array($interventions) && $interventions) {
       $items = [];
       foreach ($interventions as $intervention) {
@@ -213,7 +213,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       }
     }
 
-    $primary_outcomes = $this->getStudyValue($study, 'protocolSection.outcomesModule.primaryOutcomes', []);
+    $primary_outcomes = $this->getOptionalStudyValue($study, 'protocolSection.outcomesModule.primaryOutcomes');
     if (is_array($primary_outcomes) && $primary_outcomes) {
       $items = [];
       foreach ($primary_outcomes as $outcome) {
@@ -239,7 +239,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       }
     }
 
-    $eligibility = (string) $this->getStudyValue($study, 'protocolSection.eligibilityModule.eligibilityCriteria', '');
+    $eligibility = (string) ($this->getOptionalStudyValue($study, 'protocolSection.eligibilityModule.eligibilityCriteria') ?? '');
     if ($eligibility) {
       $build['eligibility'] = [
         '#type' => 'fieldset',
@@ -250,7 +250,7 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       ];
     }
 
-    $locations = $this->getStudyValue($study, 'protocolSection.contactsLocationsModule.locations', []);
+    $locations = $this->getOptionalStudyValue($study, 'protocolSection.contactsLocationsModule.locations');
     if (is_array($locations) && $locations) {
       $rows = [];
       foreach ($locations as $location) {
@@ -329,18 +329,18 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
   protected function buildFactsItems(array $study): array {
     $items = [];
 
-    $start_date = (string) $this->getStudyValue($study, 'protocolSection.statusModule.startDateStruct.date', '');
+    $start_date = (string) ($this->getOptionalStudyValue($study, 'protocolSection.statusModule.startDateStruct.date') ?? '');
     if ($start_date) {
       $items[] = $this->buildLabelValueMarkup($this->t('Start date'), $start_date);
     }
 
-    $completion_date = (string) $this->getStudyValue($study, 'protocolSection.statusModule.completionDateStruct.date', '');
+    $completion_date = (string) ($this->getOptionalStudyValue($study, 'protocolSection.statusModule.completionDateStruct.date') ?? '');
     if ($completion_date) {
       $items[] = $this->buildLabelValueMarkup($this->t('Completion date'), $completion_date);
     }
 
-    $enrollment_count = $this->getStudyValue($study, 'protocolSection.designModule.enrollmentInfo.count', NULL);
-    $enrollment_type = (string) $this->getStudyValue($study, 'protocolSection.designModule.enrollmentInfo.type', '');
+    $enrollment_count = $this->getOptionalStudyValue($study, 'protocolSection.designModule.enrollmentInfo.count');
+    $enrollment_type = (string) ($this->getOptionalStudyValue($study, 'protocolSection.designModule.enrollmentInfo.type') ?? '');
     if ($enrollment_count !== NULL) {
       $value = (string) $enrollment_count;
       if ($enrollment_type) {
@@ -349,19 +349,19 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
       $items[] = $this->buildLabelValueMarkup($this->t('Enrollment'), $value);
     }
 
-    $sex = (string) $this->getStudyValue($study, 'protocolSection.eligibilityModule.sex', '');
+    $sex = (string) ($this->getOptionalStudyValue($study, 'protocolSection.eligibilityModule.sex') ?? '');
     if ($sex) {
       $items[] = $this->buildLabelValueMarkup($this->t('Sex'), $sex);
     }
 
-    $minimum_age = (string) $this->getStudyValue($study, 'protocolSection.eligibilityModule.minimumAge', '');
-    $maximum_age = (string) $this->getStudyValue($study, 'protocolSection.eligibilityModule.maximumAge', '');
+    $minimum_age = (string) ($this->getOptionalStudyValue($study, 'protocolSection.eligibilityModule.minimumAge') ?? '');
+    $maximum_age = (string) ($this->getOptionalStudyValue($study, 'protocolSection.eligibilityModule.maximumAge') ?? '');
     if ($minimum_age || $maximum_age) {
       $age_range = (($minimum_age) ? $minimum_age : (string) $this->t('N/A')) . ' - ' . (($maximum_age) ? $maximum_age : (string) $this->t('N/A'));
       $items[] = $this->buildLabelValueMarkup($this->t('Age range'), $age_range);
     }
 
-    $healthy_volunteers = $this->getStudyValue($study, 'protocolSection.eligibilityModule.healthyVolunteers', NULL);
+    $healthy_volunteers = $this->getOptionalStudyValue($study, 'protocolSection.eligibilityModule.healthyVolunteers');
     if ($healthy_volunteers !== NULL) {
       $items[] = $this->buildLabelValueMarkup($this->t('Healthy volunteers'), ($healthy_volunteers) ? $this->t('Yes') : $this->t('No'));
     }
@@ -375,10 +375,14 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
   protected function buildDataTable(array $study, array $metadata): array {
     $rows = [];
     foreach ($study as $key => $value) {
-      $field_metadata = $metadata[$key] ?? [];
-      $title = (string) ($field_metadata['title'] ?? $field_metadata['name'] ?? $key);
-      $description = (string) ($field_metadata['description'] ?? '');
-      $data_type = (string) ($field_metadata['sourceType'] ?? '');
+      $field_metadata = $metadata[$key] ?? [
+        'title' => $key,
+        'description' => '',
+        'sourceType' => '',
+      ];
+      $title = (string) $field_metadata['title'];
+      $description = (string) $field_metadata['description'];
+      $data_type = (string) $field_metadata['sourceType'];
 
       $field_markup = '<strong>' . Html::escape($title) . '</strong>';
       if ($data_type) {
@@ -552,8 +556,15 @@ class ClinicalTrialsGovBuilder implements ClinicalTrialsGovBuilderInterface {
   /**
    * Gets a study value from the flat array with a fallback.
    */
-  protected function getStudyValue(array $study, string $key, mixed $default): mixed {
-    return $study[$key] ?? $default;
+  protected function getStudyValue(array $study, string $key): mixed {
+    return $study[$key];
+  }
+
+  /**
+   * Gets an optional study value from the flat array.
+   */
+  protected function getOptionalStudyValue(array $study, string $key): mixed {
+    return $study[$key] ?? NULL;
   }
 
   /**

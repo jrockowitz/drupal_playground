@@ -62,7 +62,10 @@ class ClinicalTrialsGovReportStudyController extends ControllerBase {
    */
   public function title(string $nctId): string {
     $study = $this->studyManager->getStudy($nctId);
-    return (string) ($study['protocolSection.identificationModule.briefTitle'] ?? $nctId);
+    if ($study === []) {
+      return $nctId;
+    }
+    return $study['protocolSection.identificationModule.briefTitle'];
   }
 
 }

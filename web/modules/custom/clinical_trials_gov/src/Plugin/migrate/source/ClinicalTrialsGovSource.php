@@ -74,21 +74,18 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
    * {@inheritdoc}
    */
   protected function initializeIterator(): \Traversable {
-    $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString((string) ($this->configuration['query'] ?? ''));
+    $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($this->configuration['query']);
     $parameters['fields'] = 'NCTId';
     $parameters['pageSize'] = '1000';
     $rows = [];
 
     do {
       $response = $this->api->get('/studies', $parameters);
-      foreach (($response['studies'] ?? []) as $study) {
+      foreach ($response['studies'] as $study) {
         if (!is_array($study)) {
           continue;
         }
-        $nct_id = (string) ($study['protocolSection']['identificationModule']['nctId'] ?? '');
-        if (!$nct_id) {
-          continue;
-        }
+        $nct_id = (string) $study['protocolSection']['identificationModule']['nctId'];
         $rows[] = [
           'nctId' => $nct_id,
         ];

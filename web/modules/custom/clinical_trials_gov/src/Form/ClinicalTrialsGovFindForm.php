@@ -70,7 +70,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     $form['#attached']['library'][] = 'clinical_trials_gov/clinical_trials_gov';
 
     $config = $this->config('clinical_trials_gov.settings');
-    $saved_query = (string) $config->get('query');
+    $saved_query = $config->get('query');
     $form['query_wrapper'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Studies query'),

@@ -55,7 +55,7 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
         'library' => ['clinical_trials_gov_report/report'],
       ],
     ];
-    $query_string = $request->getQueryString() ?? '';
+    $query_string = (string) $request->server->get('QUERY_STRING', '');
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query_string);
     $version = $this->studyManager->getVersion();
 
@@ -69,29 +69,27 @@ class ClinicalTrialsGovReportStudiesController extends ControllerBase {
     // count across pages) and is never sent to the API. It is added to the
     // next-page URL by this controller so the "Showing X to Y" label stays
     // accurate across paginated requests.
-    $page_offset = (int) ($parameters['pageOffset'] ?? 0);
+    $page_offset = isset($parameters['pageOffset']) ? (int) $parameters['pageOffset'] : 0;
     unset($parameters['pageOffset']);
     $api_parameters = $this->buildApiParameters($parameters);
 
     $response = $this->studyManager->getStudies($api_parameters);
-    $studies = $response['studies'] ?? [];
+    $studies = $response['studies'];
     $api_url = $this->buildApiUrl($api_parameters);
 
-    if (!empty($studies) || isset($response['totalCount'])) {
+    if ($studies !== []) {
       $count = count($studies);
       $start = $page_offset + 1;
       $end = $page_offset + $count;
-      $total = $response['totalCount'] ?? NULL;
+      $total = $response['totalCount'];
 
       $build['summary'] = [
         '#type' => 'item',
-        '#markup' => ($total !== NULL)
-          ? $this->t('Showing @start to @end of @total trials', [
-            '@start' => $start,
-            '@end' => $end,
-            '@total' => $total,
-          ])
-          : $this->t('Showing @start to @end', ['@start' => $start, '@end' => $end]),
+        '#markup' => $this->t('Showing @start to @end of @total trials', [
+          '@start' => $start,
+          '@end' => $end,
+          '@total' => $total,
+        ]),
       ];
     }
 

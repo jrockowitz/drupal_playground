@@ -16,7 +16,7 @@ class ClinicalTrialsGovManageController extends ControllerBase {
    * Redirects to the configured content overview or back to Configure.
    */
   public function index(): RedirectResponse {
-    $type = (string) $this->config('clinical_trials_gov.settings')->get('type');
+    $type = $this->config('clinical_trials_gov.settings')->get('type');
     $node_type = ($type) ? $this->entityTypeManager()->getStorage('node_type')->load($type) : NULL;
 
     if (!$type || !$node_type) {

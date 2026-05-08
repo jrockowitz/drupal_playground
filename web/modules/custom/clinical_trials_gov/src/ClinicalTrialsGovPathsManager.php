@@ -84,7 +84,7 @@ class ClinicalTrialsGovPathsManager implements ClinicalTrialsGovPathsManagerInte
    * {@inheritdoc}
    */
   public function getQueryPathsRaw(): array {
-    return $this->configFactory->get('clinical_trials_gov.settings')->get('query_paths') ?? [];
+    return $this->configFactory->get('clinical_trials_gov.settings')->get('query_paths');
   }
 
   /**
@@ -98,7 +98,7 @@ class ClinicalTrialsGovPathsManager implements ClinicalTrialsGovPathsManagerInte
     $response = $this->studyManager->getStudies($parameters);
 
     $discovered_paths = [];
-    foreach (($response['studies'] ?? []) as $study) {
+    foreach ($response['studies'] as $study) {
       if (!is_array($study)) {
         continue;
       }
@@ -163,7 +163,7 @@ class ClinicalTrialsGovPathsManager implements ClinicalTrialsGovPathsManagerInte
    * Returns the configured title metadata path.
    */
   protected function getTitleFieldPath(): string {
-    return (string) $this->configFactory->get('clinical_trials_gov.settings')->get('title_path');
+    return $this->configFactory->get('clinical_trials_gov.settings')->get('title_path');
   }
 
   /**

@@ -103,7 +103,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Returns the saved query string.
    */
   protected function getSavedQuery(): string {
-    return (string) $this->configurationFactory->get('clinical_trials_gov.settings')->get('query');
+    return $this->configurationFactory->get('clinical_trials_gov.settings')->get('query');
   }
 
   /**

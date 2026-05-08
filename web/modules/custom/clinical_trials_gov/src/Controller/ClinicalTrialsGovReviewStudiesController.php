@@ -73,14 +73,14 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
     }
 
     $study = $this->studyManager->getStudy($nctId);
-    return (string) ($study['protocolSection.identificationModule.briefTitle'] ?? $this->t('ClinicalTrials.gov'));
+    return $study['protocolSection.identificationModule.briefTitle'];
   }
 
   /**
    * Builds the saved-query studies list page.
    */
   protected function buildListPage(Request $request): array {
-    $saved_query = (string) $this->config('clinical_trials_gov.settings')->get('query');
+    $saved_query = $this->config('clinical_trials_gov.settings')->get('query');
     if (!$saved_query) {
       $this->messenger()->addWarning($this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
@@ -98,11 +98,11 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
     $parameters['pageSize'] = 50;
 
     $response = $this->studyManager->getStudies($parameters);
-    $studies = $response['studies'] ?? [];
+    $studies = $response['studies'];
     $count = count($studies);
     $start = $page_offset + 1;
     $end = $page_offset + $count;
-    $total = $response['totalCount'] ?? NULL;
+    $total = $response['totalCount'];
 
     $build = [
       '#attributes' => [
@@ -133,16 +133,11 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
         ]),
       ],
       'summary' => [
-        '#markup' => '<p>' . (($total !== NULL)
-          ? $this->t('Showing @start - @end of @total trials.', [
-            '@start' => $start,
-            '@end' => $end,
-            '@total' => $total,
-          ])
-          : $this->t('Showing @start - @end trials.', [
-            '@start' => $start,
-            '@end' => $end,
-          ])) . '</p>',
+        '#markup' => '<p>' . $this->t('Showing @start - @end of @total trials.', [
+          '@start' => $start,
+          '@end' => $end,
+          '@total' => $total,
+        ]) . '</p>',
       ],
       'results' => $this->builder->buildStudiesList($studies, 'clinical_trials_gov.review.study', ['modal' => TRUE]),
     ];

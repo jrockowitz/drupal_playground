@@ -46,23 +46,26 @@ class ClinicalTrialsGovApiStub implements ClinicalTrialsGovApiInterface {
    */
   protected function getStudiesResponse(array $parameters): array {
     $fixture = $this->loadFixture('studies');
-    $studies = array_values(array_filter($fixture['studies'] ?? [], 'is_array'));
+    $studies = array_values(array_filter($fixture['studies'], 'is_array'));
     $page_token = (string) ($parameters['pageToken'] ?? '');
     $page_size = (int) ($parameters['pageSize'] ?? 10);
 
     if ($page_token === 'page-2') {
       return [
         'studies' => array_slice($studies, 2),
-        'nextPageToken' => NULL,
-        'totalCount' => $fixture['totalCount'] ?? count($studies),
+        'totalCount' => $fixture['totalCount'],
       ];
     }
 
-    return [
+    $response = [
       'studies' => array_slice($studies, 0, min($page_size, 2)),
-      'nextPageToken' => (count($studies) > 2) ? 'page-2' : NULL,
-      'totalCount' => $fixture['totalCount'] ?? count($studies),
+      'totalCount' => $fixture['totalCount'],
     ];
+    if (count($studies) > 2) {
+      $response['nextPageToken'] = 'page-2';
+    }
+
+    return $response;
   }
 
   /**
@@ -90,9 +93,13 @@ class ClinicalTrialsGovApiStub implements ClinicalTrialsGovApiInterface {
   protected function loadFixture(string $name): array {
     $path = dirname(__DIR__) . '/fixtures/' . $name . '.json';
     if (!file_exists($path)) {
-      return [];
+      throw new \RuntimeException(sprintf('Missing ClinicalTrials.gov fixture "%s".', $name));
     }
-    return json_decode(file_get_contents($path), TRUE) ?? [];
+    $fixture = json_decode(file_get_contents($path), TRUE);
+    if (!is_array($fixture)) {
+      throw new \RuntimeException(sprintf('Invalid ClinicalTrials.gov fixture "%s".', $name));
+    }
+    return $fixture;
   }
 
 }

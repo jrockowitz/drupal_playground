@@ -207,7 +207,7 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
    * Returns the configured title metadata path.
    */
   protected function getTitleFieldPath(): string {
-    return (string) $this->configFactory->get('clinical_trials_gov.settings')->get('title_path');
+    return $this->configFactory->get('clinical_trials_gov.settings')->get('title_path');
   }
 
   /**
