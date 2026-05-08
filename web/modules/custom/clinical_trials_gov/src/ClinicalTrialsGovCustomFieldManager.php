@@ -89,7 +89,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       }
     }
 
-    if ($columns === []) {
+    if (!$columns) {
       return NULL;
     }
 
@@ -115,7 +115,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
     $type = (string) ($metadata['type'] ?? '');
     $children = $metadata['children'] ?? [];
 
-    if ($children === [] || str_ends_with($type, '[]')) {
+    if (!$children || str_ends_with($type, '[]')) {
       return FALSE;
     }
 

@@ -7,6 +7,7 @@ namespace Drupal\clinical_trials_gov\Element;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Attribute\FormElement;
 use Drupal\Core\Render\Element\FormElementBase;
+use Drupal\Core\StringTranslation\PluralTranslatableMarkup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
@@ -128,7 +129,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    * Determines whether a field key is included by the element configuration.
    */
   protected static function isIncludedField(string $field_key, array $include_fields): bool {
-    if ($include_fields === []) {
+    if (!$include_fields) {
       return TRUE;
     }
 
@@ -699,11 +700,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    * Formats an item count label for the description metadata.
    */
   protected static function formatItemCount(int $count): TranslatableMarkup {
-    if ($count === 1) {
-      return t('@count item', ['@count' => (string) $count]);
-    }
-
-    return t('@count items', ['@count' => (string) $count]);
+    return new PluralTranslatableMarkup($count, '1 item', '@count items');
   }
 
 }

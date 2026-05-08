@@ -112,7 +112,7 @@ class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFacto
     }
 
     $study = $this->api->get('/studies/' . $nct_id);
-    if ($study === []) {
+    if (!$study) {
       return FALSE;
     }
 

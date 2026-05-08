@@ -27,13 +27,6 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
   use RedundantEditableConfigNamesTrait;
 
   /**
-   * The editable config names.
-   */
-  protected function editableConfigNames(): array {
-    return ['clinical_trials_gov.settings'];
-  }
-
-  /**
    * Constructs a new ClinicalTrialsGovSettingsForm instance.
    */
   public function __construct(

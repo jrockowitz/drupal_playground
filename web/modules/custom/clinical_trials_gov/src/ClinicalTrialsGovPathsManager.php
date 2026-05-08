@@ -67,7 +67,7 @@ class ClinicalTrialsGovPathsManager implements ClinicalTrialsGovPathsManagerInte
       return $this->queryPaths;
     }
 
-    if ($this->getQueryPathsRaw() === []) {
+    if (!$this->getQueryPathsRaw()) {
       $this->queryPaths = [];
       return $this->queryPaths;
     }
@@ -121,7 +121,7 @@ class ClinicalTrialsGovPathsManager implements ClinicalTrialsGovPathsManagerInte
     $metadata_paths = array_keys($this->studyManager->getMetadataByPath());
     $ordered_paths = $this->expandAndOrderPaths($discovered_paths, $metadata_paths);
 
-    if ($ordered_paths === []) {
+    if (!$ordered_paths) {
       return [];
     }
 
@@ -137,7 +137,7 @@ class ClinicalTrialsGovPathsManager implements ClinicalTrialsGovPathsManagerInte
     $paths = array_values(array_unique($paths));
     $paths = array_values(array_intersect($metadata_paths, $paths));
 
-    if ($paths === []) {
+    if (!$paths) {
       return [];
     }
 

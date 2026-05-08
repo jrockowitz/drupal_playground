@@ -70,14 +70,14 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     $form['#attached']['library'][] = 'clinical_trials_gov/clinical_trials_gov';
 
     $config = $this->config('clinical_trials_gov.settings');
-    $saved_query = $config->get('query');
+    $query = $config->get('query');
     $form['query_wrapper'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Studies query'),
     ];
     $form['query_wrapper']['query'] = [
       '#type' => 'clinical_trials_gov_studies_query',
-      '#default_value' => $saved_query,
+      '#default_value' => $query,
       '#include_fields' => [
         'query.',
         'filter.overallStatus',
@@ -88,7 +88,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     $form['preview'] = [
       '#type' => 'details',
       '#title' => $this->t('Preview'),
-      '#open' => empty($saved_query),
+      '#open' => empty($query),
     ];
     $form['preview']['update_preview'] = [
       '#type' => 'submit',
@@ -104,7 +104,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
       '#attributes' => [
         'id' => 'clinical-trials-gov-find-preview',
       ],
-    ] + $this->buildPreview($form_state, $saved_query);
+    ] + $this->buildPreview($form_state, $query);
 
     $form = parent::buildForm($form, $form_state);
 
@@ -165,7 +165,7 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     }
 
     $query = (string) $form_state->getValue('query');
-    if (ClinicalTrialsGovStudiesQuery::parseQueryString($query) === []) {
+    if (!ClinicalTrialsGovStudiesQuery::parseQueryString($query)) {
       $form_state->setErrorByName('query', $this->t('Enter at least one query value before saving the studies query.'));
     }
   }
@@ -196,8 +196,8 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
   /**
    * Builds the preview results render array.
    */
-  protected function buildPreview(FormStateInterface $form_state, string $saved_query): array {
-    $query = $this->getPreviewQuery($form_state, $saved_query);
+  protected function buildPreview(FormStateInterface $form_state, string $query): array {
+    $query = $this->getPreviewQuery($form_state, $query);
     if (!$query) {
       return $this->buildMessages(
         $this->t('Use Update preview to preview the current query without saving it.'),
@@ -205,15 +205,15 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
     }
 
     $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query);
-    if ($parameters === []) {
+    if (!$parameters) {
       return $this->buildMessages(
         $this->t('Enter at least one query value to preview studies.'),
         'warning',
       );
     }
 
-    $page_token = $this->getPreviewPageToken($form_state);
-    $page_offset = $this->getPreviewPageOffset($form_state);
+    $page_token = (string) $form_state->get('preview_page_token');
+    $page_offset = (int) $form_state->get('preview_page_offset');
     if ($page_token) {
       $parameters['pageToken'] = $page_token;
     }
@@ -281,34 +281,12 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
   /**
    * Gets the query string used to build the preview.
    */
-  protected function getPreviewQuery(FormStateInterface $form_state, string $saved_query): string {
+  protected function getPreviewQuery(FormStateInterface $form_state, string $query): string {
     if ($form_state->has('preview_query')) {
       return (string) $form_state->get('preview_query');
     }
 
-    return (ClinicalTrialsGovStudiesQuery::parseQueryString($saved_query)) ? $saved_query : '';
-  }
-
-  /**
-   * Gets the stored preview page token.
-   */
-  protected function getPreviewPageToken(FormStateInterface $form_state): string {
-    if ($form_state->get('preview_page_advanced')) {
-      return (string) $form_state->get('preview_page_token');
-    }
-
-    return '';
-  }
-
-  /**
-   * Gets the stored preview page offset.
-   */
-  protected function getPreviewPageOffset(FormStateInterface $form_state): int {
-    if ($form_state->get('preview_page_advanced')) {
-      return (int) $form_state->get('preview_page_offset');
-    }
-
-    return 0;
+    return (ClinicalTrialsGovStudiesQuery::parseQueryString($query)) ? $query : '';
   }
 
 }

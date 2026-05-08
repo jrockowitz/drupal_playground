@@ -58,7 +58,8 @@ class ClinicalTrialsGovReviewMetadataController extends ClinicalTrialsGovMetadat
       'studies_query' => $build['studies_query'],
       'summary' => $build['summary'],
       'results' => $build['results'],
-    ] + (isset($build['footer']) ? ['footer' => $build['footer']] : []);
+      'footer' => $build['footer'],
+    ];
   }
 
   /**

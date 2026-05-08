@@ -54,7 +54,7 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
     }
 
     $study = $this->studyManager->getStudy($nct_id);
-    if ($study === []) {
+    if (!$study) {
       $this->messenger()->addWarning($this->t('Study %nct_id was not found. Review the saved query results below.', [
         '%nct_id' => $nct_id,
       ]));
@@ -80,15 +80,15 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
    * Builds the saved-query studies list page.
    */
   protected function buildListPage(Request $request): array {
-    $saved_query = $this->config('clinical_trials_gov.settings')->get('query');
-    if (!$saved_query) {
+    $query = $this->config('clinical_trials_gov.settings')->get('query');
+    if (!$query) {
       $this->messenger()->addWarning($this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ]));
       return [];
     }
 
-    $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($saved_query);
+    $parameters = ClinicalTrialsGovStudiesQuery::parseQueryString($query);
     $page_token = (string) $request->query->get('pageToken', '');
     $page_offset = (int) $request->query->get('pageOffset', 0);
     if ($page_token) {
@@ -123,7 +123,7 @@ class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
         '#open' => FALSE,
         'summary' => [
           '#type' => 'clinical_trials_gov_studies_query_summary',
-          '#query' => $saved_query,
+          '#query' => $query,
         ],
         'links' => $this->buildActionLinks([
           'find' => [

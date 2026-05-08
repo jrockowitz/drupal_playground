@@ -350,7 +350,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       ],
     ];
 
-    if (!is_array($details) || $details === []) {
+    if (!is_array($details) || !$details) {
       return $cell;
     }
 
@@ -359,7 +359,7 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       $details
     )));
 
-    if ($items === []) {
+    if (!$items) {
       return $cell;
     }
 

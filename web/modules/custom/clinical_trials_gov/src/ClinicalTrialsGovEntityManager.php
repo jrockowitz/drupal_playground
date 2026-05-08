@@ -253,7 +253,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   public function createConfiguredFields(): void {
     $type = $this->getConfiguredType();
     $field_mappings = $this->getConfiguredFieldMappings();
-    if (!$type || $field_mappings === []) {
+    if (!$type || !$field_mappings) {
       return;
     }
 
@@ -318,7 +318,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     $group_definitions = array_filter($selected_fields, static fn(array $definition): bool => !empty($definition['group_only']));
-    if ($group_definitions === []) {
+    if (!$group_definitions) {
       return;
     }
 
@@ -327,7 +327,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
 
     foreach ($group_definitions as $path => $definition) {
       $children = $this->resolveFieldGroupChildren($path, $selected_fields);
-      if ($children === []) {
+      if (!$children) {
         continue;
       }
 

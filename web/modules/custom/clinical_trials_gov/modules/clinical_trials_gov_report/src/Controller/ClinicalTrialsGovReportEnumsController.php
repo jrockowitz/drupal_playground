@@ -117,7 +117,7 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
    * Builds the values cell.
    */
   protected function buildValuesCell(mixed $values): array|string {
-    if (!is_array($values) || $values === []) {
+    if (!is_array($values) || !$values) {
       return '';
     }
 

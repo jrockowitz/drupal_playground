@@ -33,7 +33,7 @@ class ClinicalTrialsGovCustomField extends ProcessPluginBase {
       $yaml_columns = $this->configuration['yaml_columns'];
     }
 
-    if (!is_array($value) || $yaml_columns === []) {
+    if (!is_array($value) || !$yaml_columns) {
       return $value;
     }
 

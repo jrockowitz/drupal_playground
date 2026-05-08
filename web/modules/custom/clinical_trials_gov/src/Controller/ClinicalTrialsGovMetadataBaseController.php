@@ -20,7 +20,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
   /**
    * Whether to filter metadata to the configured paths.
    */
-  protected bool $filter = TRUE;
+  protected bool $filterByQueryPaths = TRUE;
 
   /**
    * Constructs a new ClinicalTrialsGovMetadataBaseController instance.
@@ -36,7 +36,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds the metadata page.
    */
   public function index(): array {
-    if ($this->filter && !$this->getQuery()) {
+    if ($this->filterByQueryPaths && !$this->getQuery()) {
       $this->messageHandler->addWarning($this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ]));
@@ -53,10 +53,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
         'library' => $this->getAttachedLibraries(),
       ],
       'intro' => $this->buildIntro(),
-      'summary' => [
-        '#type' => 'item',
-        '#markup' => $this->t('Showing @count fields', ['@count' => count($metadata)]),
-      ],
+      'summary' => $this->buildSummary($metadata),
       'results' => $this->buildMetadataTable($metadata),
     ];
 
@@ -72,6 +69,22 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds the page intro section.
    */
   abstract protected function buildIntro(): array;
+
+  /**
+   * Builds a summary output based on the provided metadata.
+   *
+   * @param array $metadata
+   *   An array of metadata fields to be summarized.
+   *
+   * @return array
+   *   A renderable array containing the summary of the metadata fields.
+   */
+  protected function buildSummary(array $metadata): array {
+    return [
+      '#type' => 'item',
+      '#markup' => $this->t('Showing @count fields', ['@count' => count($metadata)]),
+    ];
+  }
 
   /**
    * Builds the page footer section.
@@ -93,25 +106,11 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
   }
 
   /**
-   * Returns configured metadata paths.
-   */
-  protected function getQueryPaths(): array {
-    return $this->pathsManager->getQueryPaths();
-  }
-
-  /**
-   * Returns the saved query string.
-   */
-  protected function getQuery(): string {
-    return $this->configurationFactory->get('clinical_trials_gov.settings')->get('query');
-  }
-
-  /**
    * Returns the metadata rows that should be displayed.
    */
   protected function getDisplayedMetadata(): array {
     $metadata = $this->studyManager->getMetadataByPath();
-    if (!$this->filter) {
+    if (!$this->filterByQueryPaths) {
       return $metadata;
     }
 
@@ -125,6 +124,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
       if (!is_array($row) || !isset($path_lookup[$path])) {
         continue;
       }
+
       $displayed_metadata[$path] = $row;
     }
 
@@ -362,7 +362,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds a multi-line list cell.
    */
   protected function buildListCell(mixed $values): array|string {
-    if (!is_array($values) || $values === []) {
+    if (!is_array($values) || !$values) {
       return '';
     }
 
@@ -407,6 +407,20 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
         '#value' => $path,
       ],
     ];
+  }
+
+  /**
+   * Returns the saved query string.
+   */
+  protected function getQuery(): string {
+    return $this->configurationFactory->get('clinical_trials_gov.settings')->get('query');
+  }
+
+  /**
+   * Returns configured metadata paths.
+   */
+  protected function getQueryPaths(): array {
+    return $this->pathsManager->getQueryPaths();
   }
 
 }

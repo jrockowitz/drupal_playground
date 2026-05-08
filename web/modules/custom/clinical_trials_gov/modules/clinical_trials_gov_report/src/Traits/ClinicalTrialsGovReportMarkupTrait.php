@@ -31,7 +31,7 @@ trait ClinicalTrialsGovReportMarkupTrait {
    * Builds a multi-line list cell.
    */
   protected function buildListCell(mixed $values): array|string {
-    if (!is_array($values) || $values === []) {
+    if (!is_array($values) || !$values) {
       return '';
     }
 
