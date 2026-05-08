@@ -10,7 +10,6 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
 use Drupal\clinical_trials_gov\Form\ClinicalTrialsGovConfigForm;
 use Drupal\Core\Form\FormState;
 use Drupal\field\Entity\FieldConfig;
-use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -20,29 +19,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovSetupWorkflowTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'node',
-    'field',
-    'text',
-    'link',
-    'options',
-    'datetime',
-    'filter',
-    'user',
-    'system',
-    'migrate',
-    'migrate_plus',
-    'migrate_tools',
-    'custom_field',
-    'field_group',
-  ];
+class ClinicalTrialsGovSetupWorkflowTest extends ClinicalTrialsGovContentTestBase {
 
   /**
    * The paths manager under test.
@@ -64,10 +41,7 @@ class ClinicalTrialsGovSetupWorkflowTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('user');
     $this->installConfig(['clinical_trials_gov', 'field', 'filter', 'node', 'system']);
-    $this->installSchema('node', ['node_access']);
     $this->pathsManager = $this->container->get('clinical_trials_gov.paths_manager');
     $this->entityManager = $this->container->get('clinical_trials_gov.entity_manager');
     $this->migrationManager = $this->container->get('clinical_trials_gov.migration_manager');
@@ -80,7 +54,7 @@ class ClinicalTrialsGovSetupWorkflowTest extends KernelTestBase {
     $query = 'query.cond=lung';
     $paths = $this->pathsManager->discoverQueryPaths($query);
 
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query', $query)
       ->set('query_paths', $paths)
       ->save();

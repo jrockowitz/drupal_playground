@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\clinical_trials_gov\Kernel;
+namespace Drupal\Tests\clinical_trials_gov\Controller;
 
 use Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController;
-use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -15,22 +15,13 @@ use Symfony\Component\HttpFoundation\Request;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovReviewControllerTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'migrate',
-  ];
+class ClinicalTrialsGovReviewControllerTest extends ClinicalTrialsGovTestBase {
 
   /**
    * Tests the review page includes the studies query summary details section.
    */
   public function testBuildListPageIncludesStudiesQuerySummary(): void {
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer&filter.overallStatus=RECRUITING')
       ->save();
 
@@ -55,7 +46,7 @@ class ClinicalTrialsGovReviewControllerTest extends KernelTestBase {
     $this->assertSame('Cognition and QoL After Thyroid Surgery', $controller->title('NCT05088187'));
 
     $this->container->get('messenger')->deleteAll();
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query', '')
       ->save();
     $empty_build = $controller->index(new Request());

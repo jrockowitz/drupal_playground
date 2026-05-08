@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovCustomFieldManagerInterface;
-use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -14,28 +13,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovCustomFieldManagerTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'node',
-    'field',
-    'text',
-    'options',
-    'datetime',
-    'filter',
-    'user',
-    'system',
-    'migrate',
-    'migrate_plus',
-    'migrate_tools',
-    'custom_field',
-    'field_group',
-  ];
+class ClinicalTrialsGovCustomFieldManagerTest extends ClinicalTrialsGovContentTestBase {
 
   /**
    * The custom field manager under test.
@@ -47,10 +25,6 @@ class ClinicalTrialsGovCustomFieldManagerTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('user');
-    $this->installConfig(['field', 'filter', 'node', 'system']);
-    $this->installSchema('node', ['node_access']);
     $this->customFieldManager = $this->container->get('clinical_trials_gov.custom_field_manager');
   }
 

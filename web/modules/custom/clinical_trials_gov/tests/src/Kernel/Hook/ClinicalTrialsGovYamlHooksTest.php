@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\clinical_trials_gov\Kernel;
+namespace Drupal\Tests\clinical_trials_gov\Kernel\Hook;
 
 use Drupal\clinical_trials_gov\Hook\ClinicalTrialsGovCustomFieldHooks;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovContentTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -17,29 +17,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovYamlHooksTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'node',
-    'field',
-    'text',
-    'link',
-    'options',
-    'datetime',
-    'filter',
-    'user',
-    'system',
-    'migrate',
-    'migrate_plus',
-    'migrate_tools',
-    'custom_field',
-    'field_group',
-  ];
+class ClinicalTrialsGovYamlHooksTest extends ClinicalTrialsGovContentTestBase {
 
   /**
    * The hook implementation under test.
@@ -56,11 +34,7 @@ class ClinicalTrialsGovYamlHooksTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('user');
-    $this->installConfig(['field', 'filter', 'node', 'system']);
-    $this->installSchema('node', ['node_access']);
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('field_prefix', 'trial_version_holder')
       ->save();
 

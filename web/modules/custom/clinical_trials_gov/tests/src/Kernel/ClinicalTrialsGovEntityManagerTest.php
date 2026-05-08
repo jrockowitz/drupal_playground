@@ -9,7 +9,6 @@ use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -19,29 +18,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'node',
-    'field',
-    'text',
-    'link',
-    'options',
-    'datetime',
-    'filter',
-    'user',
-    'system',
-    'migrate',
-    'migrate_plus',
-    'migrate_tools',
-    'custom_field',
-    'field_group',
-  ];
+class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBase {
 
   /**
    * The entity manager under test.
@@ -53,12 +30,8 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('user');
     $this->installConfig('clinical_trials_gov');
-    $this->installConfig(['field', 'filter', 'node', 'system']);
-    $this->installSchema('node', ['node_access']);
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('type', 'trial')
       ->set('field_prefix', 'trial')
       ->save();
@@ -262,7 +235,7 @@ class ClinicalTrialsGovEntityManagerTest extends KernelTestBase {
     // Check that the default prefix is used when no override is saved.
     $this->assertSame('trial_nct_id', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'));
 
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('field_prefix', 'study')
       ->save();
 

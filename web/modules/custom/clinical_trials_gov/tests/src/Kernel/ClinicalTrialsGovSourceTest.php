@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
-use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -13,14 +12,12 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovSourceTest extends KernelTestBase {
+class ClinicalTrialsGovSourceTest extends ClinicalTrialsGovTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
     'node',
     'field',
     'text',
@@ -29,7 +26,6 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
     'filter',
     'user',
     'system',
-    'migrate',
     'migrate_plus',
     'migrate_tools',
     'custom_field',
@@ -40,7 +36,7 @@ class ClinicalTrialsGovSourceTest extends KernelTestBase {
    */
   public function testSourceRows(): void {
     $this->installConfig('clinical_trials_gov');
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
       ->set('query_paths', ['protocolSection.identificationModule.nctId'])
       ->set('type', 'trial')

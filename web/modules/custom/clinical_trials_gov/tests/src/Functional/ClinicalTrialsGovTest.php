@@ -86,7 +86,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     // Check that Find starts without preview results when no query is saved.
     $this->assertSession()->pageTextContains('Use Update preview to preview the current query without saving it.');
 
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
       ->set('query_paths', [
         'protocolSection.conditionsModule.conditions',
@@ -226,7 +226,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     // Check that Manage redirects to the filtered content overview once the type exists.
     $this->assertStringContainsString('/admin/content?title=&type=trial', $this->getSession()->getCurrentUrl());
 
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query_paths', [])
       ->save();
 
@@ -238,7 +238,7 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->linkExists('Find');
     $this->assertSession()->pageTextNotContains('Field mapping');
 
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query_paths', [
         'protocolSection.statusModule.overallStatus',
         'protocolSection.identificationModule.nctId',

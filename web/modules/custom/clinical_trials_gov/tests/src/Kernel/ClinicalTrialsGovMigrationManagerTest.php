@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
-use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -13,39 +12,14 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'node',
-    'field',
-    'text',
-    'link',
-    'options',
-    'datetime',
-    'filter',
-    'user',
-    'system',
-    'migrate',
-    'migrate_plus',
-    'migrate_tools',
-    'custom_field',
-    'field_group',
-  ];
+class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('user');
-    $this->installConfig(['field', 'filter', 'node', 'system']);
-    $this->installSchema('node', ['node_access']);
+    $this->installConfig('clinical_trials_gov');
   }
 
   /**
@@ -53,7 +27,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
    */
   public function testUpdateMigration(): void {
     $this->config('clinical_trials_gov.settings');
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer&filter.overallStatus=RECRUITING')
       ->set('title_path', 'protocolSection.identificationModule.briefTitle')
       ->set('required_paths', [
@@ -153,7 +127,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
 
     // Check that updating the saved query refreshes an already-cached migration definition.
     $this->container->get('plugin.manager.migration')->createInstance('clinical_trials_gov');
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=diabetes')
       ->save();
     $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();
@@ -161,7 +135,7 @@ class ClinicalTrialsGovMigrationManagerTest extends KernelTestBase {
     $this->assertSame('query.cond=diabetes', $migration->getSourceConfiguration()['query']);
 
     // Check that clearing discovered paths removes the generated migration.
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query_paths', [])
       ->save();
     $this->container->get('clinical_trials_gov.migration_manager')->updateMigration();

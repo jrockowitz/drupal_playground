@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
-use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -13,15 +12,12 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovManagerDiscoveryTest extends KernelTestBase {
+class ClinicalTrialsGovManagerDiscoveryTest extends ClinicalTrialsGovTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'migrate',
     'system',
     'user',
   ];

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\clinical_trials_gov\Kernel;
+namespace Drupal\Tests\clinical_trials_gov\Kernel\Form;
 
 use Drupal\Core\Form\FormState;
-use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -14,15 +14,12 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovImportFormTest extends KernelTestBase {
+class ClinicalTrialsGovImportFormTest extends ClinicalTrialsGovTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'migrate',
     'migrate_plus',
     'migrate_tools',
     'node',

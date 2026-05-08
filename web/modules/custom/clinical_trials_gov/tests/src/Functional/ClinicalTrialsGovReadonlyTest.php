@@ -41,7 +41,7 @@ class ClinicalTrialsGovReadonlyTest extends BrowserTestBase {
       'protocolSection.identificationModule.briefTitle',
       'protocolSection.identificationModule.nctId',
     ]);
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('type', 'trial')
       ->set('fields', [
         'trial_brief_title' => 'protocolSection.identificationModule.briefTitle',

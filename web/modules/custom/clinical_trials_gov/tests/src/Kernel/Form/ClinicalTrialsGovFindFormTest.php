@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\clinical_trials_gov\Kernel;
+namespace Drupal\Tests\clinical_trials_gov\Kernel\Form;
 
 use Drupal\clinical_trials_gov\Form\ClinicalTrialsGovFindForm;
 use Drupal\Core\Form\FormState;
-use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -15,15 +15,12 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovFindFormTest extends KernelTestBase {
+class ClinicalTrialsGovFindFormTest extends ClinicalTrialsGovTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'migrate',
     'system',
     'user',
   ];
@@ -40,7 +37,7 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
    * Tests preview paging, reset behavior, and save validation.
    */
   public function testFindFormFlow(): void {
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
       ->save();
 
@@ -102,7 +99,7 @@ class ClinicalTrialsGovFindFormTest extends KernelTestBase {
     $submit_form_state = new FormState();
     $submit_form_state->setValue('query', 'query.cond=lung');
     $submit_form = $form_object->buildForm([], $submit_form_state);
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query_paths', ['protocolSection.statusModule.overallStatus'])
       ->save();
     $form_object->submitForm($submit_form, $submit_form_state);

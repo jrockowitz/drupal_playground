@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\clinical_trials_gov\Kernel;
+namespace Drupal\Tests\clinical_trials_gov\Controller;
 
 use Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewMetadataController;
-use Drupal\KernelTests\KernelTestBase;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -14,22 +14,13 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovReviewMetadataControllerTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'migrate',
-  ];
+class ClinicalTrialsGovReviewMetadataControllerTest extends ClinicalTrialsGovTestBase {
 
   /**
    * Tests the filtered metadata page and missing-query warning behavior.
    */
   public function testIndex(): void {
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer')
       ->set('title_path', 'protocolSection.identificationModule.briefTitle')
       ->set('required_paths', [])
@@ -73,7 +64,7 @@ class ClinicalTrialsGovReviewMetadataControllerTest extends KernelTestBase {
     $paths = array_map(static fn(array $row): string => (string) $row['data'][2]['data']['#value'], $build['results']['#rows']);
     $this->assertContains('protocolSection.identificationModule.briefTitle', $paths);
     $this->assertContains('protocolSection.statusModule.overallStatus', $paths);
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('query', '')
       ->save();
 

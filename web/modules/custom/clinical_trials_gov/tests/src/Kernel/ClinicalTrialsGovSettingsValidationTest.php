@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
 use Drupal\Core\Config\TypedConfigManagerInterface;
-use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -14,7 +13,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovSettingsValidationTest extends KernelTestBase {
+class ClinicalTrialsGovSettingsValidationTest extends ClinicalTrialsGovTestBase {
 
   /**
    * The typed config manager.
@@ -25,9 +24,6 @@ class ClinicalTrialsGovSettingsValidationTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'migrate',
     'migrate_plus',
     'migrate_tools',
     'system',

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
-use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -14,28 +13,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'node',
-    'field',
-    'text',
-    'options',
-    'datetime',
-    'filter',
-    'user',
-    'system',
-    'migrate',
-    'migrate_plus',
-    'migrate_tools',
-    'custom_field',
-    'field_group',
-  ];
+class ClinicalTrialsGovFieldManagerTest extends ClinicalTrialsGovContentTestBase {
 
   /**
    * The field manager under test.
@@ -47,11 +25,8 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('user');
-    $this->installConfig(['field', 'filter', 'node', 'system']);
-    $this->installSchema('node', ['node_access']);
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->installConfig('clinical_trials_gov');
+    $this->config('clinical_trials_gov.settings')
       ->set('field_prefix', 'trial')
       ->set('title_path', 'protocolSection.identificationModule.briefTitle')
       ->set('required_paths', [
@@ -104,7 +79,7 @@ class ClinicalTrialsGovFieldManagerTest extends KernelTestBase {
     $this->assertSame('custom', $eligibility_definition['field_type']);
     $this->assertSame('custom', $references_definition['field_type']);
 
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('title_path', 'protocolSection.identificationModule.nctId')
       ->set('required_paths', [
         'protocolSection.identificationModule.nctId',

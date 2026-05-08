@@ -6,7 +6,6 @@ namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface;
 use Drupal\Core\Url;
-use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -15,14 +14,11 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovBuilderTest extends KernelTestBase {
+class ClinicalTrialsGovBuilderTest extends ClinicalTrialsGovTestBase {
 
   // phpcs:ignore
   protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
     'clinical_trials_gov_report',
-    'migrate',
   ];
 
   /**

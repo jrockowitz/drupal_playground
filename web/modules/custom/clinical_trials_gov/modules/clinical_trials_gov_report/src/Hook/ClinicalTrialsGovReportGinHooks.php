@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\clinical_trials_gov_report\Hooks;
+namespace Drupal\clinical_trials_gov_report\Hook;
 
 use Drupal\Core\Hook\Attribute\Hook;
 

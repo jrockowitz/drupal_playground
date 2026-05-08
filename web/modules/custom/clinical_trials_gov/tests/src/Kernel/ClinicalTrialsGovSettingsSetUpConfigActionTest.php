@@ -8,7 +8,6 @@ use Drupal\Core\Config\Action\ConfigActionException;
 use Drupal\Core\Config\Action\ConfigActionManager;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\FunctionalTests\Core\Recipe\RecipeTestTrait;
-use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -18,31 +17,9 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovSettingsSetUpConfigActionTest extends KernelTestBase {
+class ClinicalTrialsGovSettingsSetUpConfigActionTest extends ClinicalTrialsGovContentTestBase {
 
   use RecipeTestTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
-    'node',
-    'field',
-    'text',
-    'link',
-    'options',
-    'datetime',
-    'filter',
-    'user',
-    'system',
-    'migrate',
-    'migrate_plus',
-    'migrate_tools',
-    'custom_field',
-    'field_group',
-  ];
 
   /**
    * The config action manager under test.
@@ -54,10 +31,7 @@ class ClinicalTrialsGovSettingsSetUpConfigActionTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('user');
     $this->installConfig(['clinical_trials_gov', 'field', 'filter', 'node', 'system']);
-    $this->installSchema('node', ['node_access']);
     $this->configActionManager = $this->container->get('plugin.manager.config_action');
   }
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\clinical_trials_gov\Kernel;
+namespace Drupal\Tests\clinical_trials_gov\Kernel\Hook;
 
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovContentTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -18,29 +18,13 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovReadonlyHooksTest extends KernelTestBase {
+class ClinicalTrialsGovReadonlyHooksTest extends ClinicalTrialsGovContentTestBase {
 
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'clinical_trials_gov',
-    'clinical_trials_gov_test',
     'readonly_field_widget',
-    'node',
-    'field',
-    'text',
-    'link',
-    'options',
-    'datetime',
-    'filter',
-    'user',
-    'system',
-    'migrate',
-    'migrate_plus',
-    'migrate_tools',
-    'custom_field',
-    'field_group',
   ];
 
   /**
@@ -48,11 +32,8 @@ class ClinicalTrialsGovReadonlyHooksTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('user');
-    $this->installConfig(['field', 'filter', 'node', 'system']);
-    $this->installSchema('node', ['node_access']);
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->installConfig('clinical_trials_gov');
+    $this->config('clinical_trials_gov.settings')
       ->set('field_prefix', 'trial')
       ->save();
   }
@@ -98,7 +79,7 @@ class ClinicalTrialsGovReadonlyHooksTest extends KernelTestBase {
       'region' => 'content',
     ])->save();
 
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('type', 'trial')
       ->set('readonly', FALSE)
       ->set('fields', [
@@ -117,7 +98,7 @@ class ClinicalTrialsGovReadonlyHooksTest extends KernelTestBase {
     $this->assertSame('link_default', $editable_display->getComponent('trial_nct_api')['type'] ?? NULL);
     $this->assertSame('string_textfield', $editable_display->getComponent('field_manual_notes')['type'] ?? NULL);
 
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('readonly', TRUE)
       ->save();
 

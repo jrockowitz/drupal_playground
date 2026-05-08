@@ -38,7 +38,7 @@ class ClinicalTrialsGovCreateAccessTrashTest extends BrowserTestBase {
 
     $this->container->get('router.builder')->rebuild();
     $this->container->get('clinical_trials_gov.entity_manager')->createContentType('trial', 'Trial', 'Clinical trial content type');
-    $this->container->get('config.factory')->getEditable('clinical_trials_gov.settings')
+    $this->config('clinical_trials_gov.settings')
       ->set('type', 'trial')
       ->save();
     $this->drupalCreateContentType([
