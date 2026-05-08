@@ -33,6 +33,9 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
    */
   protected const STUDY_API_URL_PREFIX = 'https://clinicaltrials.gov/api/v2/studies/';
 
+  /**
+   * Constructs a new ClinicalTrialsGovMigrationManager instance.
+   */
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
     protected MigrationPluginManagerInterface $migrationPluginManager,

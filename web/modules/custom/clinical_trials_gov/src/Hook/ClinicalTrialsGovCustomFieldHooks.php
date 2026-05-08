@@ -18,6 +18,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  */
 class ClinicalTrialsGovCustomFieldHooks {
 
+  /**
+   * Constructs a new ClinicalTrialsGovCustomFieldHooks instance.
+   */
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
   ) {}

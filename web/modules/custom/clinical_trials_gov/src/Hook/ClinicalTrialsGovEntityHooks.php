@@ -21,6 +21,9 @@ use Drupal\Core\Hook\Attribute\Hook;
  */
 class ClinicalTrialsGovEntityHooks {
 
+  /**
+   * Constructs a new ClinicalTrialsGovEntityHooks instance.
+   */
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
     protected ModuleHandlerInterface $moduleHandler,

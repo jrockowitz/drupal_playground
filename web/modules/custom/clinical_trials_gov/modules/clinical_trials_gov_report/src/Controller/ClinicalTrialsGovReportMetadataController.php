@@ -23,6 +23,9 @@ class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadat
    */
   protected bool $filter = FALSE;
 
+  /**
+   * Constructs a new ClinicalTrialsGovReportMetadataController instance.
+   */
   public function __construct(
     ClinicalTrialsGovStudyManagerInterface $studyManager,
     ConfigFactoryInterface $configFactory,

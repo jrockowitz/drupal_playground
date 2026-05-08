@@ -22,6 +22,9 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    */
   protected bool $filter = TRUE;
 
+  /**
+   * Constructs a new ClinicalTrialsGovMetadataBaseController instance.
+   */
   public function __construct(
     protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ConfigFactoryInterface $configurationFactory,

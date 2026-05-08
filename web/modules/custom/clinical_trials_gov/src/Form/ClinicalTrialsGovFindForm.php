@@ -26,6 +26,9 @@ class ClinicalTrialsGovFindForm extends ConfigFormBase {
    */
   protected const PREVIEW_PAGE_SIZE = 10;
 
+  /**
+   * Constructs a new ClinicalTrialsGovFindForm instance.
+   */
   public function __construct(
     protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovBuilderInterface $builder,

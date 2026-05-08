@@ -14,6 +14,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ClinicalTrialsGovReportStudyController extends ControllerBase {
 
+  /**
+   * Constructs a new ClinicalTrialsGovReportStudyController instance.
+   */
   public function __construct(
     protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovBuilderInterface $builder,

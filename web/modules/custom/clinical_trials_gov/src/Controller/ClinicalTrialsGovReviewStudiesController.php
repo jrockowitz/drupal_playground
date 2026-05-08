@@ -17,6 +17,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ClinicalTrialsGovReviewStudiesController extends ControllerBase {
 
+  /**
+   * Constructs a new ClinicalTrialsGovReviewStudiesController instance.
+   */
   public function __construct(
     protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovBuilderInterface $builder,

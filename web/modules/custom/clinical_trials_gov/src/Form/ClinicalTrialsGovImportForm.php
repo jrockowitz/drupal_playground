@@ -22,6 +22,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ClinicalTrialsGovImportForm extends FormBase {
 
+  /**
+   * Constructs a new ClinicalTrialsGovImportForm instance.
+   */
   public function __construct(
     protected MigrationPluginManagerInterface $migrationPluginManager,
     protected KeyValueFactoryInterface $keyValue,

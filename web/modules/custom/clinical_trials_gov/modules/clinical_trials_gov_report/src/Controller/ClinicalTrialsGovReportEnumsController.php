@@ -16,6 +16,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ClinicalTrialsGovReportEnumsController extends ControllerBase {
 
+  /**
+   * Constructs a new ClinicalTrialsGovReportEnumsController instance.
+   */
   public function __construct(
     protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected DateFormatterInterface $dateFormatter,

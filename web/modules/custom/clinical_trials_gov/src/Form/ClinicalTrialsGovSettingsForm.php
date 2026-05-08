@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Form;
 
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -13,7 +14,6 @@ use Drupal\Core\Form\ConfigTarget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\RedundantEditableConfigNamesTrait;
 use Drupal\Core\Render\Markup;
-use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\ConstraintViolationInterface;
@@ -33,6 +33,9 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
     return ['clinical_trials_gov.settings'];
   }
 
+  /**
+   * Constructs a new ClinicalTrialsGovSettingsForm instance.
+   */
   public function __construct(
     ConfigFactoryInterface $configFactory,
     TypedConfigManagerInterface $typedConfigManager,

@@ -19,6 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 #[MigrateSource(id: 'clinical_trials_gov')]
 class ClinicalTrialsGovSource extends SourcePluginBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * Constructs a new ClinicalTrialsGovSource instance.
+   */
   public function __construct(
     array $configuration,
     string $plugin_id,
