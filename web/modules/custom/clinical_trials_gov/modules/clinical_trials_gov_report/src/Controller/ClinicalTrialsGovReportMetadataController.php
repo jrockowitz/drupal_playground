@@ -8,6 +8,7 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovMetadataBaseController;
+use Drupal\clinical_trials_gov_report\Traits\ClinicalTrialsGovReportMarkupTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -17,6 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Renders the ClinicalTrials.gov metadata report.
  */
 class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadataBaseController {
+
+  use ClinicalTrialsGovReportMarkupTrait;
 
   /**
    * {@inheritdoc}
@@ -93,27 +96,6 @@ class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadat
     return [
       'clinical_trials_gov_report/report',
     ];
-  }
-
-  /**
-   * Builds the version line markup.
-   */
-  protected function buildVersionMarkup(array $version): string {
-    $api_version = (string) ($version['apiVersion'] ?? '');
-    $timestamp = (string) ($version['dataTimestamp'] ?? '');
-    $formatted_timestamp = $timestamp;
-
-    if ($timestamp) {
-      $date_time = strtotime($timestamp . ' UTC');
-      if ($date_time) {
-        $formatted_timestamp = $this->dateFormatter->format($date_time, 'custom', 'F j Y \a\t g:i a');
-      }
-    }
-
-    return '<small>' . $this->t('Version: @version and Last Updated: @updated', [
-      '@version' => $api_version,
-      '@updated' => $formatted_timestamp,
-    ]) . '</small>';
   }
 
 }

@@ -6,7 +6,7 @@ namespace Drupal\clinical_trials_gov_report\Controller;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
-use Drupal\Component\Utility\Html;
+use Drupal\clinical_trials_gov_report\Traits\ClinicalTrialsGovReportMarkupTrait;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -15,6 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Renders the ClinicalTrials.gov enums report.
  */
 class ClinicalTrialsGovReportEnumsController extends ControllerBase {
+
+  use ClinicalTrialsGovReportMarkupTrait;
 
   /**
    * Constructs a new ClinicalTrialsGovReportEnumsController instance.
@@ -79,27 +81,6 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
   }
 
   /**
-   * Builds the version line markup.
-   */
-  protected function buildVersionMarkup(array $version): string {
-    $api_version = (string) ($version['apiVersion'] ?? '');
-    $timestamp = (string) ($version['dataTimestamp'] ?? '');
-    $formatted_timestamp = $timestamp;
-
-    if ($timestamp) {
-      $date_time = strtotime($timestamp . ' UTC');
-      if ($date_time) {
-        $formatted_timestamp = $this->dateFormatter->format($date_time, 'custom', 'F j Y \a\t g:i a');
-      }
-    }
-
-    return '<small>' . $this->t('Version: @version and Last Updated: @updated', [
-      '@version' => $api_version,
-      '@updated' => $formatted_timestamp,
-    ]) . '</small>';
-  }
-
-  /**
    * Builds the enums table.
    */
   protected function buildEnumsTable(array $enums): array {
@@ -159,37 +140,6 @@ class ClinicalTrialsGovReportEnumsController extends ControllerBase {
     }
 
     return $this->buildListCell($items);
-  }
-
-  /**
-   * Builds a multi-line list cell.
-   */
-  protected function buildListCell(mixed $values): array|string {
-    if (!is_array($values) || $values === []) {
-      return '';
-    }
-
-    $items = array_values(array_filter(array_map(
-      fn(mixed $item): string => is_scalar($item) ? (string) $item : '',
-      $values
-    )));
-
-    return $this->buildTextCell(implode("\n", $items));
-  }
-
-  /**
-   * Builds a plain text cell preserving line breaks.
-   */
-  protected function buildTextCell(string $value): array|string {
-    if (!$value) {
-      return '';
-    }
-
-    return [
-      'data' => [
-        '#markup' => nl2br(Html::escape($value)),
-      ],
-    ];
   }
 
 }

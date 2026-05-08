@@ -80,31 +80,19 @@ class ClinicalTrialsGovReportStudiesControllerTest extends UnitTestCase {
   }
 
   /**
-   * Tests that a malformed timestamp is displayed as-is.
+   * Tests that version markup formats required version data.
    *
    * @covers ::buildVersionMarkup
    */
-  public function testBuildVersionMarkupWithMalformedTimestamp(): void {
+  public function testBuildVersionMarkupFormatsRequiredVersionData(): void {
     $markup = $this->controller->exposedBuildVersionMarkup([
       'apiVersion' => '2.0.5',
-      'dataTimestamp' => 'not-a-valid-date',
+      'dataTimestamp' => '2024-01-02T03:04:05',
     ]);
 
-    // Check that a malformed timestamp is output raw rather than formatted.
-    $this->assertStringContainsString('not-a-valid-date', $markup);
-    $this->assertStringContainsString('2.0.5', $markup);
-  }
-
-  /**
-   * Tests that an empty version array produces valid markup without errors.
-   *
-   * @covers ::buildVersionMarkup
-   */
-  public function testBuildVersionMarkupWithEmptyVersion(): void {
-    $markup = $this->controller->exposedBuildVersionMarkup([]);
-
-    // Check that missing keys produce an empty but structurally valid markup string.
-    $this->assertNotEmpty($markup);
+    // Check that valid version contract data is formatted for display.
+    $this->assertStringContainsString('Version: 2.0.5', $markup);
+    $this->assertStringContainsString('January 2 2024', $markup);
   }
 
 }

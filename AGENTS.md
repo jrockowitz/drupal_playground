@@ -41,6 +41,9 @@ ddev drush config:import -y --partial --source=<directory>
 - Config
   - Use `#config_target` when extending `ConfigFormBase`. @see https://www.drupal.org/node/3373502
   - When simple config is schema-validated, trust the schema-backed return type instead of adding defensive casts like `(array) $config->get('query_paths')`.
+  - Treat schema-backed `config->get('key')` values as the expected datatype and do not add fallback values for required config contracts.
+  - Treat required API payload values the same way: do not add defensive casts or fallback rendering for data that must exist for the feature to function.
+  - In tests, only model `NULL` when the contract explicitly allows it.
 - Services
   - Always use `autowire`
   - Always create an interface
