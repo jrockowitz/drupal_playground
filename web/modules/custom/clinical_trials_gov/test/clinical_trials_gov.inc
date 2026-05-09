@@ -442,7 +442,7 @@ function render_study_summary(array $data): void {
   $brief_summary = $description_module['briefSummary'] ?? '';
   if ($brief_summary) {
     echo '<h2 class="h5 mt-4">Summary</h2>' . "\n";
-    $clean_summary = strip_tags(str_replace(['<br/>', '<br />', '<br>'], "\n", $brief_summary));
+    $clean_summary = strip_tags(str_replace(['<br/>', '<br />', '<br/>'], "\n", $brief_summary));
     echo '<p>' . nl2br(htmlspecialchars(trim($clean_summary))) . '</p>' . "\n";
   }
 
@@ -487,7 +487,7 @@ function render_study_summary(array $data): void {
   $criteria_text = $eligibility_module['eligibilityCriteria'] ?? '';
   if ($criteria_text) {
     echo '<h2 class="h5 mt-4">Eligibility</h2>' . "\n";
-    $clean_criteria = strip_tags(str_replace(['<br/>', '<br />', '<br>'], "\n", $criteria_text));
+    $clean_criteria = strip_tags(str_replace(['<br/>', '<br />', '<br/>'], "\n", $criteria_text));
     $parts = preg_split('/(Inclusion Criteria|Exclusion Criteria)\s*:/i', $clean_criteria, -1, PREG_SPLIT_DELIM_CAPTURE);
     if (count($parts) > 1) {
       for ($i = 1; $i < count($parts); $i += 2) {
@@ -529,7 +529,7 @@ function render_study_summary(array $data): void {
         echo '<strong>' . htmlspecialchars($facility) . '</strong>';
       }
       if (!empty($location_parts)) {
-        echo '<br><span class="text-muted small">' . htmlspecialchars(implode(', ', $location_parts)) . '</span>';
+        echo '<br/><span class="text-muted small">' . htmlspecialchars(implode(', ', $location_parts)) . '</span>';
       }
       echo '</div>' . "\n";
       if ($location_status) {

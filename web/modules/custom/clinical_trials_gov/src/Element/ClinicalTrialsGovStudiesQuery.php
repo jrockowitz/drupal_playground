@@ -9,6 +9,7 @@ use Drupal\Core\Render\Attribute\FormElement;
 use Drupal\Core\Render\Element\FormElementBase;
 use Drupal\Core\StringTranslation\PluralTranslatableMarkup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 
 /**
  * Composite form element for the ClinicalTrials.gov /studies query interface.
@@ -27,11 +28,6 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  */
 #[FormElement('clinical_trials_gov_studies_query')]
 class ClinicalTrialsGovStudiesQuery extends FormElementBase {
-
-  /**
-   * Base URL for ClinicalTrials.gov documentation links.
-   */
-  protected const DOCS_BASE_URL = 'https://clinicaltrials.gov';
 
   /**
    * Keys that accept multiple values and serialize to pipe-delimited strings.
@@ -99,19 +95,13 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
   /**
    * Builds sub-elements from the query string #default_value.
    */
-  public static function processStudiesQuery(
-    array $element,
-    FormStateInterface $form_state,
-    array &$complete_form,
-  ): array {
-    $defaults = static::parseQueryString($element['#default_value'] ?? '');
+  public static function processStudiesQuery(array $element, FormStateInterface $form_state, array &$complete_form): array {
+    $defaults = static::parseQueryString($element['#default_value']);
+    $include_fields = $element['#include_fields'] ?? [];
+
     /** @var \Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface $study_manager */
     $study_manager = \Drupal::service('clinical_trials_gov.study_manager');
     $field_definitions = static::fieldDefinitions($study_manager->getEnum('Status'));
-    $include_fields = $element['#include_fields'] ?? [];
-
-    $element['#attached']['library'][] = 'clinical_trials_gov/studies_query';
-
     foreach ($field_definitions as $definition) {
       if (!static::isIncludedField($definition['key'], $include_fields)) {
         continue;
@@ -123,6 +113,8 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       );
     }
 
+    $element['#attached']['library'][] = 'clinical_trials_gov/studies_query';
+
     return $element;
   }
 
@@ -130,7 +122,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    * Determines whether a field key is included by the element configuration.
    */
   protected static function isIncludedField(string $field_key, array $include_fields): bool {
-    if (!$include_fields) {
+    if (empty($include_fields)) {
       return TRUE;
     }
 
@@ -138,7 +130,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       if (!is_string($include_field) || !$include_field) {
         continue;
       }
-      if ($field_key === $include_field || str_starts_with($field_key, $include_field)) {
+      if (($field_key === $include_field) || str_starts_with($field_key, $include_field)) {
         return TRUE;
       }
     }
@@ -149,11 +141,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
   /**
    * Assembles sub-element values into a query string and sets it on $form_state.
    */
-  public static function validateStudiesQuery(
-    array &$element,
-    FormStateInterface $form_state,
-    array &$complete_form,
-  ): void {
+  public static function validateStudiesQuery(array &$element, FormStateInterface $form_state, array &$complete_form,): void {
     $parts = [];
     foreach ($element as $name => $child) {
       if (!is_array($child) || !array_key_exists('#value', $child)) {
@@ -186,319 +174,319 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       $overall_status_values
     )));
     $overall_status_examples = [
-      ['values' => ['NOT_YET_RECRUITING', 'RECRUITING'], 'label' => 'NOT_YET_RECRUITING, RECRUITING'],
-      ['values' => ['COMPLETED'], 'label' => 'COMPLETED'],
+      ['values' => ['NOT_YET_RECRUITING', 'RECRUITING'], 'label' => t('NOT_YET_RECRUITING, RECRUITING')],
+      ['values' => ['COMPLETED'], 'label' => t('COMPLETED')],
     ];
     $overall_status_allowed = array_map(
       static fn(string $value): array => [
         'value' => [$value],
-        'label' => $value,
+        'label' => t($value),
       ],
       $overall_status_values
     );
 
-    return static::translateFieldDefinitions([
+    return [
       [
         'key' => 'query.cond',
-        'label' => 'Condition or disease',
+        'label' => t('Condition or disease'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('"Conditions or disease" query in <a href=":query_url">Essie expression syntax</a>. See "ConditionSearch Area" on <a href=":search_url">Search Areas</a> for more details.', [
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
-          ':search_url' => static::docsUrl('/data-api/about-api/search-areas#ConditionSearch'),
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
+          ':search_url' => 'https://clinicaltrials.gov/data-api/about-api/search-areas#ConditionSearch',
         ]),
         'examples' => [
-          ['value' => 'lung cancer', 'label' => 'lung cancer'],
-          ['value' => '(head OR neck) AND pain', 'label' => '(head OR neck) AND pain'],
+          ['value' => 'lung cancer', 'label' => t('lung cancer')],
+          ['value' => '(head OR neck) AND pain', 'label' => t('(head OR neck) AND pain')],
         ],
       ],
       [
         'key' => 'query.term',
-        'label' => 'Other search terms',
+        'label' => t('Other search terms'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('"Other terms" query in <a href=":query_url">Essie expression syntax</a>. See "BasicSearch Area" on <a href=":search_url">Search Areas</a> for more details.', [
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
-          ':search_url' => static::docsUrl('/data-api/about-api/search-areas#BasicSearch'),
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
+          ':search_url' => 'https://clinicaltrials.gov/data-api/about-api/search-areas#BasicSearch',
         ]),
         'examples' => [
-          ['value' => 'AREA[LastUpdatePostDate]RANGE[2023-01-15,MAX]', 'label' => 'AREA[LastUpdatePostDate]RANGE[2023-01-15,MAX]'],
+          ['value' => 'AREA[LastUpdatePostDate]RANGE[2023-01-15,MAX]', 'label' => t('AREA[LastUpdatePostDate]RANGE[2023-01-15,MAX]')],
         ],
       ],
       [
         'key' => 'query.locn',
-        'label' => 'Location terms',
+        'label' => t('Location terms'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('"Location terms" query in <a href=":query_url">Essie expression syntax</a>. See "LocationSearch Area" on <a href=":search_url">Search Areas</a> for more details.', [
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
-          ':search_url' => static::docsUrl('/data-api/about-api/search-areas#LocationSearch'),
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
+          ':search_url' => 'https://clinicaltrials.gov/data-api/about-api/search-areas#LocationSearch',
         ]),
       ],
       [
         'key' => 'query.titles',
-        'label' => 'Title or acronym',
+        'label' => t('Title or acronym'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('"Title / acronym" query in <a href=":query_url">Essie expression syntax</a>. See "TitleSearch Area" on <a href=":search_url">Search Areas</a> for more details.', [
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
-          ':search_url' => static::docsUrl('/data-api/about-api/search-areas#TitleSearch'),
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
+          ':search_url' => 'https://clinicaltrials.gov/data-api/about-api/search-areas#TitleSearch',
         ]),
       ],
       [
         'key' => 'query.intr',
-        'label' => 'Intervention or treatment',
+        'label' => t('Intervention or treatment'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('"Intervention / treatment" query in <a href=":query_url">Essie expression syntax</a>. See "InterventionSearch Area" on <a href=":search_url">Search Areas</a> for more details.', [
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
-          ':search_url' => static::docsUrl('/data-api/about-api/search-areas#InterventionSearch'),
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
+          ':search_url' => 'https://clinicaltrials.gov/data-api/about-api/search-areas#InterventionSearch',
         ]),
       ],
       [
         'key' => 'query.outc',
-        'label' => 'Outcome measure',
+        'label' => t('Outcome measure'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('"Outcome measure" query in <a href=":query_url">Essie expression syntax</a>. See "OutcomeSearch Area" on <a href=":search_url">Search Areas</a> for more details.', [
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
-          ':search_url' => static::docsUrl('/data-api/about-api/search-areas#OutcomeSearch'),
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
+          ':search_url' => 'https://clinicaltrials.gov/data-api/about-api/search-areas#OutcomeSearch',
         ]),
       ],
       [
         'key' => 'query.spons',
-        'label' => 'Sponsor or collaborator',
+        'label' => t('Sponsor or collaborator'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('"Sponsor / collaborator" query in <a href=":query_url">Essie expression syntax</a>. See "SponsorSearch Area" on <a href=":search_url">Search Areas</a> for more details.', [
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
-          ':search_url' => static::docsUrl('/data-api/about-api/search-areas#SponsorSearch'),
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
+          ':search_url' => 'https://clinicaltrials.gov/data-api/about-api/search-areas#SponsorSearch',
         ]),
       ],
       [
         'key' => 'query.lead',
-        'label' => 'Lead sponsor',
+        'label' => t('Lead sponsor'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('Searches in "LeadSponsorName" field. See <a href=":structure_url">Study Data Structure</a> for more details. The query is in <a href=":query_url">Essie expression syntax</a>.', [
-          ':structure_url' => static::docsUrl('/data-api/about-api/study-data-structure#LeadSponsorName'),
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
+          ':structure_url' => 'https://clinicaltrials.gov/data-api/about-api/study-data-structure#LeadSponsorName',
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
         ]),
       ],
       [
         'key' => 'query.id',
-        'label' => 'NCT number or study ID',
+        'label' => t('NCT number or study ID'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('"Study IDs" query in <a href=":query_url">Essie expression syntax</a>. See "IdSearch Area" on <a href=":search_url">Search Areas</a> for more details.', [
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
-          ':search_url' => static::docsUrl('/data-api/about-api/search-areas#IdSearch'),
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
+          ':search_url' => 'https://clinicaltrials.gov/data-api/about-api/search-areas#IdSearch',
         ]),
       ],
       [
         'key' => 'query.patient',
-        'label' => 'Patient query',
+        'label' => t('Patient query'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('See "PatientSearch Area" on <a href=":search_url">Search Areas</a> for more details.', [
-          ':search_url' => static::docsUrl('/data-api/about-api/search-areas#PatientSearch'),
+          ':search_url' => 'https://clinicaltrials.gov/data-api/about-api/search-areas#PatientSearch',
         ]),
       ],
       [
         'key' => 'filter.overallStatus',
-        'label' => 'Overall status',
+        'label' => t('Overall status'),
         'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
-        'description' => 'Filter by comma- or pipe-separated list of statuses.',
+        'description' => t('Filter by comma- or pipe-separated list of statuses.'),
         'allowed_values' => $overall_status_allowed,
         'examples' => $overall_status_examples,
       ],
       [
         'key' => 'filter.geo',
-        'label' => 'Geographic filter',
+        'label' => t('Geographic filter'),
         'data_type' => 'string',
         'type' => 'textfield',
-        'description' => 'Filter by geo-function. Currently only distance function is supported. Format: <code>distance(latitude,longitude,distance)</code>.',
+        'description' => t('Filter by geo-function. Currently only distance function is supported. Format: <code>distance(latitude,longitude,distance)</code>.'),
         'pattern' => '^distance\(-?\d+(\.\d+)?,-?\d+(\.\d+)?,\d+(\.\d+)?(km|mi)?\)$',
         'examples' => [
-          ['value' => 'distance(39.0035707,-77.1013313,50mi)', 'label' => 'distance(39.0035707,-77.1013313,50mi)'],
+          ['value' => 'distance(39.0035707,-77.1013313,50mi)', 'label' => t('distance(39.0035707,-77.1013313,50mi)')],
         ],
       ],
       [
         'key' => 'filter.ids',
-        'label' => 'NCT ID filter',
+        'label' => t('NCT ID filter'),
         'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
         'description' => t('Filter by comma- or pipe-separated list of NCT IDs (a.k.a. ClinicalTrials.gov identifiers). The provided IDs will be searched in <a href=":nct_id_url">NCTId</a> and <a href=":nct_alias_url">NCTIdAlias</a> fields.', [
-          ':nct_id_url' => static::docsUrl('/data-api/about-api/study-data-structure#NCTId'),
-          ':nct_alias_url' => static::docsUrl('/data-api/about-api/study-data-structure#NCTIdAlias'),
+          ':nct_id_url' => 'https://clinicaltrials.gov/data-api/about-api/study-data-structure#NCTId',
+          ':nct_alias_url' => 'https://clinicaltrials.gov/data-api/about-api/study-data-structure#NCTIdAlias',
         ]),
         'examples' => [
-          ['values' => ['NCT04852770', 'NCT01728545', 'NCT02109302'], 'label' => 'NCT04852770, NCT01728545, NCT02109302'],
+          ['values' => ['NCT04852770', 'NCT01728545', 'NCT02109302'], 'label' => t('NCT04852770, NCT01728545, NCT02109302')],
         ],
       ],
       [
         'key' => 'filter.advanced',
-        'label' => 'Advanced filter',
+        'label' => t('Advanced filter'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('Filter by query in <a href=":query_url">Essie expression syntax</a>.', [
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
         ]),
         'examples' => [
-          ['value' => 'AREA[StartDate]2022', 'label' => 'AREA[StartDate]2022'],
-          ['value' => 'AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]', 'label' => 'AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]'],
+          ['value' => 'AREA[StartDate]2022', 'label' => t('AREA[StartDate]2022')],
+          ['value' => 'AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]', 'label' => t('AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]')],
         ],
       ],
       [
         'key' => 'filter.synonyms',
-        'label' => 'Synonym filter',
+        'label' => t('Synonym filter'),
         'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
-        'description' => 'Filter by comma- or pipe-separated list of <code>area</code>:<code>synonym_id</code> pairs.',
+        'description' => t('Filter by comma- or pipe-separated list of <code>area</code>:<code>synonym_id</code> pairs.'),
         'examples' => [
-          ['values' => ['ConditionSearch:1651367', 'BasicSearch:2013558'], 'label' => 'ConditionSearch:1651367, BasicSearch:2013558'],
+          ['values' => ['ConditionSearch:1651367', 'BasicSearch:2013558'], 'label' => t('ConditionSearch:1651367, BasicSearch:2013558')],
         ],
       ],
       [
         'key' => 'postFilter.overallStatus',
-        'label' => 'Post-filter overall status',
+        'label' => t('Post-filter overall status'),
         'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
-        'description' => 'Filter by comma- or pipe-separated list of statuses.',
+        'description' => t('Filter by comma- or pipe-separated list of statuses.'),
         'allowed_values' => $overall_status_allowed,
         'examples' => $overall_status_examples,
       ],
       [
         'key' => 'postFilter.geo',
-        'label' => 'Post-filter geographic filter',
+        'label' => t('Post-filter geographic filter'),
         'data_type' => 'string',
         'type' => 'textfield',
-        'description' => 'Filter by geo-function. Currently only distance function is supported. Format: <code>distance(latitude,longitude,distance)</code>.',
+        'description' => t('Filter by geo-function. Currently only distance function is supported. Format: <code>distance(latitude,longitude,distance)</code>.'),
         'pattern' => '^distance\(-?\d+(\.\d+)?,-?\d+(\.\d+)?,\d+(\.\d+)?(km|mi)?\)$',
         'examples' => [
-          ['value' => 'distance(39.0035707,-77.1013313,50mi)', 'label' => 'distance(39.0035707,-77.1013313,50mi)'],
+          ['value' => 'distance(39.0035707,-77.1013313,50mi)', 'label' => t('distance(39.0035707,-77.1013313,50mi)')],
         ],
       ],
       [
         'key' => 'postFilter.ids',
-        'label' => 'Post-filter NCT IDs',
+        'label' => t('Post-filter NCT IDs'),
         'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
         'description' => t('Filter by comma- or pipe-separated list of NCT IDs (a.k.a. ClinicalTrials.gov identifiers). The provided IDs will be searched in <a href=":nct_id_url">NCTId</a> and <a href=":nct_alias_url">NCTIdAlias</a> fields.', [
-          ':nct_id_url' => static::docsUrl('/data-api/about-api/study-data-structure#NCTId'),
-          ':nct_alias_url' => static::docsUrl('/data-api/about-api/study-data-structure#NCTIdAlias'),
+          ':nct_id_url' => 'https://clinicaltrials.gov/data-api/about-api/study-data-structure#NCTId',
+          ':nct_alias_url' => 'https://clinicaltrials.gov/data-api/about-api/study-data-structure#NCTIdAlias',
         ]),
         'examples' => [
-          ['values' => ['NCT04852770', 'NCT01728545', 'NCT02109302'], 'label' => 'NCT04852770, NCT01728545, NCT02109302'],
+          ['values' => ['NCT04852770', 'NCT01728545', 'NCT02109302'], 'label' => t('NCT04852770, NCT01728545, NCT02109302')],
         ],
       ],
       [
         'key' => 'postFilter.advanced',
-        'label' => 'Post-filter advanced query',
+        'label' => t('Post-filter advanced query'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('Filter by query in <a href=":query_url">Essie expression syntax</a>.', [
-          ':query_url' => static::docsUrl('/find-studies/constructing-complex-search-queries'),
+          ':query_url' => 'https://clinicaltrials.gov/find-studies/constructing-complex-search-queries',
         ]),
         'examples' => [
-          ['value' => 'AREA[StartDate]2022', 'label' => 'AREA[StartDate]2022'],
-          ['value' => 'AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]', 'label' => 'AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]'],
+          ['value' => 'AREA[StartDate]2022', 'label' => t('AREA[StartDate]2022')],
+          ['value' => 'AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]', 'label' => t('AREA[MinimumAge]RANGE[MIN, 16 years] AND AREA[MaximumAge]RANGE[16 years, MAX]')],
         ],
       ],
       [
         'key' => 'postFilter.synonyms',
-        'label' => 'Post-filter synonyms',
+        'label' => t('Post-filter synonyms'),
         'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
-        'description' => 'Filter by comma- or pipe-separated list of <code>area</code>:<code>synonym_id</code> pairs.',
+        'description' => t('Filter by comma- or pipe-separated list of <code>area</code>:<code>synonym_id</code> pairs.'),
         'examples' => [
-          ['values' => ['ConditionSearch:1651367', 'BasicSearch:2013558'], 'label' => 'ConditionSearch:1651367, BasicSearch:2013558'],
+          ['values' => ['ConditionSearch:1651367', 'BasicSearch:2013558'], 'label' => t('ConditionSearch:1651367, BasicSearch:2013558')],
         ],
       ],
       [
         'key' => 'aggFilters',
-        'label' => 'Aggregation filters',
+        'label' => t('Aggregation filters'),
         'data_type' => 'string',
         'type' => 'textfield',
-        'description' => 'Apply aggregation filters, aggregation counts will not be provided. The value is comma- or pipe-separated list of pairs <code>filter_id</code>:<code>space-separated list of option keys</code> for the checked options.',
+        'description' => t('Apply aggregation filters, aggregation counts will not be provided. The value is comma- or pipe-separated list of pairs <code>filter_id</code>:<code>space-separated list of option keys</code> for the checked options.'),
         'examples' => [
-          ['value' => 'results:with,status:com', 'label' => 'results:with,status:com'],
-          ['value' => 'status:not rec,sex:f,healthy:y', 'label' => 'status:not rec,sex:f,healthy:y'],
+          ['value' => 'results:with,status:com', 'label' => t('results:with,status:com')],
+          ['value' => 'status:not rec,sex:f,healthy:y', 'label' => t('status:not rec,sex:f,healthy:y')],
         ],
       ],
       [
         'key' => 'geoDecay',
-        'label' => 'Geo decay',
+        'label' => t('Geo decay'),
         'data_type' => 'string',
         'type' => 'textfield',
         'description' => t('Set proximity factor by distance from <code>filter.geo</code> location to the closest <a href=":location_url">LocationGeoPoint</a> of a study. Ignored, if <code>filter.geo</code> parameter is not set or response contains more than 10,000 studies.', [
-          ':location_url' => static::docsUrl('/data-api/about-api/study-data-structure#LocationGeoPoint'),
+          ':location_url' => 'https://clinicaltrials.gov/data-api/about-api/study-data-structure#LocationGeoPoint',
         ]),
         'default' => 'func:exp,scale:300mi,offset:0mi,decay:0.5',
         'pattern' => '^func:(gauss|exp|linear),scale:(\d+(\.\d+)?(km|mi)),offset:(\d+(\.\d+)?(km|mi)),decay:(\d+(\.\d+)?)$',
         'examples' => [
-          ['value' => 'func:linear,scale:100km,offset:10km,decay:0.1', 'label' => 'func:linear,scale:100km,offset:10km,decay:0.1'],
-          ['value' => 'func:gauss,scale:500mi,offset:0mi,decay:0.3', 'label' => 'func:gauss,scale:500mi,offset:0mi,decay:0.3'],
+          ['value' => 'func:linear,scale:100km,offset:10km,decay:0.1', 'label' => t('func:linear,scale:100km,offset:10km,decay:0.1')],
+          ['value' => 'func:gauss,scale:500mi,offset:0mi,decay:0.3', 'label' => t('func:gauss,scale:500mi,offset:0mi,decay:0.3')],
         ],
       ],
       [
         'key' => 'fields',
-        'label' => 'Fields',
+        'label' => t('Fields'),
         'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
-        'description' => t('If specified, must be non-empty comma- or pipe-separated list of fields to return. If unspecified, all fields will be returned. Order of the fields does not matter.<br><br>For <code>json</code> format, every list item is either area name, piece name, field name, or special name. If a piece or a field is a branch node, all descendant fields will be included. All area names are available on <a href=":search_url">Search Areas</a>, the piece and field names on <a href=":structure_url">Data Structure</a> and also can be retrieved at <code>/studies/metadata</code> endpoint. There is a special name, <code>@query</code>, which expands to all fields queried by search.', [
-          ':search_url' => static::docsUrl('/data-api/about-api/search-areas'),
-          ':structure_url' => static::docsUrl('/data-api/about-api/study-data-structure'),
+        'description' => t('If specified, must be non-empty comma- or pipe-separated list of fields to return. If unspecified, all fields will be returned. Order of the fields does not matter.<br/><br/>For <code>json</code> format, every list item is either area name, piece name, field name, or special name. If a piece or a field is a branch node, all descendant fields will be included. All area names are available on <a href=":search_url">Search Areas</a>, the piece and field names on <a href=":structure_url">Data Structure</a> and also can be retrieved at <code>/studies/metadata</code> endpoint. There is a special name, <code>@query</code>, which expands to all fields queried by search.', [
+          ':search_url' => 'https://clinicaltrials.gov/data-api/about-api/search-areas',
+          ':structure_url' => 'https://clinicaltrials.gov/data-api/about-api/study-data-structure',
         ]),
         'min_items' => 1,
         'examples' => [
-          ['values' => ['NCTId', 'BriefTitle', 'OverallStatus', 'HasResults'], 'label' => 'NCTId, BriefTitle, OverallStatus, HasResults'],
-          ['values' => ['ProtocolSection'], 'label' => 'ProtocolSection'],
+          ['values' => ['NCTId', 'BriefTitle', 'OverallStatus', 'HasResults'], 'label' => t('NCTId, BriefTitle, OverallStatus, HasResults')],
+          ['values' => ['ProtocolSection'], 'label' => t('ProtocolSection')],
         ],
       ],
       [
         'key' => 'sort',
-        'label' => 'Sort',
+        'label' => t('Sort'),
         'data_type' => 'array of string',
         'type' => 'textarea',
         'multivalue' => TRUE,
-        'description' => t('Comma- or pipe-separated list of sorting options of the studies. The returning studies are not sorted by default for a performance reason. Every list item contains a field/piece name and an optional sort direction (<code>asc</code> for ascending or <code>desc</code> for descending) after colon character.<br><br>All piece and field names can be found on <a href=":structure_url">Data Structure</a> and also can be retrieved at <code>/studies/metadata</code> endpoint. Currently, only date and numeric fields are allowed for sorting. There is a special "field" <code>@relevance</code> to sort by relevance to a search query.<br><br>Studies missing sort field are always last. Default sort direction: Date field <code>desc</code>, numeric field <code>asc</code>, and <code>@relevance</code> <code>desc</code>.', [
-          ':structure_url' => static::docsUrl('/data-api/about-api/study-data-structure'),
+        'description' => t('Comma- or pipe-separated list of sorting options of the studies. The returning studies are not sorted by default for a performance reason. Every list item contains a field/piece name and an optional sort direction (<code>asc</code> for ascending or <code>desc</code> for descending) after colon character.<br/><br/>All piece and field names can be found on <a href=":structure_url">Data Structure</a> and also can be retrieved at <code>/studies/metadata</code> endpoint. Currently, only date and numeric fields are allowed for sorting. There is a special "field" <code>@relevance</code> to sort by relevance to a search query.<br/><br/>Studies missing sort field are always last. Default sort direction: Date field <code>desc</code>, numeric field <code>asc</code>, and <code>@relevance</code> <code>desc</code>.', [
+          ':structure_url' => 'https://clinicaltrials.gov/data-api/about-api/study-data-structure',
         ]),
         'max_items' => 2,
         'examples' => [
-          ['values' => ['@relevance'], 'label' => '@relevance'],
-          ['values' => ['LastUpdatePostDate'], 'label' => 'LastUpdatePostDate'],
-          ['values' => ['EnrollmentCount:desc', 'NumArmGroups'], 'label' => 'EnrollmentCount:desc, NumArmGroups'],
+          ['values' => ['@relevance'], 'label' => t('@relevance')],
+          ['values' => ['LastUpdatePostDate'], 'label' => t('LastUpdatePostDate')],
+          ['values' => ['EnrollmentCount:desc', 'NumArmGroups'], 'label' => t('EnrollmentCount:desc, NumArmGroups')],
         ],
       ],
       [
         'key' => 'countTotal',
-        'label' => 'Count total',
+        'label' => t('Count total'),
         'data_type' => 'boolean',
         'type' => 'select',
-        'description' => 'Count total number of studies in all pages and return <code>totalCount</code> field with first page, if <code>true</code>. The parameter is ignored for the subsequent pages.',
+        'description' => t('Count total number of studies in all pages and return <code>totalCount</code> field with first page, if <code>true</code>. The parameter is ignored for the subsequent pages.'),
         'default' => 'false',
         'options' => [
-          '' => '- Default -',
-          'true' => 'Yes',
-          'false' => 'No',
+          '' => t('- Default -'),
+          'true' => t('Yes'),
+          'false' => t('No'),
         ],
       ],
       [
         'key' => 'pageSize',
-        'label' => 'Page size',
+        'label' => t('Page size'),
         'data_type' => 'int32',
         'type' => 'number',
-        'description' => 'Page size is maximum number of studies to return in response. It does not have to be the same for every page. If not specified or set to 0, the default value will be used. It will be coerced down to 1,000, if greater than that.',
+        'description' => t('Page size is maximum number of studies to return in response. It does not have to be the same for every page. If not specified or set to 0, the default value will be used. It will be coerced down to 1,000, if greater than that.'),
         'default' => '10',
         'min' => 0,
         'max' => 1000,
@@ -509,12 +497,12 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       ],
       [
         'key' => 'pageToken',
-        'label' => 'Page token',
+        'label' => t('Page token'),
         'data_type' => 'string',
         'type' => 'textfield',
-        'description' => 'Token to get next page. Set it to a <code>nextPageToken</code> value returned with the previous page in JSON format.',
+        'description' => t('Token to get next page. Set it to a <code>nextPageToken</code> value returned with the previous page in JSON format.'),
       ],
-    ]);
+    ];
   }
 
   /**
@@ -545,10 +533,7 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
 
       case 'select':
         $element['#type'] = 'select';
-        $element['#options'] = array_map(
-          static fn(mixed $label): TranslatableMarkup => t('@label', ['@label' => (string) $label]),
-          $definition['options']
-        );
+        $element['#options'] = $definition['options'];
         break;
 
       case 'textarea':
@@ -573,49 +558,128 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
    * Builds the description markup for a field.
    */
   protected static function buildDescription(array $definition): array {
-    $parts = [];
-    $parts[] = '<div>' . $definition['description'] . '</div>';
+    $build = [
+      '#type' => 'container',
+      'description' => [
+        '#markup' => $definition['description'],
+        '#prefix' => '<div>',
+        '#suffix' => '</div>',
+      ],
+    ];
 
     $metadata_lines = [];
     if (isset($definition['default'])) {
-      $metadata_lines[] = '<strong>' . t('Default:') . '</strong> <code>' . htmlspecialchars($definition['default']) . '</code>';
+      $metadata_lines[] = [
+        'label' => t('Default:'),
+        'value' => $definition['default'],
+      ];
     }
     if (isset($definition['pattern'])) {
-      $metadata_lines[] = '<strong>' . t('Pattern:') . '</strong> <code>' . htmlspecialchars($definition['pattern']) . '</code>';
+      $metadata_lines[] = [
+        'label' => t('Pattern:'),
+        'value' => $definition['pattern'],
+      ];
     }
     if (isset($definition['min_items'])) {
-      $metadata_lines[] = '<strong>' . t('Minimum:') . '</strong> ' . static::formatItemCount((int) $definition['min_items']);
+      $metadata_lines[] = [
+        'label' => t('Minimum:'),
+        'value' => static::formatItemCount((int) $definition['min_items']),
+      ];
     }
     if (isset($definition['max_items'])) {
-      $metadata_lines[] = '<strong>' . t('Maximum:') . '</strong> ' . static::formatItemCount((int) $definition['max_items']);
+      $metadata_lines[] = [
+        'label' => t('Maximum:'),
+        'value' => static::formatItemCount((int) $definition['max_items']),
+      ];
     }
-    if (!empty($metadata_lines)) {
-      $parts[] = '<div><small>' . implode('<br>', $metadata_lines) . '</small></div>';
+    if ($metadata_lines) {
+      $build['metadata'] = [
+        '#type' => 'container',
+        '#prefix' => '<div><small>',
+        '#suffix' => '</small></div>',
+      ];
+      foreach ($metadata_lines as $metadata_line) {
+        $build['metadata'][] = static::buildDescriptionMetadataLine(
+          $metadata_line['label'],
+          $metadata_line['value']
+        );
+      }
     }
 
     if (!empty($definition['allowed_values'])) {
-      $allowed = [];
-      foreach ($definition['allowed_values'] as $allowed_value) {
-        $value = static::exampleValue($allowed_value);
-        $allowed[] = '<a href="#" class="clinical-trials-gov-studies-query__fill-value" data-clinical-trials-gov-value="' . htmlspecialchars($value, ENT_QUOTES) . '">' . htmlspecialchars((string) $allowed_value['label']) . '</a>';
-      }
-      $parts[] = '<div><strong>' . t('Allowed:') . '</strong> ' . implode(' | ', $allowed) . '</div>';
+      $build['allowed_values'] = static::buildDescriptionLinkList(
+        t('Allowed:'),
+        $definition['allowed_values']
+      );
     }
 
     if (!empty($definition['examples'])) {
-      $examples = [];
-      foreach ($definition['examples'] as $example) {
-        $value = static::exampleValue($example);
-        $examples[] = '<a href="#" class="clinical-trials-gov-studies-query__fill-value" data-clinical-trials-gov-value="' . htmlspecialchars($value, ENT_QUOTES) . '">' . htmlspecialchars((string) $example['label']) . '</a>';
-      }
-      $parts[] = '<div><strong>' . t('Examples:') . '</strong> ' . implode(' | ', $examples) . '</div>';
+      $build['examples'] = static::buildDescriptionLinkList(
+        t('Examples:'),
+        $definition['examples']
+      );
     }
 
+    return $build;
+  }
+
+  /**
+   * Builds a single metadata line for the description.
+   */
+  protected static function buildDescriptionMetadataLine(TranslatableMarkup $label, string|TranslatableMarkup $value): array {
     return [
-      '#type' => 'inline_template',
-      '#template' => '{{ description|raw }}',
-      '#context' => [
-        'description' => implode('', $parts),
+      '#type' => 'container',
+      'label' => [
+        '#markup' => $label,
+        '#prefix' => '<strong>',
+        '#suffix' => '</strong> ',
+      ],
+      'value' => is_string($value) ? [
+        '#type' => 'html_tag',
+        '#tag' => 'code',
+        '#value' => $value,
+      ] : [
+        '#markup' => $value,
+      ],
+    ];
+  }
+
+  /**
+   * Builds a labeled list of fill-value links for the description.
+   */
+  protected static function buildDescriptionLinkList(TranslatableMarkup $label, array $items): array {
+    $build = [
+      '#type' => 'container',
+      'label' => [
+        '#markup' => $label,
+        '#prefix' => '<strong>',
+        '#suffix' => '</strong> ',
+      ],
+    ];
+
+    foreach ($items as $index => $item) {
+      if ($index > 0) {
+        $build['separator_' . $index] = [
+          '#markup' => ' | ',
+        ];
+      }
+      $build['item_' . $index] = static::buildFillValueLink($item);
+    }
+
+    return $build;
+  }
+
+  /**
+   * Builds a fill-value link for an allowed value or example.
+   */
+  protected static function buildFillValueLink(array $item): array {
+    return [
+      '#type' => 'link',
+      '#title' => $item['label'],
+      '#url' => Url::fromRoute('<none>'),
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-studies-query__fill-value'],
+        'data-clinical-trials-gov-value' => static::exampleValue($item),
       ],
     ];
   }
@@ -640,13 +704,6 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
   }
 
   /**
-   * Returns a full ClinicalTrials.gov documentation URL.
-   */
-  protected static function docsUrl(string $path): string {
-    return static::DOCS_BASE_URL . $path;
-  }
-
-  /**
    * Returns the serialized example value.
    */
   protected static function exampleValue(array $example): string {
@@ -657,44 +714,6 @@ class ClinicalTrialsGovStudiesQuery extends FormElementBase {
       return $example['value'];
     }
     return implode('|', $example['values']);
-  }
-
-  /**
-   * Translates field definition UI strings.
-   */
-  protected static function translateFieldDefinitions(array $definitions): array {
-    foreach ($definitions as &$definition) {
-      if (is_string($definition['label'] ?? NULL)) {
-        $definition['label'] = t($definition['label']);
-      }
-      if (is_string($definition['description'] ?? NULL)) {
-        $definition['description'] = t($definition['description']);
-      }
-      if (!empty($definition['options'])) {
-        foreach ($definition['options'] as $key => $label) {
-          if (is_string($label)) {
-            $definition['options'][$key] = t($label);
-          }
-        }
-      }
-      if (!empty($definition['allowed_values'])) {
-        foreach ($definition['allowed_values'] as $index => $allowed_value) {
-          if (is_string($allowed_value['label'] ?? NULL)) {
-            $definition['allowed_values'][$index]['label'] = t($allowed_value['label']);
-          }
-        }
-      }
-      if (!empty($definition['examples'])) {
-        foreach ($definition['examples'] as $index => $example) {
-          if (is_string($example['label'] ?? NULL)) {
-            $definition['examples'][$index]['label'] = t($example['label']);
-          }
-        }
-      }
-    }
-    unset($definition);
-
-    return $definitions;
   }
 
   /**

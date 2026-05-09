@@ -82,7 +82,7 @@ class ClinicalTrialsGovCustomFieldHooks {
       Yaml::decode((string) $value);
     }
     catch (InvalidDataTypeException) {
-      $form_state->setError($element, new TranslatableMarkup('The value must be valid YAML.'));
+      $form_state->setError($element, t('The value must be valid YAML.'));
     }
   }
 

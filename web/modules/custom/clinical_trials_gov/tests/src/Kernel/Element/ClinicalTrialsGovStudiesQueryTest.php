@@ -106,17 +106,20 @@ class ClinicalTrialsGovStudiesQueryTest extends ClinicalTrialsGovTestBase {
     $this->assertSame('Sort', (string) $processed['sort']['#title']);
     $this->assertStringContainsString('filter.overallStatus', $processed['filter__overallStatus']['#field_prefix']);
     $this->assertStringContainsString('(array of string)', $processed['filter__overallStatus']['#field_prefix']);
+    $this->assertSame('container', $processed['query__cond']['#description']['#type']);
+    $this->assertArrayHasKey('description', $processed['query__cond']['#description']);
+    $this->assertArrayHasKey('examples', $processed['query__cond']['#description']);
+    $this->assertSame('link', $processed['query__cond']['#description']['examples']['item_0']['#type']);
+    $this->assertContains('clinical-trials-gov-studies-query__fill-value', $processed['query__cond']['#description']['examples']['item_0']['#attributes']['class']);
+    $this->assertSame('lung cancer', $processed['query__cond']['#description']['examples']['item_0']['#attributes']['data-clinical-trials-gov-value']);
 
-    // Check that descriptions render ClinicalTrials.gov links and omit CSV text.
-    $query_description = $this->renderer->renderInIsolation($processed['query__cond']['#description']);
-    $this->assertStringContainsString('https://clinicaltrials.gov/data-api/about-api/search-areas#ConditionSearch', (string) $query_description);
-    $this->assertStringContainsString('Examples:', (string) $query_description);
-    $fields_description = $this->renderer->renderInIsolation($processed['fields']['#description']);
-    $this->assertStringContainsString('https://clinicaltrials.gov/data-api/about-api/study-data-structure', (string) $fields_description);
-    $this->assertStringNotContainsString('CSV', (string) $fields_description);
-    $page_token_description = $this->renderer->renderInIsolation($processed['pageToken']['#description']);
-    $this->assertStringNotContainsString('x-next-page-token', (string) $page_token_description);
-    $this->assertStringNotContainsString('Do not specify it for first page', (string) $page_token_description);
+    // Check that descriptions preserve links, examples, and updated copy.
+    $this->assertStringContainsString('https://clinicaltrials.gov/data-api/about-api/search-areas#ConditionSearch', (string) $processed['query__cond']['#description']['description']['#markup']);
+    $this->assertStringContainsString('Examples:', (string) $processed['query__cond']['#description']['examples']['label']['#markup']);
+    $this->assertStringContainsString('https://clinicaltrials.gov/data-api/about-api/study-data-structure', (string) $processed['fields']['#description']['description']['#markup']);
+    $this->assertStringNotContainsString('CSV', (string) $processed['fields']['#description']['description']['#markup']);
+    $this->assertStringNotContainsString('x-next-page-token', (string) $processed['pageToken']['#description']['description']['#markup']);
+    $this->assertStringNotContainsString('Do not specify it for first page', (string) $processed['pageToken']['#description']['description']['#markup']);
     $this->assertInstanceOf(TranslatableMarkup::class, $processed['countTotal']['#options']['true']);
     $this->assertSame('Yes', (string) $processed['countTotal']['#options']['true']);
 

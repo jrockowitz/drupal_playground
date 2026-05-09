@@ -79,11 +79,11 @@ class ClinicalTrialsGovStudiesQuerySummary extends RenderElementBase {
     $element['#attributes']['class'][] = 'clinical-trials-gov-table';
     $element['#header'] = [
       [
-        'data' => new TranslatableMarkup('Parameter'),
+        'data' => t('Parameter'),
         'style' => 'width: 50%',
       ],
       [
-        'data' => new TranslatableMarkup('Value'),
+        'data' => t('Value'),
         'style' => 'width: 50%',
       ],
     ];
@@ -98,11 +98,16 @@ class ClinicalTrialsGovStudiesQuerySummary extends RenderElementBase {
   protected static function buildParameterCell(array $definition): array {
     return [
       'data' => [
-        '#type' => 'inline_template',
-        '#template' => '<strong>{{ title }}</strong><br><small><code>{{ key }}</code></small>',
-        '#context' => [
-          'title' => (string) ($definition['label'] ?? ''),
-          'key' => (string) ($definition['key'] ?? ''),
+        '#type' => 'container',
+        'title' => [
+          '#markup' => $definition['label'] ?? '',
+          '#prefix' => '<strong>',
+          '#suffix' => '</strong><br/>',
+        ],
+        'key' => [
+          '#plain_text' => $definition['key'] ?? '',
+          '#prefix' => '<small><code>',
+          '#suffix' => '</code></small>',
         ],
       ],
     ];
@@ -114,11 +119,16 @@ class ClinicalTrialsGovStudiesQuerySummary extends RenderElementBase {
   protected static function buildFallbackParameterCell(string $key): array {
     return [
       'data' => [
-        '#type' => 'inline_template',
-        '#template' => '<strong><code>{{ key }}</code></strong><br><small>{{ fallback }}</small>',
-        '#context' => [
-          'key' => $key,
-          'fallback' => new TranslatableMarkup('Unknown parameter'),
+        '#type' => 'container',
+        'key' => [
+          '#plain_text' => $key,
+          '#prefix' => '<strong><code>',
+          '#suffix' => '</code></strong><br/>',
+        ],
+        'fallback' => [
+          '#markup' => t('Unknown parameter'),
+          '#prefix' => '<small>',
+          '#suffix' => '</small>',
         ],
       ],
     ];
@@ -129,7 +139,7 @@ class ClinicalTrialsGovStudiesQuerySummary extends RenderElementBase {
    */
   protected static function formatValue(string $key, string $value): string {
     if (in_array($key, self::MULTI_VALUE_KEYS, TRUE)) {
-      $parts = array_values(array_filter(array_map('trim', explode('|', $value))));
+      $parts = explode('|', $value);
       return implode(', ', $parts);
     }
 

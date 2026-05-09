@@ -192,10 +192,8 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         $row_attributes['class'][] = 'clinical-trials-gov-field-group';
       }
 
-      $label = (string) ($definition['label'] ?? '');
-      if (!$label) {
-        $label = (string) ($definition['piece'] ?? $path);
-      }
+      $label = $definition['label'] ?: $definition['piece'] ?: $path;
+      $description = $definition['description'] ?: '';
 
       if (!empty($definition['group_only'])) {
         $form['field_mapping']['rows'][$row_key]['selected'] = [
@@ -213,7 +211,6 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
           '#wrapper_attributes' => $row_attributes,
         ];
       }
-      $description = (string) ($definition['description'] ?? '');
       $form['field_mapping']['rows'][$row_key]['label'] = [
         'data' => $this->buildLabelCell($label, $description, $depth),
         '#wrapper_attributes' => $row_attributes,
@@ -287,27 +284,12 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
   }
 
   /**
-   * Builds a padding style for hierarchical table cells.
-   */
-  protected function buildIndentStyle(int $depth): string {
-    if ($depth <= 0) {
-      return '';
-    }
-
-    return ' style="padding-left: ' . (string) ($depth * 1.5) . 'rem;"';
-  }
-
-  /**
    * Builds shared wrapper attributes for indented cell content.
    */
   protected function buildIndentAttributes(int $depth): array {
-    if ($depth <= 0) {
-      return [];
-    }
-
-    return [
-      'style' => 'padding-left: ' . (string) ($depth * 1.5) . 'rem;',
-    ];
+    return ($depth) ? [
+      'style' => 'padding-left: ' . ($depth * 1.5) . 'rem;',
+    ] : [];
   }
 
   /**

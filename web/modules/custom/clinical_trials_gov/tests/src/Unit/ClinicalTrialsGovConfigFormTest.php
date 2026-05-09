@@ -97,20 +97,6 @@ class ClinicalTrialsGovConfigFormTest extends UnitTestCase {
   }
 
   /**
-   * Tests that indent spacing matches the reports.
-   *
-   * @covers ::buildIndentStyle
-   */
-  public function testBuildIndentStyleUsesReportSpacing(): void {
-    // Check that top-level rows do not get inline padding.
-    $this->assertSame('', $this->form->exposedBuildIndentStyle(0));
-
-    // Check that nested rows use 1.5rem increments.
-    $this->assertSame(' style="padding-left: 3rem;"', $this->form->exposedBuildIndentStyle(2));
-    $this->assertSame(' style="padding-left: 4.5rem;"', $this->form->exposedBuildIndentStyle(3));
-  }
-
-  /**
    * Tests that the configure cells preserve indent attributes in render arrays.
    *
    * @covers ::buildLabelCell

@@ -19,13 +19,6 @@ class TestClinicalTrialsGovConfigForm extends ClinicalTrialsGovConfigForm {
   }
 
   /**
-   * Exposes buildIndentStyle() for testing.
-   */
-  public function exposedBuildIndentStyle(int $depth): string {
-    return $this->buildIndentStyle($depth);
-  }
-
-  /**
    * Exposes buildLabelCell() for testing.
    */
   public function exposedBuildLabelCell(string $label, string $description, int $depth): array {

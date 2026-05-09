@@ -19,10 +19,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
   id: 'setUp',
   admin_label: new TranslatableMarkup('Set up ClinicalTrials.gov settings'),
 )]
-class SetUp implements ConfigActionPluginInterface, ContainerFactoryPluginInterface {
+class ClinicalTrialsGovSetUp implements ConfigActionPluginInterface, ContainerFactoryPluginInterface {
 
   /**
-   * Constructs a new SetUp config action.
+   * Constructs a new ClinicalTrialsGovSetUp config action.
    */
   public function __construct(
     protected ClinicalTrialsGovSetupManagerInterface $setupManager,
