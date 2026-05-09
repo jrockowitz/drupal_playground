@@ -81,7 +81,7 @@ for PRESET in "$@"; do
 
     # ddev exec curl -X DELETE http://elasticsearch:9200/trials_elasticsearch
     echo "Applying ClinicalTrials.gov setup recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe
+    drush recipe ../recipes/clinical_trials_gov_recipe_setup
     echo "Applying Clinical Trials Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_elastic
 #    echo "Setting the ClinicalTrials.gov query..."
@@ -96,7 +96,7 @@ for PRESET in "$@"; do
     drush recipe ../recipes/drupal_playground_ai
     drush recipe ../recipes/drupal_playground_ai_devel
     echo "Applying ClinicalTrials.gov setup recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe
+    drush recipe ../recipes/clinical_trials_gov_recipe_setup
     echo "Applying Clinical Trials Milvus recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_milvus
     echo "Indexing ClinicalTrials.gov studies in Milvus..."

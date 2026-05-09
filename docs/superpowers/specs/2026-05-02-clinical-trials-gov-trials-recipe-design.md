@@ -2,7 +2,7 @@
 
 ## Goal
 
-Add a `clinical_trials_gov_recipe` recipe that can be installed through `ddev install trials-setup` and provisions the ClinicalTrials.gov workflow by invoking a new `clinical_trials_gov.settings:setUp` config action.
+Add a `clinical_trials_gov_recipe_setup` recipe that can be installed through `ddev install trials-setup` and provisions the ClinicalTrials.gov workflow by invoking a new `clinical_trials_gov.settings:setUp` config action.
 
 ## Scope
 
@@ -67,9 +67,9 @@ This keeps the recipe flexible without allowing stale derived data to bypass set
 
 Create a new recipe directory:
 
-- `recipes/clinical_trials_gov_recipe/recipe.yml`
-- `recipes/clinical_trials_gov_recipe/composer.json`
-- `recipes/clinical_trials_gov_recipe/README.md`
+- `recipes/clinical_trials_gov_recipe_setup/recipe.yml`
+- `recipes/clinical_trials_gov_recipe_setup/composer.json`
+- `recipes/clinical_trials_gov_recipe_setup/README.md`
 
 The recipe will declare the required modules and invoke the config action using data shaped like:
 

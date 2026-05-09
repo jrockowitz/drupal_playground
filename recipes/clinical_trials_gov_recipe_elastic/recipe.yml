@@ -2,7 +2,7 @@ name: 'Clinical Trials Recipe Elastic'
 description: 'Sets up Search API with Elasticsearch Connector for Clinical Trials search.'
 type: 'Site'
 recipes:
-  - clinical_trials_gov_recipe
+  - clinical_trials_gov_recipe_setup
 install:
   - better_exposed_filters
   - facets

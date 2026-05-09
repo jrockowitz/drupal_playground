@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a `clinical_trials_gov_recipe` recipe and a shared ClinicalTrials.gov setup workflow that recipes and Drush can both invoke.
+**Goal:** Add a `clinical_trials_gov_recipe_setup` recipe and a shared ClinicalTrials.gov setup workflow that recipes and Drush can both invoke.
 
 **Architecture:** Extract the current Drush setup orchestration into a new `ClinicalTrialsGovSetupManager::setUp(array $overrides): array` service, add a `clinical_trials_gov.settings:setUp` config action plugin that delegates to it, then create a new recipe that installs the required modules and calls the config action with only a `query`. Cover the shared workflow with targeted kernel and unit tests.
 
@@ -41,9 +41,9 @@
 
 **Files:**
 - Create: `web/modules/custom/clinical_trials_gov/src/Plugin/ConfigAction/SetUpClinicalTrialsGovSettings.php`
-- Create: `recipes/clinical_trials_gov_recipe/recipe.yml`
-- Create: `recipes/clinical_trials_gov_recipe/composer.json`
-- Create: `recipes/clinical_trials_gov_recipe/README.md`
+- Create: `recipes/clinical_trials_gov_recipe_setup/recipe.yml`
+- Create: `recipes/clinical_trials_gov_recipe_setup/composer.json`
+- Create: `recipes/clinical_trials_gov_recipe_setup/README.md`
 
 - [ ] **Step 1: Add the config action plugin that validates `query` and delegates to the setup manager**
 - [ ] **Step 2: Add the new recipe files with required modules, Composer dependencies, and `clinical_trials_gov.settings:setUp` action**

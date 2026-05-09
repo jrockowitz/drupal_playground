@@ -1,4 +1,4 @@
-# ClinicalTrials.gov Recipe
+# ClinicalTrials.gov Setup Recipe
 
 Applies the ClinicalTrials.gov setup workflow.
 

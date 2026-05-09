@@ -1,5 +1,5 @@
 {
-  "name": "drupal/clinical_trials_gov_recipe",
+  "name": "drupal/clinical_trials_gov_recipe_setup",
   "description": "Installs the ClinicalTrials.gov workflow recipe.",
   "type": "drupal-recipe",
   "license": "GPL-2.0-or-later",

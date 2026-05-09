@@ -3454,11 +3454,11 @@
             }
         },
         {
-            "name": "drupal/clinical_trials_gov_recipe",
+            "name": "drupal/clinical_trials_gov_recipe_setup",
             "version": "1.0.0",
             "dist": {
                 "type": "path",
-                "url": "recipes/clinical_trials_gov_recipe",
+                "url": "recipes/clinical_trials_gov_recipe_setup",
                 "reference": "ecd8cbb7432fe464b718d1f093a29ba2a01f3f29"
             },
             "require": {

@@ -62,7 +62,7 @@
         },
         {
             "type": "path",
-            "url": "recipes/clinical_trials_gov_recipe"
+            "url": "recipes/clinical_trials_gov_recipe_setup"
         },
         {
             "type": "path",
@@ -100,7 +100,7 @@
         "drupal/drupal_playground_elasticsearch": "*",
         "drupal/drupal_playground_eca": "*",
         "drupal/drupal_playground_schemadotorg": "*",
-        "drupal/clinical_trials_gov_recipe": "*",
+        "drupal/clinical_trials_gov_recipe_setup": "*",
         "drupal/clinical_trials_gov_recipe_elastic": "*",
         "drupal/clinical_trials_gov_recipe_milvus": "*",
         "drupal/drupal_playground_translation": "*",

@@ -5,9 +5,7 @@
   "license": "GPL-2.0-or-later",
   "version": "1.0.0",
   "require": {
-    "drupal/ai_agents": "^1",
-    "drupal/ai_assistant_api": "^1",
-    "drupal/ai_chatbot": "^1",
+    "drupal/ai": "^1",
     "drupal/ai_vdb_provider_milvus": "^1.1@beta",
     "drupal/asset_injector": "^2",
     "drupal/core": "^11",

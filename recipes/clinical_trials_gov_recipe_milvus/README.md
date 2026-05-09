@@ -9,7 +9,7 @@
 ## Summary
 
 This recipe layers a Milvus-backed AI chat and RAG experience on top of the existing
-`clinical_trials_gov_recipe` foundation.
+`clinical_trials_gov_recipe_setup` foundation.
 
 It installs:
 

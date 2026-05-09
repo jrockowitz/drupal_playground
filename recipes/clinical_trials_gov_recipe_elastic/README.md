@@ -1,6 +1,6 @@
 # Clinical Trials Recipe Elastic
 
-Sets up a Clinical Trials search experience backed by Elasticsearch for the `trial` content type created by the `clinical_trials_gov_recipe` recipe.
+Sets up a Clinical Trials search experience backed by Elasticsearch for the `trial` content type created by the `clinical_trials_gov_recipe_setup` recipe.
 
 ## What It Installs
 
@@ -32,7 +32,7 @@ Sets up a Clinical Trials search experience backed by Elasticsearch for the `tri
 
 ## Prerequisite
 
-This recipe depends on the `clinical_trials_gov_recipe` recipe so the `trial` bundle and generated ClinicalTrials.gov fields already exist before Search API configuration is imported.
+This recipe depends on the `clinical_trials_gov_recipe_setup` recipe so the `trial` bundle and generated ClinicalTrials.gov fields already exist before Search API configuration is imported.
 
 The recipe uses `facets_exposed_filters` directly in the View configuration rather than separate facet blocks or separately managed facet entities.
 
