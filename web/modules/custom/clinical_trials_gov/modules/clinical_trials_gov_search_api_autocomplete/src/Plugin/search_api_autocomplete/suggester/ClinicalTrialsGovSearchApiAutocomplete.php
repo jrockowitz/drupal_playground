@@ -140,7 +140,7 @@ class ClinicalTrialsGovSearchApiAutocomplete extends SuggesterPluginBase {
     $query->isNotNull($column);
     $query->where("TRIM($column) <> ''");
     $query->where("LOWER($column) LIKE LOWER(:match)", [
-      ':match' => $this->database->escapeLike($user_input) . '%',
+      ':match' => '%' . $this->database->escapeLike($user_input) . '%',
     ]);
     $query->orderBy($column);
     $query->range(0, $limit);

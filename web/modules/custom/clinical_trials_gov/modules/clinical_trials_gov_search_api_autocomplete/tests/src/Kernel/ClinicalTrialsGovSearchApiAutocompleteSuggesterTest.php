@@ -57,7 +57,7 @@ class ClinicalTrialsGovSearchApiAutocompleteSuggesterTest extends KernelTestBase
   }
 
   /**
-   * Tests merged, de-duplicated, prefix-based suggestions from trial fields.
+   * Tests merged, de-duplicated, contains-based suggestions from trial fields.
    */
   public function testDatabaseTermsSuggester(): void {
     $this->createTrialNode(
@@ -95,6 +95,15 @@ class ClinicalTrialsGovSearchApiAutocompleteSuggesterTest extends KernelTestBase
     $this->assertNotContains('Brain Tumor', $suggested_keys);
     $this->assertNotContains('Cardiology', $suggested_keys);
     $this->assertNotContains('', $suggested_keys);
+
+    $contains_suggestions = $plugin->getAutocompleteSuggestions($query, 'screen', 'screen');
+    $contains_suggested_keys = array_map(
+      static fn(SuggestionInterface $suggestion): string => $suggestion->getSuggestedKeys(),
+      $contains_suggestions
+    );
+
+    // Check that matching now works on contained text, not only prefixes.
+    $this->assertSame(['breast screening'], $contains_suggested_keys);
   }
 
   /**
