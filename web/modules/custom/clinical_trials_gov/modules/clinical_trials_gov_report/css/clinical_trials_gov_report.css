@@ -22,3 +22,7 @@
 .clinical-trials-gov-report-metadata tr.clinical-trials-gov-report-metadata__row--unused .clinical-trials-gov-report-metadata__secondary {
   color: inherit;
 }
+
+.clinical-trials-gov-report-metadata a.button {
+  white-space: nowrap;
+}

@@ -18,9 +18,11 @@ use Drupal\Core\Url;
 abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
 
   /**
-   * Whether to filter metadata to the configured paths.
+   * Metadata paths to display.
+   *
+   * NULL displays all metadata. An empty array loads saved query paths.
    */
-  protected bool $filterByQueryPaths = TRUE;
+  protected ?array $queryPaths = [];
 
   /**
    * Constructs a new ClinicalTrialsGovMetadataBaseController instance.
@@ -36,7 +38,7 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    * Builds the metadata page.
    */
   public function index(): array {
-    if ($this->filterByQueryPaths && !$this->getQuery()) {
+    if (($this->queryPaths === []) && !$this->getQuery()) {
       $this->messageHandler->addWarning($this->t('No saved query was found. Start with the <a href=":find_url">Find</a> step.', [
         ':find_url' => Url::fromRoute('clinical_trials_gov.find')->toString(),
       ]));
@@ -110,11 +112,11 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    */
   protected function getDisplayedMetadata(): array {
     $metadata = $this->studyManager->getMetadataByPath();
-    if (!$this->filterByQueryPaths) {
+    $path_lookup = $this->getDisplayedPathLookup();
+    if ($path_lookup === NULL) {
       return $metadata;
     }
 
-    $path_lookup = array_fill_keys($this->getQueryPaths(), TRUE);
     if (!$path_lookup) {
       return [];
     }
@@ -157,9 +159,8 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
         $this->buildHeader('Field Name', 'Piece Name'),
         $this->buildHeader('Field Title', 'Description/Notes/Definition'),
         $this->t('Path'),
-        $this->t('Classic Type'),
-        $this->t('Data Type'),
-        $this->t('Alt Piece Names'),
+        $this->t('Type'),
+        $this->t('Operations'),
       ],
       '#rows' => $rows,
       '#empty' => $this->t('No metadata returned.'),
@@ -191,9 +192,8 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
         definition_url: (string) ($row['dedLinkUrl'] ?? ''),
       ),
       $this->buildPathCell((string) ($row['path'] ?? '')),
-      $this->buildTextCell($classic_type),
-      $this->buildDataTypeCell($row),
-      $this->buildListCell($row['altPieceNames'] ?? []),
+      $this->buildTypeCell($classic_type, $row),
+      $this->buildOperationsCell($row),
     ];
   }
 
@@ -359,25 +359,9 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
   }
 
   /**
-   * Builds a multi-line list cell.
+   * Builds the combined type cell.
    */
-  protected function buildListCell(mixed $values): array|string {
-    if (!is_array($values) || !$values) {
-      return '';
-    }
-
-    $items = array_values(array_filter(array_map(
-      fn(mixed $item): string => is_scalar($item) ? (string) $item : '',
-      $values
-    )));
-
-    return $this->buildTextCell(implode("\n", $items));
-  }
-
-  /**
-   * Builds the data type cell.
-   */
-  protected function buildDataTypeCell(array $row): array|string {
+  protected function buildTypeCell(string $classic_type, array $row): array|string {
     $value = (string) ($row['type'] ?? '');
     $suffixes = [];
 
@@ -389,7 +373,33 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
       $value .= ' (' . implode(', ', $suffixes) . ')';
     }
 
-    return $this->buildTextCell($value);
+    if (!$classic_type && !$value) {
+      return '';
+    }
+
+    $content = [];
+    if ($classic_type) {
+      $content['classic_type'] = [
+        '#markup' => Html::escape($classic_type),
+      ];
+    }
+    if ($classic_type && $value) {
+      $content['line_break'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'br',
+      ];
+    }
+    if ($value) {
+      $content['data_type'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'small',
+        '#value' => $value,
+      ];
+    }
+
+    return [
+      'data' => $content,
+    ];
   }
 
   /**
@@ -410,6 +420,31 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
   }
 
   /**
+   * Builds the operations cell.
+   */
+  protected function buildOperationsCell(array $row): array|string {
+    if (($row['sourceType'] ?? '') === 'STRUCT') {
+      return '';
+    }
+
+    $piece = (string) ($row['piece'] ?? '');
+    if (!$piece) {
+      return '';
+    }
+
+    return [
+      'data' => [
+        '#type' => 'link',
+        '#title' => $this->t('View values'),
+        '#url' => Url::fromUri('https://clinicaltrials.gov/api/v2/stats/field/values?fields=' . rawurlencode($piece)),
+        '#attributes' => [
+          'class' => ['button', 'button--small'],
+        ],
+      ],
+    ];
+  }
+
+  /**
    * Returns the saved query string.
    */
   protected function getQuery(): string {
@@ -421,6 +456,29 @@ abstract class ClinicalTrialsGovMetadataBaseController extends ControllerBase {
    */
   protected function getQueryPaths(): array {
     return $this->pathsManager->getQueryPaths();
+  }
+
+  /**
+   * Returns configured required metadata paths.
+   */
+  protected function getRequiredPaths(): array {
+    return $this->pathsManager->getRequiredPaths();
+  }
+
+  /**
+   * Returns the metadata path lookup for the current page.
+   */
+  protected function getDisplayedPathLookup(): ?array {
+    if ($this->queryPaths === NULL) {
+      return NULL;
+    }
+
+    $paths = ($this->queryPaths === []) ? $this->getQueryPaths() : $this->queryPaths;
+    if (!$paths) {
+      return [];
+    }
+
+    return array_fill_keys($paths, TRUE);
   }
 
 }

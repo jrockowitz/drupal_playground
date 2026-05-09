@@ -24,7 +24,7 @@ class ClinicalTrialsGovReportMetadataController extends ClinicalTrialsGovMetadat
   /**
    * {@inheritdoc}
    */
-  protected bool $filterByQueryPaths = FALSE;
+  protected ?array $queryPaths = NULL;
 
   /**
    * Constructs a new ClinicalTrialsGovReportMetadataController instance.

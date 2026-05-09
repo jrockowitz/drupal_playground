@@ -41,6 +41,10 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     parent::setUp();
     $this->drupalLogin($this->drupalCreateUser(['access administration pages']));
     $this->config('clinical_trials_gov.settings')
+      ->set('required_paths', [
+        'protocolSection.identificationModule.nctId',
+        'protocolSection.identificationModule.briefTitle',
+      ])
       ->set('query_paths', [
         'protocolSection.contactsLocationsModule.locations.contacts',
       ])
@@ -111,18 +115,19 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Field Name');
     $this->assertSession()->pageTextContains('Piece Name');
     $this->assertSession()->pageTextContains('Description/Notes/Definition');
-    $this->assertSession()->pageTextContains('Classic Type');
-    $this->assertSession()->pageTextContains('Data Type');
+    $this->assertSession()->pageTextContains('Type');
     $this->assertSession()->pageTextContains('Path');
+    $this->assertSession()->pageTextContains('Operations');
     $this->assertSession()->pageTextContains('briefTitle');
     $this->assertSession()->pageTextContains('BriefTitle');
-    $this->assertSession()->pageTextContains('BRIEF-TITLE');
     $this->assertSession()->pageTextContains('TEXT (max 300 chars)');
     $this->assertSession()->pageTextContains('text');
     $this->assertSession()->linkExists('Brief Title');
     $this->assertSession()->pageTextContains('Required for INT/OBS/EA. Has to be unique in PRS');
     $this->assertSession()->pageTextContains('protocolSection.identificationModule.briefTitle');
     $this->assertSession()->elementExists('css', 'a[href="https://clinicaltrials.gov/policy/protocol-definitions#BriefTitle"]');
+    $this->assertSession()->linkByHrefExists('https://clinicaltrials.gov/api/v2/stats/field/values?fields=BriefTitle');
+    $this->assertSession()->linkExists('View values');
     $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
     $metadata_page_html = $this->getSession()->getPage()->getContent();
     $this->assertStringNotContainsString('clinical-trials-gov-report-metadata__row--unused', $metadata_page_html);
@@ -135,6 +140,18 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
       strpos($metadata_page_html, '<hr'),
       strpos($metadata_page_html, 'Version: 2.0.5 and Last Updated:')
     );
+
+    // Check that the required metadata report loads and shows only required paths.
+    $this->drupalGet('admin/reports/status/clinical-trials-gov/required');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Required');
+    $this->assertSession()->elementExists('css', 'table');
+    $this->assertSession()->pageTextContains('This page displays required ClinicalTrials.gov metadata configured in settings.');
+    $this->assertSession()->pageTextContains('protocolSection.identificationModule.nctId');
+    $this->assertSession()->pageTextContains('protocolSection.identificationModule.briefTitle');
+    $this->assertSession()->pageTextNotContains('protocolSection.contactsLocationsModule.locations.contacts');
+    $this->assertSession()->pageTextContains('ClinicalTrials.gov API:');
+
     // Check that the enums report loads and shows the expected grouped table.
     $this->drupalGet('admin/reports/status/clinical-trials-gov/enums');
     $this->assertSession()->statusCodeEquals(200);

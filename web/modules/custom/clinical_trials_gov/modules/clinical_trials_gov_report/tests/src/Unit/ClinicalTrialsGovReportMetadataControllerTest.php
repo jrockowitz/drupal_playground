@@ -115,11 +115,13 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
     $this->assertSame([], $table['#rows'][1]['class']);
 
     // Check that the field title column combines description and notes.
-    $this->assertCount(6, $table['#header']);
+    $this->assertCount(5, $table['#header']);
     $this->assertSame('Field Title', $table['#header'][1]['data']['primary']['#value']);
     $this->assertSame('Description/Notes/Definition', $table['#header'][1]['data']['secondary']['#value']);
     $this->assertSame('Path', (string) $table['#header'][2]);
-    $this->assertSame('Alt Piece Names', (string) $table['#header'][5]);
+    $this->assertSame('Type', (string) $table['#header'][3]);
+    $this->assertSame('Operations', (string) $table['#header'][4]);
+    $this->assertSame('', $table['#rows'][0]['data'][4]);
     $this->assertSame('html_tag', $table['#rows'][1]['data'][0]['data']['primary']['#type']);
     $this->assertSame('div', $table['#rows'][1]['data'][0]['data']['primary']['#tag']);
     $this->assertSame('strong', $table['#rows'][1]['data'][0]['data']['primary']['content']['#tag']);
@@ -131,7 +133,12 @@ class ClinicalTrialsGovReportMetadataControllerTest extends UnitTestCase {
     $this->assertSame('html_tag', $table['#rows'][1]['data'][2]['data']['#type']);
     $this->assertSame('small', $table['#rows'][1]['data'][2]['data']['#tag']);
     $this->assertSame('protocolSection.identificationModule.briefTitle', $table['#rows'][1]['data'][2]['data']['#value']);
-    $this->assertStringContainsString('BRIEF-TITLE', (string) $table['#rows'][1]['data'][5]['data']['#markup']);
+    $this->assertSame('TEXT (max 300 chars)', (string) $table['#rows'][1]['data'][3]['data']['classic_type']['#markup']);
+    $this->assertSame('small', $table['#rows'][1]['data'][3]['data']['data_type']['#tag']);
+    $this->assertSame('text', $table['#rows'][1]['data'][3]['data']['data_type']['#value']);
+    $this->assertSame('link', $table['#rows'][1]['data'][4]['data']['#type']);
+    $this->assertSame('View values', (string) $table['#rows'][1]['data'][4]['data']['#title']);
+    $this->assertSame('https://clinicaltrials.gov/api/v2/stats/field/values?fields=BriefTitle', $table['#rows'][1]['data'][4]['data']['#url']->getUri());
   }
 
   /**
