@@ -17,6 +17,26 @@ drush site:install standard \
   --account-mail=admin@example.com \
   --yes
 
+# Some local installs end up with core.extension missing its theme map even
+# though system.theme is present. Normalize it before enabling more modules so
+# post-update listeners do not crash during module installation.
+drush php:eval '
+$core_extension = \Drupal::service("config.factory")->getEditable("core.extension");
+if ($core_extension->get("theme") === NULL) {
+  $system_theme = \Drupal::config("system.theme");
+  $themes = [];
+  foreach (["default", "admin"] as $theme_type) {
+    $theme_name = $system_theme->get($theme_type);
+    if (is_string($theme_name) && $theme_name !== "") {
+      $themes[$theme_name] = 0;
+    }
+  }
+  if ($themes !== []) {
+    $core_extension->set("theme", $themes)->save();
+  }
+}
+'
+
 drush recipe ../recipes/drupal_playground_base
 drush recipe ../recipes/drupal_playground_admin
 drush recipe ../recipes/drupal_playground_devel
@@ -87,6 +107,8 @@ for PRESET in "$@"; do
     drush recipe ../recipes/clinical_trials_gov_recipe_setup
     echo "Applying Clinical Trials Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_elastic
+    echo "Applying Clinical Trials Elasticsearch autocomplete recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_elastic_autocomplete
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit=10
     uli_path="/trials"

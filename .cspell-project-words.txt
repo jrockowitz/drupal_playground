@@ -60,6 +60,7 @@ Michelf
 michelf
 Microdata
 mmsg
+minmax
 Linkit
 lingotek
 isic
@@ -122,6 +123,7 @@ barbudans
 Autocreate
 autop
 autoplay
+autosubmit
 Barbudans
 Clientside
 clusterer

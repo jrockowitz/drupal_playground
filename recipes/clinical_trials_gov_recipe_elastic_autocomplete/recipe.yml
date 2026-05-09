@@ -1,0 +1,16 @@
+name: 'Clinical Trials Recipe Elastic Autocomplete'
+description: 'Adds Search API Autocomplete to the Clinical Trials Elasticsearch search.'
+type: 'Site'
+install:
+  - clinical_trials_gov_search_api_autocomplete
+  - search_api_autocomplete
+config:
+  strict: false
+  import:
+    search_api_autocomplete:
+      - search_api_autocomplete.search.trials_elasticsearch
+  actions:
+    user.role.anonymous:
+      grantPermission: 'use search_api_autocomplete for trials_elasticsearch'
+    user.role.authenticated:
+      grantPermission: 'use search_api_autocomplete for trials_elasticsearch'

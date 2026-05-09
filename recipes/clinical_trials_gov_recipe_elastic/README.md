@@ -36,6 +36,8 @@ This recipe depends on the `clinical_trials_gov_recipe_setup` recipe so the `tri
 
 The recipe uses `facets_exposed_filters` directly in the View configuration rather than separate facet blocks or separately managed facet entities.
 
+Autocomplete is applied by the separate `clinical_trials_gov_recipe_elastic_autocomplete` recipe. The `ddev install trials-elastic` preset applies both recipes in sequence.
+
 ## Installation
 
 ```shell
@@ -91,6 +93,8 @@ ddev drush search-api:index trials_elasticsearch
 - ⚫ Confirm the facet-backed filters render human-friendly labels such as `Recruiting`, `Phase 2`, and `Adult`.
 - ⚫ Confirm the facet-backed filters show result counts next to each item.
 - ⚫ Visit `/trials`.
+- ⚫ Type the prefix of a stored condition and confirm autocomplete suggestions appear from `trial_cond` values.
+- ⚫ Type the prefix of a stored keyword and confirm autocomplete suggestions appear from `trial_keyword` values.
 - ⚫ Search for a misspelled keyword and confirm a `Did you mean:` correction appears when appropriate.
 - ⚫ Apply multiple facet selections and confirm the result count updates.
 - ⚫ Confirm the header summarizes the active filters and result count.
@@ -98,6 +102,14 @@ ddev drush search-api:index trials_elasticsearch
 - ⚫ Search for a query with no matches and confirm the empty state shows:
 - `<h2>No records found.</h2>`
 - `<p>Please try different keywords and search again.</p>`
+
+### Autocomplete review
+
+- ⚫ Go to the `Clinical Trials` index Autocomplete tab.
+- ⚫ Confirm Search API Autocomplete is enabled for the `Clinical Trials (Elasticsearch)` search.
+- ⚫ Visit `/trials`.
+- ⚫ Type the prefix of a stored condition and confirm autocomplete suggestions appear from `trial_cond` values.
+- ⚫ Type the prefix of a stored keyword and confirm autocomplete suggestions appear from `trial_keyword` values.
 
 ### Default content review
 
