@@ -147,6 +147,7 @@ class ClinicalTrialsGovReportTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Required');
     $this->assertSession()->elementExists('css', 'table');
     $this->assertSession()->pageTextContains('This page displays required ClinicalTrials.gov metadata configured in settings.');
+    $this->assertSession()->linkByHrefExists('/admin/config/services/clinical-trials-gov/settings');
     $this->assertSession()->pageTextContains('protocolSection.identificationModule.nctId');
     $this->assertSession()->pageTextContains('protocolSection.identificationModule.briefTitle');
     $this->assertSession()->pageTextNotContains('protocolSection.contactsLocationsModule.locations.contacts');

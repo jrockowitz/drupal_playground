@@ -9,6 +9,7 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -50,7 +51,9 @@ class ClinicalTrialsGovReportRequiredController extends ClinicalTrialsGovReportM
   protected function buildIntro(): array {
     return [
       '#type' => 'item',
-      '#markup' => $this->t('This page displays required ClinicalTrials.gov metadata configured in settings.'),
+      '#markup' => $this->t('This page displays required ClinicalTrials.gov metadata configured in <a href=":settings_url">settings</a>.', [
+        ':settings_url' => Url::fromRoute('clinical_trials_gov.settings')->toString(),
+      ]),
     ];
   }
 
