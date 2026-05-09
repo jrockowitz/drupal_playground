@@ -134,7 +134,7 @@ class ClinicalTrialsGovFindFormTest extends ClinicalTrialsGovTestBase {
 
     // Check that saving without a query is rejected.
     $this->assertTrue($save_form_state->hasAnyErrors());
-    $this->assertNotEmpty($save_form_state->getErrors()['query'] ?? NULL);
+    $this->assertNotEmpty($save_form_state->getErrors()['query']);
 
     $preview_form_state = new FormState();
     $preview_form_state->setValue('query', '');

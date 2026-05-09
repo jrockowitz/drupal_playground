@@ -80,10 +80,10 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.organization'))?->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty'))?->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))?->getType());
-    $this->assertSame('map_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.eligibilityModule'))?->getSetting('columns')['stdAges']['type'] ?? NULL);
-    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))?->getSetting('columns')['contacts']['type'] ?? NULL);
-    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))?->getSetting('columns')['geoPoint']['type'] ?? NULL);
-    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.referencesModule.references'))?->getSetting('columns')['citation']['type'] ?? NULL);
+    $this->assertSame('map_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.eligibilityModule'))?->getSetting('columns')['stdAges']['type']);
+    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))?->getSetting('columns')['contacts']['type']);
+    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))?->getSetting('columns')['geoPoint']['type']);
+    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.referencesModule.references'))?->getSetting('columns')['citation']['type']);
     $this->assertSame('link', FieldStorageConfig::loadByName('node', 'trial_nct_url')?->getType());
     $this->assertSame('link', FieldStorageConfig::loadByName('node', 'trial_nct_api')?->getType());
 
@@ -100,25 +100,25 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
     // Check that created fields are added to the default form and view displays.
     $form_display = EntityFormDisplay::load('node.trial.default');
     $this->assertNotNull($form_display);
-    $this->assertSame('string_textfield', $form_display->getComponent('trial_brief_title')['type'] ?? NULL);
-    $this->assertSame('string_textfield', $form_display->getComponent('trial_nct_id')['type'] ?? NULL);
-    $this->assertSame('custom_stacked', $form_display->getComponent('trial_resp_party')['type'] ?? NULL);
-    $this->assertSame('link_default', $form_display->getComponent('trial_nct_url')['type'] ?? NULL);
-    $this->assertSame('link_default', $form_display->getComponent('trial_nct_api')['type'] ?? NULL);
+    $this->assertSame('string_textfield', $form_display->getComponent('trial_brief_title')['type']);
+    $this->assertSame('string_textfield', $form_display->getComponent('trial_nct_id')['type']);
+    $this->assertSame('custom_stacked', $form_display->getComponent('trial_resp_party')['type']);
+    $this->assertSame('link_default', $form_display->getComponent('trial_nct_url')['type']);
+    $this->assertSame('link_default', $form_display->getComponent('trial_nct_api')['type']);
 
     $view_display = EntityViewDisplay::load('node.trial.default');
     $this->assertNotNull($view_display);
-    $this->assertSame('string', $view_display->getComponent('trial_nct_id')['type'] ?? NULL);
-    $this->assertSame('custom_formatter', $view_display->getComponent('trial_resp_party')['type'] ?? NULL);
-    $this->assertSame('link', $view_display->getComponent('trial_nct_url')['type'] ?? NULL);
-    $this->assertSame('link', $view_display->getComponent('trial_nct_api')['type'] ?? NULL);
+    $this->assertSame('string', $view_display->getComponent('trial_nct_id')['type']);
+    $this->assertSame('custom_formatter', $view_display->getComponent('trial_resp_party')['type']);
+    $this->assertSame('link', $view_display->getComponent('trial_nct_url')['type']);
+    $this->assertSame('link', $view_display->getComponent('trial_nct_api')['type']);
     $this->assertGreaterThan($view_display->getComponent('trial_over_status')['weight'] ?? -1, $view_display->getComponent('trial_nct_url')['weight'] ?? -1);
     $this->assertGreaterThan($view_display->getComponent('trial_nct_url')['weight'] ?? -1, $view_display->getComponent('trial_nct_api')['weight'] ?? -1);
 
     // Check that the promoted custom field is added to the displays.
     $location_field_name = $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations');
-    $this->assertSame('custom_stacked', $form_display->getComponent($location_field_name)['type'] ?? NULL);
-    $this->assertSame('custom_formatter', $view_display->getComponent($location_field_name)['type'] ?? NULL);
+    $this->assertSame('custom_stacked', $form_display->getComponent($location_field_name)['type']);
+    $this->assertSame('custom_formatter', $view_display->getComponent($location_field_name)['type']);
 
     // Check that remaining nested structure selections create a field group on the form display.
     $field_groups = $form_display->getThirdPartySettings('field_group');
@@ -144,12 +144,12 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
     $maximum_age_field_name = $this->entityManager->generateFieldName('protocolSection.eligibilityModule.maximumAge');
     $standard_ages_field_name = $this->entityManager->generateFieldName('protocolSection.eligibilityModule.stdAges');
 
-    $this->assertSame('text_summary_or_trimmed', $teaser_display->getComponent($brief_summary_field_name)['type'] ?? NULL);
-    $this->assertSame('string', $teaser_display->getComponent($condition_field_name)['type'] ?? NULL);
-    $this->assertSame('string', $teaser_display->getComponent($keyword_field_name)['type'] ?? NULL);
-    $this->assertSame('string', $teaser_display->getComponent($minimum_age_field_name)['type'] ?? NULL);
-    $this->assertSame('string', $teaser_display->getComponent($maximum_age_field_name)['type'] ?? NULL);
-    $this->assertSame('list_default', $teaser_display->getComponent($standard_ages_field_name)['type'] ?? NULL);
+    $this->assertSame('text_summary_or_trimmed', $teaser_display->getComponent($brief_summary_field_name)['type']);
+    $this->assertSame('string', $teaser_display->getComponent($condition_field_name)['type']);
+    $this->assertSame('string', $teaser_display->getComponent($keyword_field_name)['type']);
+    $this->assertSame('string', $teaser_display->getComponent($minimum_age_field_name)['type']);
+    $this->assertSame('string', $teaser_display->getComponent($maximum_age_field_name)['type']);
+    $this->assertSame('list_default', $teaser_display->getComponent($standard_ages_field_name)['type']);
     $this->assertNull($teaser_display->getComponent('trial_nct_url'));
     $this->assertNull($teaser_display->getComponent('trial_resp_party'));
     $this->assertSame([], $teaser_display->getThirdPartySettings('field_group'));

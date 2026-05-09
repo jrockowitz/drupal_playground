@@ -98,11 +98,11 @@ class ClinicalTrialsGovReadonlyHooksTest extends ClinicalTrialsGovContentTestBas
     $editable_display = EntityFormDisplay::collectRenderDisplay($node, 'default');
 
     // Check that readonly mode off preserves the editable widgets.
-    $this->assertSame('string_textfield', $editable_display->getComponent('trial_brief_title')['type'] ?? NULL);
-    $this->assertSame('string_textfield', $editable_display->getComponent('trial_nct_id')['type'] ?? NULL);
-    $this->assertSame('link_default', $editable_display->getComponent('trial_nct_url')['type'] ?? NULL);
-    $this->assertSame('link_default', $editable_display->getComponent('trial_nct_api')['type'] ?? NULL);
-    $this->assertSame('string_textfield', $editable_display->getComponent('field_manual_notes')['type'] ?? NULL);
+    $this->assertSame('string_textfield', $editable_display->getComponent('trial_brief_title')['type']);
+    $this->assertSame('string_textfield', $editable_display->getComponent('trial_nct_id')['type']);
+    $this->assertSame('link_default', $editable_display->getComponent('trial_nct_url')['type']);
+    $this->assertSame('link_default', $editable_display->getComponent('trial_nct_api')['type']);
+    $this->assertSame('string_textfield', $editable_display->getComponent('field_manual_notes')['type']);
 
     $this->config('clinical_trials_gov.settings')
       ->set('readonly', TRUE)
@@ -111,11 +111,11 @@ class ClinicalTrialsGovReadonlyHooksTest extends ClinicalTrialsGovContentTestBas
     $readonly_display = EntityFormDisplay::collectRenderDisplay($node, 'default');
 
     // Check that mapped ClinicalTrials.gov fields and system links switch to readonly.
-    $this->assertSame('readonly_field_widget', $readonly_display->getComponent('trial_brief_title')['type'] ?? NULL);
-    $this->assertSame('readonly_field_widget', $readonly_display->getComponent('trial_nct_id')['type'] ?? NULL);
-    $this->assertSame('readonly_field_widget', $readonly_display->getComponent('trial_nct_url')['type'] ?? NULL);
-    $this->assertSame('readonly_field_widget', $readonly_display->getComponent('trial_nct_api')['type'] ?? NULL);
-    $this->assertSame('string_textfield', $readonly_display->getComponent('field_manual_notes')['type'] ?? NULL);
+    $this->assertSame('readonly_field_widget', $readonly_display->getComponent('trial_brief_title')['type']);
+    $this->assertSame('readonly_field_widget', $readonly_display->getComponent('trial_nct_id')['type']);
+    $this->assertSame('readonly_field_widget', $readonly_display->getComponent('trial_nct_url')['type']);
+    $this->assertSame('readonly_field_widget', $readonly_display->getComponent('trial_nct_api')['type']);
+    $this->assertSame('string_textfield', $readonly_display->getComponent('field_manual_notes')['type']);
   }
 
 }
