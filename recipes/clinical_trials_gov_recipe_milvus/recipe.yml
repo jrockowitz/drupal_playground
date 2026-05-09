@@ -1,29 +1,22 @@
 name: 'Clinical Trials Recipe Milvus'
-description: 'Sets up AI Search, Milvus, and DeepChat for Clinical Trials discovery.'
+description: 'Sets up AI Search and Milvus for Clinical Trials discovery.'
 type: 'Site'
 recipes:
   - clinical_trials_gov_recipe_setup
 install:
   - ai_agents
   - ai_assistant_api
-  - ai_chatbot
   - ai_search
   - ai_vdb_provider_milvus
-  - asset_injector
   - search_api
   - shortcut
 config:
   strict: false
   import:
-    asset_injector:
-      - asset_injector.css.trials_milvus_olivero
-      - asset_injector.js.trials_milvus_olivero
     ai_agents: '*'
     ai_assistant_api: '*'
     ai_vdb_provider_milvus:
       - ai_vdb_provider_milvus.settings
-    block:
-      - block.block.olivero_trials_milvus_chat
     search_api:
       - search_api.server.trials_milvus
       - search_api.index.trials_milvus
@@ -34,5 +27,3 @@ config:
     ai.settings:
       simpleConfigUpdate:
         default_vdb_provider: milvus
-    user.role.anonymous:
-      grantPermission: 'access deepchat api'

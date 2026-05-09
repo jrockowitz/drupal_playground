@@ -2,20 +2,19 @@
 
 ## Goals
 
-- Build a DeepChat interface for finding clinical trials as a patient, caregiver, or medical professional.
+- Build the Milvus-backed assistant and retrieval layer for finding clinical trials as a patient, caregiver, or medical professional.
 - Implement a local Milvus database for trial retrieval in DDEV.
-- Provide `ddev install trials-milvus` to set up ClinicalTrials.gov content, AI Search, Milvus, and DeepChat together.
+- Provide `ddev install trials-milvus` to set up the Milvus backend, AI Search, and assistant configuration without assuming a specific front-end theme.
 
 ## Summary
 
-This recipe layers a Milvus-backed AI chat and RAG experience on top of the existing
+This recipe layers a Milvus-backed AI assistant and RAG backend on top of the existing
 `clinical_trials_gov_recipe_setup` foundation.
 
 It installs:
 
 - `ai_agents`
 - `ai_assistant_api`
-- `ai_chatbot`
 - `ai_search`
 - `search_api`
 - `ai_vdb_provider_milvus`
@@ -25,8 +24,11 @@ It configures:
 - local Milvus provider settings for `http://milvus:19530`
 - a Search API AI Search server and index for imported `trial` nodes
 - a trials-specific AI assistant and AI agent
-- a DeepChat block labeled `Ask AI about Clinical Trials`
-- DeepChat visibility on `<front>` and `/trials`
+
+The visible Olivero DeepChat user interface now lives in
+`clinical_trials_gov_recipe_milvus_chat`. Install that recipe with
+`ddev install trials-chat` after the backend is ready, or include it in a fresh
+layered install with `ddev install trials-milvus trials-chat`.
 
 When combined with `clinical_trials_gov_recipe_elastic`, the `/trials` page becomes hybrid:
 
@@ -47,9 +49,11 @@ When combined with `clinical_trials_gov_recipe_elastic`, the `/trials` page beco
 - Retrieval is grounded in imported Drupal `trial` nodes, not live ClinicalTrials.gov API calls.
 - This recipe does not provide its own `/trials` route or fallback page.
 - The canonical `/trials` page comes from `clinical_trials_gov_recipe_elastic` when that recipe is installed.
-- The DeepChat block uses the exact user-facing copy:
-  - Label: `Ask AI about Clinical Trials`
-  - First message: `Ask our AI Assistant to help you search for a clinical trials.`
+- The Olivero DeepChat block, Asset Injector configuration, and anonymous
+  `access deepchat api` permission now come from
+  `clinical_trials_gov_recipe_milvus_chat`.
+- Install `clinical_trials_gov_recipe_milvus_chat` when you want the visible
+  Olivero chat experience on `/trials`.
 
 ## DDEV Setup
 
@@ -83,16 +87,22 @@ These are the steps used to add Milvus to the local DDEV environment:
 
 ### 2. Choose an install flow
 
-- Run `ddev install trials-milvus` for Milvus chat and indexing only.
-- Run `ddev install trials-elastic` for the Elasticsearch-backed `/trials` page only.
-- Run `ddev install trials-elastic trials-milvus` for the hybrid `/trials` page.
+- Run `ddev install trials-milvus` for the Milvus backend, assistant, and indexing layer.
+- Run `ddev install trials-chat` after `trials-milvus` to add the Olivero DeepChat interface.
+- Run `ddev install trials-elastic` when you want the Elasticsearch-backed `/trials` page and the current preset-driven ClinicalTrials.gov content import.
+- Run `ddev install trials-elastic trials-milvus` for the hybrid `/trials` page without the Olivero chat UI.
+- Run `ddev install trials-milvus trials-chat` for a fresh layered Milvus backend plus Olivero chat install.
+- Run `ddev install trials-elastic trials-milvus trials-chat` for the full hybrid `/trials` page plus Olivero chat UI.
+- If you install `trials-milvus` without `trials-elastic`, import content manually before relying on retrieval:
+  - `ddev drush migrate:import clinical_trials_gov --limit=10`
 - Confirm the install output includes:
   - `Applying AI recipe...`
   - `Applying ClinicalTrials.gov setup recipe...`
   - `Applying Clinical Trials Milvus recipe...`
-  - `Importing ClinicalTrials.gov studies...`
-  - `Indexing ClinicalTrials.gov studies in Milvus...`
-- Confirm ClinicalTrials.gov imports are limited to `30` items during install.
+- Confirm the install output also includes `Indexing ClinicalTrials.gov studies in Milvus...` when imported `trial` content is already available for indexing.
+- If `trials-chat` is part of the install command, also confirm the output includes:
+  - `Applying Clinical Trials chat recipe...`
+- If `trials-elastic` is part of the install command, confirm ClinicalTrials.gov imports are limited to `10` items during install.
 - If `trials-elastic` is part of the install command, confirm the one-time login URL includes `destination=/trials`.
 
 ### 3. Review the Milvus provider configuration
@@ -120,6 +130,8 @@ These are the steps used to add Milvus to the local DDEV environment:
 
 ### 5. Verify indexing
 
+- If needed, import trial content first:
+  - `ddev drush migrate:import clinical_trials_gov --limit=10`
 - Run `ddev drush search-api:clear trials_milvus -y`.
 - Run `ddev drush search-api:index trials_milvus --limit=10 --batch-size=5 --time-limit=30`.
 - Repeat the indexing command if your embeddings provider rate-limits large runs.
@@ -127,17 +139,22 @@ These are the steps used to add Milvus to the local DDEV environment:
 
 ## Verification Steps
 
-### Front end
+### Backend
 
-- Visit `<front>`.
-- Confirm a DeepChat block appears with the label `Ask AI about Clinical Trials`.
-- Confirm the initial message says `Ask our AI Assistant to help you search for a clinical trials.`
+- Run `ddev drush php:eval "print \\Drupal::service('ai_assistant_api.assistant_provider')->loadAssistant('trials_milvus_assistant');"`.
+- Confirm the assistant loads without errors.
 
 ### Trials page
 
 - If `trials-elastic` is installed, visit `/trials`.
 - Confirm the Elasticsearch trials page renders with its keyword search and filters.
-- Confirm the DeepChat block appears on the page.
+- Confirm search and listing behavior still come from Elasticsearch while retrieval for the Milvus assistant remains separate.
+
+### Olivero chat interface
+
+- If `trials-chat` is installed, visit `/trials`.
+- Confirm a DeepChat block appears with the label `Ask AI about Clinical Trials`.
+- Confirm the initial message says `Ask our AI Assistant to help you search for a clinical trials.`
 - Confirm search and listing behavior still come from Elasticsearch while chat answers come from the Milvus assistant.
 
 ### Assistant behavior
@@ -151,7 +168,8 @@ These are the steps used to add Milvus to the local DDEV environment:
 
 - Reimport trial content:
   - `ddev drush migrate:rollback clinical_trials_gov -y`
-  - `ddev drush migrate:import clinical_trials_gov --limit=30`
+  - This `--limit=10` command reflects the current testing-sized manual import flow.
+  - `ddev drush migrate:import clinical_trials_gov --limit=10`
 - Reindex Milvus content:
   - `ddev drush search-api:clear trials_milvus -y`
   - `ddev drush search-api:index trials_milvus --limit=10 --batch-size=5 --time-limit=30`

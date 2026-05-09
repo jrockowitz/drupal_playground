@@ -1,0 +1,10 @@
+{
+    "name": "drupal/clinical_trials_gov_recipe_milvus_chat",
+    "description": "Installs the Olivero DeepChat UI for the Clinical Trials Milvus experience.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/core": "^11"
+    }
+}

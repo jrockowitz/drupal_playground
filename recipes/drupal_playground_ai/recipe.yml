@@ -9,7 +9,6 @@ recipes:
 
 install:
   - ai
-#  - ai_dashboard
   - ai_provider_anthropic
   - ai_provider_openai
   - ai_external_moderation
@@ -18,7 +17,6 @@ config:
   strict: false
   import:
     ai: '*'
-#    ai_dashboard: '*'
     key: '*'
     dashboard: '*'
   actions:

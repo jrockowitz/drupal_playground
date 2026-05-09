@@ -3454,31 +3454,6 @@
             }
         },
         {
-            "name": "drupal/clinical_trials_gov_recipe_setup",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "recipes/clinical_trials_gov_recipe_setup",
-                "reference": "ecd8cbb7432fe464b718d1f093a29ba2a01f3f29"
-            },
-            "require": {
-                "drupal/core": "^11",
-                "drupal/custom_field": "^4",
-                "drupal/field_group": "^4",
-                "drupal/migrate_plus": "^6",
-                "drupal/migrate_tools": "^6",
-                "drupal/readonly_field_widget": "^2"
-            },
-            "type": "drupal-recipe",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "description": "Installs the ClinicalTrials.gov workflow recipe.",
-            "transport-options": {
-                "relative": true
-            }
-        },
-        {
             "name": "drupal/clinical_trials_gov_recipe_elastic",
             "version": "1.0.0",
             "dist": {
@@ -3511,14 +3486,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/clinical_trials_gov_recipe_milvus",
-                "reference": "d038906403701d972cb34f09b365ddd08a7a62b1"
+                "reference": "de5cc95b1e5b048c06929fc258396df1bec63125"
             },
             "require": {
-                "drupal/ai_agents": "^1",
-                "drupal/ai_assistant_api": "^1",
-                "drupal/ai_chatbot": "^1",
+                "drupal/ai": "^1",
                 "drupal/ai_vdb_provider_milvus": "^1.1@beta",
-                "drupal/asset_injector": "^2",
                 "drupal/core": "^11",
                 "drupal/search_api": "^1"
             },
@@ -3526,7 +3498,54 @@
             "license": [
                 "GPL-2.0-or-later"
             ],
-            "description": "Installs a Milvus-backed AI Search and DeepChat clinical trials experience.",
+            "description": "Installs a Milvus-backed AI Search clinical trials experience.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "drupal/clinical_trials_gov_recipe_milvus_chat",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/clinical_trials_gov_recipe_milvus_chat",
+                "reference": "1b96ce949ed3f964a3219a1385643829cd7af96c"
+            },
+            "require": {
+                "drupal/asset_injector": "^2",
+                "drupal/clinical_trials_gov_recipe_milvus": "1.0.0",
+                "drupal/core": "^11"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Installs the Olivero DeepChat UI for the Clinical Trials Milvus experience.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "drupal/clinical_trials_gov_recipe_setup",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/clinical_trials_gov_recipe_setup",
+                "reference": "20d58bdedbeae112d4f9dc3c10cedd96eedb3d56"
+            },
+            "require": {
+                "drupal/core": "^11",
+                "drupal/custom_field": "^4",
+                "drupal/field_group": "^4",
+                "drupal/migrate_plus": "^6",
+                "drupal/migrate_tools": "^6",
+                "drupal/readonly_field_widget": "^2"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Installs the ClinicalTrials.gov workflow recipe.",
             "transport-options": {
                 "relative": true
             }
