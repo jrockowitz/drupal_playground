@@ -145,13 +145,48 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
       '#required' => !$structure_locked,
       '#disabled' => $structure_locked,
     ];
-    $form['content_type']['readonly'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Read-only imported fields'),
-      '#description' => $this->t('Display imported ClinicalTrials.gov fields as readonly on edit forms and hide the editable node title when the generated title mapping is present.'),
-      '#config_target' => 'clinical_trials_gov.settings:readonly',
-      '#access' => $this->moduleHandler->moduleExists('readonly_field_widget'),
+
+    $form['content_type']['view_display_component'] = [
+      '#type' => 'select',
+      '#title' => $this->t('View display component'),
+      '#description' => $this->t('Choose how generated ClinicalTrials.gov fields are added to the default view display before fields are created.'),
+      '#options' => $this->getViewDisplayComponentOptions(),
+      '#config_target' => 'clinical_trials_gov.settings:view_display_component',
+      '#required' => TRUE,
+      '#disabled' => $structure_locked,
     ];
+    if ($this->moduleHandler->moduleExists('field_group')) {
+      $form['content_type']['view_display_field_group'] = [
+        '#type' => 'select',
+        '#title' => $this->t('View display field group'),
+        '#description' => $this->t('Choose how generated field groups are added to the default view display before fields are created.'),
+        '#options' => $this->getFieldGroupOptions(),
+        '#config_target' => 'clinical_trials_gov.settings:view_display_field_group',
+        '#required' => TRUE,
+        '#disabled' => $structure_locked,
+      ];
+    }
+
+    $form['content_type']['form_display_component'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Form display component'),
+      '#description' => $this->t('Choose how generated ClinicalTrials.gov fields are added to the default edit form display before fields are created.'),
+      '#options' => $this->getFormDisplayComponentOptions(),
+      '#config_target' => 'clinical_trials_gov.settings:form_display_component',
+      '#required' => TRUE,
+      '#disabled' => $structure_locked,
+    ];
+    if ($this->moduleHandler->moduleExists('field_group')) {
+      $form['content_type']['form_display_field_group'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Form display field group'),
+        '#description' => $this->t('Choose how generated field groups are added to the default edit form display before fields are created.'),
+        '#options' => $this->getFieldGroupOptions(),
+        '#config_target' => 'clinical_trials_gov.settings:form_display_field_group',
+        '#required' => TRUE,
+        '#disabled' => $structure_locked,
+      ];
+    }
 
     return parent::buildForm($form, $form_state);
   }
@@ -205,6 +240,46 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
     }
 
     return (bool) $this->entityTypeManager->getStorage('node_type')->load($type);
+  }
+
+  /**
+   * Returns view display component options.
+   */
+  protected function getViewDisplayComponentOptions(): array {
+    return [
+      'visible' => $this->t('Visible'),
+      'visible_update' => $this->t('Visible for editors who can update'),
+      'hidden' => $this->t('Hidden'),
+    ];
+  }
+
+  /**
+   * Returns form display component options.
+   */
+  protected function getFormDisplayComponentOptions(): array {
+    $options = [
+      'visible' => $this->t('Visible'),
+      'hidden' => $this->t('Hidden'),
+    ];
+
+    if ($this->moduleHandler->moduleExists('readonly_field_widget')) {
+      $options['readonly'] = $this->t('Readonly');
+    }
+
+    return $options;
+  }
+
+  /**
+   * Returns field-group format options.
+   */
+  protected function getFieldGroupOptions(): array {
+    return [
+      'details' => $this->t('Details'),
+      'details_opened' => $this->t('Details (opened)'),
+      'fieldset' => $this->t('Fieldset'),
+      'container' => $this->t('Container'),
+      'none' => $this->t('None'),
+    ];
   }
 
 }

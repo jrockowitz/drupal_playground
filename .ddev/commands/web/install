@@ -75,6 +75,9 @@ for PRESET in "$@"; do
 
     echo "Installing ClinicalTrials.gov module..."
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
+    echo "Setting the ClinicalTrials.gov query..."
+    drush config:set -y clinical_trials_gov.settings query 'query.term=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING'
+
     uli_path="/admin/config/services/clinical-trials-gov"
 
   elif [ "$PRESET" = "trials-elastic" ]; then

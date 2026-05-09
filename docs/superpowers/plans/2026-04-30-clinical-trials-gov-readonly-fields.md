@@ -63,11 +63,11 @@ Expected: FAIL because the Settings form has no readonly checkbox and the node e
 
 **Files:**
 - Modify: `web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovEntityManagerTest.php`
-- Create: `web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovReadonlyHooksTest.php`
+- Create: `web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovFieldAccessHooksTest.php`
 
 - [ ] **Step 1: Create a kernel test for readonly widget switching**
 
-Create `ClinicalTrialsGovReadonlyHooksTest.php` with modules:
+Create `ClinicalTrialsGovFieldAccessHooksTest.php` with modules:
 
 ```php
   protected static $modules = [
@@ -111,7 +111,7 @@ and assert the helper path that decides title hiding is active only in that case
 
 - [ ] **Step 3: Run the kernel test to verify it fails**
 
-Run: `ddev phpunit web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovReadonlyHooksTest.php`
+Run: `ddev phpunit web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovFieldAccessHooksTest.php`
 Expected: FAIL because no hook logic exists yet to switch widgets or hide the title.
 
 ### Task 3: Add readonly config and Settings form support
@@ -256,7 +256,7 @@ Add:
 
 - [ ] **Step 4: Run the focused tests to verify readonly behavior passes**
 
-Run: `ddev phpunit web/modules/custom/clinical_trials_gov/tests/src/Functional/ClinicalTrialsGovTest.php web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovReadonlyHooksTest.php`
+Run: `ddev phpunit web/modules/custom/clinical_trials_gov/tests/src/Functional/ClinicalTrialsGovTest.php web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovFieldAccessHooksTest.php`
 Expected: PASS or only fail on mismatched formatter settings that need tightening.
 
 ### Task 5: Update docs and final expectations
@@ -285,8 +285,8 @@ Update the configuration and editing guidance sections to include:
 
 - [ ] **Step 3: Run the full targeted verification set**
 
-Run: `ddev phpunit web/modules/custom/clinical_trials_gov/tests/src/Functional/ClinicalTrialsGovTest.php web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovReadonlyHooksTest.php web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovEntityManagerTest.php`
+Run: `ddev phpunit web/modules/custom/clinical_trials_gov/tests/src/Functional/ClinicalTrialsGovTest.php web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovFieldAccessHooksTest.php web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovEntityManagerTest.php`
 Expected: PASS with 0 failures.
 
-Run: `ddev exec vendor/bin/phpcs web/modules/custom/clinical_trials_gov/src/Hook/ClinicalTrialsGovHooks.php web/modules/custom/clinical_trials_gov/src/Form/ClinicalTrialsGovSettingsForm.php web/modules/custom/clinical_trials_gov/tests/src/Functional/ClinicalTrialsGovTest.php web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovReadonlyHooksTest.php web/modules/custom/clinical_trials_gov/README.md web/modules/custom/clinical_trials_gov/AGENTS.md`
+Run: `ddev exec vendor/bin/phpcs web/modules/custom/clinical_trials_gov/src/Hook/ClinicalTrialsGovHooks.php web/modules/custom/clinical_trials_gov/src/Form/ClinicalTrialsGovSettingsForm.php web/modules/custom/clinical_trials_gov/tests/src/Functional/ClinicalTrialsGovTest.php web/modules/custom/clinical_trials_gov/tests/src/Kernel/ClinicalTrialsGovFieldAccessHooksTest.php web/modules/custom/clinical_trials_gov/README.md web/modules/custom/clinical_trials_gov/AGENTS.md`
 Expected: exit 0 for the changed PHP files.

@@ -7,16 +7,19 @@ namespace Drupal\clinical_trials_gov\Hook;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
 use Drupal\clinical_trials_gov\Entity\ClinicalTrialsGovNodeAccessControlHandler;
 use Drupal\clinical_trials_gov\Entity\ClinicalTrialsGovTrashNodeAccessControlHandler;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Hook\Attribute\ReorderHook;
 use Drupal\Core\Hook\Order\OrderBefore;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\trash\Hook\TrashEntityInfoHooks;
 
 /**
@@ -50,54 +53,6 @@ class ClinicalTrialsGovEntityHooks {
   }
 
   /**
-   * Implements hook_entity_form_display_alter().
-   */
-  #[Hook('entity_form_display_alter')]
-  public function entityFormDisplayAlter(EntityFormDisplayInterface $form_display, array $context): void {
-    if (($context['entity_type'] ?? '') !== 'node') {
-      return;
-    }
-
-    $settings = $this->configFactory->get('clinical_trials_gov.settings');
-    if (!$settings->get('readonly') || !$this->moduleHandler->moduleExists('readonly_field_widget')) {
-      return;
-    }
-
-    $bundle = (string) ($context['bundle'] ?? '');
-    $type = $settings->get('type');
-    if ($bundle !== $type) {
-      return;
-    }
-
-    $field_mappings = $settings->get('fields');
-    $field_names = array_keys($field_mappings);
-    $field_names[] = $this->entityManager->getStudyUrlFieldName();
-    $field_names[] = $this->entityManager->getStudyApiFieldName();
-
-    $view_display = EntityViewDisplay::load('node.' . $bundle . '.default');
-    foreach (array_unique($field_names) as $field_name) {
-      $component = $form_display->getComponent($field_name);
-      if (!$component) {
-        continue;
-      }
-
-      $formatter_type = (string) (($view_display?->getComponent($field_name)['type'] ?? '') ?: 'string');
-      $formatter_settings = (array) ($view_display?->getComponent($field_name)['settings'] ?? []);
-      $component['type'] = 'readonly_field_widget';
-      $component['settings'] = [
-        'label' => 'above',
-        'formatter_type' => $formatter_type,
-        'formatter_settings' => [
-          $formatter_type => $formatter_settings,
-        ],
-        'show_description' => FALSE,
-        'error_validation' => TRUE,
-      ];
-      $form_display->setComponent($field_name, $component);
-    }
-  }
-
-  /**
    * Implements hook_form_BASE_FORM_ID_alter() for node_form.
    */
   #[Hook('form_node_form_alter')]
@@ -113,7 +68,10 @@ class ClinicalTrialsGovEntityHooks {
     }
 
     $settings = $this->configFactory->get('clinical_trials_gov.settings');
-    if (!$settings->get('readonly') || !$this->moduleHandler->moduleExists('readonly_field_widget')) {
+    if (
+      ($settings->get('form_display_component') !== 'readonly')
+      || !$this->moduleHandler->moduleExists('readonly_field_widget')
+    ) {
       return;
     }
 
@@ -129,6 +87,47 @@ class ClinicalTrialsGovEntityHooks {
     if (isset($form['title'])) {
       $form['title']['#access'] = FALSE;
     }
+  }
+
+  /**
+   * Implements hook_entity_field_access().
+   *
+   * @param string $operation
+   *   The field access operation being checked.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The field definition being checked.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account requesting access.
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>|null $items
+   *   The field items being checked, when available.
+   */
+  #[Hook('entity_field_access')]
+  public function entityFieldAccess(string $operation, FieldDefinitionInterface $field_definition, AccountInterface $account, ?FieldItemListInterface $items = NULL): AccessResultInterface {
+    if (($operation !== 'view') || ($items === NULL)) {
+      return AccessResult::neutral();
+    }
+
+    $settings = $this->configFactory->get('clinical_trials_gov.settings');
+    $entity = $items->getEntity();
+    if (($entity->getEntityTypeId() !== 'node')
+      || ($entity->bundle() !== $settings->get('type'))
+      || ($settings->get('view_display_component') !== 'visible_update')) {
+      return AccessResult::neutral()->addCacheableDependency($settings)->addCacheableDependency($entity);
+    }
+
+    $field_names = array_keys($settings->get('fields'));
+    $field_names[] = $this->entityManager->getStudyUrlFieldName();
+    $field_names[] = $this->entityManager->getStudyApiFieldName();
+    if (!in_array($field_definition->getName(), array_unique($field_names))) {
+      return AccessResult::neutral()->addCacheableDependency($settings)->addCacheableDependency($entity);
+    }
+
+    $update_access = $entity->access('update', $account, TRUE);
+    if ($update_access->isAllowed()) {
+      return AccessResult::allowed()->addCacheableDependency($settings)->addCacheableDependency($update_access);
+    }
+
+    return AccessResult::forbidden()->addCacheableDependency($settings)->addCacheableDependency($update_access);
   }
 
 }

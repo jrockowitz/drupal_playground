@@ -78,7 +78,8 @@ class ClinicalTrialsGovTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('nct');
     $this->assertNotNull($this->getSession()->getPage()->findField('Content type machine name'));
     $this->assertNotNull($this->getSession()->getPage()->findField('Field prefix'));
-    $this->assertSession()->checkboxNotChecked('Read-only imported fields');
+    $this->assertSession()->fieldValueEquals('View display component', 'visible');
+    $this->assertSession()->fieldValueEquals('Form display component', 'visible');
 
     $this->drupalGet('admin/config/services/clinical-trials-gov/manage');
 

@@ -61,7 +61,7 @@ Step behaviour:
 
 ## Configuration
 
-Primary config: `clinical_trials_gov.settings` — keys: `query`, `query_paths`, `required_paths`, `title_path`, `type`, `field_prefix`, `readonly`, `fields`. `fields` is stored as a mapping of generated Drupal field or group name to metadata path.
+Primary config: `clinical_trials_gov.settings` — keys: `query`, `query_paths`, `required_paths`, `title_path`, `type`, `field_prefix`, `view_display_component`, `view_display_field_group`, `form_display_component`, `form_display_field_group`, `fields`. `fields` is stored as a mapping of generated Drupal field or group name to metadata path.
 Install defaults live in `config/install/clinical_trials_gov.settings.yml`.
 
 `field_prefix` is used directly as the generated Drupal field-name prefix. For example, a saved value of `trial_version_holder` generates Drupal field names beginning with `trial_version_holder_`.
@@ -94,21 +94,20 @@ Field resolution lives in `ClinicalTrialsGovFieldManager::resolveFieldDefinition
 
 **Custom-field YAML fallback** is used for unsupported nested struct/list properties inside promoted `custom_field` definitions. Those properties are stored as `string_long`, labeled with a `(YAML)` suffix, serialized in the migrate process plugin, rendered inside `<pre>` tags, and syntax-validated on edit forms.
 
-## Readonly Mode
+## Display Settings
 
-Readonly mode is optional and only applies when:
+Display behavior is decided before the destination content type and fields are created.
 
-- `clinical_trials_gov.settings:readonly` is `TRUE`
-- the `readonly_field_widget` module is enabled
-- the edited node bundle matches `clinical_trials_gov.settings:type`
+- `view_display_component` supports `visible`, `visible_update`, and `hidden`
+- `view_display_field_group` supports `details`, `details_opened`, `fieldset`, `container`, and `none`
+- `form_display_component` supports `visible`, `hidden`, and `readonly`
+- `form_display_field_group` supports `details`, `details_opened`, `fieldset`, `container`, and `none`
 
-When active:
+Additional rules:
 
-- fields listed in `clinical_trials_gov.settings:fields` are switched to `readonly_field_widget`
-- the built-in ClinicalTrials.gov link fields `trial_nct_url` and `trial_nct_api` are also switched to `readonly_field_widget`
-- unrelated bundle fields remain editable
-- the core node title input is hidden when the saved mapping includes `protocolSection.identificationModule.briefTitle`
-- the generated `briefTitle` field remains visible and readonly
+- `form_display_component: readonly` only appears in Settings when `readonly_field_widget` is installed
+- `view_display_component: visible_update` is enforced through `hook_entity_field_access()` and only allows mapped ClinicalTrials.gov fields and system links to be viewed by users who can update the trial node
+- when `form_display_component` is `readonly` and the saved mapping includes `protocolSection.identificationModule.briefTitle`, the core node title input is hidden on edit forms
 
 ## Source Plugin
 

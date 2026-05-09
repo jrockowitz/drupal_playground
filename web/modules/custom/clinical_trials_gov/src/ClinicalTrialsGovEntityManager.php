@@ -310,6 +310,12 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       return;
     }
 
+    $form_field_group_format = $this->getConfiguredFormDisplayFieldGroup();
+    $view_field_group_format = $this->getConfiguredViewDisplayFieldGroup();
+    if (($form_field_group_format === 'none') && ($view_field_group_format === 'none')) {
+      return;
+    }
+
     $selected_fields = [];
     foreach ($fields as $field) {
       if (is_string($field) && $field) {
@@ -322,8 +328,8 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       return;
     }
 
-    $form_display = $this->loadOrCreateFormDisplay($type);
-    $view_display = $this->loadOrCreateViewDisplay($type);
+    $form_display = ($form_field_group_format !== 'none') ? $this->loadOrCreateFormDisplay($type) : NULL;
+    $view_display = ($view_field_group_format !== 'none') ? $this->loadOrCreateViewDisplay($type) : NULL;
 
     foreach ($group_definitions as $path => $definition) {
       $children = $this->resolveFieldGroupChildren($path, $selected_fields);
@@ -331,49 +337,24 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
         continue;
       }
 
-      $form_display->setThirdPartySetting('field_group', $definition['field_name'], [
-        'children' => $children,
-        'label' => $definition['label'],
-        'parent_name' => $this->resolveParentGroupName($path, $selected_fields),
-        'weight' => 0,
-        'format_type' => 'details',
-        'format_settings' => [
-          'label' => $definition['label'],
-          'classes' => '',
-          'id' => '',
-          'open' => TRUE,
-          'description' => $definition['description'],
-          'required_fields' => FALSE,
-          'show_empty_fields' => FALSE,
-          'label_as_html' => FALSE,
-        ],
-        'region' => 'content',
-      ]);
+      if ($form_display) {
+        $form_display->setThirdPartySetting('field_group', $definition['field_name'], $this->buildFieldGroupSettings($definition, $children, $this->resolveParentGroupName($path, $selected_fields), $form_field_group_format));
+      }
 
-      $view_display->setThirdPartySetting('field_group', $definition['field_name'], [
-        'children' => $children,
-        'label' => $definition['label'],
-        'parent_name' => $this->resolveParentGroupName($path, $selected_fields),
-        'weight' => 0,
-        'format_type' => 'details',
-        'format_settings' => [
-          'label' => $definition['label'],
-          'classes' => '',
-          'id' => '',
-          'open' => TRUE,
-          'description' => $definition['description'],
-          'required_fields' => FALSE,
-          'label_as_html' => FALSE,
-        ],
-        'region' => 'content',
-      ]);
+      if ($view_display) {
+        $view_display->setThirdPartySetting('field_group', $definition['field_name'], $this->buildFieldGroupSettings($definition, $children, $this->resolveParentGroupName($path, $selected_fields), $view_field_group_format));
+      }
     }
 
     $display_id = 'node.' . $type . '.default';
-    $form_display->save();
-    $view_display->save();
-    $this->entityTypeManager->getStorage('entity_form_display')->resetCache([$display_id]);
-    $this->entityTypeManager->getStorage('entity_view_display')->resetCache([$display_id]);
+    if ($form_display) {
+      $form_display->save();
+      $this->entityTypeManager->getStorage('entity_form_display')->resetCache([$display_id]);
+    }
+    if ($view_display) {
+      $view_display->save();
+      $this->entityTypeManager->getStorage('entity_view_display')->resetCache([$display_id]);
+    }
   }
 
   /**
@@ -383,6 +364,8 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     $form_display = $this->loadOrCreateFormDisplay($type);
     $default_view_display = $this->loadOrCreateViewDisplay($type);
     $teaser_view_display = $this->loadOrCreateViewDisplay($type, 'teaser');
+    $form_display_component = $this->getConfiguredFormDisplayComponent();
+    $view_display_component = $this->getConfiguredViewDisplayComponent();
 
     $weight = 0;
     foreach ($field_definitions as $definition) {
@@ -391,15 +374,16 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       }
 
       $field_name = $definition['field_name'];
-      if (!$form_display->getComponent($field_name)) {
+      if (($form_display_component !== 'hidden') && !$form_display->getComponent($field_name)) {
         $form_display->setComponent($field_name, [
-          'type' => $this->getFormDisplayWidget($definition),
+          'type' => $this->getConfiguredFormDisplayWidget($definition),
+          'settings' => $this->getConfiguredFormDisplayWidgetSettings($definition),
           'weight' => $weight,
           'region' => 'content',
         ]);
       }
 
-      if (!$default_view_display->getComponent($field_name)) {
+      if (($view_display_component !== 'hidden') && !$default_view_display->getComponent($field_name)) {
         $default_view_display->setComponent($field_name, [
           'type' => $this->getViewDisplayFormatter($definition),
           'label' => 'above',
@@ -499,6 +483,38 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       'custom' => 'custom_stacked',
       default => 'string_textfield',
     };
+  }
+
+  /**
+   * Resolves the configured form widget for a generated field.
+   */
+  protected function getConfiguredFormDisplayWidget(array $definition): string {
+    if ($this->getConfiguredFormDisplayComponent() === 'readonly') {
+      return 'readonly_field_widget';
+    }
+
+    return $this->getFormDisplayWidget($definition);
+  }
+
+  /**
+   * Resolves widget settings for the configured form display component.
+   */
+  protected function getConfiguredFormDisplayWidgetSettings(array $definition): array {
+    if ($this->getConfiguredFormDisplayComponent() !== 'readonly') {
+      return [];
+    }
+
+    $formatter_type = $this->getViewDisplayFormatter($definition);
+
+    return [
+      'label' => 'above',
+      'formatter_type' => $formatter_type,
+      'formatter_settings' => [
+        $formatter_type => [],
+      ],
+      'show_description' => FALSE,
+      'error_validation' => TRUE,
+    ];
   }
 
   /**
@@ -626,6 +642,45 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    */
   protected function getConfiguredFieldMappings(): array {
     return $this->configFactory->get('clinical_trials_gov.settings')->get('fields');
+  }
+
+  /**
+   * Returns the configured view display component behavior.
+   */
+  protected function getConfiguredViewDisplayComponent(): string {
+    $value = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('view_display_component');
+
+    return in_array($value, ['visible', 'visible_update', 'hidden']) ? $value : 'visible';
+  }
+
+  /**
+   * Returns the configured view field-group format.
+   */
+  protected function getConfiguredViewDisplayFieldGroup(): string {
+    $value = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('view_display_field_group');
+
+    return in_array($value, ['details', 'details_opened', 'fieldset', 'container', 'none']) ? $value : 'details_opened';
+  }
+
+  /**
+   * Returns the configured form display component behavior.
+   */
+  protected function getConfiguredFormDisplayComponent(): string {
+    $value = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('form_display_component');
+    if (($value === 'readonly') && !$this->moduleHandler->moduleExists('readonly_field_widget')) {
+      return 'visible';
+    }
+
+    return in_array($value, ['visible', 'hidden', 'readonly']) ? $value : 'visible';
+  }
+
+  /**
+   * Returns the configured form field-group format.
+   */
+  protected function getConfiguredFormDisplayFieldGroup(): string {
+    $value = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('form_display_field_group');
+
+    return in_array($value, ['details', 'details_opened', 'fieldset', 'container', 'none']) ? $value : 'details_opened';
   }
 
   /**
@@ -808,6 +863,64 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     return (string) $selected_fields[$parent]['field_name'];
+  }
+
+  /**
+   * Builds third-party field-group settings for a selected format.
+   */
+  protected function buildFieldGroupSettings(array $definition, array $children, string $parent_name, string $format): array {
+    $settings = [
+      'children' => $children,
+      'label' => $definition['label'],
+      'parent_name' => $parent_name,
+      'weight' => 0,
+      'format_type' => $this->getFieldGroupFormatType($format),
+      'format_settings' => [
+        'label' => $definition['label'],
+        'classes' => '',
+        'id' => '',
+        'show_empty_fields' => FALSE,
+        'label_as_html' => FALSE,
+      ],
+      'region' => 'content',
+    ];
+
+    if (in_array($format, ['details', 'details_opened'])) {
+      $settings['format_settings']['open'] = ($format === 'details_opened');
+      $settings['format_settings']['description'] = $definition['description'];
+      $settings['format_settings']['required_fields'] = FALSE;
+      return $settings;
+    }
+
+    if ($format === 'fieldset') {
+      $settings['format_settings']['description'] = $definition['description'];
+      $settings['format_settings']['required_fields'] = FALSE;
+      return $settings;
+    }
+
+    if ($format === 'container') {
+      $settings['format_settings']['element'] = 'div';
+      $settings['format_settings']['show_label'] = FALSE;
+      $settings['format_settings']['label_element'] = 'h3';
+      $settings['format_settings']['label_element_classes'] = '';
+      $settings['format_settings']['attributes'] = '';
+      $settings['format_settings']['effect'] = 'none';
+      $settings['format_settings']['speed'] = 'fast';
+      $settings['format_settings']['required_fields'] = FALSE;
+    }
+
+    return $settings;
+  }
+
+  /**
+   * Maps saved field-group options to field_group formatter plugin ids.
+   */
+  protected function getFieldGroupFormatType(string $format): string {
+    return match ($format) {
+      'fieldset' => 'fieldset',
+      'container' => 'html_element',
+      default => 'details',
+    };
   }
 
 }

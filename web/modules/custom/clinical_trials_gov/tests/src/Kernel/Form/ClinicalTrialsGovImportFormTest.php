@@ -7,7 +7,7 @@ namespace Drupal\Tests\clinical_trials_gov\Kernel\Form;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormState;
-use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovContentTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
@@ -16,25 +16,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovImportFormTest extends ClinicalTrialsGovTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'migrate_plus',
-    'migrate_tools',
-    'node',
-    'field',
-    'text',
-    'options',
-    'datetime',
-    'filter',
-    'user',
-    'system',
-    'custom_field',
-    'field_group',
-  ];
+class ClinicalTrialsGovImportFormTest extends ClinicalTrialsGovContentTestBase {
 
   /**
    * The migration manager under test.
@@ -59,11 +41,7 @@ class ClinicalTrialsGovImportFormTest extends ClinicalTrialsGovTestBase {
    * Tests the import form section layout and action links.
    */
   public function testBuildFormSections(): void {
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('user');
     $this->installConfig('clinical_trials_gov');
-    $this->installConfig(['field', 'filter', 'node', 'system']);
-    $this->installSchema('node', ['node_access']);
 
     $this->config('clinical_trials_gov.settings')
       ->set('query', 'query.cond=cancer&filter.overallStatus=RECRUITING')

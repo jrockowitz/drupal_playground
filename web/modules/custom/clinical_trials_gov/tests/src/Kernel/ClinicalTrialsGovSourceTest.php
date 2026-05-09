@@ -15,24 +15,7 @@ use PHPUnit\Framework\Attributes\Group;
  * @group clinical_trials_gov
  */
 #[Group('clinical_trials_gov')]
-class ClinicalTrialsGovSourceTest extends ClinicalTrialsGovTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'node',
-    'field',
-    'text',
-    'options',
-    'datetime',
-    'filter',
-    'user',
-    'system',
-    'migrate_plus',
-    'migrate_tools',
-    'custom_field',
-  ];
+class ClinicalTrialsGovSourceTest extends ClinicalTrialsGovContentTestBase {
 
   /**
    * The migration manager under test.

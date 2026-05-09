@@ -47,7 +47,7 @@ The wizard is designed to move in this order:
 3. `Configure` the destination content type and fields
 4. `Import` the studies through Drupal Migrate
 5. `Manage` the imported nodes
-6. `Settings` for optional advanced behavior such as readonly imported fields
+6. `Settings` for optional advanced display behavior before fields are created
 
 ### The query drives everything
 
@@ -182,7 +182,7 @@ Important behavior:
 - `Configure` requires discovered `paths`
 - some rows are structural only and exist to support field groups
 - some nested structs are promoted into `custom_field` fields instead of expanding into many top-level Drupal fields
-- if readonly mode is enabled through `Settings`, generated ClinicalTrials.gov fields become readonly on edit forms
+- display behavior is decided through `Settings` before generated fields and field groups are created
 
 ### 4. Import
 
@@ -219,18 +219,23 @@ Current advanced options include:
 
 - destination content type machine name
 - generated field prefix
-- optional readonly mode for imported fields
+- default view display component behavior
+- default view display field-group format
+- default form display component behavior
+- default form display field-group format
 
 The configured ClinicalTrials.gov destination bundle is treated as import-managed content. Even users with elevated Drupal permissions cannot manually create those nodes through the UI.
 
 The saved `field_prefix` value is used directly when generating Drupal field names. For example, `trial_version_holder` produces generated Drupal field names like `trial_version_holder_brief_title`.
 
-Readonly mode requires the contrib module `readonly_field_widget`. When enabled:
+`form_display_component: readonly` requires the contrib module `readonly_field_widget`. When selected before field creation:
 
-- mapped ClinicalTrials.gov fields are shown with a readonly widget on node edit forms
-- the built-in ClinicalTrials.gov link fields `trial_nct_url` and `trial_nct_api` are also shown with a readonly widget
+- mapped ClinicalTrials.gov fields are created with a readonly widget on node edit forms
+- the built-in ClinicalTrials.gov link fields `trial_nct_url` and `trial_nct_api` are also created with a readonly widget
 - the editable Drupal node title input is hidden
 - the generated `briefTitle` field remains visible as readonly display text
+
+`view_display_component: visible_update` is enforced through field access and only shows mapped ClinicalTrials.gov fields and system links to users who can update the imported trial node.
 
 ## Field Modeling Notes
 

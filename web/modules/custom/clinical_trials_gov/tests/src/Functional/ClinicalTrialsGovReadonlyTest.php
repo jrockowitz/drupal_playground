@@ -36,19 +36,19 @@ class ClinicalTrialsGovReadonlyTest extends BrowserTestBase {
   protected function setUp(): void {
     parent::setUp();
 
+    $this->config('clinical_trials_gov.settings')
+      ->set('type', 'trial')
+      ->set('form_display_component', 'readonly')
+      ->set('fields', [
+        'trial_brief_title' => 'protocolSection.identificationModule.briefTitle',
+        'trial_nct_id' => 'protocolSection.identificationModule.nctId',
+      ])
+      ->save();
     $this->container->get('clinical_trials_gov.entity_manager')->createContentType('trial', 'Trial', 'Clinical trial content type');
     $this->container->get('clinical_trials_gov.entity_manager')->createFields('trial', [
       'protocolSection.identificationModule.briefTitle',
       'protocolSection.identificationModule.nctId',
     ]);
-    $this->config('clinical_trials_gov.settings')
-      ->set('type', 'trial')
-      ->set('fields', [
-        'trial_brief_title' => 'protocolSection.identificationModule.briefTitle',
-        'trial_nct_id' => 'protocolSection.identificationModule.nctId',
-      ])
-      ->set('readonly', TRUE)
-      ->save();
 
     $this->drupalLogin($this->drupalCreateUser([
       'access administration pages',

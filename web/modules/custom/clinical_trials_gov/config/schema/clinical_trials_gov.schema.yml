@@ -1,51 +1,88 @@
 clinical_trials_gov.settings:
   type: config_object
-  label: 'ClinicalTrials.gov settings'
+  label: "ClinicalTrials.gov settings"
   constraints:
     FullyValidatable: ~
   mapping:
     query:
       type: string
-      label: 'Query string'
+      label: "Query string"
     query_paths:
       type: sequence
-      label: 'Query-discovered metadata paths'
+      label: "Query-discovered metadata paths"
       sequence:
         type: string
-        label: 'Query-discovered metadata path'
+        label: "Query-discovered metadata path"
         constraints:
           NotBlank: []
           ClinicalTrialsGovMetadataPath: []
     title_path:
       type: string
-      label: 'Title metadata path'
+      label: "Title metadata path"
       constraints:
         NotBlank: []
         ClinicalTrialsGovMetadataPath: []
     required_paths:
       type: sequence
-      label: 'Required metadata paths'
+      label: "Required metadata paths"
       constraints:
         Count:
           min: 1
       sequence:
         type: string
-        label: 'Required metadata path'
+        label: "Required metadata path"
         constraints:
           NotBlank: []
           ClinicalTrialsGovMetadataPath: []
     type:
       type: string
-      label: 'Content type machine name'
+      label: "Content type machine name"
     field_prefix:
       type: string
-      label: 'Field machine name prefix'
+      label: "Field machine name prefix"
+    view_display_component:
+      type: string
+      label: "Default view display component behavior"
+      constraints:
+        Choice:
+          choices:
+            - visible
+            - visible_update
+            - hidden
+    view_display_field_group:
+      type: string
+      label: "Default view display field-group format"
+      constraints:
+        Choice:
+          choices:
+            - details
+            - details_opened
+            - fieldset
+            - container
+            - none
+    form_display_component:
+      type: string
+      label: "Default form display component behavior"
+      constraints:
+        Choice:
+          choices:
+            - visible
+            - hidden
+            - readonly
+    form_display_field_group:
+      type: string
+      label: "Default form display field-group format"
+      constraints:
+        Choice:
+          choices:
+            - details
+            - details_opened
+            - fieldset
+            - container
+            - none
     fields:
       type: sequence
-      label: 'Selected field mapping'
+      label: "Selected field mapping"
       sequence:
         type: string
-        label: 'Metadata path'
-    readonly:
-      type: boolean
-      label: 'Read-only imported fields'
+        label: "Metadata path"
