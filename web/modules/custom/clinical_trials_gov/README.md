@@ -250,11 +250,10 @@ The saved `field_prefix` value is used directly when generating Drupal field nam
 `form_display_component: readonly` requires the contrib module `readonly_field_widget`. When selected before field creation:
 
 - mapped ClinicalTrials.gov fields are created with a readonly widget on node edit forms
-- the built-in ClinicalTrials.gov link fields `trial_nct_url` and `trial_nct_api` are also created with a readonly widget
 - the editable Drupal node title input is hidden
 - the generated `briefTitle` field remains visible as readonly display text
 
-`view_display_component: visible_update` is enforced through field access and only shows mapped ClinicalTrials.gov fields and system links to users who can update the imported trial node.
+`view_display_component: visible_update` is enforced through field access and only shows mapped ClinicalTrials.gov fields to users who can update the imported trial node.
 
 ## Field Modeling Notes
 

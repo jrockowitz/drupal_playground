@@ -104,24 +104,6 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
     $this->assertSame('protocolSection.identificationModule.nctId', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
     $this->assertSame('protocolSection.conditionsModule.conditions', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.conditionsModule.conditions')));
     $this->assertSame('protocolSection.identificationModule.nctIdAliases', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.identificationModule.nctIdAliases')));
-    $this->assertSame([
-      [
-        'plugin' => 'concat',
-        'source' => [
-          'constants/study_url_prefix',
-          'nctId',
-        ],
-      ],
-    ], $config->get('process.' . $this->entityManager->getStudyUrlFieldName() . '/uri'));
-    $this->assertSame([
-      [
-        'plugin' => 'concat',
-        'source' => [
-          'constants/study_api_url_prefix',
-          'nctId',
-        ],
-      ],
-    ], $config->get('process.' . $this->entityManager->getStudyApiFieldName() . '/uri'));
     $this->assertNull($config->get('process.group_location'));
     $this->assertSame([
       [
@@ -138,8 +120,6 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
     $this->assertSame(255, $config->get('source.constants.title_max_length'));
     $this->assertFalse($config->get('source.constants.title_wordsafe'));
     $this->assertTrue($config->get('source.constants.title_add_ellipsis'));
-    $this->assertSame('https://clinicaltrials.gov/study/', $config->get('source.constants.study_url_prefix'));
-    $this->assertSame('https://clinicaltrials.gov/api/v2/studies/', $config->get('source.constants.study_api_url_prefix'));
     $this->assertSame([
       'contacts',
       'geoPoint',

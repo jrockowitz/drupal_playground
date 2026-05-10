@@ -9,7 +9,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\link\LinkItemInterface;
 
 /**
  * Manages wizard-created content types and fields.
@@ -85,35 +84,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
         'label' => $definition['label'],
         'description' => $definition['description'],
         'required' => !empty($definition['required']),
-        'settings' => $definition['instance_settings'],
-      ])->save();
-    }
-
-    foreach ($this->getSystemLinkFieldDefinitions() as $field_name => $definition) {
-      $field_definitions[$field_name] = $definition;
-
-      if (!FieldStorageConfig::loadByName('node', $field_name)) {
-        FieldStorageConfig::create([
-          'field_name' => $field_name,
-          'entity_type' => 'node',
-          'type' => $definition['field_type'],
-          'settings' => $definition['storage_settings'],
-          'cardinality' => $definition['cardinality'],
-          'translatable' => TRUE,
-        ])->save();
-      }
-
-      if (FieldConfig::loadByName('node', $type, $field_name)) {
-        continue;
-      }
-
-      FieldConfig::create([
-        'field_name' => $field_name,
-        'entity_type' => 'node',
-        'bundle' => $type,
-        'label' => $definition['label'],
-        'description' => $definition['description'],
-        'required' => FALSE,
         'settings' => $definition['instance_settings'],
       ])->save();
     }
@@ -275,20 +245,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * {@inheritdoc}
    */
-  public function getStudyUrlFieldName(): string {
-    return $this->buildSystemFieldName('nct_url');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getStudyApiFieldName(): string {
-    return $this->buildSystemFieldName('nct_api');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function resolveFieldDefinition(string $path): array {
     return $this->fieldManager->resolveFieldDefinition($path);
   }
@@ -298,44 +254,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    */
   public function resolveStructuredFieldDefinition(string $path): ?array {
     return $this->fieldManager->resolveStructuredFieldDefinition($path);
-  }
-
-  /**
-   * Returns the built-in generated Trial link field definitions.
-   */
-  protected function getSystemLinkFieldDefinitions(): array {
-    $definitions = [
-      $this->getStudyUrlFieldName() => [
-        'field_name' => $this->getStudyUrlFieldName(),
-        'label' => 'ClinicalTrials.gov URL',
-        'description' => '',
-        'field_type' => 'link',
-        'storage_settings' => [],
-        'instance_settings' => [
-          'title' => DRUPAL_DISABLED,
-          'link_type' => LinkItemInterface::LINK_EXTERNAL,
-        ],
-        'cardinality' => 1,
-        'selectable' => TRUE,
-        'group_only' => FALSE,
-      ],
-      $this->getStudyApiFieldName() => [
-        'field_name' => $this->getStudyApiFieldName(),
-        'label' => 'ClinicalTrials.gov API',
-        'description' => '',
-        'field_type' => 'link',
-        'storage_settings' => [],
-        'instance_settings' => [
-          'title' => DRUPAL_DISABLED,
-          'link_type' => LinkItemInterface::LINK_EXTERNAL,
-        ],
-        'cardinality' => 1,
-        'selectable' => TRUE,
-        'group_only' => FALSE,
-      ],
-    ];
-
-    return $definitions;
   }
 
   /**
@@ -478,16 +396,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     return TRUE;
-  }
-
-  /**
-   * Builds a generated system field name using the configured prefix.
-   */
-  protected function buildSystemFieldName(string $suffix): string {
-    $field_name = $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.nctId')['field_name'];
-    $prefix = preg_replace('/nct_id$/', '', $field_name) ?? $field_name;
-
-    return $prefix . $suffix;
   }
 
 }

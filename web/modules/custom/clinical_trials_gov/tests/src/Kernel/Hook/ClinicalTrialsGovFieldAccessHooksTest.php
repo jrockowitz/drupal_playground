@@ -91,12 +91,6 @@ class ClinicalTrialsGovFieldAccessHooksTest extends ClinicalTrialsGovContentTest
       'trial_nct_id' => [
         'value' => 'NCT05088187',
       ],
-      'trial_nct_url' => [
-        'uri' => 'https://clinicaltrials.gov/study/NCT05088187',
-      ],
-      'trial_nct_api' => [
-        'uri' => 'https://clinicaltrials.gov/api/v2/studies/NCT05088187',
-      ],
     ]);
     $node->save();
     $node = Node::load($node->id());
@@ -104,14 +98,10 @@ class ClinicalTrialsGovFieldAccessHooksTest extends ClinicalTrialsGovContentTest
     // Check that mapped fields stay viewable for an editor who can update.
     $this->assertTrue($node->get('trial_brief_title')->access('view', $editable_user));
     $this->assertTrue($node->get('trial_nct_id')->access('view', $editable_user));
-    $this->assertTrue($node->get('trial_nct_url')->access('view', $editable_user));
-    $this->assertTrue($node->get('trial_nct_api')->access('view', $editable_user));
 
     // Check that mapped fields are hidden from a user who cannot update.
     $this->assertFalse($node->get('trial_brief_title')->access('view', $view_only_user));
     $this->assertFalse($node->get('trial_nct_id')->access('view', $view_only_user));
-    $this->assertFalse($node->get('trial_nct_url')->access('view', $view_only_user));
-    $this->assertFalse($node->get('trial_nct_api')->access('view', $view_only_user));
   }
 
 }

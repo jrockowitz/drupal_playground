@@ -89,18 +89,9 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
     $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))->getSetting('columns')['contacts']['type']);
     $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))->getSetting('columns')['geoPoint']['type']);
     $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.referencesModule.references'))->getSetting('columns')['citation']['type']);
-    $this->assertSame('link', FieldStorageConfig::loadByName('node', 'trial_nct_url')->getType());
-    $this->assertSame('link', FieldStorageConfig::loadByName('node', 'trial_nct_api')->getType());
-
     // Check that the bundle field config exists for the created type.
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle')));
-    $this->assertSame('ClinicalTrials.gov URL', FieldConfig::loadByName('node', 'trial', 'trial_nct_url')->label());
-    $this->assertSame('ClinicalTrials.gov API', FieldConfig::loadByName('node', 'trial', 'trial_nct_api')->label());
-    $this->assertSame(16, FieldConfig::loadByName('node', 'trial', 'trial_nct_url')->getSetting('link_type'));
-    $this->assertSame(0, FieldConfig::loadByName('node', 'trial', 'trial_nct_url')->getSetting('title'));
-    $this->assertSame(16, FieldConfig::loadByName('node', 'trial', 'trial_nct_api')->getSetting('link_type'));
-    $this->assertSame(0, FieldConfig::loadByName('node', 'trial', 'trial_nct_api')->getSetting('title'));
 
     $long_name = $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations.contacts.phoneExt');
     $alias_name = $this->entityManager->generateFieldName('protocolSection.identificationModule.nctIdAliases');

@@ -24,16 +24,6 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
   protected const TITLE_MAX_LENGTH = 255;
 
   /**
-   * ClinicalTrials.gov study URL prefix.
-   */
-  protected const STUDY_URL_PREFIX = 'https://clinicaltrials.gov/study/';
-
-  /**
-   * ClinicalTrials.gov study API URL prefix.
-   */
-  protected const STUDY_API_URL_PREFIX = 'https://clinicaltrials.gov/api/v2/studies/';
-
-  /**
    * Constructs a new ClinicalTrialsGovMigrationManager instance.
    */
   public function __construct(
@@ -41,7 +31,6 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
     protected MigrationPluginManagerInterface $migrationPluginManager,
     protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
-    protected ClinicalTrialsGovEntityManagerInterface $entityManager,
     protected LoggerInterface $logger,
   ) {}
 
@@ -68,8 +57,6 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
       'title_max_length' => self::TITLE_MAX_LENGTH,
       'title_wordsafe' => FALSE,
       'title_add_ellipsis' => TRUE,
-      'study_url_prefix' => self::STUDY_URL_PREFIX,
-      'study_api_url_prefix' => self::STUDY_API_URL_PREFIX,
     ];
     foreach ($fields as $path) {
       $definition = $this->fieldManager->getFieldDefinition($path);
@@ -119,25 +106,6 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
 
       $process[$definition['field_name']] = $path;
     }
-
-    $process[$this->entityManager->getStudyUrlFieldName() . '/uri'] = [
-      [
-        'plugin' => 'concat',
-        'source' => [
-          'constants/study_url_prefix',
-          'nctId',
-        ],
-      ],
-    ];
-    $process[$this->entityManager->getStudyApiFieldName() . '/uri'] = [
-      [
-        'plugin' => 'concat',
-        'source' => [
-          'constants/study_api_url_prefix',
-          'nctId',
-        ],
-      ],
-    ];
 
     $migration_config->setData([
       'id' => 'clinical_trials_gov',

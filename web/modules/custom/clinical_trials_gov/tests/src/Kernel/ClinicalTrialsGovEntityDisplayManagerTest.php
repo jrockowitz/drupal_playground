@@ -96,16 +96,10 @@ class ClinicalTrialsGovEntityDisplayManagerTest extends ClinicalTrialsGovContent
     $this->assertSame('readonly_field_widget', $form_display->getComponent('trial_brief_title')['type']);
     $this->assertSame('readonly_field_widget', $form_display->getComponent('trial_nct_id')['type']);
     $this->assertSame('readonly_field_widget', $form_display->getComponent('trial_resp_party')['type']);
-    $this->assertSame('readonly_field_widget', $form_display->getComponent('trial_nct_url')['type']);
-    $this->assertSame('readonly_field_widget', $form_display->getComponent('trial_nct_api')['type']);
 
     $this->assertNotNull($view_display);
     $this->assertSame('string', $view_display->getComponent('trial_nct_id')['type']);
     $this->assertSame('custom_formatter', $view_display->getComponent('trial_resp_party')['type']);
-    $this->assertSame('link', $view_display->getComponent('trial_nct_url')['type']);
-    $this->assertSame('link', $view_display->getComponent('trial_nct_api')['type']);
-    $this->assertGreaterThan($view_display->getComponent('trial_over_status')['weight'] ?? -1, $view_display->getComponent('trial_nct_url')['weight'] ?? -1);
-    $this->assertGreaterThan($view_display->getComponent('trial_nct_url')['weight'] ?? -1, $view_display->getComponent('trial_nct_api')['weight'] ?? -1);
 
     // Check that the promoted custom field is added to the displays.
     $location_field_name = $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations');
@@ -116,8 +110,6 @@ class ClinicalTrialsGovEntityDisplayManagerTest extends ClinicalTrialsGovContent
     $field_groups = $form_display->getThirdPartySettings('field_group');
     $this->assertArrayHasKey('group_clinical_trials_gov', $field_groups);
     $this->assertSame('fieldset', $field_groups['group_clinical_trials_gov']['format_type']);
-    $this->assertContains('trial_nct_url', $field_groups['group_clinical_trials_gov']['children']);
-    $this->assertContains('trial_nct_api', $field_groups['group_clinical_trials_gov']['children']);
     $this->assertContains('group_id_mod', $field_groups['group_clinical_trials_gov']['children']);
     $this->assertNotContains('title', $field_groups['group_clinical_trials_gov']['children']);
     $this->assertArrayHasKey('group_id_mod', $field_groups);
@@ -134,8 +126,6 @@ class ClinicalTrialsGovEntityDisplayManagerTest extends ClinicalTrialsGovContent
     $this->assertArrayHasKey('group_clinical_trials_gov', $view_field_groups);
     $this->assertSame('details', $view_field_groups['group_clinical_trials_gov']['format_type']);
     $this->assertTrue($view_field_groups['group_clinical_trials_gov']['format_settings']['open']);
-    $this->assertContains('trial_nct_url', $view_field_groups['group_clinical_trials_gov']['children']);
-    $this->assertContains('trial_nct_api', $view_field_groups['group_clinical_trials_gov']['children']);
     $this->assertContains('group_id_mod', $view_field_groups['group_clinical_trials_gov']['children']);
     $this->assertArrayHasKey('group_id_mod', $view_field_groups);
     $this->assertSame('group_clinical_trials_gov', $view_field_groups['group_id_mod']['parent_name']);
@@ -239,7 +229,6 @@ class ClinicalTrialsGovEntityDisplayManagerTest extends ClinicalTrialsGovContent
     $this->assertSame('string', $teaser_display->getComponent($minimum_age_field_name)['type']);
     $this->assertSame('string', $teaser_display->getComponent($maximum_age_field_name)['type']);
     $this->assertSame('list_default', $teaser_display->getComponent($standard_ages_field_name)['type']);
-    $this->assertNull($teaser_display->getComponent('trial_nct_url'));
     $this->assertNull($teaser_display->getComponent('trial_resp_party'));
     $this->assertSame([], $teaser_display->getThirdPartySettings('field_group'));
   }
@@ -264,23 +253,6 @@ class ClinicalTrialsGovEntityDisplayManagerTest extends ClinicalTrialsGovContent
     foreach ($selected_fields as $path) {
       $field_definitions[$path] = $this->entityManager->resolveFieldDefinition($path);
     }
-
-    $field_definitions[$this->entityManager->getStudyUrlFieldName()] = [
-      'field_name' => $this->entityManager->getStudyUrlFieldName(),
-      'label' => 'ClinicalTrials.gov URL',
-      'description' => '',
-      'field_type' => 'link',
-      'selectable' => TRUE,
-      'group_only' => FALSE,
-    ];
-    $field_definitions[$this->entityManager->getStudyApiFieldName()] = [
-      'field_name' => $this->entityManager->getStudyApiFieldName(),
-      'label' => 'ClinicalTrials.gov API',
-      'description' => '',
-      'field_type' => 'link',
-      'selectable' => TRUE,
-      'group_only' => FALSE,
-    ];
 
     return $field_definitions;
   }
