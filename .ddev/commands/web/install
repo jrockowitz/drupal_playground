@@ -54,6 +54,8 @@ drush recipe ../recipes/drupal_playground_base
 drush recipe ../recipes/drupal_playground_admin
 drush recipe ../recipes/drupal_playground_devel
 drush recipe ../recipes/drupal_playground_ai
+drush recipe ../recipes/drupal_playground_ai_devel
+
 drush cr;
 
 # Uninstall the toolbar module, which can't be done via a recipe.
@@ -120,16 +122,13 @@ for PRESET in "$@"; do
 
   elif [ "$PRESET" = "trials-elastic" ]; then
 
-    reset_elasticsearch_index "trials_elasticsearch"
-    echo "Applying ClinicalTrials.gov setup recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_setup
-    echo "Importing ClinicalTrials.gov studies..."
-    drush migrate:import clinical_trials_gov --limit=10
-
     echo "Applying Clinical Trials Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_elastic
     echo "Applying Clinical Trials Elasticsearch autocomplete recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_elastic_autocomplete
+
+    echo "Importing ClinicalTrials.gov studies..."
+    drush migrate:import clinical_trials_gov --limit=10
     echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."
     drush search-api:clear trials_elasticsearch -y
     drush search-api:index trials_elasticsearch -y;
@@ -137,11 +136,6 @@ for PRESET in "$@"; do
 
   elif [ "$PRESET" = "trials-milvus" ]; then
 
-    echo "Applying AI recipe..."
-    drush recipe ../recipes/drupal_playground_ai
-    drush recipe ../recipes/drupal_playground_ai_devel
-    echo "Applying ClinicalTrials.gov setup recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_setup
     echo "Applying Clinical Trials Milvus recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_milvus
     echo "Indexing ClinicalTrials.gov studies in Milvus..."
@@ -153,6 +147,9 @@ for PRESET in "$@"; do
 
     echo "Applying Clinical Trials chat recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_milvus_chat
+    echo "Indexing ClinicalTrials.gov studies in Milvus..."
+    drush search-api:clear trials_milvus -y
+    drush search-api:index trials_milvus -y;
     uli_path="/trials"
 
   fi
