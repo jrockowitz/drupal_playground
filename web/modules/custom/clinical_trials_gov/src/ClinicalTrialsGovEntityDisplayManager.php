@@ -9,7 +9,6 @@ use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\field\Entity\FieldConfig;
 
 /**
  * Manages wizard-created entity displays.
@@ -75,7 +74,7 @@ class ClinicalTrialsGovEntityDisplayManager implements ClinicalTrialsGovEntityDi
       $weight++;
     }
 
-    $this->createTeaserViewDisplayComponents($type, $field_definitions, $teaser_view_display);
+    $this->resetTeaserViewDisplayComponents($field_definitions, $teaser_view_display);
 
     $default_display_id = 'node.' . $type . '.default';
     $teaser_display_id = 'node.' . $type . '.teaser';
@@ -172,33 +171,15 @@ class ClinicalTrialsGovEntityDisplayManager implements ClinicalTrialsGovEntityDi
   }
 
   /**
-   * Creates the dedicated teaser view display components for generated fields.
+   * Removes generated components from the teaser display.
    */
-  protected function createTeaserViewDisplayComponents(string $type, array $field_definitions, EntityViewDisplayInterface $teaser_view_display): void {
-    $teaser_field_definitions = $this->getTeaserFieldDefinitions($type);
-    $teaser_field_names = array_keys($teaser_field_definitions);
-
-    $weight = 0;
-    foreach ($teaser_field_definitions as $field_name => $definition) {
-      $teaser_view_display->setComponent($field_name, [
-        'type' => $this->getTeaserViewDisplayFormatter($definition),
-        'label' => 'above',
-        'settings' => $this->getTeaserViewDisplayFormatterSettings($definition),
-        'weight' => $weight,
-        'region' => 'content',
-      ]);
-      $weight++;
-    }
-
+  protected function resetTeaserViewDisplayComponents(array $field_definitions, EntityViewDisplayInterface $teaser_view_display): void {
     foreach ($field_definitions as $definition) {
       if (empty($definition['selectable']) || !empty($definition['group_only']) || empty($definition['field_name'])) {
         continue;
       }
 
-      $field_name = $definition['field_name'];
-      if (!in_array($field_name, $teaser_field_names)) {
-        $teaser_view_display->removeComponent($field_name);
-      }
+      $teaser_view_display->removeComponent($definition['field_name']);
     }
 
     foreach (array_keys($teaser_view_display->getThirdPartySettings('field_group')) as $field_group_name) {
@@ -268,66 +249,6 @@ class ClinicalTrialsGovEntityDisplayManager implements ClinicalTrialsGovEntityDi
       'custom' => 'custom_formatter',
       default => 'string',
     };
-  }
-
-  /**
-   * Returns the metadata paths that should appear in the teaser display.
-   */
-  protected function getTeaserFieldPaths(): array {
-    return [
-      'protocolSection.descriptionModule.briefSummary',
-      'protocolSection.conditionsModule.conditions',
-      'protocolSection.eligibilityModule.minimumAge',
-      'protocolSection.eligibilityModule.maximumAge',
-      'protocolSection.eligibilityModule.stdAges',
-      'protocolSection.conditionsModule.keywords',
-    ];
-  }
-
-  /**
-   * Returns the generated field definitions that should appear in teaser mode.
-   */
-  protected function getTeaserFieldDefinitions(string $type): array {
-    $teaser_field_definitions = [];
-
-    foreach ($this->getTeaserFieldPaths() as $path) {
-      $definition = $this->fieldManager->resolveFieldDefinition($path);
-      $field_name = (string) ($definition['field_name'] ?? '');
-
-      if (!$field_name || !FieldConfig::loadByName('node', $type, $field_name)) {
-        continue;
-      }
-
-      $teaser_field_definitions[$field_name] = $definition;
-    }
-
-    return $teaser_field_definitions;
-  }
-
-  /**
-   * Resolves the teaser formatter for a generated field.
-   */
-  protected function getTeaserViewDisplayFormatter(array $definition): string {
-    $brief_summary_field_name = $this->fieldManager->resolveFieldDefinition('protocolSection.descriptionModule.briefSummary')['field_name'];
-    if (($definition['field_name'] ?? '') === $brief_summary_field_name) {
-      return 'text_summary_or_trimmed';
-    }
-
-    return $this->getViewDisplayFormatter($definition);
-  }
-
-  /**
-   * Resolves the teaser formatter settings for a generated field.
-   */
-  protected function getTeaserViewDisplayFormatterSettings(array $definition): array {
-    $brief_summary_field_name = $this->fieldManager->resolveFieldDefinition('protocolSection.descriptionModule.briefSummary')['field_name'];
-    if (($definition['field_name'] ?? '') === $brief_summary_field_name) {
-      return [
-        'trim_length' => 300,
-      ];
-    }
-
-    return [];
   }
 
   /**
