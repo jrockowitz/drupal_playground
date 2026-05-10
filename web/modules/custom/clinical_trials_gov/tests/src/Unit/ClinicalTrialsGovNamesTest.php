@@ -67,6 +67,8 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
 
     // Check that non-overridden names are normalized to snake case.
     $this->assertSame('trial_version_holder_resp_party', $this->names->getFieldName('ResponsibleParty'));
+    $this->assertSame('trial_version_holder_cond_mod', $this->names->getFieldName('ConditionsModule'));
+    $this->assertSame('trial_version_holder_elig_mod', $this->names->getFieldName('EligibilityModule'));
   }
 
   /**
@@ -77,6 +79,8 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
   public function testGetGroupName(): void {
     // Check that group names are prefixed and normalized.
     $this->assertSame('group_location', $this->names->getGroupName('Location'));
+    $this->assertSame('group_cond_mod', $this->names->getGroupName('ConditionsModule'));
+    $this->assertSame('group_elig_mod', $this->names->getGroupName('EligibilityModule'));
   }
 
   /**
@@ -135,6 +139,8 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
   public function testNormalizePieceAppliesAbbreviations(): void {
     // Check that seeded abbreviations shorten long normalized tokens.
     $this->assertSame('res_first_submit_qc_date', $this->names->normalizePiece('ResultsFirstSubmitQCDate'));
+    $this->assertSame('cond_mod', $this->names->normalizePiece('ConditionsModule'));
+    $this->assertSame('elig_mod', $this->names->normalizePiece('EligibilityModule'));
   }
 
   /**
