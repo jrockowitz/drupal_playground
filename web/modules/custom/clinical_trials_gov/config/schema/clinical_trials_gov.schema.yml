@@ -108,3 +108,24 @@ clinical_trials_gov.settings:
       sequence:
         type: string
         label: "Metadata path"
+
+plugin.plugin_configuration.search_api_processor.clinical_trials_gov_flattened_custom_field_values:
+  type: search_api.default_processor_configuration
+  label: "ClinicalTrials.gov flattened custom field values processor configuration"
+  mapping:
+    mappings:
+      type: sequence
+      label: "Flattened custom field mappings"
+      sequence:
+        type: mapping
+        label: "Flattened custom field mapping"
+        mapping:
+          property_path:
+            type: string
+            label: "Derived Search API property path"
+          field_name:
+            type: string
+            label: "Source custom field machine name"
+          column_name:
+            type: string
+            label: "Source custom field property name"

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Plugin\search_api\processor;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovNamesInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldConfigInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\search_api\Attribute\SearchApiProcessor;
 use Drupal\search_api\Datasource\DatasourceInterface;
@@ -15,12 +16,12 @@ use Drupal\search_api\Processor\ProcessorProperty;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Adds flattened multi-value Search API properties for custom-field arrays.
+ * Adds flattened multi-value Search API properties for custom-field values.
  */
 #[SearchApiProcessor(
   id: 'clinical_trials_gov_flattened_custom_field_values',
   label: new TranslatableMarkup('ClinicalTrials.gov flattened custom field values'),
-  description: new TranslatableMarkup('Exposes derived multi-value string properties for serialized ClinicalTrials.gov custom-field arrays.'),
+  description: new TranslatableMarkup('Exposes derived multi-value string properties for serialized custom-field values.'),
   stages: [
     'add_properties' => 0,
   ],
@@ -29,49 +30,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ClinicalTrialsGovFlattenedCustomFieldValues extends ProcessorPluginBase {
 
   /**
-   * The derived Search API property for conditions.
+   * The entity type manager.
    */
-  public const CONDITIONS_PROPERTY_PATH = 'trial_cond';
-
-  /**
-   * The derived Search API property for keywords.
-   */
-  public const KEYWORDS_PROPERTY_PATH = 'trial_keyword';
-
-  /**
-   * The derived Search API property for age groups.
-   */
-  public const STANDARD_AGE_PROPERTY_PATH = 'trial_std_age';
-
-  /**
-   * The derived Search API property for sex.
-   */
-  public const SEX_PROPERTY_PATH = 'trial_sex';
-
-  /**
-   * The ConditionsModule custom-field property key.
-   */
-  protected const CONDITIONS_PROPERTY_NAME = 'cond';
-
-  /**
-   * The Keywords custom-field property key.
-   */
-  protected const KEYWORD_PROPERTY_NAME = 'keyword';
-
-  /**
-   * The standard age custom-field property key.
-   */
-  protected const STANDARD_AGE_PROPERTY_NAME = 'std_age';
-
-  /**
-   * The sex custom-field property key.
-   */
-  protected const SEX_PROPERTY_NAME = 'sex';
-
-  /**
-   * The naming helper.
-   */
-  protected ?ClinicalTrialsGovNamesInterface $names = NULL;
+  protected ?EntityTypeManagerInterface $entityTypeManager = NULL;
 
   /**
    * Creates the processor plugin from the service container.
@@ -92,36 +53,45 @@ class ClinicalTrialsGovFlattenedCustomFieldValues extends ProcessorPluginBase {
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     /** @var static $processor */
     $processor = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    $processor->setNames($container->get(ClinicalTrialsGovNamesInterface::class));
+    $processor->setEntityTypeManager($container->get('entity_type.manager'));
     return $processor;
   }
 
   /**
-   * Sets the naming helper.
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration(): array {
+    return [
+      'mappings' => [],
+    ] + parent::defaultConfiguration();
+  }
+
+  /**
+   * Sets the entity type manager.
    *
-   * @param \Drupal\clinical_trials_gov\ClinicalTrialsGovNamesInterface $names
-   *   The naming helper.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    *
    * @return $this
    *   The current processor.
    */
-  public function setNames(ClinicalTrialsGovNamesInterface $names): static {
-    $this->names = $names;
+  public function setEntityTypeManager(EntityTypeManagerInterface $entity_type_manager): static {
+    $this->entityTypeManager = $entity_type_manager;
     return $this;
   }
 
   /**
-   * Gets the naming helper.
+   * Gets the entity type manager.
    *
-   * @return \Drupal\clinical_trials_gov\ClinicalTrialsGovNamesInterface
-   *   The naming helper.
+   * @return \Drupal\Core\Entity\EntityTypeManagerInterface
+   *   The entity type manager.
    */
-  protected function getNames(): ClinicalTrialsGovNamesInterface {
-    if ($this->names instanceof ClinicalTrialsGovNamesInterface) {
-      return $this->names;
+  protected function getEntityTypeManager(): EntityTypeManagerInterface {
+    if ($this->entityTypeManager instanceof EntityTypeManagerInterface) {
+      return $this->entityTypeManager;
     }
 
-    throw new \LogicException('The ClinicalTrials.gov naming helper has not been set.');
+    throw new \LogicException('The entity type manager has not been set.');
   }
 
   /**
@@ -135,36 +105,19 @@ class ClinicalTrialsGovFlattenedCustomFieldValues extends ProcessorPluginBase {
       return [];
     }
 
-    return [
-      self::CONDITIONS_PROPERTY_PATH => new ProcessorProperty([
-        'label' => $this->t('ClinicalTrials.gov conditions'),
-        'description' => $this->t('Flattened condition values from the promoted ConditionsModule custom field.'),
+    $definitions = [];
+    foreach ($this->getMappings() as $mapping) {
+      $metadata = $this->getMappingMetadata($datasource, $mapping);
+      $definitions[$mapping['property_path']] = new ProcessorProperty([
+        'label' => $metadata['label'],
+        'description' => $metadata['description'],
         'type' => 'string',
         'processor_id' => $this->getPluginId(),
         'is_list' => TRUE,
-      ]),
-      self::KEYWORDS_PROPERTY_PATH => new ProcessorProperty([
-        'label' => $this->t('ClinicalTrials.gov keywords'),
-        'description' => $this->t('Flattened keyword values from the promoted ConditionsModule custom field.'),
-        'type' => 'string',
-        'processor_id' => $this->getPluginId(),
-        'is_list' => TRUE,
-      ]),
-      self::STANDARD_AGE_PROPERTY_PATH => new ProcessorProperty([
-        'label' => $this->t('ClinicalTrials.gov age groups'),
-        'description' => $this->t('Flattened standard age values from the promoted EligibilityModule custom field.'),
-        'type' => 'string',
-        'processor_id' => $this->getPluginId(),
-        'is_list' => TRUE,
-      ]),
-      self::SEX_PROPERTY_PATH => new ProcessorProperty([
-        'label' => $this->t('ClinicalTrials.gov sex values'),
-        'description' => $this->t('Flattened sex values from the promoted EligibilityModule custom field.'),
-        'type' => 'string',
-        'processor_id' => $this->getPluginId(),
-        'is_list' => TRUE,
-      ]),
-    ];
+      ]);
+    }
+
+    return $definitions;
   }
 
   /**
@@ -176,29 +129,155 @@ class ClinicalTrialsGovFlattenedCustomFieldValues extends ProcessorPluginBase {
       return;
     }
 
-    $conditions_field_name = $this->getNames()->getFieldName('ConditionsModule');
-    $eligibility_field_name = $this->getNames()->getFieldName('EligibilityModule');
+    foreach ($this->getMappings() as $mapping) {
+      $this->addValuesToProperty(
+        $item,
+        $mapping['property_path'],
+        $this->extractFieldValues($entity, $mapping['field_name'], $mapping['column_name']),
+      );
+    }
+  }
 
-    $this->addValuesToProperty(
-      $item,
-      self::CONDITIONS_PROPERTY_PATH,
-      $this->extractFieldValues($entity, $conditions_field_name, self::CONDITIONS_PROPERTY_NAME),
-    );
-    $this->addValuesToProperty(
-      $item,
-      self::KEYWORDS_PROPERTY_PATH,
-      $this->extractFieldValues($entity, $conditions_field_name, self::KEYWORD_PROPERTY_NAME),
-    );
-    $this->addValuesToProperty(
-      $item,
-      self::STANDARD_AGE_PROPERTY_PATH,
-      $this->extractFieldValues($entity, $eligibility_field_name, self::STANDARD_AGE_PROPERTY_NAME),
-    );
-    $this->addValuesToProperty(
-      $item,
-      self::SEX_PROPERTY_PATH,
-      $this->extractFieldValues($entity, $eligibility_field_name, self::SEX_PROPERTY_NAME),
-    );
+  /**
+   * Gets normalized processor mappings.
+   *
+   * @return array
+   *   The normalized mappings.
+   */
+  protected function getMappings(): array {
+    $mappings = $this->configuration['mappings'] ?? [];
+    if (!is_array($mappings)) {
+      return [];
+    }
+
+    $normalized_mappings = [];
+    $seen_property_paths = [];
+    foreach ($mappings as $mapping) {
+      if (!is_array($mapping)) {
+        continue;
+      }
+
+      $property_path = trim((string) ($mapping['property_path'] ?? ''));
+      $field_name = trim((string) ($mapping['field_name'] ?? ''));
+      $column_name = trim((string) ($mapping['column_name'] ?? ''));
+      if (
+        ($property_path === '')
+        || ($field_name === '')
+        || ($column_name === '')
+        || isset($seen_property_paths[$property_path])
+      ) {
+        continue;
+      }
+
+      $seen_property_paths[$property_path] = TRUE;
+      $normalized_mappings[] = [
+        'property_path' => $property_path,
+        'field_name' => $field_name,
+        'column_name' => $column_name,
+      ];
+    }
+
+    return $normalized_mappings;
+  }
+
+  /**
+   * Gets Search API metadata for one mapping.
+   *
+   * @param \Drupal\search_api\Datasource\DatasourceInterface $datasource
+   *   The datasource.
+   * @param array $mapping
+   *   The mapping configuration.
+   *
+   * @return array
+   *   The property metadata.
+   */
+  protected function getMappingMetadata(DatasourceInterface $datasource, array $mapping): array {
+    $field_config = $this->loadFieldConfig($datasource, $mapping['field_name']);
+    if (!$field_config instanceof FieldConfigInterface) {
+      return [
+        'label' => $this->buildFallbackLabel($mapping['column_name']),
+        'description' => '',
+      ];
+    }
+
+    $field_settings = $field_config->getSetting('field_settings');
+    if (
+      !is_array($field_settings)
+      || !isset($field_settings[$mapping['column_name']])
+      || !is_array($field_settings[$mapping['column_name']])
+    ) {
+      return [
+        'label' => $this->buildFallbackLabel($mapping['column_name']),
+        'description' => '',
+      ];
+    }
+
+    $column_settings = $field_settings[$mapping['column_name']];
+    $field_label = trim((string) $field_config->label());
+    $label = trim((string) ($column_settings['label'] ?? ''));
+    $description = trim((string) ($column_settings['description'] ?? ''));
+
+    return [
+      'label' => $this->buildPrefixedLabel($field_label, $label, $mapping['column_name']),
+      'description' => $description,
+    ];
+  }
+
+  /**
+   * Loads a custom field config for the configured entity field name.
+   *
+   * @param \Drupal\search_api\Datasource\DatasourceInterface $datasource
+   *   The datasource.
+   * @param string $field_name
+   *   The field machine name.
+   *
+   * @return \Drupal\Core\Field\FieldConfigInterface|null
+   *   The field config, if available.
+   */
+  protected function loadFieldConfig(DatasourceInterface $datasource, string $field_name): ?FieldConfigInterface {
+    $field_configs = $this->getEntityTypeManager()
+      ->getStorage('field_config')
+      ->loadByProperties([
+        'entity_type' => $datasource->getEntityTypeId(),
+        'field_name' => $field_name,
+      ]);
+
+    return reset($field_configs) ?: NULL;
+  }
+
+  /**
+   * Builds a fallback label when field settings are unavailable.
+   *
+   * @param string $column_name
+   *   The custom-field column name.
+   *
+   * @return string
+   *   The fallback label.
+   */
+  protected function buildFallbackLabel(string $column_name): string {
+    return ucwords(str_replace('_', ' ', $column_name));
+  }
+
+  /**
+   * Builds a prefixed label for the derived Search API property.
+   *
+   * @param string $field_label
+   *   The source custom field label.
+   * @param string $column_label
+   *   The source custom-field subproperty label.
+   * @param string $column_name
+   *   The source custom-field subproperty machine name.
+   *
+   * @return string
+   *   The prefixed label.
+   */
+  protected function buildPrefixedLabel(string $field_label, string $column_label, string $column_name): string {
+    $column_label = ($column_label !== '') ? $column_label : $this->buildFallbackLabel($column_name);
+    if ($field_label === '') {
+      return $column_label;
+    }
+
+    return $field_label . ': ' . $column_label;
   }
 
   /**

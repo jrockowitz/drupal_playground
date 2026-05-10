@@ -107,6 +107,23 @@ processor_settings:
     weights:
       add_properties: 20
   clinical_trials_gov_flattened_custom_field_values:
+    mappings:
+      -
+        property_path: trial_cond
+        field_name: trial_cond_mod
+        column_name: cond
+      -
+        property_path: trial_keyword
+        field_name: trial_cond_mod
+        column_name: keyword
+      -
+        property_path: trial_std_age
+        field_name: trial_elig_mod
+        column_name: std_age
+      -
+        property_path: trial_sex
+        field_name: trial_elig_mod
+        column_name: sex
     weights:
       add_properties: 0
   content_access:

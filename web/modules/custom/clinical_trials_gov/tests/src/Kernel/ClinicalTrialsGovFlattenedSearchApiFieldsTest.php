@@ -16,7 +16,7 @@ use Drupal\search_api\Utility\Utility;
 use PHPUnit\Framework\Attributes\Group;
 
 /**
- * Kernel tests for derived Search API fields from custom-field arrays.
+ * Kernel tests for flattened Search API fields from custom-field values.
  *
  * @group clinical_trials_gov
  */
@@ -53,39 +53,75 @@ class ClinicalTrialsGovFlattenedSearchApiFieldsTest extends ClinicalTrialsGovCon
     $this->installSchema('search_api', ['search_api_item']);
 
     $this->createTrialContentType();
-    $this->createCustomField(
-      'trial_cond_mod',
-      [
-        'cond' => 'Condition',
-        'keyword' => 'Keyword',
-      ]
-    );
-    $this->createCustomField(
-      'trial_elig_mod',
-      [
-        'sex' => 'Sex',
-        'std_age' => 'Age group',
-      ]
-    );
+    $this->createCustomField('trial_cond_mod', 'Conditions Module', [
+      'cond' => [
+        'label' => 'Condition/Disease',
+        'description' => 'Flattened disease values.',
+      ],
+      'keyword' => [
+        'label' => 'Keyword',
+        'description' => 'Flattened keyword values.',
+      ],
+    ]);
+    $this->createCustomField('trial_elig_mod', 'Eligibility Module', [
+      'sex' => [
+        'label' => 'Sex',
+        'description' => 'Flattened sex values.',
+      ],
+      'std_age' => [
+        'label' => 'Age group',
+        'description' => 'Flattened age-group values.',
+      ],
+    ]);
+    $this->createCustomField('trial_topic_data', 'Topic Data', [
+      'topic_terms' => [
+        'label' => 'Topic terms',
+        'description' => 'Flattened topic values.',
+      ],
+    ]);
     $this->createIndex();
   }
 
   /**
-   * Tests derived Search API fields for serialized custom-field arrays.
+   * Tests configurable derived Search API fields for custom-field values.
    */
   public function testFlattenedSearchApiFields(): void {
     $this->createTrialNode(
       ['Breast Cancer', 'Digestive Disease'],
       ['breast screening', 'Cardiology'],
       ['ALL'],
-      ['ADULT', 'OLDER_ADULT']
+      ['ADULT', 'OLDER_ADULT'],
+      ['Topic A', 'Topic B']
     );
     $this->createTrialNode(
       ['Breast Cancer'],
       ['Precision Medicine'],
       ['FEMALE'],
-      ['OLDER_ADULT']
+      ['OLDER_ADULT'],
+      ['Topic B']
     );
+
+    $processor = $this->container
+      ->get('search_api.plugin_helper')
+      ->createProcessorPlugin($this->index, 'clinical_trials_gov_flattened_custom_field_values', [
+        'mappings' => $this->getProcessorMappings(),
+      ]);
+    $property_definitions = $processor->getPropertyDefinitions($this->index->getDatasource('entity:node'));
+
+    // Check that the configured mappings expose labels from field settings.
+    $this->assertSame('Conditions Module: Condition/Disease', (string) $property_definitions['trial_cond']->getLabel());
+    $this->assertSame('Conditions Module: Keyword', (string) $property_definitions['trial_keyword']->getLabel());
+    $this->assertSame('Eligibility Module: Age group', (string) $property_definitions['trial_std_age']->getLabel());
+    $this->assertSame('Eligibility Module: Sex', (string) $property_definitions['trial_sex']->getLabel());
+    $this->assertSame('Topic Data: Topic terms', (string) $property_definitions['trial_topic']->getLabel());
+
+    // Check that the configured mappings expose descriptions from field
+    // settings.
+    $this->assertSame('Flattened disease values.', (string) $property_definitions['trial_cond']->getDescription());
+    $this->assertSame('Flattened keyword values.', (string) $property_definitions['trial_keyword']->getDescription());
+    $this->assertSame('Flattened age-group values.', (string) $property_definitions['trial_std_age']->getDescription());
+    $this->assertSame('Flattened sex values.', (string) $property_definitions['trial_sex']->getDescription());
+    $this->assertSame('Flattened topic values.', (string) $property_definitions['trial_topic']->getDescription());
 
     $item = $this->createSearchItem(Node::load(1));
     $fields = $item->getFields();
@@ -113,6 +149,16 @@ class ClinicalTrialsGovFlattenedSearchApiFieldsTest extends ClinicalTrialsGovCon
       'ALL',
     ], $fields['trial_sex']->getValues());
 
+    // Check that non-ClinicalTrials.gov custom fields can use the same
+    // processor mappings.
+    $this->assertSame([
+      'Topic A',
+      'Topic B',
+    ], $fields['trial_topic']->getValues());
+
+    // Check that mappings for missing source fields do not add values.
+    $this->assertSame([], $fields['trial_missing']->getValues());
+
     $this->index->trackItemsUpdated('entity:node', ['1', '2']);
     $indexed_items = $this->index->indexItems();
 
@@ -121,31 +167,33 @@ class ClinicalTrialsGovFlattenedSearchApiFieldsTest extends ClinicalTrialsGovCon
 
     $query = $this->index->query();
     $query->addCondition('trial_cond', 'Breast Cancer');
-    $condition_results = $query->execute()->getResultCount();
 
     // Check that exact filtering works on the flattened condition values.
-    $this->assertEquals(2, $condition_results);
+    $this->assertEquals(2, $query->execute()->getResultCount());
 
     $query = $this->index->query();
     $query->addCondition('trial_keyword', 'breast screening');
-    $keyword_results = $query->execute()->getResultCount();
 
     // Check that exact filtering works on the flattened keyword values.
-    $this->assertEquals(1, $keyword_results);
+    $this->assertEquals(1, $query->execute()->getResultCount());
 
     $query = $this->index->query();
     $query->addCondition('trial_std_age', 'OLDER_ADULT');
-    $age_results = $query->execute()->getResultCount();
 
     // Check that exact filtering works on the flattened age-group values.
-    $this->assertEquals(2, $age_results);
+    $this->assertEquals(2, $query->execute()->getResultCount());
 
     $query = $this->index->query();
     $query->addCondition('trial_sex', 'ALL');
-    $sex_results = $query->execute()->getResultCount();
 
     // Check that exact filtering works on the flattened sex values.
-    $this->assertEquals(1, $sex_results);
+    $this->assertEquals(1, $query->execute()->getResultCount());
+
+    $query = $this->index->query();
+    $query->addCondition('trial_topic', 'Topic B');
+
+    // Check that exact filtering works on generic custom-field mappings too.
+    $this->assertEquals(2, $query->execute()->getResultCount());
   }
 
   /**
@@ -160,22 +208,29 @@ class ClinicalTrialsGovFlattenedSearchApiFieldsTest extends ClinicalTrialsGovCon
 
   /**
    * Creates one custom field with map_string columns.
+   *
+   * @param string $field_name
+   *   The field machine name.
+   * @param string $field_label
+   *   The field label.
+   * @param array $columns
+   *   The custom-field columns keyed by column name.
    */
-  protected function createCustomField(string $field_name, array $columns): void {
+  protected function createCustomField(string $field_name, string $field_label, array $columns): void {
     $storage_columns = [];
     $field_settings = [];
 
-    foreach ($columns as $column_name => $label) {
+    foreach ($columns as $column_name => $column_definition) {
       $storage_columns[$column_name] = [
         'name' => $column_name,
         'type' => 'map_string',
       ];
       $field_settings[$column_name] = [
-        'label' => $label,
+        'label' => $column_definition['label'],
         'check_empty' => FALSE,
         'required' => FALSE,
         'translatable' => FALSE,
-        'description' => '',
+        'description' => $column_definition['description'],
         'description_display' => 'after',
         'table_empty' => '',
       ];
@@ -194,7 +249,7 @@ class ClinicalTrialsGovFlattenedSearchApiFieldsTest extends ClinicalTrialsGovCon
       'field_name' => $field_name,
       'entity_type' => 'node',
       'bundle' => 'trial',
-      'label' => $field_name,
+      'label' => $field_label,
       'settings' => [
         'field_settings' => $field_settings,
       ],
@@ -234,14 +289,64 @@ class ClinicalTrialsGovFlattenedSearchApiFieldsTest extends ClinicalTrialsGovCon
     ]);
 
     $plugin_helper = $this->container->get('search_api.plugin_helper');
-    $processor = $plugin_helper->createProcessorPlugin($this->index, 'clinical_trials_gov_flattened_custom_field_values');
+    $processor = $plugin_helper->createProcessorPlugin($this->index, 'clinical_trials_gov_flattened_custom_field_values', [
+      'mappings' => $this->getProcessorMappings(),
+    ]);
     $this->index->addProcessor($processor);
 
     $this->index->addField($this->createIndexField('trial_cond', 'trial_cond'));
     $this->index->addField($this->createIndexField('trial_keyword', 'trial_keyword'));
     $this->index->addField($this->createIndexField('trial_std_age', 'trial_std_age'));
     $this->index->addField($this->createIndexField('trial_sex', 'trial_sex'));
+    $this->index->addField($this->createIndexField('trial_topic', 'trial_topic'));
+    $this->index->addField($this->createIndexField('trial_missing', 'trial_missing'));
     $this->index->save();
+  }
+
+  /**
+   * Gets the processor mappings used by the test index.
+   *
+   * @return array
+   *   The mapping definitions.
+   */
+  protected function getProcessorMappings(): array {
+    return [
+      [
+        'property_path' => 'trial_cond',
+        'field_name' => 'trial_cond_mod',
+        'column_name' => 'cond',
+      ],
+      [
+        'property_path' => 'trial_keyword',
+        'field_name' => 'trial_cond_mod',
+        'column_name' => 'keyword',
+      ],
+      [
+        'property_path' => 'trial_std_age',
+        'field_name' => 'trial_elig_mod',
+        'column_name' => 'std_age',
+      ],
+      [
+        'property_path' => 'trial_sex',
+        'field_name' => 'trial_elig_mod',
+        'column_name' => 'sex',
+      ],
+      [
+        'property_path' => 'trial_topic',
+        'field_name' => 'trial_topic_data',
+        'column_name' => 'topic_terms',
+      ],
+      [
+        'property_path' => 'trial_cond',
+        'field_name' => 'trial_elig_mod',
+        'column_name' => 'sex',
+      ],
+      [
+        'property_path' => 'trial_missing',
+        'field_name' => 'trial_missing_data',
+        'column_name' => 'ghost_terms',
+      ],
+    ];
   }
 
   /**
@@ -259,7 +364,7 @@ class ClinicalTrialsGovFlattenedSearchApiFieldsTest extends ClinicalTrialsGovCon
   /**
    * Creates one trial node with the provided custom-field values.
    */
-  protected function createTrialNode(array $conditions, array $keywords, array $sexes, array $std_ages): void {
+  protected function createTrialNode(array $conditions, array $keywords, array $sexes, array $std_ages, array $topics): void {
     Node::create([
       'type' => 'trial',
       'title' => 'Trial ' . mt_rand(),
@@ -273,6 +378,11 @@ class ClinicalTrialsGovFlattenedSearchApiFieldsTest extends ClinicalTrialsGovCon
         [
           'sex' => $sexes,
           'std_age' => $std_ages,
+        ],
+      ],
+      'trial_topic_data' => [
+        [
+          'topic_terms' => $topics,
         ],
       ],
     ])->save();
