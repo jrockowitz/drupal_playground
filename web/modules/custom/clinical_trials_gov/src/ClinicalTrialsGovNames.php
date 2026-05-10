@@ -167,7 +167,7 @@ class ClinicalTrialsGovNames implements ClinicalTrialsGovNamesInterface {
       $piece = substr($piece, strlen($parent_piece)) ?: $piece;
     }
 
-    return $this->normalizePiece($piece);
+    return $piece;
   }
 
   /**

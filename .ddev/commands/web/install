@@ -4,7 +4,7 @@ set -euo pipefail
 
 ## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-elastic\nddev install trials-milvus\nddev install trials-milvus trials-chat
+## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-setup\nddev install trials-elastic\nddev install trials-milvus\nddev install trials-milvus trials-chat
 ## ProjectTypes: drupal,drupal11
 
 uli_path="/"
@@ -16,6 +16,26 @@ drush site:install standard \
   --account-pass=admin \
   --account-mail=admin@example.com \
   --yes
+
+# Some local installs end up with core.extension missing its theme map even
+# though system.theme is present. Normalize it before enabling more modules so
+# post-update listeners do not crash during module installation.
+drush php:eval '
+$core_extension = \Drupal::service("config.factory")->getEditable("core.extension");
+if ($core_extension->get("theme") === NULL) {
+  $system_theme = \Drupal::config("system.theme");
+  $themes = [];
+  foreach (["default", "admin"] as $theme_type) {
+    $theme_name = $system_theme->get($theme_type);
+    if (is_string($theme_name) && $theme_name !== "") {
+      $themes[$theme_name] = 0;
+    }
+  }
+  if ($themes !== []) {
+    $core_extension->set("theme", $themes)->save();
+  }
+}
+'
 
 drush recipe ../recipes/drupal_playground_base
 drush recipe ../recipes/drupal_playground_admin
@@ -75,9 +95,14 @@ for PRESET in "$@"; do
 
     echo "Installing ClinicalTrials.gov module..."
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
-    echo "Setting the ClinicalTrials.gov query..."
-    drush config:set -y clinical_trials_gov.settings query 'query.term=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING'
+    uli_path="/admin/config/services/clinical-trials-gov"
 
+  elif [ "$PRESET" = "trials-setup" ]; then
+
+    # ddev exec curl -X DELETE http://elasticsearch:9200/trials_elasticsearch
+    echo "Applying ClinicalTrials.gov setup recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_setup
+    drush migrate:import clinical_trials_gov --limit=10
     uli_path="/admin/config/services/clinical-trials-gov"
 
   elif [ "$PRESET" = "trials-elastic" ]; then
@@ -87,8 +112,13 @@ for PRESET in "$@"; do
     drush recipe ../recipes/clinical_trials_gov_recipe_setup
     echo "Applying Clinical Trials Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_elastic
+    echo "Applying Clinical Trials Elasticsearch autocomplete recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_elastic_autocomplete
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit=10
+    echo "Indexing ClinicalTrials.gov studies in Milvus..."
+    drush search-api:clear trials_elastic -y
+    drush search-api:index trials_elastic -y;
     uli_path="/trials"
 
   elif [ "$PRESET" = "trials-milvus" ]; then

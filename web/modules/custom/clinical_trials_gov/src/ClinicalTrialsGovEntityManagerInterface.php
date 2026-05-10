@@ -80,16 +80,6 @@ interface ClinicalTrialsGovEntityManagerInterface {
   public function generateFieldName(string $path): string;
 
   /**
-   * Returns the generated ClinicalTrials.gov URL field machine name.
-   */
-  public function getStudyUrlFieldName(): string;
-
-  /**
-   * Returns the generated ClinicalTrials.gov API field machine name.
-   */
-  public function getStudyApiFieldName(): string;
-
-  /**
    * Resolves a selectable metadata path into Drupal field metadata.
    *
    * @return array

@@ -3,14 +3,12 @@ status: true
 dependencies:
   config:
     - field.field.node.page.body
-    - field.field.node.trial.trial_brief_summary
-    - field.field.node.trial.trial_cond
-    - field.field.node.trial.trial_keyword
+    - field.field.node.trial.trial_desc_mod
+    - field.field.node.trial.trial_conditions_mod
     - field.field.node.trial.trial_nct_id
     - field.field.node.trial.trial_overall_status
     - field.field.node.trial.trial_phase
-    - field.field.node.trial.trial_sex
-    - field.field.node.trial.trial_std_age
+    - field.field.node.trial.trial_eligibility_mod
     - field.field.node.trial.trial_study_type
     - field.storage.node.body
     - node.type.page
@@ -51,27 +49,27 @@ field_settings:
   trial_brief_summary:
     label: 'Brief summary'
     datasource_id: 'entity:node'
-    property_path: trial_brief_summary
+    property_path: 'trial_desc_mod:brief_summary'
     type: text
     dependencies:
       config:
-        - field.field.node.trial.trial_brief_summary
+        - field.field.node.trial.trial_desc_mod
   trial_cond:
     label: 'Condition/Disease'
     datasource_id: 'entity:node'
-    property_path: trial_cond
+    property_path: 'trial_conditions_mod:conditions'
     type: string
     dependencies:
       config:
-        - field.field.node.trial.trial_cond
+        - field.field.node.trial.trial_conditions_mod
   trial_keyword:
     label: Keyword
     datasource_id: 'entity:node'
-    property_path: trial_keyword
+    property_path: 'trial_conditions_mod:keywords'
     type: string
     dependencies:
       config:
-        - field.field.node.trial.trial_keyword
+        - field.field.node.trial.trial_conditions_mod
   trial_nct_id:
     label: 'NCT ID'
     datasource_id: 'entity:node'
@@ -99,19 +97,19 @@ field_settings:
   trial_sex:
     label: Sex
     datasource_id: 'entity:node'
-    property_path: trial_sex
+    property_path: 'trial_eligibility_mod:sex'
     type: string
     dependencies:
       config:
-        - field.field.node.trial.trial_sex
+        - field.field.node.trial.trial_eligibility_mod
   trial_std_age:
     label: 'Age group'
     datasource_id: 'entity:node'
-    property_path: trial_std_age
+    property_path: 'trial_eligibility_mod:std_age'
     type: string
     dependencies:
       config:
-        - field.field.node.trial.trial_std_age
+        - field.field.node.trial.trial_eligibility_mod
   trial_study_type:
     label: 'Study type'
     datasource_id: 'entity:node'

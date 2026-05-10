@@ -33,7 +33,7 @@ class ClinicalTrialsGovCustomFieldTest extends UnitTestCase {
             'phone' => '111-111',
           ],
         ],
-        'geoPoint' => [
+        'geo_point' => [
           'lat' => 51.05089,
           'lon' => 13.73832,
         ],
@@ -43,7 +43,7 @@ class ClinicalTrialsGovCustomFieldTest extends UnitTestCase {
     $prepared_value = $plugin->transform(
       [
         $value,
-        ['contacts', 'geoPoint'],
+        ['contacts', 'geo_point'],
       ],
       $this->createMock(MigrateExecutableInterface::class),
       $this->createMock(Row::class),
@@ -57,9 +57,9 @@ class ClinicalTrialsGovCustomFieldTest extends UnitTestCase {
     $this->assertStringContainsString('Alice Example', $prepared_value[0]['contacts']);
     $this->assertStringContainsString("- name: 'Alice Example'", $prepared_value[0]['contacts']);
     $this->assertStringContainsString('phone: 111-111', $prepared_value[0]['contacts']);
-    $this->assertIsString($prepared_value[0]['geoPoint']);
-    $this->assertStringContainsString('lat: 51.05089', $prepared_value[0]['geoPoint']);
-    $this->assertStringContainsString('lon: 13.73832', $prepared_value[0]['geoPoint']);
+    $this->assertIsString($prepared_value[0]['geo_point']);
+    $this->assertStringContainsString('lat: 51.05089', $prepared_value[0]['geo_point']);
+    $this->assertStringContainsString('lon: 13.73832', $prepared_value[0]['geo_point']);
   }
 
 }

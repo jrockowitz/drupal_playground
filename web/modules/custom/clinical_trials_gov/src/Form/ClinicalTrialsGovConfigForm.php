@@ -8,7 +8,6 @@ use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -216,11 +215,11 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
         '#wrapper_attributes' => $row_attributes,
       ];
       $form['field_mapping']['rows'][$row_key]['identifier'] = [
-        '#markup' => $this->buildPieceMarkup($definition, $path),
+        'data' => $this->buildPieceMarkup($definition, $path),
         '#wrapper_attributes' => $row_attributes,
       ];
       $form['field_mapping']['rows'][$row_key]['field_name'] = [
-        'data' => $this->buildFieldNameCell((string) ($definition['field_name'] ?? ''), $definition['details'] ?? [], $depth),
+        'data' => $this->buildFieldNameCell((string) ($definition['field_name'] ?? ''), $definition['field_details'] ?? ($definition['details'] ?? []), $depth),
         '#wrapper_attributes' => $row_attributes,
       ];
       $form['field_mapping']['rows'][$row_key]['type'] = [
@@ -361,11 +360,22 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
   }
 
   /**
-   * Builds the markup for the piece column.
+   * Builds the render array for the piece column.
    */
-  protected function buildPieceMarkup(array $definition, string $path): string {
-    $markup = Html::escape((string) ($definition['piece'] ?? ''));
-    $markup .= '<br/><small>' . Html::escape($path) . '</small>';
+  protected function buildPieceMarkup(array $definition, string $path): array {
+    $cell = [
+      '#type' => 'container',
+      'piece' => [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => (string) ($definition['piece'] ?? ''),
+      ],
+      'path' => [
+        '#type' => 'html_tag',
+        '#tag' => 'small',
+        '#value' => $path,
+      ],
+    ];
 
     if (!empty($definition['details'])) {
       $properties = array_map(function (string $detail): string {
@@ -374,11 +384,21 @@ class ClinicalTrialsGovConfigForm extends ConfigFormBase {
       }, array_filter($definition['details'], 'is_string'));
 
       if ($properties) {
-        $markup .= '<ul><li><small>' . implode('</small></li><li><small>', array_map([Html::class, 'escape'], $properties)) . '</small></li></ul>';
+        $cell['details'] = [
+          '#theme' => 'item_list',
+          '#items' => array_map(
+            fn(string $property): array => [
+              '#type' => 'html_tag',
+              '#tag' => 'small',
+              '#value' => $property,
+            ],
+            $properties
+          ),
+        ];
       }
     }
 
-    return $markup;
+    return $cell;
   }
 
   /**

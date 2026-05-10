@@ -1,0 +1,11 @@
+{
+  "name": "drupal/clinical_trials_gov_recipe_elastic_autocomplete",
+  "description": "Adds Search API Autocomplete to the Clinical Trials Elasticsearch search experience.",
+  "type": "drupal-recipe",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "require": {
+    "drupal/core": "^11",
+    "drupal/search_api_autocomplete": "^1"
+  }
+}

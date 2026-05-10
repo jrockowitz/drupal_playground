@@ -70,6 +70,10 @@
         },
         {
             "type": "path",
+            "url": "recipes/clinical_trials_gov_recipe_elastic_autocomplete"
+        },
+        {
+            "type": "path",
             "url": "recipes/clinical_trials_gov_recipe_milvus"
         },
         {
@@ -106,6 +110,7 @@
         "drupal/drupal_playground_schemadotorg": "*",
         "drupal/clinical_trials_gov_recipe_setup": "*",
         "drupal/clinical_trials_gov_recipe_elastic": "*",
+        "drupal/clinical_trials_gov_recipe_elastic_autocomplete": "*",
         "drupal/clinical_trials_gov_recipe_milvus": "*",
         "drupal/clinical_trials_gov_recipe_milvus_chat": "*",
         "drupal/drupal_playground_translation": "*",

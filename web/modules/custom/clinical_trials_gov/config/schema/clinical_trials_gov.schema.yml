@@ -40,6 +40,17 @@ clinical_trials_gov.settings:
     field_prefix:
       type: string
       label: "Field machine name prefix"
+    view_display_root:
+      type: string
+      label: "Default view display root field-group format"
+      constraints:
+        Choice:
+          choices:
+            - details
+            - details_opened
+            - fieldset
+            - container
+            - none
     view_display_component:
       type: string
       label: "Default view display component behavior"
@@ -52,6 +63,17 @@ clinical_trials_gov.settings:
     view_display_field_group:
       type: string
       label: "Default view display field-group format"
+      constraints:
+        Choice:
+          choices:
+            - details
+            - details_opened
+            - fieldset
+            - container
+            - none
+    form_display_root:
+      type: string
+      label: "Default form display root field-group format"
       constraints:
         Choice:
           choices:

@@ -101,14 +101,31 @@ class ClinicalTrialsGovConfigFormTest extends UnitTestCase {
    *
    * @covers ::buildLabelCell
    * @covers ::buildFieldNameCell
+   * @covers ::buildPieceMarkup
    */
   public function testIndentedCellsUseRenderArrayAttributes(): void {
     $label_cell = $this->form->exposedBuildLabelCell('Responsible Party', 'Description', 2);
-    $field_name_cell = $this->form->exposedBuildFieldNameCell('field_responsible_party', ['type'], 2);
+    $field_name_cell = $this->form->exposedBuildFieldNameCell('field_responsible_party', ['type', 'inv_full_name'], 2);
+    $piece_markup = $this->form->exposedBuildPieceMarkup([
+      'piece' => 'ResponsibleParty',
+      'details' => ['Type', 'InvestigatorFullName'],
+    ], 'protocolSection.sponsorCollaboratorsModule.responsibleParty');
 
     // Check that the wrapper style survives as a real render-array attribute.
     $this->assertSame('padding-left: 3rem;', $label_cell['#attributes']['style']);
     $this->assertSame('padding-left: 3rem;', $field_name_cell['#attributes']['style']);
+
+    // Check that the field-name details remain snake case.
+    $this->assertSame('type', $field_name_cell['details']['#items'][0]['#value']);
+    $this->assertSame('inv_full_name', $field_name_cell['details']['#items'][1]['#value']);
+
+    // Check that the piece markup preserves ClinicalTrials.gov piece casing.
+    $this->assertSame('container', $piece_markup['#type']);
+    $this->assertSame('ResponsibleParty', $piece_markup['piece']['#value']);
+    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $piece_markup['path']['#value']);
+    $this->assertSame('item_list', $piece_markup['details']['#theme']);
+    $this->assertSame('Type', $piece_markup['details']['#items'][0]['#value']);
+    $this->assertSame('InvestigatorFullName', $piece_markup['details']['#items'][1]['#value']);
   }
 
   /**

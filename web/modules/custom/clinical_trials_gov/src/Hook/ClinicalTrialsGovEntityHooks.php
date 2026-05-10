@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov\Hook;
 
-use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
 use Drupal\clinical_trials_gov\Entity\ClinicalTrialsGovNodeAccessControlHandler;
 use Drupal\clinical_trials_gov\Entity\ClinicalTrialsGovTrashNodeAccessControlHandler;
 use Drupal\Core\Access\AccessResult;
@@ -33,7 +32,6 @@ class ClinicalTrialsGovEntityHooks {
   public function __construct(
     protected ConfigFactoryInterface $configFactory,
     protected ModuleHandlerInterface $moduleHandler,
-    protected ClinicalTrialsGovEntityManagerInterface $entityManager,
   ) {}
 
   /**
@@ -115,10 +113,7 @@ class ClinicalTrialsGovEntityHooks {
       return AccessResult::neutral()->addCacheableDependency($settings)->addCacheableDependency($entity);
     }
 
-    $field_names = array_keys($settings->get('fields'));
-    $field_names[] = $this->entityManager->getStudyUrlFieldName();
-    $field_names[] = $this->entityManager->getStudyApiFieldName();
-    if (!in_array($field_definition->getName(), array_unique($field_names))) {
+    if (!in_array($field_definition->getName(), array_keys($settings->get('fields')))) {
       return AccessResult::neutral()->addCacheableDependency($settings)->addCacheableDependency($entity);
     }
 

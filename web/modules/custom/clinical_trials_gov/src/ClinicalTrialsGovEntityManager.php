@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace Drupal\clinical_trials_gov;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
-use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\link\LinkItemInterface;
 
 /**
  * Manages wizard-created content types and fields.
@@ -25,9 +22,9 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     protected ModuleHandlerInterface $moduleHandler,
     protected ConfigFactoryInterface $configFactory,
     protected EntityTypeManagerInterface $entityTypeManager,
-    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
     protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
     protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
+    protected ClinicalTrialsGovEntityDisplayManagerInterface $entityDisplayManager,
   ) {}
 
   /**
@@ -91,37 +88,8 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
       ])->save();
     }
 
-    foreach ($this->getSystemLinkFieldDefinitions() as $field_name => $definition) {
-      $field_definitions[$field_name] = $definition;
-
-      if (!FieldStorageConfig::loadByName('node', $field_name)) {
-        FieldStorageConfig::create([
-          'field_name' => $field_name,
-          'entity_type' => 'node',
-          'type' => $definition['field_type'],
-          'settings' => $definition['storage_settings'],
-          'cardinality' => $definition['cardinality'],
-          'translatable' => TRUE,
-        ])->save();
-      }
-
-      if (FieldConfig::loadByName('node', $type, $field_name)) {
-        continue;
-      }
-
-      FieldConfig::create([
-        'field_name' => $field_name,
-        'entity_type' => 'node',
-        'bundle' => $type,
-        'label' => $definition['label'],
-        'description' => $definition['description'],
-        'required' => FALSE,
-        'settings' => $definition['instance_settings'],
-      ])->save();
-    }
-
-    $this->createFieldDisplayComponents($type, $field_definitions);
-    $this->createFieldGroups($type, $fields);
+    $this->entityDisplayManager->createFieldDisplayComponents($type, $field_definitions);
+    $this->entityDisplayManager->createFieldGroups($type, $fields, $field_definitions);
   }
 
   /**
@@ -171,6 +139,23 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     $normalized_rows = $this->normalizeSelectedRows($selected_rows);
 
     foreach (array_keys($normalized_rows) as $path) {
+      if (!empty($normalized_rows[$path])) {
+        $ancestor_path = $path;
+        $last_dot = strrpos($ancestor_path, '.');
+
+        while ($last_dot !== FALSE) {
+          $ancestor_path = substr($ancestor_path, 0, $last_dot);
+          $ancestor_definition = $this->fieldManager->getFieldDefinition($ancestor_path);
+
+          if ($this->isPromotedCustomFieldDefinition($ancestor_definition)) {
+            $selected_fields[(string) $ancestor_definition['field_name']] = $ancestor_path;
+            continue 2;
+          }
+
+          $last_dot = strrpos($ancestor_path, '.');
+        }
+      }
+
       $definition = $this->fieldManager->getFieldDefinition($path);
       $field_name = (string) ($definition['field_name'] ?? '');
       if (!$field_name || empty($definition['available']) || empty($definition['selectable'])) {
@@ -277,20 +262,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * {@inheritdoc}
    */
-  public function getStudyUrlFieldName(): string {
-    return $this->buildSystemFieldName('nct_url');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getStudyApiFieldName(): string {
-    return $this->buildSystemFieldName('nct_api');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function resolveFieldDefinition(string $path): array {
     return $this->fieldManager->resolveFieldDefinition($path);
   }
@@ -300,334 +271,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    */
   public function resolveStructuredFieldDefinition(string $path): ?array {
     return $this->fieldManager->resolveStructuredFieldDefinition($path);
-  }
-
-  /**
-   * Creates field groups for selected nested structures.
-   */
-  protected function createFieldGroups(string $type, array $fields): void {
-    if (!$this->supportsFieldGroups()) {
-      return;
-    }
-
-    $form_field_group_format = $this->getConfiguredFormDisplayFieldGroup();
-    $view_field_group_format = $this->getConfiguredViewDisplayFieldGroup();
-    if (($form_field_group_format === 'none') && ($view_field_group_format === 'none')) {
-      return;
-    }
-
-    $selected_fields = [];
-    foreach ($fields as $field) {
-      if (is_string($field) && $field) {
-        $selected_fields[$field] = $this->fieldManager->resolveFieldDefinition($field);
-      }
-    }
-
-    $group_definitions = array_filter($selected_fields, static fn(array $definition): bool => !empty($definition['group_only']));
-    if (!$group_definitions) {
-      return;
-    }
-
-    $form_display = ($form_field_group_format !== 'none') ? $this->loadOrCreateFormDisplay($type) : NULL;
-    $view_display = ($view_field_group_format !== 'none') ? $this->loadOrCreateViewDisplay($type) : NULL;
-
-    foreach ($group_definitions as $path => $definition) {
-      $children = $this->resolveFieldGroupChildren($path, $selected_fields);
-      if (!$children) {
-        continue;
-      }
-
-      if ($form_display) {
-        $form_display->setThirdPartySetting('field_group', $definition['field_name'], $this->buildFieldGroupSettings($definition, $children, $this->resolveParentGroupName($path, $selected_fields), $form_field_group_format));
-      }
-
-      if ($view_display) {
-        $view_display->setThirdPartySetting('field_group', $definition['field_name'], $this->buildFieldGroupSettings($definition, $children, $this->resolveParentGroupName($path, $selected_fields), $view_field_group_format));
-      }
-    }
-
-    $display_id = 'node.' . $type . '.default';
-    if ($form_display) {
-      $form_display->save();
-      $this->entityTypeManager->getStorage('entity_form_display')->resetCache([$display_id]);
-    }
-    if ($view_display) {
-      $view_display->save();
-      $this->entityTypeManager->getStorage('entity_view_display')->resetCache([$display_id]);
-    }
-  }
-
-  /**
-   * Creates default form and view display components for generated fields.
-   */
-  protected function createFieldDisplayComponents(string $type, array $field_definitions): void {
-    $form_display = $this->loadOrCreateFormDisplay($type);
-    $default_view_display = $this->loadOrCreateViewDisplay($type);
-    $teaser_view_display = $this->loadOrCreateViewDisplay($type, 'teaser');
-    $form_display_component = $this->getConfiguredFormDisplayComponent();
-    $view_display_component = $this->getConfiguredViewDisplayComponent();
-
-    $weight = 0;
-    foreach ($field_definitions as $definition) {
-      if (empty($definition['selectable']) || !empty($definition['group_only']) || empty($definition['field_name'])) {
-        continue;
-      }
-
-      $field_name = $definition['field_name'];
-      if (($form_display_component !== 'hidden') && !$form_display->getComponent($field_name)) {
-        $form_display->setComponent($field_name, [
-          'type' => $this->getConfiguredFormDisplayWidget($definition),
-          'settings' => $this->getConfiguredFormDisplayWidgetSettings($definition),
-          'weight' => $weight,
-          'region' => 'content',
-        ]);
-      }
-
-      if (($view_display_component !== 'hidden') && !$default_view_display->getComponent($field_name)) {
-        $default_view_display->setComponent($field_name, [
-          'type' => $this->getViewDisplayFormatter($definition),
-          'label' => 'above',
-          'weight' => $weight,
-          'region' => 'content',
-        ]);
-      }
-
-      $weight++;
-    }
-
-    $this->createTeaserViewDisplayComponents($type, $field_definitions, $teaser_view_display);
-
-    $default_display_id = 'node.' . $type . '.default';
-    $teaser_display_id = 'node.' . $type . '.teaser';
-    $form_display->save();
-    $default_view_display->save();
-    $teaser_view_display->save();
-    $this->entityTypeManager->getStorage('entity_form_display')->resetCache([$default_display_id]);
-    $this->entityTypeManager->getStorage('entity_view_display')->resetCache([$default_display_id, $teaser_display_id]);
-  }
-
-  /**
-   * Loads or creates the default entity form display for a node bundle.
-   */
-  protected function loadOrCreateFormDisplay(string $type): EntityFormDisplayInterface {
-    $display_id = 'node.' . $type . '.default';
-    $storage = $this->entityTypeManager->getStorage('entity_form_display');
-    return $storage->load($display_id) ?? $storage->create([
-      'targetEntityType' => 'node',
-      'bundle' => $type,
-      'mode' => 'default',
-      'status' => TRUE,
-    ]);
-  }
-
-  /**
-   * Loads or creates the default entity view display for a node bundle.
-   */
-  protected function loadOrCreateViewDisplay(string $type, string $mode = 'default'): EntityViewDisplayInterface {
-    $display_id = 'node.' . $type . '.' . $mode;
-    $storage = $this->entityTypeManager->getStorage('entity_view_display');
-    return $storage->load($display_id) ?? $storage->create([
-      'targetEntityType' => 'node',
-      'bundle' => $type,
-      'mode' => $mode,
-      'status' => TRUE,
-    ]);
-  }
-
-  /**
-   * Creates the dedicated teaser view display components for generated fields.
-   */
-  protected function createTeaserViewDisplayComponents(string $type, array $field_definitions, EntityViewDisplayInterface $teaser_view_display): void {
-    $teaser_field_definitions = $this->getTeaserFieldDefinitions($type);
-    $teaser_field_names = array_keys($teaser_field_definitions);
-
-    $weight = 0;
-    foreach ($teaser_field_definitions as $field_name => $definition) {
-      $teaser_view_display->setComponent($field_name, [
-        'type' => $this->getTeaserViewDisplayFormatter($definition),
-        'label' => 'above',
-        'settings' => $this->getTeaserViewDisplayFormatterSettings($definition),
-        'weight' => $weight,
-        'region' => 'content',
-      ]);
-      $weight++;
-    }
-
-    foreach ($field_definitions as $definition) {
-      if (empty($definition['selectable']) || !empty($definition['group_only']) || empty($definition['field_name'])) {
-        continue;
-      }
-
-      $field_name = $definition['field_name'];
-      if (!in_array($field_name, $teaser_field_names)) {
-        $teaser_view_display->removeComponent($field_name);
-      }
-    }
-
-    foreach (array_keys($teaser_view_display->getThirdPartySettings('field_group')) as $field_group_name) {
-      $teaser_view_display->unsetThirdPartySetting('field_group', $field_group_name);
-    }
-  }
-
-  /**
-   * Resolves the default form widget for a generated field.
-   */
-  protected function getFormDisplayWidget(array $definition): string {
-    return match ($definition['field_type']) {
-      'boolean' => 'boolean_checkbox',
-      'link' => 'link_default',
-      'datetime' => 'datetime_default',
-      'integer' => 'number',
-      'list_string' => 'options_select',
-      'text_long' => 'text_textarea',
-      'custom' => 'custom_stacked',
-      default => 'string_textfield',
-    };
-  }
-
-  /**
-   * Resolves the configured form widget for a generated field.
-   */
-  protected function getConfiguredFormDisplayWidget(array $definition): string {
-    if ($this->getConfiguredFormDisplayComponent() === 'readonly') {
-      return 'readonly_field_widget';
-    }
-
-    return $this->getFormDisplayWidget($definition);
-  }
-
-  /**
-   * Resolves widget settings for the configured form display component.
-   */
-  protected function getConfiguredFormDisplayWidgetSettings(array $definition): array {
-    if ($this->getConfiguredFormDisplayComponent() !== 'readonly') {
-      return [];
-    }
-
-    $formatter_type = $this->getViewDisplayFormatter($definition);
-
-    return [
-      'label' => 'above',
-      'formatter_type' => $formatter_type,
-      'formatter_settings' => [
-        $formatter_type => [],
-      ],
-      'show_description' => FALSE,
-      'error_validation' => TRUE,
-    ];
-  }
-
-  /**
-   * Resolves the default view formatter for a generated field.
-   */
-  protected function getViewDisplayFormatter(array $definition): string {
-    return match ($definition['field_type']) {
-      'boolean' => 'boolean',
-      'link' => 'link',
-      'datetime' => 'datetime_default',
-      'integer' => 'number_integer',
-      'list_string' => 'list_default',
-      'text_long' => 'text_default',
-      'custom' => 'custom_formatter',
-      default => 'string',
-    };
-  }
-
-  /**
-   * Returns the metadata paths that should appear in the teaser display.
-   */
-  protected function getTeaserFieldPaths(): array {
-    return [
-      'protocolSection.descriptionModule.briefSummary',
-      // 'protocolSection.identificationModule.nctId',
-      'protocolSection.conditionsModule.conditions',
-      'protocolSection.eligibilityModule.minimumAge',
-      'protocolSection.eligibilityModule.maximumAge',
-      'protocolSection.eligibilityModule.stdAges',
-      'protocolSection.conditionsModule.keywords',
-    ];
-  }
-
-  /**
-   * Returns the generated field definitions that should appear in teaser mode.
-   */
-  protected function getTeaserFieldDefinitions(string $type): array {
-    $teaser_field_definitions = [];
-
-    foreach ($this->getTeaserFieldPaths() as $path) {
-      $definition = $this->fieldManager->resolveFieldDefinition($path);
-      $field_name = (string) ($definition['field_name'] ?? '');
-
-      if (!$field_name || !FieldConfig::loadByName('node', $type, $field_name)) {
-        continue;
-      }
-
-      $teaser_field_definitions[$field_name] = $definition;
-    }
-
-    return $teaser_field_definitions;
-  }
-
-  /**
-   * Resolves the teaser formatter for a generated field.
-   */
-  protected function getTeaserViewDisplayFormatter(array $definition): string {
-    if (($definition['field_name'] ?? '') === $this->generateFieldName('protocolSection.descriptionModule.briefSummary')) {
-      return 'text_summary_or_trimmed';
-    }
-
-    return $this->getViewDisplayFormatter($definition);
-  }
-
-  /**
-   * Resolves the teaser formatter settings for a generated field.
-   */
-  protected function getTeaserViewDisplayFormatterSettings(array $definition): array {
-    if (($definition['field_name'] ?? '') === $this->generateFieldName('protocolSection.descriptionModule.briefSummary')) {
-      return [
-        'trim_length' => 300,
-      ];
-    }
-
-    return [];
-  }
-
-  /**
-   * Returns the built-in generated Trial link field definitions.
-   */
-  protected function getSystemLinkFieldDefinitions(): array {
-    $definitions = [
-      $this->getStudyUrlFieldName() => [
-        'field_name' => $this->getStudyUrlFieldName(),
-        'label' => 'ClinicalTrials.gov URL',
-        'description' => '',
-        'field_type' => 'link',
-        'storage_settings' => [],
-        'instance_settings' => [
-          'title' => DRUPAL_DISABLED,
-          'link_type' => LinkItemInterface::LINK_EXTERNAL,
-        ],
-        'cardinality' => 1,
-        'selectable' => TRUE,
-        'group_only' => FALSE,
-      ],
-      $this->getStudyApiFieldName() => [
-        'field_name' => $this->getStudyApiFieldName(),
-        'label' => 'ClinicalTrials.gov API',
-        'description' => '',
-        'field_type' => 'link',
-        'storage_settings' => [],
-        'instance_settings' => [
-          'title' => DRUPAL_DISABLED,
-          'link_type' => LinkItemInterface::LINK_EXTERNAL,
-        ],
-        'cardinality' => 1,
-        'selectable' => TRUE,
-        'group_only' => FALSE,
-      ],
-    ];
-
-    return $definitions;
   }
 
   /**
@@ -642,45 +285,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
    */
   protected function getConfiguredFieldMappings(): array {
     return $this->configFactory->get('clinical_trials_gov.settings')->get('fields');
-  }
-
-  /**
-   * Returns the configured view display component behavior.
-   */
-  protected function getConfiguredViewDisplayComponent(): string {
-    $value = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('view_display_component');
-
-    return in_array($value, ['visible', 'visible_update', 'hidden']) ? $value : 'visible';
-  }
-
-  /**
-   * Returns the configured view field-group format.
-   */
-  protected function getConfiguredViewDisplayFieldGroup(): string {
-    $value = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('view_display_field_group');
-
-    return in_array($value, ['details', 'details_opened', 'fieldset', 'container', 'none']) ? $value : 'details_opened';
-  }
-
-  /**
-   * Returns the configured form display component behavior.
-   */
-  protected function getConfiguredFormDisplayComponent(): string {
-    $value = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('form_display_component');
-    if (($value === 'readonly') && !$this->moduleHandler->moduleExists('readonly_field_widget')) {
-      return 'visible';
-    }
-
-    return in_array($value, ['visible', 'hidden', 'readonly']) ? $value : 'visible';
-  }
-
-  /**
-   * Returns the configured form field-group format.
-   */
-  protected function getConfiguredFormDisplayFieldGroup(): string {
-    $value = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('form_display_field_group');
-
-    return in_array($value, ['details', 'details_opened', 'fieldset', 'container', 'none']) ? $value : 'details_opened';
   }
 
   /**
@@ -769,6 +373,16 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   }
 
   /**
+   * Returns whether a field definition should collapse child paths into itself.
+   */
+  protected function isPromotedCustomFieldDefinition(array $definition): bool {
+    return !empty($definition['available'])
+      && !empty($definition['selectable'])
+      && (($definition['field_type'] ?? '') === 'custom')
+      && empty($definition['group_only']);
+  }
+
+  /**
    * Determines whether a row should be hidden beneath a promoted custom field.
    */
   protected function shouldHideFieldRow(string $path, array $definitions): bool {
@@ -776,9 +390,10 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     while ($last_dot !== FALSE) {
       $parent_path = substr($path, 0, $last_dot);
       $parent_definition = $definitions[$parent_path] ?? $this->fieldManager->getFieldDefinition($parent_path);
-      if (!empty($parent_definition['available']) && (($parent_definition['field_type'] ?? '') === 'custom') && empty($parent_definition['group_only'])) {
+      if ($this->isPromotedCustomFieldDefinition($parent_definition)) {
         return TRUE;
       }
+      $path = $parent_path;
       $last_dot = strrpos($parent_path, '.');
     }
 
@@ -809,118 +424,6 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     return TRUE;
-  }
-
-  /**
-   * Builds a generated system field name using the configured prefix.
-   */
-  protected function buildSystemFieldName(string $suffix): string {
-    $field_name = $this->fieldManager->resolveFieldDefinition('protocolSection.identificationModule.nctId')['field_name'];
-    $prefix = preg_replace('/nct_id$/', '', $field_name) ?? $field_name;
-
-    return $prefix . $suffix;
-  }
-
-  /**
-   * Resolves the direct children for a field group.
-   */
-  protected function resolveFieldGroupChildren(string $path, array $selected_fields): array {
-    $metadata = $this->studyManager->getMetadataByPath($path);
-    $children = [];
-
-    foreach (($metadata['children'] ?? []) as $child_path) {
-      if (!is_string($child_path) || !isset($selected_fields[$child_path])) {
-        continue;
-      }
-
-      $child_definition = $selected_fields[$child_path];
-      if (!empty($child_definition['group_only'])) {
-        $children[] = $child_definition['field_name'];
-        continue;
-      }
-      if (($child_definition['destination_property'] ?? NULL) === 'title') {
-        if (!empty($child_definition['field_name'])) {
-          $children[] = $child_definition['field_name'];
-        }
-        continue;
-      }
-      if (!empty($child_definition['field_name'])) {
-        $children[] = $child_definition['field_name'];
-      }
-    }
-
-    return array_values(array_unique($children));
-  }
-
-  /**
-   * Resolves the parent field-group name for a nested group.
-   */
-  protected function resolveParentGroupName(string $path, array $selected_fields): string {
-    $metadata = $this->studyManager->getMetadataByPath($path);
-    $parent = (string) ($metadata['parent'] ?? '');
-    if (!$parent || !isset($selected_fields[$parent]) || empty($selected_fields[$parent]['group_only'])) {
-      return '';
-    }
-
-    return (string) $selected_fields[$parent]['field_name'];
-  }
-
-  /**
-   * Builds third-party field-group settings for a selected format.
-   */
-  protected function buildFieldGroupSettings(array $definition, array $children, string $parent_name, string $format): array {
-    $settings = [
-      'children' => $children,
-      'label' => $definition['label'],
-      'parent_name' => $parent_name,
-      'weight' => 0,
-      'format_type' => $this->getFieldGroupFormatType($format),
-      'format_settings' => [
-        'label' => $definition['label'],
-        'classes' => '',
-        'id' => '',
-        'show_empty_fields' => FALSE,
-        'label_as_html' => FALSE,
-      ],
-      'region' => 'content',
-    ];
-
-    if (in_array($format, ['details', 'details_opened'])) {
-      $settings['format_settings']['open'] = ($format === 'details_opened');
-      $settings['format_settings']['description'] = $definition['description'];
-      $settings['format_settings']['required_fields'] = FALSE;
-      return $settings;
-    }
-
-    if ($format === 'fieldset') {
-      $settings['format_settings']['description'] = $definition['description'];
-      $settings['format_settings']['required_fields'] = FALSE;
-      return $settings;
-    }
-
-    if ($format === 'container') {
-      $settings['format_settings']['element'] = 'div';
-      $settings['format_settings']['show_label'] = FALSE;
-      $settings['format_settings']['label_element'] = 'h3';
-      $settings['format_settings']['label_element_classes'] = '';
-      $settings['format_settings']['attributes'] = '';
-      $settings['format_settings']['effect'] = 'none';
-      $settings['format_settings']['speed'] = 'fast';
-      $settings['format_settings']['required_fields'] = FALSE;
-    }
-
-    return $settings;
-  }
-
-  /**
-   * Maps saved field-group options to field_group formatter plugin ids.
-   */
-  protected function getFieldGroupFormatType(string $format): string {
-    return match ($format) {
-      'fieldset' => 'fieldset',
-      'container' => 'html_element',
-      default => 'details',
-    };
   }
 
 }
