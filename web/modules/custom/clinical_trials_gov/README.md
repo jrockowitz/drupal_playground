@@ -93,6 +93,25 @@ This is not a hand-authored migration workflow. The migration is generated from 
 
 The saved `fields` config is stored as a mapping of generated Drupal field or group name to the source metadata path.
 
+### Imported trial nodes expose ClinicalTrials.gov tokens
+
+Imported nodes for the generated ClinicalTrials.gov content type expose token support for API-backed values.
+
+Supported token forms include:
+
+- `[node:clinical-trials-gov:BriefTitle]`
+- `[node:clinical-trials-gov:brief-title]`
+- `[node:clinical-trials-gov:brief_title]`
+- `[node:clinical-trials-gov:protocolSection.identificationModule.briefTitle]`
+
+Important behavior:
+
+- tokens load the full study from the ClinicalTrials.gov API using the imported node's stored NCT ID
+- tokens can match either a metadata `piece` name or a full metadata `path`
+- matching is case-insensitive and ignores hyphen and underscore differences
+- array or object values are returned as formatted JSON text
+- if the report submodule is installed, the token UI links to the metadata report for available fields and paths
+
 ### Import uses Drupal Migrate
 
 The `Import` step runs a Drupal Migrate batch import based on the generated migration config.
