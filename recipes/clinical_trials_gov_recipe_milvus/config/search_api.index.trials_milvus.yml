@@ -57,7 +57,7 @@ field_settings:
   trial_cond:
     label: 'Condition/Disease'
     datasource_id: 'entity:node'
-    property_path: 'trial_conditions_mod:conditions'
+    property_path: 'trial_conditions_mod:cond'
     type: string
     dependencies:
       config:
@@ -65,7 +65,7 @@ field_settings:
   trial_keyword:
     label: Keyword
     datasource_id: 'entity:node'
-    property_path: 'trial_conditions_mod:keywords'
+    property_path: 'trial_conditions_mod:keyword'
     type: string
     dependencies:
       config:
