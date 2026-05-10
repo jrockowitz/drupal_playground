@@ -38,7 +38,7 @@ field_settings:
   trial_cond:
     label: 'Condition/Disease'
     datasource_id: 'entity:node'
-    property_path: 'trial_cond_mod:cond'
+    property_path: trial_cond
     type: string
     dependencies:
       config:
@@ -70,7 +70,7 @@ field_settings:
   trial_sex:
     label: Sex
     datasource_id: 'entity:node'
-    property_path: 'trial_elig_mod:sex'
+    property_path: trial_sex
     type: string
     dependencies:
       config:
@@ -86,7 +86,7 @@ field_settings:
   trial_std_age:
     label: 'Age group'
     datasource_id: 'entity:node'
-    property_path: 'trial_elig_mod:std_age'
+    property_path: trial_std_age
     type: string
     dependencies:
       config:
@@ -94,7 +94,7 @@ field_settings:
   trial_keyword:
     label: Keyword
     datasource_id: 'entity:node'
-    property_path: 'trial_cond_mod:keyword'
+    property_path: trial_keyword
     type: string
     dependencies:
       config:
@@ -106,6 +106,9 @@ processor_settings:
   aggregated_field:
     weights:
       add_properties: 20
+  clinical_trials_gov_flattened_custom_field_values:
+    weights:
+      add_properties: 0
   content_access:
     weights:
       preprocess_index: -6
