@@ -31,6 +31,10 @@ services:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManager
   Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface: "@clinical_trials_gov.entity_manager"
 
+  clinical_trials_gov.entity_display_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovEntityDisplayManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovEntityDisplayManagerInterface: "@clinical_trials_gov.entity_display_manager"
+
   clinical_trials_gov.field_manager:
     class: Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManager
   Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface: "@clinical_trials_gov.field_manager"
