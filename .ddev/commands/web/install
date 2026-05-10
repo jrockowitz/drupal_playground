@@ -114,6 +114,7 @@ for PRESET in "$@"; do
 
     echo "Applying ClinicalTrials.gov setup recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_setup
+    echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit=10
     uli_path="/admin/config/services/clinical-trials-gov"
 
@@ -122,12 +123,13 @@ for PRESET in "$@"; do
     reset_elasticsearch_index "trials_elasticsearch"
     echo "Applying ClinicalTrials.gov setup recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_setup
+    echo "Importing ClinicalTrials.gov studies..."
+    drush migrate:import clinical_trials_gov --limit=10
+
     echo "Applying Clinical Trials Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_elastic
     echo "Applying Clinical Trials Elasticsearch autocomplete recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_elastic_autocomplete
-    echo "Importing ClinicalTrials.gov studies..."
-    drush migrate:import clinical_trials_gov --limit=10
     echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."
     drush search-api:clear trials_elasticsearch -y
     drush search-api:index trials_elasticsearch -y;
