@@ -70,8 +70,8 @@ class ClinicalTrialsGovFieldManager implements ClinicalTrialsGovFieldManagerInte
     $source_type = $metadata['sourceType'] ?? '';
     $is_enum = !empty($metadata['isEnum']);
     $max_chars = isset($metadata['maxChars']) ? (int) $metadata['maxChars'] : NULL;
-    $is_multi = str_ends_with($type, '[]');
-    $cardinality = $is_multi ? -1 : 1;
+    $is_multiple = $metadata['isMultiple'] ?? FALSE;
+    $cardinality = $is_multiple ? -1 : 1;
     $definition = [
       'path' => $path,
       'label' => $this->names->getDisplayLabel($piece),

@@ -208,14 +208,64 @@ class ClinicalTrialsGovStudyManagerTest extends UnitTestCase {
     $this->assertSame('STRUCT', $result['protocolSection']['sourceType']);
     $this->assertSame('protocolSection', $result['protocolSection']['path']);
     $this->assertSame('', $result['protocolSection']['parent']);
+    $this->assertFalse($result['protocolSection']['isMultiple']);
 
     // Check that a nested module is keyed by its dotted path.
     $this->assertArrayHasKey('protocolSection.identificationModule', $result);
     $this->assertSame('Identification Module', $result['protocolSection.identificationModule']['title']);
     $this->assertSame('protocolSection', $result['protocolSection.identificationModule']['parent']);
+    $this->assertFalse($result['protocolSection.identificationModule']['isMultiple']);
 
     // Check that children are recorded as dotted paths.
     $this->assertContains('protocolSection.identificationModule', $result['protocolSection']['children']);
+  }
+
+  /**
+   * Tests that getMetadataByPath() records multiplicity explicitly.
+   *
+   * @covers ::getMetadataByPath
+   */
+  public function testGetMetadataByPathTracksMultiplicity(): void {
+    $this->api
+      ->method('get')
+      ->with('/studies/metadata')
+      ->willReturn([
+        [
+          'name' => 'protocolSection',
+          'piece' => 'ProtocolSection',
+          'title' => 'Protocol Section',
+          'type' => 'StdStudy',
+          'sourceType' => 'STRUCT',
+          'children' => [
+            [
+              'name' => 'conditionsModule',
+              'piece' => 'ConditionsModule',
+              'title' => 'Conditions Module',
+              'type' => 'ConditionsModule',
+              'sourceType' => 'STRUCT',
+              'children' => [
+                [
+                  'name' => 'conditions',
+                  'piece' => 'Condition',
+                  'title' => 'Condition/Disease',
+                  'type' => 'text[]',
+                  'sourceType' => 'TEXT',
+                  'children' => [],
+                ],
+              ],
+            ],
+          ],
+        ],
+      ]);
+
+    $result = $this->studyManager->getMetadataByPath();
+
+    // Check that scalar-like metadata rows are marked as single-value.
+    $this->assertFalse($result['protocolSection']['isMultiple']);
+    $this->assertFalse($result['protocolSection.conditionsModule']['isMultiple']);
+
+    // Check that array-valued metadata rows are marked as multi-value.
+    $this->assertTrue($result['protocolSection.conditionsModule.conditions']['isMultiple']);
   }
 
   /**

@@ -53,7 +53,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
    */
   public function resolveStructuredFieldDefinition(string $path): ?array {
     $metadata = $this->studyManager->getMetadataByPath($path);
-    return ($this->isSimpleCustomFieldStruct($metadata))
+    return ($this->supportsCustomFieldStruct($metadata))
       ? $this->buildCustomFieldDefinition($metadata)
       : NULL;
   }
@@ -108,7 +108,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
         'field_settings' => $field_settings,
       ],
       'type_label' => 'custom',
-      'display_type_label' => $this->buildDisplayTypeLabel('custom field', ((str_ends_with((string) ($metadata['type'] ?? ''), '[]')) ? -1 : 1)),
+      'display_type_label' => $this->buildDisplayTypeLabel('custom field', ($metadata['isMultiple'] ? -1 : 1)),
       'details' => $details,
       'field_details' => $field_details,
       'yaml_columns' => $yaml_columns,
@@ -117,16 +117,15 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
   }
 
   /**
-   * Determines whether a struct can be represented as a simple custom field.
+   * Determines whether a struct can be represented as a custom field.
    */
-  protected function isSimpleCustomFieldStruct(array $metadata): bool {
+  protected function supportsCustomFieldStruct(array $metadata): bool {
     $path = $metadata['path'];
     if (array_key_exists($path, self::STRUCTURE_WHITELIST)) {
       return TRUE;
     }
 
-    $type = $metadata['type'];
-    if (str_ends_with($type, '[]')) {
+    if ($metadata['isMultiple']) {
       return FALSE;
     }
 
@@ -171,7 +170,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
     $source_type = $metadata['sourceType'];
     $is_enum = !empty($metadata['isEnum']);
     $max_chars = $this->getEffectiveMaxChars($child_key, $metadata);
-    $is_multi = str_ends_with($type, '[]');
+    $is_multiple = $metadata['isMultiple'];
 
     $storage = [
       'name' => $column_name,
@@ -201,7 +200,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       ];
     }
 
-    if ($is_multi && $this->supportsCustomFieldStringArray($source_type, $type, $is_enum)) {
+    if ($is_multiple && $this->supportsCustomFieldStringArray($source_type, $type, $is_enum)) {
       $instance += [
         'allowed_values' => $is_enum ? $this->studyManager->getEnumAsAllowedValues($type, TRUE) : [],
         'table_empty' => '',
@@ -359,7 +358,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       return FALSE;
     }
 
-    if (str_ends_with($type, '[]')) {
+    if ($metadata['isMultiple']) {
       return FALSE;
     }
 

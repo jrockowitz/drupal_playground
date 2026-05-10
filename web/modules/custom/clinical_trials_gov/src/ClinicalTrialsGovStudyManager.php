@@ -221,6 +221,7 @@ class ClinicalTrialsGovStudyManager implements ClinicalTrialsGovStudyManagerInte
         'piece' => (string) $item['piece'],
         'title' => (string) ($item['title'] ?? ''),
         'type' => (string) $item['type'],
+        'isMultiple' => str_ends_with((string) $item['type'], '[]'),
         'sourceType' => (string) $item['sourceType'],
         'maxChars' => $item['maxChars'] ?? NULL,
         'isEnum' => (bool) ($item['isEnum'] ?? FALSE),
