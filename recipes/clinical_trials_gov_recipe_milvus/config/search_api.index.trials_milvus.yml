@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.page.body
-    - field.field.node.trial.trial_brief_summary
+    - field.field.node.trial.trial_desc_mod
     - field.field.node.trial.trial_conditions_mod
     - field.field.node.trial.trial_nct_id
     - field.field.node.trial.trial_overall_status
@@ -49,11 +49,11 @@ field_settings:
   trial_brief_summary:
     label: 'Brief summary'
     datasource_id: 'entity:node'
-    property_path: trial_brief_summary
+    property_path: 'trial_desc_mod:briefSummary'
     type: text
     dependencies:
       config:
-        - field.field.node.trial.trial_brief_summary
+        - field.field.node.trial.trial_desc_mod
   trial_cond:
     label: 'Condition/Disease'
     datasource_id: 'entity:node'
