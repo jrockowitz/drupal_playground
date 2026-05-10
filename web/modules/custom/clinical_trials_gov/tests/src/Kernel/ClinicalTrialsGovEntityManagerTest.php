@@ -129,8 +129,8 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
     // Check that partial date structures resolve to custom fields.
     $this->assertSame('custom', $partial_date_struct_definition['field_type']);
     $this->assertSame([
-      'start_date',
-      'start_date_type',
+      'StartDate',
+      'StartDateType',
     ], $partial_date_struct_definition['details']);
 
     // Check that text array fields resolve to unlimited multi-value scalar fields.
@@ -147,12 +147,12 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
     $this->assertSame('custom', $responsible_party_definition['field_type']);
     $this->assertSame('custom field', $responsible_party_definition['display_type_label']);
     $this->assertSame([
-      'type',
-      'inv_full_name',
-      'inv_title',
-      'inv_aff',
-      'old_name_title',
-      'old_org',
+      'Type',
+      'InvestigatorFullName',
+      'InvestigatorTitle',
+      'InvestigatorAffiliation',
+      'OldNameTitle',
+      'OldOrganization',
     ], $responsible_party_definition['details']);
 
     // Check that MARKUP custom-field columns use formatted long text with plain text format.

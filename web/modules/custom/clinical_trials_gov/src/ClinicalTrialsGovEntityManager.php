@@ -139,6 +139,23 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     $normalized_rows = $this->normalizeSelectedRows($selected_rows);
 
     foreach (array_keys($normalized_rows) as $path) {
+      if (!empty($normalized_rows[$path])) {
+        $ancestor_path = $path;
+        $last_dot = strrpos($ancestor_path, '.');
+
+        while ($last_dot !== FALSE) {
+          $ancestor_path = substr($ancestor_path, 0, $last_dot);
+          $ancestor_definition = $this->fieldManager->getFieldDefinition($ancestor_path);
+
+          if ($this->isPromotedCustomFieldDefinition($ancestor_definition)) {
+            $selected_fields[(string) $ancestor_definition['field_name']] = $ancestor_path;
+            continue 2;
+          }
+
+          $last_dot = strrpos($ancestor_path, '.');
+        }
+      }
+
       $definition = $this->fieldManager->getFieldDefinition($path);
       $field_name = (string) ($definition['field_name'] ?? '');
       if (!$field_name || empty($definition['available']) || empty($definition['selectable'])) {
@@ -356,6 +373,16 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   }
 
   /**
+   * Returns whether a field definition should collapse child paths into itself.
+   */
+  protected function isPromotedCustomFieldDefinition(array $definition): bool {
+    return !empty($definition['available'])
+      && !empty($definition['selectable'])
+      && (($definition['field_type'] ?? '') === 'custom')
+      && empty($definition['group_only']);
+  }
+
+  /**
    * Determines whether a row should be hidden beneath a promoted custom field.
    */
   protected function shouldHideFieldRow(string $path, array $definitions): bool {
@@ -363,9 +390,10 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     while ($last_dot !== FALSE) {
       $parent_path = substr($path, 0, $last_dot);
       $parent_definition = $definitions[$parent_path] ?? $this->fieldManager->getFieldDefinition($parent_path);
-      if (!empty($parent_definition['available']) && (($parent_definition['field_type'] ?? '') === 'custom') && empty($parent_definition['group_only'])) {
+      if ($this->isPromotedCustomFieldDefinition($parent_definition)) {
         return TRUE;
       }
+      $path = $parent_path;
       $last_dot = strrpos($parent_path, '.');
     }
 
