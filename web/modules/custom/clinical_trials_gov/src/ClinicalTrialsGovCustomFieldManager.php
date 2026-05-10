@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\clinical_trials_gov;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\link\LinkItemInterface;
 
 /**
  * Builds custom-field definitions for supported structured metadata.
  */
 class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFieldManagerInterface {
+  use StringTranslationTrait;
 
   /**
    * Policy-backed max character overrides missing from study metadata.
@@ -51,36 +53,30 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
    */
   public function resolveStructuredFieldDefinition(string $path): ?array {
     $metadata = $this->studyManager->getMetadataByPath($path);
-    if ($this->isSimpleCustomFieldStruct($metadata)) {
-      return $this->buildCustomFieldDefinition($metadata);
-    }
-
-    if (!array_key_exists($path, self::STRUCTURE_WHITELIST)) {
-      return NULL;
-    }
-
-    return $this->buildCustomFieldDefinition($metadata);
+    return ($this->isSimpleCustomFieldStruct($metadata))
+      ? $this->buildCustomFieldDefinition($metadata)
+      : NULL;
   }
 
   /**
    * Resolves a custom-field definition from a struct metadata row.
    */
   protected function buildCustomFieldDefinition(array $metadata): ?array {
-    $children = $metadata['children'] ?? [];
+    $children = $metadata['children'];
     $columns = [];
     $field_settings = [];
     $details = [];
     $field_details = [];
     $yaml_columns = [];
     $source_key_map = [];
-    $parent_piece = (string) ($metadata['piece'] ?? '');
+    $parent_piece = $metadata['piece'];
 
     foreach ($children as $child_key) {
-      if (!is_string($child_key)) {
-        continue;
-      }
       $child_metadata = $this->studyManager->getMetadataByPath($child_key);
-      $detail_piece = $this->names->getDetailLabel((string) ($child_metadata['piece'] ?? $child_metadata['name'] ?? ''), $parent_piece);
+      $detail_piece = $this->names->getDetailLabel(
+        $child_metadata['piece'] ?? $child_metadata['name'] ?? '',
+        $parent_piece
+      );
       $column_definition = $this->buildCustomFieldColumnDefinition($child_key, $child_metadata, $detail_piece);
       if (!$column_definition) {
         continue;
@@ -124,20 +120,28 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
    * Determines whether a struct can be represented as a simple custom field.
    */
   protected function isSimpleCustomFieldStruct(array $metadata): bool {
-    $type = (string) ($metadata['type'] ?? '');
-    $children = $metadata['children'] ?? [];
+    $path = $metadata['path'];
+    if (array_key_exists($path, self::STRUCTURE_WHITELIST)) {
+      return TRUE;
+    }
 
-    if (!$children || str_ends_with($type, '[]')) {
+    $type = $metadata['type'];
+    if (str_ends_with($type, '[]')) {
+      return FALSE;
+    }
+
+    $children = $metadata['children'];
+    if (empty($children)) {
       return FALSE;
     }
 
     foreach ($children as $child_key) {
-      if (!is_string($child_key)) {
-        return FALSE;
-      }
       $child_metadata = $this->studyManager->getMetadataByPath($child_key);
-      $detail_piece = $this->names->getDetailLabel((string) ($child_metadata['piece'] ?? $child_metadata['name'] ?? ''), (string) ($metadata['piece'] ?? ''));
-      if (($child_metadata['sourceType'] ?? '') === 'STRUCT') {
+      $detail_piece = $this->names->getDetailLabel(
+        $child_metadata['piece'] ?? $child_metadata['name'] ?? '',
+        $metadata['piece'],
+      );
+      if ($child_metadata['sourceType'] === 'STRUCT') {
         return FALSE;
       }
       if (!$this->buildCustomFieldColumnDefinition($child_key, $child_metadata, $detail_piece)) {
@@ -152,7 +156,9 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
    * Builds a human-readable field type label for the mapping table.
    */
   protected function buildDisplayTypeLabel(string $type_label, int $cardinality): string {
-    return ($cardinality === -1) ? ($type_label . ' (multiple)') : $type_label;
+    return ($cardinality === -1)
+      ? $type_label . ' (' . $this->t('multiple') . ')'
+      : $type_label;
   }
 
   /**
@@ -160,9 +166,9 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
    */
   protected function buildCustomFieldColumnDefinition(string $child_key, array $metadata, string $detail_piece): ?array {
     $column_name = $this->names->normalizePiece($detail_piece);
-    $title = (string) ($metadata['title'] ?? $column_name);
-    $type = (string) ($metadata['type'] ?? '');
-    $source_type = (string) ($metadata['sourceType'] ?? '');
+    $title = $metadata['title'] ?? $column_name;
+    $type = $metadata['type'];
+    $source_type = $metadata['sourceType'];
     $is_enum = !empty($metadata['isEnum']);
     $max_chars = $this->getEffectiveMaxChars($child_key, $metadata);
     $is_multi = str_ends_with($type, '[]');
@@ -339,14 +345,17 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
    * Determines whether one child value should fall back to YAML storage.
    */
   protected function requiresYamlFallback(array $metadata): bool {
-    $source_type = (string) ($metadata['sourceType'] ?? '');
-    $type = (string) ($metadata['type'] ?? '');
+    $source_type = $metadata['sourceType'];
 
     if ($source_type === 'STRUCT') {
       return TRUE;
     }
+    if (in_array($source_type, ['TEXT', 'MARKUP', 'NUMERIC', 'BOOLEAN', 'DATE'])) {
+      return FALSE;
+    }
 
-    if (!$type || $type === 'text' || $type === 'boolean' || $type === 'integer') {
+    $type = $metadata['type'];
+    if (in_array($type, ['text', 'boolean', 'integer', 'date', 'long'])) {
       return FALSE;
     }
 
@@ -354,28 +363,12 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       return FALSE;
     }
 
-    if (in_array($source_type, ['TEXT', 'MARKUP', 'NUMERIC', 'BOOLEAN', 'DATE'])) {
-      return FALSE;
-    }
-
-    return !$this->isScalarType($type);
-  }
-
-  /**
-   * Determines whether one metadata type is already scalar-like.
-   */
-  protected function isScalarType(string $type): bool {
-    return in_array($type, [
+    return !in_array($type, [
       'RecruitmentStatus',
       'ContactRole',
       'OfficialRole',
       'GeoName',
       'NormalizedTime',
-      'text',
-      'boolean',
-      'integer',
-      'date',
-      'long',
     ]);
   }
 
@@ -383,22 +376,17 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
    * Determines whether an array-valued child can use a map_string column.
    */
   protected function supportsCustomFieldStringArray(string $source_type, string $type, bool $is_enum): bool {
-    if ($is_enum) {
-      return TRUE;
-    }
-
-    return in_array($source_type, ['TEXT', 'MARKUP']);
+    return $is_enum || in_array($source_type, ['TEXT', 'MARKUP']);
   }
 
   /**
    * Returns the effective max character limit for one metadata row.
    */
   protected function getEffectiveMaxChars(string $path, array $metadata): ?int {
-    if (isset(self::MAX_CHAR_OVERRIDES[$path])) {
-      return self::MAX_CHAR_OVERRIDES[$path];
-    }
-
-    return isset($metadata['maxChars']) ? (int) $metadata['maxChars'] : NULL;
+    $max_chars = self::MAX_CHAR_OVERRIDES[$path] ?? $metadata['maxChars'] ?? NULL;
+    return (!is_null($max_chars))
+      ? (int) $max_chars
+      : NULL;
   }
 
 }
