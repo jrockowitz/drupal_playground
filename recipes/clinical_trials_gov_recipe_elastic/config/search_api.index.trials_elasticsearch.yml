@@ -178,6 +178,6 @@ tracker_settings:
 options:
   cron_limit: 50
   delete_on_fail: true
-  index_directly: true
+  index_directly: false
   track_changes_in_references: true
 server: trials_elasticsearch
