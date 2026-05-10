@@ -39,8 +39,10 @@ class ClinicalTrialsGovSetupManagerTest extends ClinicalTrialsGovContentTestBase
       'query' => 'query.cond=lung',
       'type' => 'study',
       'field_prefix' => 'study',
+      'view_display_root' => 'details',
       'view_display_component' => 'visible_update',
       'view_display_field_group' => 'fieldset',
+      'form_display_root' => 'container',
       'form_display_component' => 'visible',
       'form_display_field_group' => 'container',
     ]);
@@ -52,8 +54,10 @@ class ClinicalTrialsGovSetupManagerTest extends ClinicalTrialsGovContentTestBase
     $this->assertSame('query.cond=lung', $settings->get('query'));
     $this->assertSame('study', $settings->get('type'));
     $this->assertSame('study', $settings->get('field_prefix'));
+    $this->assertSame('details', $settings->get('view_display_root'));
     $this->assertSame('visible_update', $settings->get('view_display_component'));
     $this->assertSame('fieldset', $settings->get('view_display_field_group'));
+    $this->assertSame('container', $settings->get('form_display_root'));
     $this->assertSame('visible', $settings->get('form_display_component'));
     $this->assertSame('container', $settings->get('form_display_field_group'));
     $this->assertNotEmpty($settings->get('query_paths'));

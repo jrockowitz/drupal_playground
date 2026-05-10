@@ -146,6 +146,17 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
       '#disabled' => $structure_locked,
     ];
 
+    if ($this->moduleHandler->moduleExists('field_group')) {
+      $form['content_type']['view_display_root'] = [
+        '#type' => 'select',
+        '#title' => $this->t('View display root'),
+        '#description' => $this->t('Choose how the generated ClinicalTrials.gov root field group is added to the default view display before fields are created.'),
+        '#options' => $this->getFieldGroupOptions(),
+        '#config_target' => 'clinical_trials_gov.settings:view_display_root',
+        '#required' => TRUE,
+        '#disabled' => $structure_locked,
+      ];
+    }
     $form['content_type']['view_display_component'] = [
       '#type' => 'select',
       '#title' => $this->t('View display component'),
@@ -167,6 +178,17 @@ class ClinicalTrialsGovSettingsForm extends ConfigFormBase {
       ];
     }
 
+    if ($this->moduleHandler->moduleExists('field_group')) {
+      $form['content_type']['form_display_root'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Form display root'),
+        '#description' => $this->t('Choose how the generated ClinicalTrials.gov root field group is added to the default edit form display before fields are created.'),
+        '#options' => $this->getFieldGroupOptions(),
+        '#config_target' => 'clinical_trials_gov.settings:form_display_root',
+        '#required' => TRUE,
+        '#disabled' => $structure_locked,
+      ];
+    }
     $form['content_type']['form_display_component'] = [
       '#type' => 'select',
       '#title' => $this->t('Form display component'),

@@ -30,7 +30,9 @@ required_paths:
 type: trial
 field_prefix: trial
 fields: {}
+view_display_root: details_opened
 view_display_component: visible
 view_display_field_group: details_opened
+form_display_root: details_opened
 form_display_component: visible
 form_display_field_group: details_opened

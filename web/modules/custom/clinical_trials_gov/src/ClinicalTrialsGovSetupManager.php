@@ -20,8 +20,10 @@ class ClinicalTrialsGovSetupManager implements ClinicalTrialsGovSetupManagerInte
     'field_prefix',
     'title_path',
     'required_paths',
+    'view_display_root',
     'view_display_component',
     'view_display_field_group',
+    'form_display_root',
     'form_display_component',
     'form_display_field_group',
   ];

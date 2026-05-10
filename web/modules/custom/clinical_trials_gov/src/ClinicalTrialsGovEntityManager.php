@@ -19,6 +19,16 @@ use Drupal\link\LinkItemInterface;
 class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerInterface {
 
   /**
+   * The generated field-group machine name for ClinicalTrials.gov display items.
+   */
+  protected const ROOT_FIELD_GROUP_NAME = 'group_clinical_trials_gov';
+
+  /**
+   * The generated field-group label for ClinicalTrials.gov display items.
+   */
+  protected const ROOT_FIELD_GROUP_LABEL = 'ClinicalTrials.gov';
+
+  /**
    * Constructs a new ClinicalTrialsGovEntityManager.
    */
   public function __construct(
@@ -121,7 +131,7 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     $this->createFieldDisplayComponents($type, $field_definitions);
-    $this->createFieldGroups($type, $fields);
+    $this->createFieldGroups($type, $fields, $field_definitions);
   }
 
   /**
@@ -305,14 +315,19 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   /**
    * Creates field groups for selected nested structures.
    */
-  protected function createFieldGroups(string $type, array $fields): void {
+  protected function createFieldGroups(string $type, array $fields, array $field_definitions): void {
     if (!$this->supportsFieldGroups()) {
       return;
     }
 
+    $form_root_format = $this->getConfiguredFormDisplayRoot();
     $form_field_group_format = $this->getConfiguredFormDisplayFieldGroup();
+    $view_root_format = $this->getConfiguredViewDisplayRoot();
     $view_field_group_format = $this->getConfiguredViewDisplayFieldGroup();
-    if (($form_field_group_format === 'none') && ($view_field_group_format === 'none')) {
+    if (($form_root_format === 'none')
+      && ($form_field_group_format === 'none')
+      && ($view_root_format === 'none')
+      && ($view_field_group_format === 'none')) {
       return;
     }
 
@@ -324,26 +339,16 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     $group_definitions = array_filter($selected_fields, static fn(array $definition): bool => !empty($definition['group_only']));
-    if (!$group_definitions) {
-      return;
+
+    $form_display = (($form_root_format !== 'none') || ($form_field_group_format !== 'none')) ? $this->loadOrCreateFormDisplay($type) : NULL;
+    $view_display = (($view_root_format !== 'none') || ($view_field_group_format !== 'none')) ? $this->loadOrCreateViewDisplay($type) : NULL;
+
+    if ($form_display) {
+      $this->applyDisplayFieldGroups($form_display, $group_definitions, $selected_fields, $field_definitions, $form_field_group_format, $form_root_format);
     }
 
-    $form_display = ($form_field_group_format !== 'none') ? $this->loadOrCreateFormDisplay($type) : NULL;
-    $view_display = ($view_field_group_format !== 'none') ? $this->loadOrCreateViewDisplay($type) : NULL;
-
-    foreach ($group_definitions as $path => $definition) {
-      $children = $this->resolveFieldGroupChildren($path, $selected_fields);
-      if (!$children) {
-        continue;
-      }
-
-      if ($form_display) {
-        $form_display->setThirdPartySetting('field_group', $definition['field_name'], $this->buildFieldGroupSettings($definition, $children, $this->resolveParentGroupName($path, $selected_fields), $form_field_group_format));
-      }
-
-      if ($view_display) {
-        $view_display->setThirdPartySetting('field_group', $definition['field_name'], $this->buildFieldGroupSettings($definition, $children, $this->resolveParentGroupName($path, $selected_fields), $view_field_group_format));
-      }
+    if ($view_display) {
+      $this->applyDisplayFieldGroups($view_display, $group_definitions, $selected_fields, $field_definitions, $view_field_group_format, $view_root_format);
     }
 
     $display_id = 'node.' . $type . '.default';
@@ -654,6 +659,15 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
   }
 
   /**
+   * Returns the configured view root field-group format.
+   */
+  protected function getConfiguredViewDisplayRoot(): string {
+    $value = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('view_display_root');
+
+    return in_array($value, ['details', 'details_opened', 'fieldset', 'container', 'none']) ? $value : 'details_opened';
+  }
+
+  /**
    * Returns the configured view field-group format.
    */
   protected function getConfiguredViewDisplayFieldGroup(): string {
@@ -672,6 +686,15 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     return in_array($value, ['visible', 'hidden', 'readonly']) ? $value : 'visible';
+  }
+
+  /**
+   * Returns the configured form root field-group format.
+   */
+  protected function getConfiguredFormDisplayRoot(): string {
+    $value = (string) $this->configFactory->get('clinical_trials_gov.settings')->get('form_display_root');
+
+    return in_array($value, ['details', 'details_opened', 'fieldset', 'container', 'none']) ? $value : 'details_opened';
   }
 
   /**
@@ -863,6 +886,96 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
     }
 
     return (string) $selected_fields[$parent]['field_name'];
+  }
+
+  /**
+   * Applies generated field-group settings to a display.
+   */
+  protected function applyDisplayFieldGroups(
+    EntityFormDisplayInterface|EntityViewDisplayInterface $display,
+    array $group_definitions,
+    array $selected_fields,
+    array $field_definitions,
+    string $field_group_format,
+    string $root_format,
+  ): void {
+    $root_children = $this->getRootFieldGroupChildren($field_definitions, $group_definitions, $selected_fields, $display, $field_group_format);
+    foreach ($group_definitions as $path => $definition) {
+      if ($field_group_format === 'none') {
+        $display->unsetThirdPartySetting('field_group', $definition['field_name']);
+        continue;
+      }
+
+      $children = $this->resolveFieldGroupChildren($path, $selected_fields);
+      if (!$children) {
+        continue;
+      }
+
+      $parent_name = $this->resolveParentGroupName($path, $selected_fields);
+      if (($parent_name === '') && ($root_format !== 'none')) {
+        $parent_name = self::ROOT_FIELD_GROUP_NAME;
+        $root_children[] = $definition['field_name'];
+      }
+
+      $display->setThirdPartySetting('field_group', $definition['field_name'], $this->buildFieldGroupSettings($definition, $children, $parent_name, $field_group_format));
+    }
+
+    if ($root_format === 'none') {
+      $display->unsetThirdPartySetting('field_group', self::ROOT_FIELD_GROUP_NAME);
+      return;
+    }
+
+    $display->setThirdPartySetting('field_group', self::ROOT_FIELD_GROUP_NAME, $this->buildRootFieldGroupSettings(array_values(array_unique($root_children)), $root_format));
+  }
+
+  /**
+   * Returns the top-level generated children for the ClinicalTrials.gov root group.
+   */
+  protected function getRootFieldGroupChildren(
+    array $field_definitions,
+    array $group_definitions,
+    array $selected_fields,
+    EntityFormDisplayInterface|EntityViewDisplayInterface $display,
+    string $field_group_format,
+  ): array {
+    $group_children = [];
+    if ($field_group_format !== 'none') {
+      foreach (array_keys($group_definitions) as $path) {
+        foreach ($this->resolveFieldGroupChildren($path, $selected_fields) as $child_name) {
+          $group_children[] = $child_name;
+        }
+      }
+    }
+
+    $root_children = [];
+    foreach ($field_definitions as $definition) {
+      if (empty($definition['selectable']) || !empty($definition['group_only']) || empty($definition['field_name'])) {
+        continue;
+      }
+      if (($definition['destination_property'] ?? NULL) === 'title') {
+        continue;
+      }
+      if (!$display->getComponent($definition['field_name'])) {
+        continue;
+      }
+      if (in_array($definition['field_name'], $group_children)) {
+        continue;
+      }
+
+      $root_children[] = $definition['field_name'];
+    }
+
+    return $root_children;
+  }
+
+  /**
+   * Builds third-party settings for the ClinicalTrials.gov root field group.
+   */
+  protected function buildRootFieldGroupSettings(array $children, string $format): array {
+    return $this->buildFieldGroupSettings([
+      'label' => self::ROOT_FIELD_GROUP_LABEL,
+      'description' => '',
+    ], $children, '', $format);
   }
 
   /**

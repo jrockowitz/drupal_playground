@@ -41,8 +41,10 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
     $this->config('clinical_trials_gov.settings')
       ->set('type', 'trial')
       ->set('field_prefix', 'trial')
+      ->set('view_display_root', 'details_opened')
       ->set('view_display_component', 'visible')
       ->set('view_display_field_group', 'fieldset')
+      ->set('form_display_root', 'fieldset')
       ->set('form_display_component', 'readonly')
       ->set('form_display_field_group', 'details_opened')
       ->save();
@@ -133,7 +135,14 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
 
     // Check that remaining nested structure selections create the configured form field group.
     $field_groups = $form_display->getThirdPartySettings('field_group');
+    $this->assertArrayHasKey('group_clinical_trials_gov', $field_groups);
+    $this->assertSame('fieldset', $field_groups['group_clinical_trials_gov']['format_type']);
+    $this->assertContains('trial_nct_url', $field_groups['group_clinical_trials_gov']['children']);
+    $this->assertContains('trial_nct_api', $field_groups['group_clinical_trials_gov']['children']);
+    $this->assertContains('group_id_mod', $field_groups['group_clinical_trials_gov']['children']);
+    $this->assertNotContains('title', $field_groups['group_clinical_trials_gov']['children']);
     $this->assertArrayHasKey('group_id_mod', $field_groups);
+    $this->assertSame('group_clinical_trials_gov', $field_groups['group_id_mod']['parent_name']);
     $this->assertContains('trial_brief_title', $field_groups['group_id_mod']['children']);
     $this->assertContains('trial_nct_id', $field_groups['group_id_mod']['children']);
     $this->assertContains('trial_org', $field_groups['group_id_mod']['children']);
@@ -143,13 +152,22 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
 
     // Check that remaining nested structure selections create the configured view field group.
     $view_field_groups = $view_display->getThirdPartySettings('field_group');
+    $this->assertArrayHasKey('group_clinical_trials_gov', $view_field_groups);
+    $this->assertSame('details', $view_field_groups['group_clinical_trials_gov']['format_type']);
+    $this->assertTrue($view_field_groups['group_clinical_trials_gov']['format_settings']['open']);
+    $this->assertContains('trial_nct_url', $view_field_groups['group_clinical_trials_gov']['children']);
+    $this->assertContains('trial_nct_api', $view_field_groups['group_clinical_trials_gov']['children']);
+    $this->assertContains('group_id_mod', $view_field_groups['group_clinical_trials_gov']['children']);
     $this->assertArrayHasKey('group_id_mod', $view_field_groups);
+    $this->assertSame('group_clinical_trials_gov', $view_field_groups['group_id_mod']['parent_name']);
     $this->assertSame('fieldset', $view_field_groups['group_id_mod']['format_type']);
 
     $this->config('clinical_trials_gov.settings')
       ->set('type', 'trial_hidden')
+      ->set('form_display_root', 'details_opened')
       ->set('form_display_component', 'hidden')
       ->set('form_display_field_group', 'none')
+      ->set('view_display_root', 'container')
       ->set('view_display_component', 'hidden')
       ->set('view_display_field_group', 'none')
       ->save();
@@ -170,8 +188,51 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
     $this->assertNotNull($hidden_view_display);
     $this->assertNull($hidden_form_display->getComponent('trial_brief_title'));
     $this->assertNull($hidden_view_display->getComponent('trial_brief_title'));
-    $this->assertSame([], $hidden_form_display->getThirdPartySettings('field_group'));
-    $this->assertSame([], $hidden_view_display->getThirdPartySettings('field_group'));
+    $hidden_form_field_groups = $hidden_form_display->getThirdPartySettings('field_group');
+    $hidden_view_field_groups = $hidden_view_display->getThirdPartySettings('field_group');
+    $this->assertArrayHasKey('group_clinical_trials_gov', $hidden_form_field_groups);
+    $this->assertSame([], $hidden_form_field_groups['group_clinical_trials_gov']['children']);
+    $this->assertArrayHasKey('group_clinical_trials_gov', $hidden_view_field_groups);
+    $this->assertSame([], $hidden_view_field_groups['group_clinical_trials_gov']['children']);
+
+    $this->config('clinical_trials_gov.settings')
+      ->set('type', 'trial_nested')
+      ->set('field_prefix', 'trial_nested')
+      ->set('form_display_root', 'none')
+      ->set('form_display_component', 'visible')
+      ->set('form_display_field_group', 'details_opened')
+      ->set('view_display_root', 'none')
+      ->set('view_display_component', 'visible')
+      ->set('view_display_field_group', 'fieldset')
+      ->save();
+
+    $this->entityManager->createContentType('trial_nested', 'Nested Trial', 'Clinical trial content type');
+    $this->entityManager->createFields('trial_nested', [
+      'protocolSection.identificationModule',
+      'protocolSection.identificationModule.briefTitle',
+      'protocolSection.identificationModule.nctId',
+      'protocolSection.identificationModule.organization',
+    ]);
+
+    $nested_form_display = EntityFormDisplay::load('node.trial_nested.default');
+    $nested_view_display = EntityViewDisplay::load('node.trial_nested.default');
+
+    // Check that nested field groups still work without the ClinicalTrials.gov root group.
+    $this->assertNotNull($nested_form_display);
+    $this->assertNotNull($nested_view_display);
+    $nested_form_field_groups = $nested_form_display->getThirdPartySettings('field_group');
+    $nested_view_field_groups = $nested_view_display->getThirdPartySettings('field_group');
+    $this->assertArrayNotHasKey('group_clinical_trials_gov', $nested_form_field_groups);
+    $this->assertArrayNotHasKey('group_clinical_trials_gov', $nested_view_field_groups);
+    $this->assertArrayHasKey('group_id_mod', $nested_form_field_groups);
+    $this->assertSame('', $nested_form_field_groups['group_id_mod']['parent_name']);
+    $this->assertArrayHasKey('group_id_mod', $nested_view_field_groups);
+    $this->assertSame('', $nested_view_field_groups['group_id_mod']['parent_name']);
+
+    $this->config('clinical_trials_gov.settings')
+      ->set('type', 'trial')
+      ->set('field_prefix', 'trial')
+      ->save();
 
     // Check that the teaser display only contains the selected summary fields.
     $teaser_display = EntityViewDisplay::load('node.trial.teaser');

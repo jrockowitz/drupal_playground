@@ -61,8 +61,10 @@ class ClinicalTrialsGovSettingValidationTest extends ClinicalTrialsGovTestBase {
       ],
       'type' => 'trial',
       'field_prefix' => 'trial',
+      'view_display_root' => 'details',
       'view_display_component' => 'visible',
       'view_display_field_group' => 'details',
+      'form_display_root' => 'details',
       'form_display_component' => 'visible',
       'form_display_field_group' => 'details',
       'fields' => [],
@@ -82,8 +84,10 @@ class ClinicalTrialsGovSettingValidationTest extends ClinicalTrialsGovTestBase {
       ],
       'type' => 'trial',
       'field_prefix' => 'trial',
+      'view_display_root' => 'invalid',
       'view_display_component' => 'invalid',
       'view_display_field_group' => 'invalid',
+      'form_display_root' => 'invalid',
       'form_display_component' => 'invalid',
       'form_display_field_group' => 'invalid',
       'fields' => [],
@@ -93,7 +97,7 @@ class ClinicalTrialsGovSettingValidationTest extends ClinicalTrialsGovTestBase {
     $invalid_values = array_map(static fn ($violation): string => (string) $violation->getInvalidValue(), $violations);
 
     // Check that invalid query, title, required metadata paths, and display options are rejected.
-    $this->assertCount(7, $violations);
+    $this->assertCount(9, $violations);
     $this->assertContains('protocolSection.identificationModule.notARealPath', $invalid_values);
     $this->assertContains('protocolSection.identificationModule.notARealPath', $invalid_values);
     $this->assertContains('protocolSection.identificationModule.alsoNotReal', $invalid_values);
