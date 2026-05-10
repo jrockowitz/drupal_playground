@@ -61,9 +61,9 @@ class ClinicalTrialsGovCustomFieldManagerTest extends ClinicalTrialsGovContentTe
     // Check that MARKUP child fields use formatted long text settings.
     $this->assertIsArray($eligibility_definition);
     $this->assertSame('custom', $eligibility_definition['field_type']);
-    $this->assertSame('string_long', $eligibility_definition['storage_settings']['columns']['eligibility_criteria']['type']);
-    $this->assertTrue($eligibility_definition['instance_settings']['field_settings']['eligibility_criteria']['formatted']);
-    $this->assertSame('plain_text', $eligibility_definition['instance_settings']['field_settings']['eligibility_criteria']['default_format']);
+    $this->assertSame('string_long', $eligibility_definition['storage_settings']['columns']['elig_criteria']['type']);
+    $this->assertTrue($eligibility_definition['instance_settings']['field_settings']['elig_criteria']['formatted']);
+    $this->assertSame('plain_text', $eligibility_definition['instance_settings']['field_settings']['elig_criteria']['default_format']);
     $this->assertSame('map_string', $eligibility_definition['storage_settings']['columns']['std_age']['type']);
     $this->assertSame('', $eligibility_definition['instance_settings']['field_settings']['std_age']['table_empty']);
     $this->assertContains('StdAge', $eligibility_definition['details']);
