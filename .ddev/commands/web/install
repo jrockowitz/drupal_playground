@@ -4,7 +4,7 @@ set -euo pipefail
 
 ## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-elastic\nddev install trials-milvus\nddev install trials-milvus trials-chat
+## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-setup\nddev install trials-elastic\nddev install trials-milvus\nddev install trials-milvus trials-chat
 ## ProjectTypes: drupal,drupal11
 
 uli_path="/"
@@ -95,9 +95,14 @@ for PRESET in "$@"; do
 
     echo "Installing ClinicalTrials.gov module..."
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
-    echo "Setting the ClinicalTrials.gov query..."
-    drush config:set -y clinical_trials_gov.settings query 'query.term=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING'
+    uli_path="/admin/config/services/clinical-trials-gov"
 
+  elif [ "$PRESET" = "trials-setup" ]; then
+
+    # ddev exec curl -X DELETE http://elasticsearch:9200/trials_elasticsearch
+    echo "Applying ClinicalTrials.gov setup recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_setup
+    drush migrate:import clinical_trials_gov --limit=10
     uli_path="/admin/config/services/clinical-trials-gov"
 
   elif [ "$PRESET" = "trials-elastic" ]; then

@@ -115,16 +115,16 @@ class ClinicalTrialsGovNamesTest extends UnitTestCase {
   }
 
   /**
-   * Tests detail labels trim the parent piece before normalization.
+   * Tests detail labels trim the parent piece and preserve piece casing.
    *
    * @covers ::getDetailLabel
    */
   public function testGetDetailLabel(): void {
     // Check that the parent piece prefix is trimmed from the child piece.
-    $this->assertSame('inv_full_name', $this->names->getDetailLabel('ResponsiblePartyInvestigatorFullName', 'ResponsibleParty'));
+    $this->assertSame('InvestigatorFullName', $this->names->getDetailLabel('ResponsiblePartyInvestigatorFullName', 'ResponsibleParty'));
 
-    // Check that labels still normalize when there is no parent piece.
-    $this->assertSame('type', $this->names->getDetailLabel('Type'));
+    // Check that labels still preserve their original piece style without a parent.
+    $this->assertSame('Type', $this->names->getDetailLabel('Type'));
   }
 
   /**

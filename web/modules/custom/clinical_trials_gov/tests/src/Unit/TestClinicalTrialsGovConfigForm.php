@@ -33,6 +33,13 @@ class TestClinicalTrialsGovConfigForm extends ClinicalTrialsGovConfigForm {
   }
 
   /**
+   * Exposes buildPieceMarkup() for testing.
+   */
+  public function exposedBuildPieceMarkup(array $definition, string $path): array {
+    return $this->buildPieceMarkup($definition, $path);
+  }
+
+  /**
    * Exposes hasRequiredDescendant() for testing.
    */
   public function exposedHasRequiredDescendant(string $path, array $definitions): bool {

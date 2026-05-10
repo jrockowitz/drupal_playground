@@ -68,6 +68,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
     $columns = [];
     $field_settings = [];
     $details = [];
+    $field_details = [];
     $yaml_columns = [];
     $parent_piece = (string) ($metadata['piece'] ?? '');
 
@@ -83,7 +84,9 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       $column_name = $column_definition['column_name'];
       $columns[$column_name] = $column_definition['storage'];
       $field_settings[$column_name] = $column_definition['instance'];
-      $details[] = $this->names->getDetailLabel((string) ($child_metadata['piece'] ?? $child_metadata['name'] ?? ''), $parent_piece);
+      $detail_piece = $this->names->getDetailLabel((string) ($child_metadata['piece'] ?? $child_metadata['name'] ?? ''), $parent_piece);
+      $details[] = $detail_piece;
+      $field_details[] = $this->names->normalizePiece($detail_piece);
       if (!empty($column_definition['yaml_fallback'])) {
         $yaml_columns[] = $column_name;
       }
@@ -104,6 +107,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       'type_label' => 'custom',
       'display_type_label' => $this->buildDisplayTypeLabel('custom field', ((str_ends_with((string) ($metadata['type'] ?? ''), '[]')) ? -1 : 1)),
       'details' => $details,
+      'field_details' => $field_details,
       'yaml_columns' => $yaml_columns,
     ];
   }

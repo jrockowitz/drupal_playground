@@ -40,13 +40,21 @@ class ClinicalTrialsGovCustomFieldManagerTest extends ClinicalTrialsGovContentTe
     $this->assertIsArray($responsible_party_definition);
     $this->assertSame('custom', $responsible_party_definition['field_type']);
     $this->assertSame([
+      'Type',
+      'InvestigatorFullName',
+      'InvestigatorTitle',
+      'InvestigatorAffiliation',
+      'OldNameTitle',
+      'OldOrganization',
+    ], $responsible_party_definition['details']);
+    $this->assertSame([
       'type',
       'inv_full_name',
       'inv_title',
       'inv_aff',
       'old_name_title',
       'old_org',
-    ], $responsible_party_definition['details']);
+    ], $responsible_party_definition['field_details']);
 
     // Check that MARKUP child fields use formatted long text settings.
     $this->assertIsArray($eligibility_definition);
@@ -56,6 +64,8 @@ class ClinicalTrialsGovCustomFieldManagerTest extends ClinicalTrialsGovContentTe
     $this->assertSame('plain_text', $eligibility_definition['instance_settings']['field_settings']['eligibilityCriteria']['default_format']);
     $this->assertSame('map_string', $eligibility_definition['storage_settings']['columns']['stdAges']['type']);
     $this->assertSame('', $eligibility_definition['instance_settings']['field_settings']['stdAges']['table_empty']);
+    $this->assertContains('StdAge', $eligibility_definition['details']);
+    $this->assertContains('std_age', $eligibility_definition['field_details']);
     $this->assertSame([
       [
         'key' => 'CHILD',
