@@ -100,7 +100,11 @@ class ClinicalTrialsGovSetupWorkflowTest extends ClinicalTrialsGovContentTestBas
     $this->assertSame('protocolSection.identificationModule', $field_mappings['group_id_mod']);
     $this->assertSame('protocolSection.identificationModule.briefTitle', $field_mappings['trial_brief_title']);
     $this->assertSame('protocolSection.identificationModule.nctId', $field_mappings['trial_nct_id']);
+    $this->assertSame('protocolSection.armsInterventionsModule.interventions', $field_mappings['trial_int']);
     $this->assertSame('protocolSection.eligibilityModule', $field_mappings['trial_eligibility_mod']);
+    $this->assertArrayNotHasKey('trial_int_type', $field_mappings);
+    $this->assertArrayNotHasKey('trial_int_name', $field_mappings);
+    $this->assertArrayNotHasKey('trial_int_desc', $field_mappings);
     $this->assertArrayNotHasKey('trial_eligibility_criteria', $field_mappings);
     $this->assertArrayNotHasKey('trial_healthy_volunteers', $field_mappings);
     $this->assertArrayNotHasKey('trial_sex', $field_mappings);
@@ -117,7 +121,9 @@ class ClinicalTrialsGovSetupWorkflowTest extends ClinicalTrialsGovContentTestBas
     $this->assertSame('Imported ClinicalTrials.gov studies.', $node_type->getDescription());
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', 'trial_nct_id'));
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', 'trial_brief_title'));
+    $this->assertNotNull(FieldConfig::loadByName('node', 'trial', 'trial_int'));
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', 'trial_eligibility_mod'));
+    $this->assertNull(FieldConfig::loadByName('node', 'trial', 'trial_int_type'));
     $this->assertNull(FieldConfig::loadByName('node', 'trial', 'trial_std_age'));
 
     // Check that the generated migration points at the configured bundle.

@@ -27,6 +27,8 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
     'protocolSection.identificationModule.organization' => 'Organization',
     'protocolSection.statusModule.expandedAccessInfo' => 'ExpandedAccessInfo',
     'protocolSection.designModule.enrollmentInfo' => 'EnrollmentInfo',
+    'protocolSection.armsInterventionsModule.armGroups' => 'ArmGroup[]',
+    'protocolSection.armsInterventionsModule.interventions' => 'Intervention[]',
     'protocolSection.contactsLocationsModule.centralContacts' => 'Contact[]',
     'protocolSection.contactsLocationsModule.locations' => 'Location[]',
     'protocolSection.contactsLocationsModule.locations.contacts' => 'Contact[]',

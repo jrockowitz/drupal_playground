@@ -34,6 +34,8 @@ class ClinicalTrialsGovCustomFieldManagerTest extends ClinicalTrialsGovContentTe
   public function testResolveStructuredFieldDefinition(): void {
     $responsible_party_definition = $this->customFieldManager->resolveStructuredFieldDefinition('protocolSection.sponsorCollaboratorsModule.responsibleParty');
     $eligibility_definition = $this->customFieldManager->resolveStructuredFieldDefinition('protocolSection.eligibilityModule');
+    $arm_groups_definition = $this->customFieldManager->resolveStructuredFieldDefinition('protocolSection.armsInterventionsModule.armGroups');
+    $interventions_definition = $this->customFieldManager->resolveStructuredFieldDefinition('protocolSection.armsInterventionsModule.interventions');
     $references_definition = $this->customFieldManager->resolveStructuredFieldDefinition('protocolSection.referencesModule.references');
 
     // Check that simple structs resolve as custom fields.
@@ -84,6 +86,60 @@ class ClinicalTrialsGovCustomFieldManagerTest extends ClinicalTrialsGovContentTe
     $this->assertSame('string', $eligibility_definition['storage_settings']['columns']['maximumAge']['type']);
     $this->assertNotContains('minimumAge', $eligibility_definition['yaml_columns']);
     $this->assertNotContains('maximumAge', $eligibility_definition['yaml_columns']);
+
+    // Check that supported array structs resolve as custom fields.
+    $this->assertIsArray($arm_groups_definition);
+    $this->assertSame('custom', $arm_groups_definition['field_type']);
+    $this->assertSame('string_long', $arm_groups_definition['storage_settings']['columns']['description']['type']);
+    $this->assertSame('map_string', $arm_groups_definition['storage_settings']['columns']['interventionNames']['type']);
+    $this->assertSame([
+      [
+        'key' => 'EXPERIMENTAL',
+        'label' => 'Experimental',
+      ],
+      [
+        'key' => 'ACTIVE_COMPARATOR',
+        'label' => 'Active Comparator',
+      ],
+      [
+        'key' => 'PLACEBO_COMPARATOR',
+        'label' => 'Placebo Comparator',
+      ],
+      [
+        'key' => 'SHAM_COMPARATOR',
+        'label' => 'Sham Comparator',
+      ],
+      [
+        'key' => 'NO_INTERVENTION',
+        'label' => 'No Intervention',
+      ],
+      [
+        'key' => 'OTHER',
+        'label' => 'Other',
+      ],
+    ], $arm_groups_definition['instance_settings']['field_settings']['type']['allowed_values']);
+    $this->assertSame([], $arm_groups_definition['yaml_columns']);
+
+    // Check that interventions support enum, markup, and text-array columns.
+    $this->assertIsArray($interventions_definition);
+    $this->assertSame('custom', $interventions_definition['field_type']);
+    $this->assertSame('string_long', $interventions_definition['storage_settings']['columns']['description']['type']);
+    $this->assertSame('map_string', $interventions_definition['storage_settings']['columns']['armGroupLabels']['type']);
+    $this->assertSame('map_string', $interventions_definition['storage_settings']['columns']['otherNames']['type']);
+    $this->assertSame([
+      'BEHAVIORAL',
+      'BIOLOGICAL',
+      'COMBINATION_PRODUCT',
+      'DEVICE',
+      'DIAGNOSTIC_TEST',
+      'DIETARY_SUPPLEMENT',
+      'DRUG',
+      'GENETIC',
+      'PROCEDURE',
+      'RADIATION',
+      'OTHER',
+    ], array_column($interventions_definition['instance_settings']['field_settings']['type']['allowed_values'], 'key'));
+    $this->assertSame([], $interventions_definition['yaml_columns']);
 
     // Check that policy-backed max length overrides promote long citation text.
     $this->assertIsArray($references_definition);
