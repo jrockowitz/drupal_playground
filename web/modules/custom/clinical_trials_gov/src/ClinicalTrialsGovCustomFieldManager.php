@@ -79,14 +79,14 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
         continue;
       }
       $child_metadata = $this->studyManager->getMetadataByPath($child_key);
-      $column_definition = $this->buildCustomFieldColumnDefinition($child_key, $child_metadata);
+      $detail_piece = $this->names->getDetailLabel((string) ($child_metadata['piece'] ?? $child_metadata['name'] ?? ''), $parent_piece);
+      $column_definition = $this->buildCustomFieldColumnDefinition($child_key, $child_metadata, $detail_piece);
       if (!$column_definition) {
         continue;
       }
       $column_name = $column_definition['column_name'];
       $columns[$column_name] = $column_definition['storage'];
       $field_settings[$column_name] = $column_definition['instance'];
-      $detail_piece = $this->names->getDetailLabel((string) ($child_metadata['piece'] ?? $child_metadata['name'] ?? ''), $parent_piece);
       $details[] = $detail_piece;
       $field_details[] = $this->names->normalizePiece($detail_piece);
       if (!empty($column_definition['yaml_fallback'])) {
@@ -130,10 +130,11 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
         return FALSE;
       }
       $child_metadata = $this->studyManager->getMetadataByPath($child_key);
+      $detail_piece = $this->names->getDetailLabel((string) ($child_metadata['piece'] ?? $child_metadata['name'] ?? ''), (string) ($metadata['piece'] ?? ''));
       if (($child_metadata['sourceType'] ?? '') === 'STRUCT') {
         return FALSE;
       }
-      if (!$this->buildCustomFieldColumnDefinition($child_key, $child_metadata)) {
+      if (!$this->buildCustomFieldColumnDefinition($child_key, $child_metadata, $detail_piece)) {
         return FALSE;
       }
     }
@@ -151,8 +152,8 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
   /**
    * Builds a custom-field column definition for a child metadata row.
    */
-  protected function buildCustomFieldColumnDefinition(string $child_key, array $metadata): ?array {
-    $column_name = (string) ($metadata['name'] ?? basename(str_replace('.', '/', $child_key)));
+  protected function buildCustomFieldColumnDefinition(string $child_key, array $metadata, string $detail_piece): ?array {
+    $column_name = $this->names->normalizePiece($detail_piece);
     $title = (string) ($metadata['title'] ?? $column_name);
     $type = (string) ($metadata['type'] ?? '');
     $source_type = (string) ($metadata['sourceType'] ?? '');

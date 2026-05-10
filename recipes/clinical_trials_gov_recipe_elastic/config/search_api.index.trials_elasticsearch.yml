@@ -86,7 +86,7 @@ field_settings:
   trial_std_age:
     label: 'Age group'
     datasource_id: 'entity:node'
-    property_path: 'trial_eligibility_mod:stdAges'
+    property_path: 'trial_eligibility_mod:std_age'
     type: string
     dependencies:
       config:

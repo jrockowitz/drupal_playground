@@ -85,9 +85,9 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.identificationModule.organization'))->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty'))->getType());
     $this->assertSame('custom', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))->getType());
-    $this->assertSame('map_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.eligibilityModule'))->getSetting('columns')['stdAges']['type']);
-    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))->getSetting('columns')['contacts']['type']);
-    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))->getSetting('columns')['geoPoint']['type']);
+    $this->assertSame('map_string', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.eligibilityModule'))->getSetting('columns')['std_age']['type']);
+    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))->getSetting('columns')['contact']['type']);
+    $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations'))->getSetting('columns')['geo_point']['type']);
     $this->assertSame('string_long', FieldStorageConfig::loadByName('node', $this->entityManager->generateFieldName('protocolSection.referencesModule.references'))->getSetting('columns')['citation']['type']);
     // Check that the bundle field config exists for the created type.
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
@@ -140,8 +140,8 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
 
     // Check that whitelisted structures resolve to custom fields with columns.
     $this->assertSame('custom', $custom_definition['field_type']);
-    $this->assertArrayHasKey('fullName', $custom_definition['storage_settings']['columns']);
-    $this->assertArrayHasKey('class', $custom_definition['instance_settings']['field_settings']);
+    $this->assertArrayHasKey('org_full_name', $custom_definition['storage_settings']['columns']);
+    $this->assertArrayHasKey('org_class', $custom_definition['instance_settings']['field_settings']);
 
     // Check that simple structs resolve to custom fields with display details.
     $this->assertSame('custom', $responsible_party_definition['field_type']);
@@ -157,11 +157,11 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
 
     // Check that MARKUP custom-field columns use formatted long text with plain text format.
     $this->assertSame('custom', $eligibility_module_definition['field_type']);
-    $this->assertSame('string_long', $eligibility_module_definition['storage_settings']['columns']['eligibilityCriteria']['type']);
-    $this->assertTrue($eligibility_module_definition['instance_settings']['field_settings']['eligibilityCriteria']['formatted']);
-    $this->assertSame('plain_text', $eligibility_module_definition['instance_settings']['field_settings']['eligibilityCriteria']['default_format']);
-    $this->assertSame('map_string', $eligibility_module_definition['storage_settings']['columns']['stdAges']['type']);
-    $this->assertSame('', $eligibility_module_definition['instance_settings']['field_settings']['stdAges']['table_empty']);
+    $this->assertSame('string_long', $eligibility_module_definition['storage_settings']['columns']['eligibility_criteria']['type']);
+    $this->assertTrue($eligibility_module_definition['instance_settings']['field_settings']['eligibility_criteria']['formatted']);
+    $this->assertSame('plain_text', $eligibility_module_definition['instance_settings']['field_settings']['eligibility_criteria']['default_format']);
+    $this->assertSame('map_string', $eligibility_module_definition['storage_settings']['columns']['std_age']['type']);
+    $this->assertSame('', $eligibility_module_definition['instance_settings']['field_settings']['std_age']['table_empty']);
 
     // Check that reference citations use long plain text even without maxChars in the metadata.
     $this->assertSame('custom', $references_definition['field_type']);

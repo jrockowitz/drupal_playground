@@ -121,8 +121,8 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
     $this->assertFalse($config->get('source.constants.title_wordsafe'));
     $this->assertTrue($config->get('source.constants.title_add_ellipsis'));
     $this->assertSame([
-      'contacts',
-      'geoPoint',
+      'contact',
+      'geo_point',
     ], $config->get('source.constants.' . $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations') . '_yaml_columns'));
 
     // Check that updating the saved query refreshes an already-cached migration definition.

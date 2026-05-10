@@ -105,12 +105,12 @@ class ClinicalTrialsGovYamlHooksTest extends ClinicalTrialsGovContentTestBase {
         '#parents' => ['trial_version_holder_location', 0, 'contacts'],
         '#value' => 'contacts: [',
       ],
-      'geoPoint' => [
+      'geo_point' => [
         '#type' => 'text_format',
         '#title' => 'Location Geo Point (YAML)',
         'value' => [
           '#type' => 'textarea',
-          '#parents' => ['trial_version_holder_location', 0, 'geoPoint', 'value'],
+          '#parents' => ['trial_version_holder_location', 0, 'geo_point', 'value'],
           '#value' => "lat: 59.32938\nlon: 18.06871\n",
         ],
       ],
@@ -127,7 +127,7 @@ class ClinicalTrialsGovYamlHooksTest extends ClinicalTrialsGovContentTestBase {
 
     // Check that YAML-labeled textarea and text_format value elements get validation.
     $this->assertSame([ClinicalTrialsGovCustomFieldHooks::class, 'validateYamlElement'], $matching_element['contacts']['#element_validate'][0]);
-    $this->assertSame([ClinicalTrialsGovCustomFieldHooks::class, 'validateYamlElement'], $matching_element['geoPoint']['value']['#element_validate'][0]);
+    $this->assertSame([ClinicalTrialsGovCustomFieldHooks::class, 'validateYamlElement'], $matching_element['geo_point']['value']['#element_validate'][0]);
     $this->assertArrayNotHasKey('#element_validate', $matching_element['facility']);
 
     $invalid_state = new FormState();
@@ -138,7 +138,7 @@ class ClinicalTrialsGovYamlHooksTest extends ClinicalTrialsGovContentTestBase {
     $this->assertNotEmpty($invalid_state->getErrors());
 
     $valid_state = new FormState();
-    $element = $matching_element['geoPoint']['value'];
+    $element = $matching_element['geo_point']['value'];
     ClinicalTrialsGovCustomFieldHooks::validateYamlElement($element, $valid_state);
 
     // Check that valid YAML passes.
