@@ -157,9 +157,9 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
 
     // Check that MARKUP custom-field columns use formatted long text with plain text format.
     $this->assertSame('custom', $eligibility_module_definition['field_type']);
-    $this->assertSame('string_long', $eligibility_module_definition['storage_settings']['columns']['eligibility_criteria']['type']);
-    $this->assertTrue($eligibility_module_definition['instance_settings']['field_settings']['eligibility_criteria']['formatted']);
-    $this->assertSame('plain_text', $eligibility_module_definition['instance_settings']['field_settings']['eligibility_criteria']['default_format']);
+    $this->assertSame('string_long', $eligibility_module_definition['storage_settings']['columns']['elig_criteria']['type']);
+    $this->assertTrue($eligibility_module_definition['instance_settings']['field_settings']['elig_criteria']['formatted']);
+    $this->assertSame('plain_text', $eligibility_module_definition['instance_settings']['field_settings']['elig_criteria']['default_format']);
     $this->assertSame('map_string', $eligibility_module_definition['storage_settings']['columns']['std_age']['type']);
     $this->assertSame('', $eligibility_module_definition['instance_settings']['field_settings']['std_age']['table_empty']);
 

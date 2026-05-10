@@ -72,6 +72,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
     $details = [];
     $field_details = [];
     $yaml_columns = [];
+    $source_key_map = [];
     $parent_piece = (string) ($metadata['piece'] ?? '');
 
     foreach ($children as $child_key) {
@@ -89,6 +90,10 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       $field_settings[$column_name] = $column_definition['instance'];
       $details[] = $detail_piece;
       $field_details[] = $this->names->normalizePiece($detail_piece);
+      $source_key = $child_metadata['name'] ?? NULL;
+      if (is_string($source_key) && $source_key !== '') {
+        $source_key_map[$source_key] = $column_name;
+      }
       if (!empty($column_definition['yaml_fallback'])) {
         $yaml_columns[] = $column_name;
       }
@@ -111,6 +116,7 @@ class ClinicalTrialsGovCustomFieldManager implements ClinicalTrialsGovCustomFiel
       'details' => $details,
       'field_details' => $field_details,
       'yaml_columns' => $yaml_columns,
+      'source_key_map' => $source_key_map,
     ];
   }
 

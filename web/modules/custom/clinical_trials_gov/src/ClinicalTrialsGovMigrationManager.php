@@ -86,21 +86,25 @@ class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationMan
         ];
       }
 
-      if ($definition['field_type'] === 'custom' && !empty($definition['yaml_columns'])) {
-        $source_constants[$definition['field_name'] . '_yaml_columns'] = $definition['yaml_columns'];
+      if ($definition['field_type'] === 'custom') {
+        $source_constants[$definition['field_name'] . '_yaml_columns'] = $definition['yaml_columns'] ?? [];
+        $source_constants[$definition['field_name'] . '_source_key_map'] = $definition['source_key_map'] ?? [];
         $process[$definition['field_name']] = [
           [
             'plugin' => 'clinical_trials_gov_custom_field',
             'source' => [
               $path,
               'constants/' . $definition['field_name'] . '_yaml_columns',
+              'constants/' . $definition['field_name'] . '_source_key_map',
             ],
           ],
         ];
-        $this->logger->warning('ClinicalTrials.gov field @path uses YAML fallback for custom field properties: @columns', [
-          '@path' => $path,
-          '@columns' => implode(', ', $definition['yaml_columns']),
-        ]);
+        if (!empty($definition['yaml_columns'])) {
+          $this->logger->warning('ClinicalTrials.gov field @path uses YAML fallback for custom field properties: @columns', [
+            '@path' => $path,
+            '@columns' => implode(', ', $definition['yaml_columns']),
+          ]);
+        }
         continue;
       }
 

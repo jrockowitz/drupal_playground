@@ -41,7 +41,7 @@ class ClinicalTrialsGovSearchApiAutocomplete extends SuggesterPluginBase {
    *   The service container.
    * @param array $configuration
    *   The plugin configuration.
-   * @param string $plugin_id
+   * @param mixed $plugin_id
    *   The plugin identifier.
    * @param mixed $plugin_definition
    *   The plugin definition.
@@ -49,6 +49,7 @@ class ClinicalTrialsGovSearchApiAutocomplete extends SuggesterPluginBase {
    * @return static
    *   The instantiated suggester plugin.
    */
+  // phpcs:ignore SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
@@ -96,12 +97,25 @@ class ClinicalTrialsGovSearchApiAutocomplete extends SuggesterPluginBase {
     }
 
     $result_limit = max(10, $limit * 2);
-    $matches = array_merge(
-      $this->loadMatches('node__trial_cond', 'trial_cond_value', $user_input, $result_limit),
-      $this->loadMatches('node__trial_keyword', 'trial_keyword_value', $user_input, $result_limit),
-    );
+    $matches = [];
 
-    usort($matches, 'strnatcasecmp');
+    foreach ($this->getSuggestionSources() as $source) {
+      $matches = array_merge(
+        $matches,
+        $this->loadMatches(
+          $source['table'],
+          $source['column'],
+          $user_input,
+          $result_limit,
+          $source['serialized']
+        ),
+      );
+    }
+
+    usort($matches, static function (string $first_match, string $second_match): int {
+      $comparison = strnatcasecmp($first_match, $second_match);
+      return ($comparison !== 0) ? $comparison : strcmp($first_match, $second_match);
+    });
 
     $unique_matches = [];
     foreach ($matches as $match) {
@@ -119,7 +133,51 @@ class ClinicalTrialsGovSearchApiAutocomplete extends SuggesterPluginBase {
   }
 
   /**
-   * Loads matching values from a single Clinical Trials field storage table.
+   * Returns the available field storage sources for autocomplete suggestions.
+   *
+   * @return array
+   *   A list of source table definitions.
+   */
+  protected function getSuggestionSources(): array {
+    $candidate_sources = [
+      [
+        'table' => 'node__trial_cond_mod',
+        'column' => 'trial_cond_mod_cond',
+        'serialized' => TRUE,
+      ],
+      [
+        'table' => 'node__trial_cond_mod',
+        'column' => 'trial_cond_mod_keyword',
+        'serialized' => TRUE,
+      ],
+      [
+        'table' => 'node__trial_cond',
+        'column' => 'trial_cond_value',
+        'serialized' => FALSE,
+      ],
+      [
+        'table' => 'node__trial_keyword',
+        'column' => 'trial_keyword_value',
+        'serialized' => FALSE,
+      ],
+    ];
+    $schema = $this->database->schema();
+    $sources = [];
+
+    foreach ($candidate_sources as $candidate_source) {
+      if (
+        $schema->tableExists($candidate_source['table'])
+        && $schema->fieldExists($candidate_source['table'], $candidate_source['column'])
+      ) {
+        $sources[] = $candidate_source;
+      }
+    }
+
+    return $sources;
+  }
+
+  /**
+   * Loads matching values from a single Clinical Trials field storage source.
    *
    * @param string $table
    *   The table name to query.
@@ -129,23 +187,81 @@ class ClinicalTrialsGovSearchApiAutocomplete extends SuggesterPluginBase {
    *   The current autocomplete input.
    * @param int $limit
    *   The maximum number of rows to load from this table.
+   * @param bool $serialized
+   *   Whether the field stores serialized arrays of strings.
    *
    * @return array
    *   A list of matching values from the requested table.
    */
-  protected function loadMatches(string $table, string $column, string $user_input, int $limit): array {
+  protected function loadMatches(string $table, string $column, string $user_input, int $limit, bool $serialized = FALSE): array {
     $query = $this->database->select($table, 'trials');
     $query->distinct();
     $query->fields('trials', [$column]);
     $query->isNotNull($column);
-    $query->where("TRIM($column) <> ''");
-    $query->where("LOWER($column) LIKE LOWER(:match)", [
-      ':match' => '%' . $this->database->escapeLike($user_input) . '%',
-    ]);
+    if ($serialized) {
+      $query->where("LOWER(CAST($column AS CHAR)) LIKE LOWER(:match)", [
+        ':match' => '%' . $this->database->escapeLike($user_input) . '%',
+      ]);
+    }
+    else {
+      $query->where("LOWER($column) LIKE LOWER(:match)", [
+        ':match' => '%' . $this->database->escapeLike($user_input) . '%',
+      ]);
+    }
     $query->orderBy($column);
     $query->range(0, $limit);
 
-    return array_values($query->execute()->fetchCol());
+    $matches = array_values($query->execute()->fetchCol());
+    if (!$serialized) {
+      return array_values(array_filter(array_map('trim', $matches), static fn(string $match): bool => $match !== ''));
+    }
+
+    return $this->extractSerializedMatches($matches, $user_input);
+  }
+
+  /**
+   * Extracts matching plain-text values from serialized custom-field columns.
+   *
+   * @param array $serialized_matches
+   *   The serialized values returned from field storage.
+   * @param string $user_input
+   *   The current autocomplete input.
+   *
+   * @return array
+   *   A list of matching values extracted from the serialized data.
+   */
+  protected function extractSerializedMatches(array $serialized_matches, string $user_input): array {
+    $matches = [];
+
+    foreach ($serialized_matches as $serialized_match) {
+      if (is_resource($serialized_match)) {
+        $serialized_match = stream_get_contents($serialized_match) ?: '';
+      }
+
+      if (!is_string($serialized_match) || $serialized_match === '') {
+        continue;
+      }
+
+      $values = @unserialize($serialized_match, ['allowed_classes' => FALSE]);
+      if (!is_array($values)) {
+        continue;
+      }
+
+      foreach ($values as $value) {
+        if (!is_string($value)) {
+          continue;
+        }
+
+        $value = trim($value);
+        if ($value === '' || stripos($value, $user_input) === FALSE) {
+          continue;
+        }
+
+        $matches[] = $value;
+      }
+    }
+
+    return $matches;
   }
 
 }

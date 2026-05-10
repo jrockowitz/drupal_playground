@@ -27,6 +27,7 @@ class ClinicalTrialsGovSearchApiAutocompleteSuggesterTest extends KernelTestBase
    */
   protected static $modules = [
     'clinical_trials_gov_search_api_autocomplete',
+    'custom_field',
     'field',
     'node',
     'search_api',
@@ -51,8 +52,7 @@ class ClinicalTrialsGovSearchApiAutocompleteSuggesterTest extends KernelTestBase
     $this->installSchema('search_api', ['search_api_item']);
 
     $this->createTrialContentType();
-    $this->createTrialField('trial_cond');
-    $this->createTrialField('trial_keyword');
+    $this->createTrialField();
     $this->createSearchIndex();
   }
 
@@ -68,7 +68,6 @@ class ClinicalTrialsGovSearchApiAutocompleteSuggesterTest extends KernelTestBase
       ['breast cancer', 'Digestive Disease'],
       ['Breast Cancer', '']
     );
-
     $plugin = $this->container
       ->get('plugin.manager.search_api_autocomplete.suggester')
       ->createInstance('clinical_trials_gov_search_api_autocomplete');
@@ -117,21 +116,54 @@ class ClinicalTrialsGovSearchApiAutocompleteSuggesterTest extends KernelTestBase
   }
 
   /**
-   * Creates one trial text field used by the autocomplete lookups.
+   * Creates the promoted custom field used by the autocomplete lookups.
    */
-  protected function createTrialField(string $field_name): void {
+  protected function createTrialField(): void {
     FieldStorageConfig::create([
-      'field_name' => $field_name,
+      'field_name' => 'trial_cond_mod',
       'entity_type' => 'node',
-      'type' => 'string',
-      'cardinality' => -1,
+      'type' => 'custom',
+      'settings' => [
+        'columns' => [
+          'cond' => [
+            'name' => 'cond',
+            'type' => 'map_string',
+          ],
+          'keyword' => [
+            'name' => 'keyword',
+            'type' => 'map_string',
+          ],
+        ],
+      ],
     ])->save();
 
     FieldConfig::create([
-      'field_name' => $field_name,
+      'field_name' => 'trial_cond_mod',
       'entity_type' => 'node',
       'bundle' => 'trial',
-      'label' => $field_name,
+      'label' => 'trial_cond_mod',
+      'settings' => [
+        'field_settings' => [
+          'cond' => [
+            'label' => 'Condition',
+            'check_empty' => FALSE,
+            'required' => FALSE,
+            'translatable' => FALSE,
+            'description' => '',
+            'description_display' => 'after',
+            'table_empty' => '',
+          ],
+          'keyword' => [
+            'label' => 'Keyword',
+            'check_empty' => FALSE,
+            'required' => FALSE,
+            'translatable' => FALSE,
+            'description' => '',
+            'description_display' => 'after',
+            'table_empty' => '',
+          ],
+        ],
+      ],
     ])->save();
   }
 
@@ -175,14 +207,11 @@ class ClinicalTrialsGovSearchApiAutocompleteSuggesterTest extends KernelTestBase
     Node::create([
       'type' => 'trial',
       'title' => 'Trial ' . mt_rand(),
-      'trial_cond' => array_map(
-        static fn(string $value): array => ['value' => $value],
-        $conditions
-      ),
-      'trial_keyword' => array_map(
-        static fn(string $value): array => ['value' => $value],
-        $keywords
-      ),
+      'trial_cond_mod' => [[
+        'cond' => $conditions,
+        'keyword' => $keywords,
+      ],
+      ],
     ])->save();
   }
 

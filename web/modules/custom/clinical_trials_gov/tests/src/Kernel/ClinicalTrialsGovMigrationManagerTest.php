@@ -59,7 +59,9 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
       ->set('query_paths', [
         'protocolSection.contactsLocationsModule.locations',
         'protocolSection.sponsorCollaboratorsModule.responsibleParty',
-        'protocolSection.conditionsModule.conditions',
+        'protocolSection.conditionsModule',
+        'protocolSection.descriptionModule',
+        'protocolSection.eligibilityModule',
         'protocolSection.identificationModule.briefTitle',
         'protocolSection.identificationModule.nctId',
         'protocolSection.identificationModule.nctIdAliases',
@@ -69,7 +71,9 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
       ->set('fields', [
         'group_location' => 'protocolSection.contactsLocationsModule.locations',
         'trial_resp_party' => 'protocolSection.sponsorCollaboratorsModule.responsibleParty',
-        'trial_condition' => 'protocolSection.conditionsModule.conditions',
+        'trial_cond_mod' => 'protocolSection.conditionsModule',
+        'trial_desc_mod' => 'protocolSection.descriptionModule',
+        'trial_elig_mod' => 'protocolSection.eligibilityModule',
         'trial_brief_title' => 'protocolSection.identificationModule.briefTitle',
         'trial_nct_id' => 'protocolSection.identificationModule.nctId',
         'trial_nct_id_alias' => 'protocolSection.identificationModule.nctIdAliases',
@@ -102,7 +106,6 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
     ], $config->get('process.title'));
     $this->assertSame('protocolSection.identificationModule.briefTitle', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle')));
     $this->assertSame('protocolSection.identificationModule.nctId', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
-    $this->assertSame('protocolSection.conditionsModule.conditions', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.conditionsModule.conditions')));
     $this->assertSame('protocolSection.identificationModule.nctIdAliases', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.identificationModule.nctIdAliases')));
     $this->assertNull($config->get('process.group_location'));
     $this->assertSame([
@@ -111,10 +114,50 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
         'source' => [
           'protocolSection.contactsLocationsModule.locations',
           'constants/' . $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations') . '_yaml_columns',
+          'constants/' . $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations') . '_source_key_map',
         ],
       ],
     ], $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations')));
-    $this->assertSame('protocolSection.sponsorCollaboratorsModule.responsibleParty', $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty')));
+    $this->assertSame([
+      [
+        'plugin' => 'clinical_trials_gov_custom_field',
+        'source' => [
+          'protocolSection.sponsorCollaboratorsModule.responsibleParty',
+          'constants/' . $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty') . '_yaml_columns',
+          'constants/' . $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty') . '_source_key_map',
+        ],
+      ],
+    ], $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.sponsorCollaboratorsModule.responsibleParty')));
+    $this->assertSame([
+      [
+        'plugin' => 'clinical_trials_gov_custom_field',
+        'source' => [
+          'protocolSection.conditionsModule',
+          'constants/' . $this->entityManager->generateFieldName('protocolSection.conditionsModule') . '_yaml_columns',
+          'constants/' . $this->entityManager->generateFieldName('protocolSection.conditionsModule') . '_source_key_map',
+        ],
+      ],
+    ], $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.conditionsModule')));
+    $this->assertSame([
+      [
+        'plugin' => 'clinical_trials_gov_custom_field',
+        'source' => [
+          'protocolSection.descriptionModule',
+          'constants/' . $this->entityManager->generateFieldName('protocolSection.descriptionModule') . '_yaml_columns',
+          'constants/' . $this->entityManager->generateFieldName('protocolSection.descriptionModule') . '_source_key_map',
+        ],
+      ],
+    ], $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.descriptionModule')));
+    $this->assertSame([
+      [
+        'plugin' => 'clinical_trials_gov_custom_field',
+        'source' => [
+          'protocolSection.eligibilityModule',
+          'constants/' . $this->entityManager->generateFieldName('protocolSection.eligibilityModule') . '_yaml_columns',
+          'constants/' . $this->entityManager->generateFieldName('protocolSection.eligibilityModule') . '_source_key_map',
+        ],
+      ],
+    ], $config->get('process.' . $this->entityManager->generateFieldName('protocolSection.eligibilityModule')));
 
     // Check that title truncation constants are available to the migration.
     $this->assertSame(255, $config->get('source.constants.title_max_length'));
@@ -124,6 +167,26 @@ class ClinicalTrialsGovMigrationManagerTest extends ClinicalTrialsGovContentTest
       'contact',
       'geo_point',
     ], $config->get('source.constants.' . $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations') . '_yaml_columns'));
+    $this->assertSame([
+      'conditions' => 'cond',
+      'keywords' => 'keyword',
+    ], $config->get('source.constants.' . $this->entityManager->generateFieldName('protocolSection.conditionsModule') . '_source_key_map'));
+    $this->assertSame([
+      'briefSummary' => 'brief_summary',
+      'detailedDescription' => 'detailed_desc',
+    ], $config->get('source.constants.' . $this->entityManager->generateFieldName('protocolSection.descriptionModule') . '_source_key_map'));
+    $this->assertSame([
+      'eligibilityCriteria' => 'elig_criteria',
+      'healthyVolunteers' => 'healthy_volunteers',
+      'sex' => 'sex',
+      'genderBased' => 'gender_based',
+      'genderDescription' => 'gender_desc',
+      'minimumAge' => 'minimum_age',
+      'maximumAge' => 'maximum_age',
+      'stdAges' => 'std_age',
+      'studyPopulation' => 'study_pop',
+      'samplingMethod' => 'sampling_method',
+    ], $config->get('source.constants.' . $this->entityManager->generateFieldName('protocolSection.eligibilityModule') . '_source_key_map'));
 
     // Check that updating the saved query refreshes an already-cached migration definition.
     $this->migrationPluginManager->createInstance('clinical_trials_gov');

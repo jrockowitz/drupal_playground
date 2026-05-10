@@ -25,15 +25,36 @@ class ClinicalTrialsGovCustomField extends ProcessPluginBase {
     }
 
     $yaml_columns = [];
-    if (array_is_list($value) && count($value) === 2 && is_array($value[1])) {
-      $yaml_columns = $value[1];
-      $value = $value[0];
+    $source_key_map = [];
+    if (array_is_list($value)) {
+      if (isset($value[1]) && is_array($value[1])) {
+        $yaml_columns = $value[1];
+      }
+      if (isset($value[2]) && is_array($value[2])) {
+        $source_key_map = $value[2];
+      }
+      if ((isset($value[1]) && is_array($value[1])) || (isset($value[2]) && is_array($value[2]))) {
+        $value = $value[0];
+      }
     }
-    elseif (isset($this->configuration['yaml_columns']) && is_array($this->configuration['yaml_columns'])) {
-      $yaml_columns = $this->configuration['yaml_columns'];
+    else {
+      if (isset($this->configuration['yaml_columns']) && is_array($this->configuration['yaml_columns'])) {
+        $yaml_columns = $this->configuration['yaml_columns'];
+      }
+      if (isset($this->configuration['source_key_map']) && is_array($this->configuration['source_key_map'])) {
+        $source_key_map = $this->configuration['source_key_map'];
+      }
     }
 
-    if (!is_array($value) || !$yaml_columns) {
+    if (!is_array($value)) {
+      return $value;
+    }
+
+    if ($source_key_map) {
+      $value = $this->remapSourceKeys($value, $source_key_map);
+    }
+
+    if (!$yaml_columns) {
       return $value;
     }
 
@@ -58,6 +79,41 @@ class ClinicalTrialsGovCustomField extends ProcessPluginBase {
     }
 
     return $value;
+  }
+
+  /**
+   * Remaps source struct keys to the generated custom field property names.
+   */
+  protected function remapSourceKeys(array $value, array $source_key_map): array {
+    if (array_is_list($value)) {
+      foreach ($value as $delta => $item) {
+        if (!is_array($item)) {
+          continue;
+        }
+        $value[$delta] = $this->remapAssociativeArray($item, $source_key_map);
+      }
+      return $value;
+    }
+
+    return $this->remapAssociativeArray($value, $source_key_map);
+  }
+
+  /**
+   * Remaps one associative source array to destination property keys.
+   */
+  protected function remapAssociativeArray(array $value, array $source_key_map): array {
+    $remapped_value = [];
+
+    foreach ($value as $key => $item) {
+      if (is_string($key) && isset($source_key_map[$key]) && is_string($source_key_map[$key])) {
+        $remapped_value[$source_key_map[$key]] = $item;
+        continue;
+      }
+
+      $remapped_value[$key] = $item;
+    }
+
+    return $remapped_value;
   }
 
   /**

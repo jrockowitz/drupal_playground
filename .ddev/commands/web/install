@@ -116,7 +116,7 @@ for PRESET in "$@"; do
     drush recipe ../recipes/clinical_trials_gov_recipe_elastic_autocomplete
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit=10
-    echo "Indexing ClinicalTrials.gov studies in Milvus..."
+    echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."
     drush search-api:clear trials_elastic -y
     drush search-api:index trials_elastic -y;
     uli_path="/trials"
