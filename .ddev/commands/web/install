@@ -45,9 +45,9 @@ drush pm:uninstall toolbar
 
 PRESETS=("$@")
 
-# Expand the trials-data convenience preset into the individual recipe steps.
+# Expand the trials-data convenience preset into the default data-search flow.
 if [ "${#PRESETS[@]}" -eq 1 ] && [ "${PRESETS[0]}" = "trials-data" ]; then
-  PRESETS=("trials-data-setup" "trials-data-elastic" "trials-data-milvus")
+  PRESETS=("trials-data-setup" "trials-data-elastic")
 fi
 
 for PRESET in "${PRESETS[@]}"; do
@@ -106,7 +106,7 @@ for PRESET in "${PRESETS[@]}"; do
     echo "Applying ClinicalTrials.gov data setup recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_data_setup
     echo "Applying ClinicalTrials.gov fields recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_fields
+    drush recipe ../recipes/clinical_trials_gov_recipe_fields_setup
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit=10
     echo "Running AI Automator queue..."

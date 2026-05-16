@@ -1,4 +1,4 @@
-name: 'ClinicalTrials.gov Recipe Fields'
+name: 'ClinicalTrials.gov Recipe Fields Setup'
 description: 'Adds fixed patient-friendly trial fields and AI automators to the ClinicalTrials.gov setup.'
 type: 'Site'
 recipes:

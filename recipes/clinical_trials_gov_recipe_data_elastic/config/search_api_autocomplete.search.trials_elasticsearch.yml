@@ -1,5 +1,12 @@
 langcode: en
 status: true
+dependencies:
+  config:
+    - search_api.index.trials_elasticsearch
+    - views.view.trials_elasticsearch
+  module:
+    - search_api_autocomplete
+    - views
 id: trials_elasticsearch
 label: 'Clinical Trials (Elasticsearch)'
 index_id: trials_elasticsearch
