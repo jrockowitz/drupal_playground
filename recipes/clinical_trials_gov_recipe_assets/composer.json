@@ -1,0 +1,10 @@
+{
+  "name": "drupal/clinical_trials_gov_recipe_assets",
+  "description": "Installs shared ClinicalTrials.gov assets used by search recipes.",
+  "type": "drupal-recipe",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "require": {
+    "drupal/core": "^11"
+  }
+}

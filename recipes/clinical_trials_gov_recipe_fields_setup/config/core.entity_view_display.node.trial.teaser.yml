@@ -15,6 +15,7 @@ dependencies:
     - field.field.node.trial.field_trial_phase
     - field.field.node.trial.field_trial_sex
     - field.field.node.trial.field_trial_status
+    - field.field.node.trial.field_trial_study_type
     - field.field.node.trial.field_trial_summary
     - field.field.node.trial.field_trial_title
     - field.field.node.trial.field_trials_nct_id
@@ -32,7 +33,6 @@ dependencies:
     - field.field.node.trial.trial_overall_official
     - field.field.node.trial.trial_overall_status
     - field.field.node.trial.trial_phase
-    - field.field.node.trial.trial_study_type
     - node.type.trial
   module:
     - link
@@ -86,13 +86,21 @@ content:
     third_party_settings: {  }
     weight: 5
     region: content
-  field_trials_nct_id:
+  field_trial_study_type:
     type: string
     label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
     weight: 6
+    region: content
+  field_trials_nct_id:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 7
     region: content
   field_trials_nct_url:
     type: link
@@ -104,7 +112,7 @@ content:
       rel: '0'
       target: '0'
     third_party_settings: {  }
-    weight: 7
+    weight: 8
     region: content
   links:
     settings: {  }
@@ -132,4 +140,3 @@ hidden:
   trial_overall_official: true
   trial_overall_status: true
   trial_phase: true
-  trial_study_type: true

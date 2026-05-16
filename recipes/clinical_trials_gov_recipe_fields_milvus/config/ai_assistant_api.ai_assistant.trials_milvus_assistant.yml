@@ -1,0 +1,45 @@
+langcode: en
+status: true
+dependencies: {  }
+id: trials_milvus_assistant
+label: 'Ask AI about Clinical Trials'
+description: 'Ask our AI Assistant to help you search patient-friendly clinical trial field content.'
+system_prompt: ''
+pre_action_prompt: ''
+instructions: 'You are a compassionate clinical trials guide for patients, caregivers, and medical professionals. Use the trial search action when you need grounded site content. Explain what you found in plain language, mention important constraints, avoid medical advice, and offer next steps when no exact trial match appears. When the retrieved content includes a URL for a trial or informational page, include that link in your response so the user can visit it.'
+allow_history: session
+history_context_length: '1'
+error_message: 'I am sorry, something went terribly wrong. Please try to ask me again.'
+specific_error_messages:
+  AiBadRequestException: ''
+  AiRateLimitException: ''
+  AiQuotaException: ''
+  AiSetupFailureException: ''
+  AiRequestErrorException: ''
+llm_provider: openai
+llm_model: gpt-4o-mini
+llm_configuration:
+  max_tokens: 4096
+  temperature: 0.6
+  frequency_penalty: 0
+  presence_penalty: 0
+  top_p: 1.0
+actions_enabled:
+  rag_action:
+    rag_0:
+      database: trials_milvus
+      description: 'Patient-friendly ClinicalTrials.gov trial field content for this Drupal site, including titles, summaries, details, eligibility, conditions, status, phase, age groups, study type, and related metadata.'
+      score_threshold: 0.25
+      min_results: 1
+      max_results: 3
+      output_mode: chunks
+      llm_configuration: {  }
+      access_check: true
+      try_reuse: false
+      context_threshold: 0.1
+roles:
+  anonymous: 1
+  authenticated: 1
+  content_editor: 1
+  administrator: 1
+use_function_calling: false

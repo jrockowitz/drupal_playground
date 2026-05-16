@@ -4,7 +4,7 @@ set -euo pipefail
 
 ## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-fields\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
+## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-fields\nddev install trials-fields-setup\nddev install trials-fields-elastic\nddev install trials-fields-milvus\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
 ## ProjectTypes: drupal,drupal11
 
 uli_path="/"
@@ -47,7 +47,12 @@ PRESETS=("$@")
 
 # Expand the trials-data convenience preset into the default data-search flow.
 if [ "${#PRESETS[@]}" -eq 1 ] && [ "${PRESETS[0]}" = "trials-data" ]; then
-  PRESETS=("trials-data-setup" "trials-data-elastic")
+  PRESETS=("trials-data-setup" "trials-data-elastic" "trials-data-milvus")
+fi
+
+# Expand the trials-fields convenience preset into the field-based flow.
+if [ "${#PRESETS[@]}" -eq 1 ] && [ "${PRESETS[0]}" = "trials-fields" ]; then
+  PRESETS=("trials-fields-setup" "trials-fields-elastic" "trials-fields-milvus")
 fi
 
 for PRESET in "${PRESETS[@]}"; do
@@ -101,24 +106,42 @@ for PRESET in "${PRESETS[@]}"; do
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
     uli_path="/admin/config/services/clinical-trials-gov"
 
-  elif [ "$PRESET" = "trials-fields" ]; then
+  elif [ "$PRESET" = "trials-fields-setup" ]; then
 
-    echo "Applying ClinicalTrials.gov data setup recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_data_setup
-    echo "Applying ClinicalTrials.gov fields recipe..."
+    echo "Applying ClinicalTrials.gov fields setup recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_fields_setup
     echo "Importing ClinicalTrials.gov studies..."
-    drush migrate:import clinical_trials_gov --limit=10
+    drush migrate:import clinical_trials_gov --limit=3
     echo "Running AI Automator queue..."
     drush queue:run ai_automator_field_modifier
     uli_path="/admin/config/services/clinical-trials-gov"
+
+  elif [ "$PRESET" = "trials-fields-elastic" ]; then
+
+    reset_elasticsearch_index "drupal_playground_elasticsearch"
+    echo "Applying ClinicalTrials.gov fields Elasticsearch recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_fields_elastic
+    echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."
+    drush search-api:clear trials_elasticsearch -y
+    drush search-api:index trials_elasticsearch -y;
+    uli_path="/trials"
+
+  elif [ "$PRESET" = "trials-fields-milvus" ]; then
+
+    docker restart ddev-drupal-playground-milvus >/dev/null
+    echo "Applying ClinicalTrials.gov fields Milvus recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_fields_milvus
+    echo "Indexing ClinicalTrials.gov studies in Milvus..."
+    drush search-api:clear trials_milvus -y
+    drush search-api:index trials_milvus -y;
+    uli_path="/trials"
 
   elif [ "$PRESET" = "trials-data-setup" ]; then
 
     echo "Applying ClinicalTrials.gov data setup recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_data_setup
     echo "Importing ClinicalTrials.gov studies..."
-    drush migrate:import clinical_trials_gov --limit=10
+    drush migrate:import clinical_trials_gov --limit=3
     uli_path="/admin/config/services/clinical-trials-gov"
 
   elif [ "$PRESET" = "trials-data-elastic" ]; then
@@ -126,7 +149,7 @@ for PRESET in "${PRESETS[@]}"; do
     echo "Applying ClinicalTrials.gov data Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_data_elastic
     echo "Importing ClinicalTrials.gov studies..."
-    drush migrate:import clinical_trials_gov --limit=10
+    drush migrate:import clinical_trials_gov --limit=3
     echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."
     drush search-api:clear trials_elasticsearch -y
     drush search-api:index trials_elasticsearch -y;
@@ -134,6 +157,7 @@ for PRESET in "${PRESETS[@]}"; do
 
   elif [ "$PRESET" = "trials-data-milvus" ]; then
 
+    docker restart ddev-drupal-playground-milvus >/dev/null
     echo "Applying ClinicalTrials.gov data Milvus recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_data_milvus
     echo "Indexing ClinicalTrials.gov studies in Milvus..."

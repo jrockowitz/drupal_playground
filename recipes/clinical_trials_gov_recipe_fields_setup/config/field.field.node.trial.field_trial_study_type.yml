@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trial_study_type
+    - node.type.trial
+id: node.trial.field_trial_study_type
+field_name: field_trial_study_type
+entity_type: node
+bundle: trial
+label: 'Study Type'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

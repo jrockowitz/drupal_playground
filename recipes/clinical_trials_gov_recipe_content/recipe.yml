@@ -1,0 +1,5 @@
+name: 'ClinicalTrials.gov Content Recipe'
+description: 'Installs shared ClinicalTrials.gov shortcut and supporting content pages.'
+type: 'Site'
+install:
+  - shortcut

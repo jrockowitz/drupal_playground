@@ -42,6 +42,7 @@ class ClinicalTrialsGovFieldsMigrateHooks {
 
       $definition['source']['plugin'] = 'clinical_trials_gov_fields';
       $definition['process']['field_trial_phase'] = 'normalized_trial_phase';
+      $definition['process']['field_trial_study_type'] = 'normalized_trial_study_type';
       $definition['process']['field_trial_status'] = 'normalized_trial_status';
       $definition['process']['field_trial_sex'] = 'normalized_trial_sex';
       $definition['process']['field_trials_nct_id'] = 'normalized_trial_nct_id';

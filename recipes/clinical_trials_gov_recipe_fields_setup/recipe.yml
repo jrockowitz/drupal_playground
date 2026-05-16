@@ -1,15 +1,23 @@
 name: 'ClinicalTrials.gov Recipe Fields Setup'
 description: 'Adds fixed patient-friendly trial fields and AI automators to the ClinicalTrials.gov setup.'
 type: 'Site'
-recipes:
-  - clinical_trials_gov_recipe_data_setup
 install:
+  - custom_field
+  - field_group
+  - migrate_plus
+  - migrate_tools
+  - readonly_field_widget
   - ai_automators
+  - clinical_trials_gov
+  - clinical_trials_gov_report
   - clinical_trials_gov_fields
   - link
 config:
   strict: false
   actions:
+    clinical_trials_gov.settings:
+      setUp:
+        query: 'query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'
     core.entity_form_display.node.trial.default:
       setProperties:
         third_party_settings.field_group.group_clinical_trials_gov.label: ClinicalTrials.gov data
@@ -64,21 +72,29 @@ config:
           region: content
           settings: {  }
           third_party_settings: {  }
-        content.field_trial_sex:
-          type: options_select
+        content.field_trial_study_type:
+          type: string_textfield
           weight: 26
           region: content
-          settings: {  }
+          settings:
+            size: 60
+            placeholder: ''
           third_party_settings: {  }
-        content.field_trial_age:
+        content.field_trial_sex:
           type: options_select
           weight: 27
           region: content
           settings: {  }
           third_party_settings: {  }
+        content.field_trial_age:
+          type: options_select
+          weight: 28
+          region: content
+          settings: {  }
+          third_party_settings: {  }
         content.field_trial_condition:
           type: string_textfield
-          weight: 28
+          weight: 29
           region: content
           settings:
             size: 60
@@ -86,7 +102,7 @@ config:
           third_party_settings: {  }
         content.field_trial_contact:
           type: custom_flex
-          weight: 29
+          weight: 30
           region: content
           settings:
             wrapper: div
@@ -139,7 +155,7 @@ config:
           third_party_settings: {  }
         content.field_trial_location:
           type: custom_flex
-          weight: 30
+          weight: 31
           region: content
           settings:
             wrapper: div
@@ -200,7 +216,7 @@ config:
           third_party_settings: {  }
         content.field_trials_nct_id:
           type: string_textfield
-          weight: 31
+          weight: 32
           region: content
           settings:
             size: 60
@@ -208,7 +224,7 @@ config:
           third_party_settings: {  }
         content.field_trials_nct_url:
           type: link_default
-          weight: 32
+          weight: 33
           region: content
           settings:
             placeholder_url: ''
@@ -220,6 +236,7 @@ config:
         hidden.field_trial_eligibility: false
         hidden.field_trial_phase: false
         hidden.field_trial_status: false
+        hidden.field_trial_study_type: false
         hidden.field_trial_sex: false
         hidden.field_trial_age: false
         hidden.field_trial_condition: false
@@ -274,19 +291,27 @@ config:
           third_party_settings: {  }
           weight: 5
           region: content
+        content.field_trial_study_type:
+          type: string
+          label: above
+          settings:
+            link_to_entity: false
+          third_party_settings: {  }
+          weight: 6
+          region: content
         content.field_trial_sex:
           type: list_default
           label: above
           settings: {  }
           third_party_settings: {  }
-          weight: 6
+          weight: 7
           region: content
         content.field_trial_age:
           type: list_default
           label: above
           settings: {  }
           third_party_settings: {  }
-          weight: 7
+          weight: 8
           region: content
         content.field_trial_condition:
           type: string
@@ -294,7 +319,7 @@ config:
           settings:
             link_to_entity: false
           third_party_settings: {  }
-          weight: 8
+          weight: 9
           region: content
         content.field_trial_contact:
           type: custom_formatter
@@ -377,7 +402,7 @@ config:
                   field_label: Email
                   prefix_suffix: false
           third_party_settings: {  }
-          weight: 9
+          weight: 10
           region: content
         content.field_trial_location:
           type: custom_table
@@ -479,7 +504,7 @@ config:
                   field_label: Status
                   prefix_suffix: false
           third_party_settings: {  }
-          weight: 10
+          weight: 11
           region: content
         content.field_trials_nct_id:
           type: string
@@ -487,7 +512,7 @@ config:
           settings:
             link_to_entity: false
           third_party_settings: {  }
-          weight: 11
+          weight: 12
           region: content
         content.field_trials_nct_url:
           type: link
@@ -499,13 +524,14 @@ config:
             rel: '0'
             target: '0'
           third_party_settings: {  }
-          weight: 12
+          weight: 13
           region: content
         hidden.field_trial_goal: false
         hidden.field_trial_details: false
         hidden.field_trial_eligibility: false
         hidden.field_trial_phase: false
         hidden.field_trial_status: false
+        hidden.field_trial_study_type: false
         hidden.field_trial_sex: false
         hidden.field_trial_age: false
         hidden.field_trial_condition: false
@@ -560,13 +586,21 @@ config:
           third_party_settings: {  }
           weight: 5
           region: content
-        content.field_trials_nct_id:
+        content.field_trial_study_type:
           type: string
           label: inline
           settings:
             link_to_entity: false
           third_party_settings: {  }
           weight: 6
+          region: content
+        content.field_trials_nct_id:
+          type: string
+          label: inline
+          settings:
+            link_to_entity: false
+          third_party_settings: {  }
+          weight: 7
           region: content
         content.field_trials_nct_url:
           type: link
@@ -578,7 +612,7 @@ config:
             rel: '0'
             target: '0'
           third_party_settings: {  }
-          weight: 7
+          weight: 8
           region: content
         hidden.field_trial_summary: false
         hidden.field_trial_condition: false
@@ -586,6 +620,7 @@ config:
         hidden.field_trial_sex: false
         hidden.field_trial_phase: false
         hidden.field_trial_status: false
+        hidden.field_trial_study_type: false
         hidden.field_trials_nct_id: false
         hidden.field_trials_nct_url: false
         hidden.field_trial_goal: true

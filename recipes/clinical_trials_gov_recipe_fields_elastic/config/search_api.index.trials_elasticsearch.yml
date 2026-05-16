@@ -1,0 +1,168 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.trial.field_trial_age
+    - field.field.node.trial.field_trial_condition
+    - field.field.node.trial.field_trial_phase
+    - field.field.node.trial.field_trial_sex
+    - field.field.node.trial.field_trial_status
+    - field.field.node.trial.field_trial_study_type
+    - field.field.node.trial.field_trial_title
+    - field.field.node.trial.field_trials_nct_id
+    - node.type.trial
+    - search_api.server.trials_elasticsearch
+  module:
+    - node
+    - search_api
+id: trials_elasticsearch
+name: 'Clinical Trials'
+description: 'Clinical Trials search index powered by Elasticsearch.'
+read_only: false
+field_settings:
+  field_trial_title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: field_trial_title
+    type: text
+    boost: 8
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_title
+  field_trial_condition:
+    label: 'Condition/Disease'
+    datasource_id: 'entity:node'
+    property_path: field_trial_condition
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_condition
+  field_trials_nct_id:
+    label: 'NCT ID'
+    datasource_id: 'entity:node'
+    property_path: field_trials_nct_id
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trials_nct_id
+  field_trial_status:
+    label: 'Overall status'
+    datasource_id: 'entity:node'
+    property_path: field_trial_status
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_status
+  field_trial_phase:
+    label: Phase
+    datasource_id: 'entity:node'
+    property_path: field_trial_phase
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_phase
+  field_trial_study_type:
+    label: 'Study type'
+    datasource_id: 'entity:node'
+    property_path: field_trial_study_type
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_study_type
+  field_trial_sex:
+    label: Sex
+    datasource_id: 'entity:node'
+    property_path: field_trial_sex
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_sex
+  field_trial_age:
+    label: 'Age group'
+    datasource_id: 'entity:node'
+    property_path: field_trial_age
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_age
+processor_settings:
+  add_url:
+    weights:
+      preprocess_index: -30
+  aggregated_field:
+    weights:
+      add_properties: 20
+  content_access:
+    weights:
+      preprocess_index: -6
+      preprocess_query: -4
+  entity_status:
+    weights:
+      preprocess_index: -10
+  html_filter:
+    weights:
+      preprocess_index: -3
+      preprocess_query: -6
+    fields:
+      - field_trial_title
+    title: true
+    alt: true
+    tags:
+      h1: 5
+      h2: 3
+      h3: 2
+      string: 2
+      b: 2
+  ignorecase:
+    weights:
+      preprocess_index: -5
+      preprocess_query: -8
+    fields:
+      - field_trial_title
+      - field_trial_condition
+      - field_trials_nct_id
+      - field_trial_status
+      - field_trial_phase
+      - field_trial_sex
+      - field_trial_age
+      - field_trial_study_type
+  tokenizer:
+    weights:
+      preprocess_index: -2
+      preprocess_query: -5
+    fields:
+      - field_trial_title
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
+  transliteration:
+    weights:
+      preprocess_index: -4
+      preprocess_query: -7
+    fields:
+      - field_trial_title
+      - field_trial_condition
+      - field_trials_nct_id
+      - field_trial_status
+      - field_trial_phase
+      - field_trial_sex
+      - field_trial_age
+      - field_trial_study_type
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: false
+      selected:
+        trial: trial
+    languages:
+      default: true
+      selected: {  }
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  cron_limit: 50
+  delete_on_fail: true
+  index_directly: false
+  track_changes_in_references: true
+server: trials_elasticsearch

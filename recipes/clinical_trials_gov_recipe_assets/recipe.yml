@@ -1,0 +1,11 @@
+name: 'ClinicalTrials.gov Assets Recipe'
+description: 'Installs shared ClinicalTrials.gov CSS and JavaScript assets.'
+type: 'Site'
+install:
+  - asset_injector
+config:
+  strict: false
+  import:
+    asset_injector:
+      - asset_injector.css.trials_elasticsearch_olivero
+      - asset_injector.js.trials_elasticsearch_olivero

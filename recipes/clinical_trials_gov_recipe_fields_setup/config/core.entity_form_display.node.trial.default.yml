@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.trial.field_trial_phase
     - field.field.node.trial.field_trial_sex
     - field.field.node.trial.field_trial_status
+    - field.field.node.trial.field_trial_study_type
     - field.field.node.trial.field_trial_summary
     - field.field.node.trial.field_trial_title
     - field.field.node.trial.field_trials_nct_id
@@ -71,21 +72,29 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_trial_sex:
-    type: options_select
+  field_trial_study_type:
+    type: string_textfield
     weight: 26
     region: content
-    settings: {  }
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
-  field_trial_age:
+  field_trial_sex:
     type: options_select
     weight: 27
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_trial_age:
+    type: options_select
+    weight: 28
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_trial_condition:
     type: string_textfield
-    weight: 28
+    weight: 29
     region: content
     settings:
       size: 60
@@ -93,7 +102,7 @@ content:
     third_party_settings: {  }
   field_trial_contact:
     type: custom_flex
-    weight: 29
+    weight: 30
     region: content
     settings:
       wrapper: div
@@ -146,7 +155,7 @@ content:
     third_party_settings: {  }
   field_trial_location:
     type: custom_flex
-    weight: 30
+    weight: 31
     region: content
     settings:
       wrapper: div
@@ -207,7 +216,7 @@ content:
     third_party_settings: {  }
   field_trials_nct_id:
     type: string_textfield
-    weight: 31
+    weight: 32
     region: content
     settings:
       size: 60
@@ -215,7 +224,7 @@ content:
     third_party_settings: {  }
   field_trials_nct_url:
     type: link_default
-    weight: 32
+    weight: 33
     region: content
     settings:
       placeholder_url: ''

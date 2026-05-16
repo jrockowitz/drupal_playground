@@ -88,6 +88,12 @@ class ClinicalTrialsGovFieldsTest extends ClinicalTrialsGovContentTestBase {
     $this->assertSame([
       [
         'plugin' => 'get',
+        'source' => 'normalized_trial_study_type',
+      ],
+    ], $migration->getProcess()['field_trial_study_type']);
+    $this->assertSame([
+      [
+        'plugin' => 'get',
         'source' => 'normalized_trial_status',
       ],
     ], $migration->getProcess()['field_trial_status']);
@@ -148,6 +154,7 @@ class ClinicalTrialsGovFieldsTest extends ClinicalTrialsGovContentTestBase {
 
     // Check that normalized scalar and list values are populated.
     $this->assertNull($thyroid_study->getSourceProperty('normalized_trial_phase'));
+    $this->assertSame('OBSERVATIONAL', $thyroid_study->getSourceProperty('normalized_trial_study_type'));
     $this->assertSame('RECRUITING', $thyroid_study->getSourceProperty('normalized_trial_status'));
     $this->assertSame('ALL', $thyroid_study->getSourceProperty('normalized_trial_sex'));
     $this->assertSame('NCT05088187', $thyroid_study->getSourceProperty('normalized_trial_nct_id'));
@@ -168,6 +175,7 @@ class ClinicalTrialsGovFieldsTest extends ClinicalTrialsGovContentTestBase {
     $this->assertSame([
       'PHASE2',
     ], $colorectal_study->getSourceProperty('normalized_trial_phase'));
+    $this->assertSame('INTERVENTIONAL', $colorectal_study->getSourceProperty('normalized_trial_study_type'));
 
     // Check that normalized contact values remap phoneExt and keep only needed keys.
     $this->assertSame([

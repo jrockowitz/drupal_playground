@@ -1,0 +1,13 @@
+{
+    "name": "drupal/clinical_trials_gov_recipe_fields_milvus",
+    "description": "Installs a Milvus-backed AI Search and chat experience for patient-friendly ClinicalTrials.gov field content.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/core": "^11",
+        "drupal/ai": "^1",
+        "drupal/ai_vdb_provider_milvus": "^1.1@beta",
+        "drupal/search_api": "^1"
+    }
+}
