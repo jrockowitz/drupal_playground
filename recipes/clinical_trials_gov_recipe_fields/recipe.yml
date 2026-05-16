@@ -1,0 +1,598 @@
+name: 'ClinicalTrials.gov Recipe Fields'
+description: 'Adds fixed patient-friendly trial fields and AI automators to the ClinicalTrials.gov setup.'
+type: 'Site'
+recipes:
+  - clinical_trials_gov_recipe_setup
+install:
+  - ai_automators
+  - clinical_trials_gov_fields
+  - link
+config:
+  strict: false
+  actions:
+    core.entity_form_display.node.trial.default:
+      setProperties:
+        third_party_settings.field_group.group_clinical_trials_gov.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.weight: 20
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.open: false
+        third_party_settings.field_group.group_id_mod.children:
+          - trial_brief_title
+          - trial_org
+        content.trial_nct_id.region: hidden
+        content.field_trial_title:
+          type: string_textfield
+          weight: 20
+          region: content
+          settings:
+            size: 60
+            placeholder: ''
+          third_party_settings: {  }
+        content.field_trial_goal:
+          type: text_textarea
+          weight: 21
+          region: content
+          settings:
+            rows: 5
+            placeholder: ''
+          third_party_settings: {  }
+        content.field_trial_details:
+          type: text_textarea
+          weight: 22
+          region: content
+          settings:
+            rows: 8
+            placeholder: ''
+          third_party_settings: {  }
+        content.field_trial_eligibility:
+          type: text_textarea
+          weight: 23
+          region: content
+          settings:
+            rows: 8
+            placeholder: ''
+          third_party_settings: {  }
+        content.field_trial_phase:
+          type: options_select
+          weight: 24
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+        content.field_trial_status:
+          type: options_select
+          weight: 25
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+        content.field_trial_sex:
+          type: options_select
+          weight: 26
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+        content.field_trial_age:
+          type: options_select
+          weight: 27
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+        content.field_trial_condition:
+          type: string_textfield
+          weight: 28
+          region: content
+          settings:
+            size: 60
+            placeholder: ''
+          third_party_settings: {  }
+        content.field_trial_contact:
+          type: custom_flex
+          weight: 29
+          region: content
+          settings:
+            wrapper: div
+            label_prefix: Item
+            auto_collapse: true
+            open: true
+            fields:
+              name:
+                weight: 0
+                type: text
+                label: Name
+                size: 60
+                placeholder: ''
+                maxlength: 255
+              role:
+                weight: 1
+                type: text
+                label: Role
+                size: 60
+                placeholder: ''
+                maxlength: 255
+              phone:
+                weight: 2
+                type: text
+                label: Phone
+                size: 60
+                placeholder: ''
+                maxlength: 255
+              phone_ext:
+                weight: 3
+                type: text
+                label: 'Phone Extension'
+                size: 60
+                placeholder: ''
+                maxlength: 255
+              email:
+                weight: 4
+                type: text
+                label: Email
+                size: 60
+                placeholder: ''
+                maxlength: 255
+            columns:
+              name: '12'
+              role: '12'
+              phone: '12'
+              phone_ext: '12'
+              email: '12'
+            breakpoint: ''
+          third_party_settings: {  }
+        content.field_trial_location:
+          type: custom_flex
+          weight: 30
+          region: content
+          settings:
+            wrapper: div
+            label_prefix: Item
+            auto_collapse: true
+            open: true
+            fields:
+              facility:
+                weight: 0
+                type: text
+                label: Facility
+                size: 60
+                placeholder: ''
+                maxlength: 254
+              city:
+                weight: 1
+                type: text
+                label: City
+                size: 60
+                placeholder: ''
+                maxlength: 255
+              state:
+                weight: 2
+                type: text
+                label: State
+                size: 60
+                placeholder: ''
+                maxlength: 255
+              zip:
+                weight: 3
+                type: text
+                label: ZIP
+                size: 60
+                placeholder: ''
+                maxlength: 255
+              country:
+                weight: 4
+                type: text
+                label: Country
+                size: 60
+                placeholder: ''
+                maxlength: 255
+              status:
+                weight: 5
+                type: text
+                label: Status
+                size: 60
+                placeholder: ''
+                maxlength: 255
+            columns:
+              facility: '12'
+              city: '12'
+              state: '12'
+              zip: '12'
+              country: '12'
+              status: '12'
+            breakpoint: ''
+          third_party_settings: {  }
+        content.field_trials_nct_id:
+          type: string_textfield
+          weight: 31
+          region: content
+          settings:
+            size: 60
+            placeholder: ''
+          third_party_settings: {  }
+        content.field_trials_nct_url:
+          type: link_default
+          weight: 32
+          region: content
+          settings:
+            placeholder_url: ''
+            placeholder_title: ''
+          third_party_settings: {  }
+        hidden.field_trial_title: false
+        hidden.field_trial_goal: false
+        hidden.field_trial_details: false
+        hidden.field_trial_eligibility: false
+        hidden.field_trial_phase: false
+        hidden.field_trial_status: false
+        hidden.field_trial_sex: false
+        hidden.field_trial_age: false
+        hidden.field_trial_condition: false
+        hidden.field_trial_contact: false
+        hidden.field_trial_location: false
+        hidden.field_trial_summary: true
+        hidden.field_trials_nct_id: false
+        hidden.field_trials_nct_url: false
+        hidden.trial_nct_id: true
+    core.entity_view_display.node.trial.default:
+      setProperties:
+        third_party_settings.field_group.group_clinical_trials_gov.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.weight: 20
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.open: false
+        third_party_settings.field_group.group_id_mod.children:
+          - trial_brief_title
+          - trial_org
+        content.trial_nct_id.region: hidden
+        content.field_trial_goal:
+          type: text_default
+          label: above
+          settings: {  }
+          third_party_settings: {  }
+          weight: 1
+          region: content
+        content.field_trial_details:
+          type: text_default
+          label: above
+          settings: {  }
+          third_party_settings: {  }
+          weight: 2
+          region: content
+        content.field_trial_eligibility:
+          type: text_default
+          label: above
+          settings: {  }
+          third_party_settings: {  }
+          weight: 3
+          region: content
+        content.field_trial_phase:
+          type: list_default
+          label: above
+          settings: {  }
+          third_party_settings: {  }
+          weight: 4
+          region: content
+        content.field_trial_status:
+          type: list_default
+          label: above
+          settings: {  }
+          third_party_settings: {  }
+          weight: 5
+          region: content
+        content.field_trial_sex:
+          type: list_default
+          label: above
+          settings: {  }
+          third_party_settings: {  }
+          weight: 6
+          region: content
+        content.field_trial_age:
+          type: list_default
+          label: above
+          settings: {  }
+          third_party_settings: {  }
+          weight: 7
+          region: content
+        content.field_trial_condition:
+          type: string
+          label: above
+          settings:
+            link_to_entity: false
+          third_party_settings: {  }
+          weight: 8
+          region: content
+        content.field_trial_contact:
+          type: custom_formatter
+          label: above
+          settings:
+            fields:
+              name:
+                weight: 0
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: Name
+                  prefix_suffix: false
+              role:
+                weight: 1
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: Role
+                  prefix_suffix: false
+              phone:
+                weight: 2
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: Phone
+                  prefix_suffix: false
+              phone_ext:
+                weight: 3
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: 'Phone Extension'
+                  prefix_suffix: false
+              email:
+                weight: 4
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: Email
+                  prefix_suffix: false
+          third_party_settings: {  }
+          weight: 9
+          region: content
+        content.field_trial_location:
+          type: custom_table
+          label: above
+          settings:
+            sort_by: _delta
+            sort_order: asc
+            hide_empty: false
+            hide_header: false
+            fields:
+              facility:
+                weight: 0
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: Facility
+                  prefix_suffix: false
+              city:
+                weight: 1
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: City
+                  prefix_suffix: false
+              state:
+                weight: 2
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: State
+                  prefix_suffix: false
+              zip:
+                weight: 3
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: ZIP
+                  prefix_suffix: false
+              country:
+                weight: 4
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: Country
+                  prefix_suffix: false
+              status:
+                weight: 5
+                format_type: string
+                wrappers:
+                  field_wrapper_tag: ''
+                  field_wrapper_classes: ''
+                  field_tag: ''
+                  field_classes: ''
+                  label_tag: ''
+                  label_classes: ''
+                formatter_settings:
+                  key_label: label
+                  label_display: above
+                  field_label: Status
+                  prefix_suffix: false
+          third_party_settings: {  }
+          weight: 10
+          region: content
+        content.field_trials_nct_id:
+          type: string
+          label: above
+          settings:
+            link_to_entity: false
+          third_party_settings: {  }
+          weight: 11
+          region: content
+        content.field_trials_nct_url:
+          type: link
+          label: above
+          settings:
+            trim_length: 80
+            url_only: false
+            url_plain: false
+            rel: '0'
+            target: '0'
+          third_party_settings: {  }
+          weight: 12
+          region: content
+        hidden.field_trial_goal: false
+        hidden.field_trial_details: false
+        hidden.field_trial_eligibility: false
+        hidden.field_trial_phase: false
+        hidden.field_trial_status: false
+        hidden.field_trial_sex: false
+        hidden.field_trial_age: false
+        hidden.field_trial_condition: false
+        hidden.field_trial_contact: false
+        hidden.field_trial_location: false
+        hidden.field_trial_summary: true
+        hidden.field_trials_nct_id: false
+        hidden.field_trials_nct_url: false
+        hidden.trial_nct_id: true
+    core.entity_view_display.node.trial.teaser:
+      setProperties:
+        content.field_trial_summary:
+          type: basic_string
+          label: hidden
+          settings: {  }
+          third_party_settings: {  }
+          weight: 0
+          region: content
+        content.field_trial_condition:
+          type: string
+          label: inline
+          settings:
+            link_to_entity: false
+          third_party_settings: {  }
+          weight: 1
+          region: content
+        content.field_trial_age:
+          type: list_default
+          label: inline
+          settings: {  }
+          third_party_settings: {  }
+          weight: 2
+          region: content
+        content.field_trial_sex:
+          type: list_default
+          label: inline
+          settings: {  }
+          third_party_settings: {  }
+          weight: 3
+          region: content
+        content.field_trial_phase:
+          type: list_default
+          label: inline
+          settings: {  }
+          third_party_settings: {  }
+          weight: 4
+          region: content
+        content.field_trial_status:
+          type: list_default
+          label: inline
+          settings: {  }
+          third_party_settings: {  }
+          weight: 5
+          region: content
+        content.field_trials_nct_id:
+          type: string
+          label: inline
+          settings:
+            link_to_entity: false
+          third_party_settings: {  }
+          weight: 6
+          region: content
+        content.field_trials_nct_url:
+          type: link
+          label: inline
+          settings:
+            trim_length: 80
+            url_only: false
+            url_plain: false
+            rel: '0'
+            target: '0'
+          third_party_settings: {  }
+          weight: 7
+          region: content
+        hidden.field_trial_summary: false
+        hidden.field_trial_condition: false
+        hidden.field_trial_age: false
+        hidden.field_trial_sex: false
+        hidden.field_trial_phase: false
+        hidden.field_trial_status: false
+        hidden.field_trials_nct_id: false
+        hidden.field_trials_nct_url: false
+        hidden.field_trial_goal: true
+        hidden.field_trial_details: true
+        hidden.field_trial_eligibility: true
+        hidden.field_trial_contact: true
+        hidden.field_trial_location: true
+        hidden.field_trial_title: true
+        hidden.trial_nct_id: true
+        hidden.links: false

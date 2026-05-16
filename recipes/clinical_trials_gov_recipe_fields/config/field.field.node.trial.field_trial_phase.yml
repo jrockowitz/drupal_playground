@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trial_phase
+    - node.type.trial
+  module:
+    - options
+id: node.trial.field_trial_phase
+field_name: field_trial_phase
+entity_type: node
+bundle: trial
+label: Phase
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

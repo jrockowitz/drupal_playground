@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trial_details
+    - node.type.trial
+  module:
+    - text
+id: node.trial.field_trial_details
+field_name: field_trial_details
+entity_type: node
+bundle: trial
+label: Details
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

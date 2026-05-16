@@ -1,0 +1,38 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_trial_phase
+field_name: field_trial_phase
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: NA
+      label: 'Not applicable'
+    -
+      value: EARLY_PHASE1
+      label: 'Early Phase 1'
+    -
+      value: PHASE1
+      label: 'Phase 1'
+    -
+      value: PHASE2
+      label: 'Phase 2'
+    -
+      value: PHASE3
+      label: 'Phase 3'
+    -
+      value: PHASE4
+      label: 'Phase 4'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

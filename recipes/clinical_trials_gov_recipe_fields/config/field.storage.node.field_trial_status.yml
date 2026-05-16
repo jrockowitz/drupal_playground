@@ -1,0 +1,47 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_trial_status
+field_name: field_trial_status
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: RECRUITING
+      label: Recruiting
+    -
+      value: NOT_YET_RECRUITING
+      label: 'Not yet recruiting'
+    -
+      value: ACTIVE_NOT_RECRUITING
+      label: 'Active, not recruiting'
+    -
+      value: COMPLETED
+      label: Completed
+    -
+      value: SUSPENDED
+      label: Suspended
+    -
+      value: TERMINATED
+      label: Terminated
+    -
+      value: WITHDRAWN
+      label: Withdrawn
+    -
+      value: ENROLLING_BY_INVITATION
+      label: 'Enrolling by invitation'
+    -
+      value: UNKNOWN
+      label: Unknown
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

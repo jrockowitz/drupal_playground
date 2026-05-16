@@ -1,0 +1,135 @@
+uuid: bd176af9-2ed2-4b2a-9b69-b5b4278485c6
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.trial.ai_automator_status
+    - field.field.node.trial.field_trial_age
+    - field.field.node.trial.field_trial_condition
+    - field.field.node.trial.field_trial_contact
+    - field.field.node.trial.field_trial_details
+    - field.field.node.trial.field_trial_eligibility
+    - field.field.node.trial.field_trial_goal
+    - field.field.node.trial.field_trial_location
+    - field.field.node.trial.field_trial_phase
+    - field.field.node.trial.field_trial_sex
+    - field.field.node.trial.field_trial_status
+    - field.field.node.trial.field_trial_summary
+    - field.field.node.trial.field_trial_title
+    - field.field.node.trial.field_trials_nct_id
+    - field.field.node.trial.field_trials_nct_url
+    - field.field.node.trial.trial_brief_title
+    - field.field.node.trial.trial_cond_mod
+    - field.field.node.trial.trial_desc_mod
+    - field.field.node.trial.trial_elig_mod
+    - field.field.node.trial.trial_int
+    - field.field.node.trial.trial_last_update_post_date_str
+    - field.field.node.trial.trial_lead_sponsor
+    - field.field.node.trial.trial_location
+    - field.field.node.trial.trial_nct_id
+    - field.field.node.trial.trial_org
+    - field.field.node.trial.trial_overall_official
+    - field.field.node.trial.trial_overall_status
+    - field.field.node.trial.trial_phase
+    - field.field.node.trial.trial_study_type
+    - node.type.trial
+  module:
+    - link
+    - options
+    - user
+id: node.trial.teaser
+targetEntityType: node
+bundle: trial
+mode: teaser
+content:
+  field_trial_summary:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_trial_condition:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_trial_age:
+    type: list_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_trial_sex:
+    type: list_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_trial_phase:
+    type: list_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_trial_status:
+    type: list_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_trials_nct_id:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_trials_nct_url:
+    type: link
+    label: inline
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: '0'
+      target: '0'
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  ai_automator_status: true
+  field_trial_contact: true
+  field_trial_details: true
+  field_trial_eligibility: true
+  field_trial_goal: true
+  field_trial_location: true
+  field_trial_title: true
+  trial_nct_id: true
+  trial_brief_title: true
+  trial_cond_mod: true
+  trial_desc_mod: true
+  trial_elig_mod: true
+  trial_int: true
+  trial_last_update_post_date_str: true
+  trial_lead_sponsor: true
+  trial_location: true
+  trial_org: true
+  trial_overall_official: true
+  trial_overall_status: true
+  trial_phase: true
+  trial_study_type: true

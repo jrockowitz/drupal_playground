@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trial_summary
+    - node.type.trial
+id: node.trial.field_trial_summary
+field_name: field_trial_summary
+entity_type: node
+bundle: trial
+label: Summary
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

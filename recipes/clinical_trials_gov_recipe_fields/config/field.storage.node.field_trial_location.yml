@@ -1,0 +1,49 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - custom_field
+    - node
+id: node.field_trial_location
+field_name: field_trial_location
+entity_type: node
+type: custom
+settings:
+  columns:
+    facility:
+      allowed_values: {  }
+      name: facility
+      type: string
+      length: 254
+    city:
+      allowed_values: {  }
+      name: city
+      type: string
+      length: 255
+    state:
+      allowed_values: {  }
+      name: state
+      type: string
+      length: 255
+    zip:
+      allowed_values: {  }
+      name: zip
+      type: string
+      length: 255
+    country:
+      allowed_values: {  }
+      name: country
+      type: string
+      length: 255
+    status:
+      allowed_values: {  }
+      name: status
+      type: string
+      length: 255
+module: custom_field
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

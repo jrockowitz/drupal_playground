@@ -4,7 +4,7 @@ set -euo pipefail
 
 ## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-setup\nddev install trials-elastic\nddev install trials-milvus\nddev install trials-milvus trials-chat
+## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-setup\nddev install trials-fields\nddev install trials-elastic\nddev install trials-milvus\nddev install trials-milvus trials-chat
 ## ProjectTypes: drupal,drupal11
 
 uli_path="/"
@@ -21,6 +21,8 @@ reset_elasticsearch_index() {
     curl -fsS -X DELETE "http://elasticsearch:9200/${DDEV_SITENAME}_${index_name}" >/dev/null 2>&1 || true
   fi
 }
+
+drush sql:drop -y
 
 drush site:install standard \
   --db-url=mysql://db:db@db/db \
@@ -118,6 +120,18 @@ for PRESET in "$@"; do
     drush recipe ../recipes/clinical_trials_gov_recipe_setup
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit=10
+    uli_path="/admin/config/services/clinical-trials-gov"
+
+  elif [ "$PRESET" = "trials-fields" ]; then
+
+    echo "Applying ClinicalTrials.gov setup recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_setup
+    echo "Applying ClinicalTrials.gov fields recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_fields
+    echo "Importing ClinicalTrials.gov studies..."
+    drush migrate:import clinical_trials_gov --limit=10
+    echo "Running AI Automator queue..."
+    drush queue:run ai_automator_field_modifier
     uli_path="/admin/config/services/clinical-trials-gov"
 
   elif [ "$PRESET" = "trials-elastic" ]; then

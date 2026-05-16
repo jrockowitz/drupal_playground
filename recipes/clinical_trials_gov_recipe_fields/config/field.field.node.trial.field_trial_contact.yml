@@ -1,0 +1,71 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trial_contact
+    - node.type.trial
+  module:
+    - custom_field
+id: node.trial.field_trial_contact
+field_name: field_trial_contact
+entity_type: node
+bundle: trial
+label: Contact
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  field_settings:
+    name:
+      label: Name
+      check_empty: false
+      required: false
+      translatable: false
+      description: ''
+      description_display: after
+      prefix: ''
+      suffix: ''
+      allowed_values: {  }
+    role:
+      label: Role
+      check_empty: false
+      required: false
+      translatable: false
+      description: ''
+      description_display: after
+      prefix: ''
+      suffix: ''
+      allowed_values: {  }
+    phone:
+      label: Phone
+      check_empty: false
+      required: false
+      translatable: false
+      description: ''
+      description_display: after
+      prefix: ''
+      suffix: ''
+      allowed_values: {  }
+    phone_ext:
+      label: 'Phone Extension'
+      check_empty: false
+      required: false
+      translatable: false
+      description: ''
+      description_display: after
+      prefix: ''
+      suffix: ''
+      allowed_values: {  }
+    email:
+      label: Email
+      check_empty: false
+      required: false
+      translatable: false
+      description: ''
+      description_display: after
+      prefix: ''
+      suffix: ''
+      allowed_values: {  }
+field_type: custom

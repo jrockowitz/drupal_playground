@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_trials_nct_url
+    - node.type.trial
+  module:
+    - link
+id: node.trial.field_trials_nct_url
+field_name: field_trials_nct_url
+entity_type: node
+bundle: trial
+label: 'ClinicalTrials.gov URL'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 16
+field_type: link
