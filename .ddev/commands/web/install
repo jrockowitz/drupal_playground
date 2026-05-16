@@ -32,26 +32,6 @@ drush site:install standard \
   --account-mail=admin@example.com \
   --yes
 
-# Some local installs end up with core.extension missing its theme map even
-# though system.theme is present. Normalize it before enabling more modules so
-# post-update listeners do not crash during module installation.
-drush php:eval '
-$core_extension = \Drupal::service("config.factory")->getEditable("core.extension");
-if ($core_extension->get("theme") === NULL) {
-  $system_theme = \Drupal::config("system.theme");
-  $themes = [];
-  foreach (["default", "admin"] as $theme_type) {
-    $theme_name = $system_theme->get($theme_type);
-    if (is_string($theme_name) && $theme_name !== "") {
-      $themes[$theme_name] = 0;
-    }
-  }
-  if ($themes !== []) {
-    $core_extension->set("theme", $themes)->save();
-  }
-}
-'
-
 drush recipe ../recipes/drupal_playground_base
 drush recipe ../recipes/drupal_playground_admin
 drush recipe ../recipes/drupal_playground_devel
@@ -63,7 +43,14 @@ drush cr;
 # Uninstall the toolbar module, which can't be done via a recipe.
 drush pm:uninstall toolbar
 
-for PRESET in "$@"; do
+PRESETS=("$@")
+
+# Expand the trials-data convenience preset into the individual recipe steps.
+if [ "${#PRESETS[@]}" -eq 1 ] && [ "${PRESETS[0]}" = "trials-data" ]; then
+  PRESETS=("trials-data-setup" "trials-data-elastic" "trials-data-milvus")
+fi
+
+for PRESET in "${PRESETS[@]}"; do
   if [ "$PRESET" = "ai" ]; then
 
     echo "Applying AI recipe..."
@@ -114,14 +101,6 @@ for PRESET in "$@"; do
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
     uli_path="/admin/config/services/clinical-trials-gov"
 
-  elif [ "$PRESET" = "trials-data-setup" ]; then
-
-    echo "Applying ClinicalTrials.gov data setup recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_data_setup
-    echo "Importing ClinicalTrials.gov studies..."
-    drush migrate:import clinical_trials_gov --limit=10
-    uli_path="/admin/config/services/clinical-trials-gov"
-
   elif [ "$PRESET" = "trials-fields" ]; then
 
     echo "Applying ClinicalTrials.gov data setup recipe..."
@@ -134,14 +113,18 @@ for PRESET in "$@"; do
     drush queue:run ai_automator_field_modifier
     uli_path="/admin/config/services/clinical-trials-gov"
 
+  elif [ "$PRESET" = "trials-data-setup" ]; then
+
+    echo "Applying ClinicalTrials.gov data setup recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_data_setup
+    echo "Importing ClinicalTrials.gov studies..."
+    drush migrate:import clinical_trials_gov --limit=10
+    uli_path="/admin/config/services/clinical-trials-gov"
+
   elif [ "$PRESET" = "trials-data-elastic" ]; then
 
     echo "Applying ClinicalTrials.gov data Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_data_elastic
-    echo "Importing ClinicalTrials.gov data autocomplete config..."
-    drush config:import -y --partial --source=../recipes/clinical_trials_gov_recipe_data_elastic/config/autocomplete
-    drush role:perm:add anonymous 'use search_api_autocomplete for trials_elasticsearch'
-    drush role:perm:add authenticated 'use search_api_autocomplete for trials_elasticsearch'
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit=10
     echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."

@@ -23,6 +23,7 @@ Sets up a ClinicalTrials.gov data search experience backed by Elasticsearch for 
 - A Search API server pointed at the local DDEV Elasticsearch service
 - A Search API index for `trial` nodes
 - A Views search page at `/trials`
+- A Search API Autocomplete search definition for the `trials_elasticsearch` index
 - Views-based exposed facet filters powered by `facets_exposed_filters`
 - A `Did you mean:` spellcheck prompt on the `/trials` results page
 - Search API Autocomplete suggestions on the `/trials` keyword input
