@@ -29,7 +29,7 @@ ddev drush migrate:import clinical_trials_gov
 If you want the install script to do both steps for you, use:
 
 ```bash
-ddev install trials-setup
+ddev install trials-data-setup
 ```
 
 ## Key Concepts

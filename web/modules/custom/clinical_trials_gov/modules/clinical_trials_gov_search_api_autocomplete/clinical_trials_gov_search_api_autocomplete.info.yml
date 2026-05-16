@@ -1,9 +1,0 @@
-name: "ClinicalTrials.gov Search API Autocomplete"
-type: module
-description: "Database-backed Search API autocomplete suggester for Clinical Trials search."
-package: ClinicalTrials.gov
-core_version_requirement: ^10.3 || ^11
-dependencies:
-  - drupal:node
-  - search_api:search_api
-  - search_api_autocomplete:search_api_autocomplete

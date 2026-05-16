@@ -2,7 +2,7 @@ name: 'ClinicalTrials.gov Recipe Fields'
 description: 'Adds fixed patient-friendly trial fields and AI automators to the ClinicalTrials.gov setup.'
 type: 'Site'
 recipes:
-  - clinical_trials_gov_recipe_setup
+  - clinical_trials_gov_recipe_data_setup
 install:
   - ai_automators
   - clinical_trials_gov_fields

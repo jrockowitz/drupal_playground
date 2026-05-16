@@ -1,3 +1,0 @@
-plugin.plugin_configuration.search_api_autocomplete_suggester.clinical_trials_gov_search_api_autocomplete:
-  type: mapping
-  label: 'Clinical Trials Search API autocomplete suggester'

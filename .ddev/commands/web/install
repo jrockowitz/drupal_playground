@@ -4,7 +4,7 @@ set -euo pipefail
 
 ## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-setup\nddev install trials-fields\nddev install trials-elastic\nddev install trials-milvus\nddev install trials-milvus trials-chat
+## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-fields\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
 ## ProjectTypes: drupal,drupal11
 
 uli_path="/"
@@ -114,18 +114,18 @@ for PRESET in "$@"; do
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
     uli_path="/admin/config/services/clinical-trials-gov"
 
-  elif [ "$PRESET" = "trials-setup" ]; then
+  elif [ "$PRESET" = "trials-data-setup" ]; then
 
-    echo "Applying ClinicalTrials.gov setup recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_setup
+    echo "Applying ClinicalTrials.gov data setup recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_data_setup
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit=10
     uli_path="/admin/config/services/clinical-trials-gov"
 
   elif [ "$PRESET" = "trials-fields" ]; then
 
-    echo "Applying ClinicalTrials.gov setup recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_setup
+    echo "Applying ClinicalTrials.gov data setup recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_data_setup
     echo "Applying ClinicalTrials.gov fields recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_fields
     echo "Importing ClinicalTrials.gov studies..."
@@ -134,13 +134,14 @@ for PRESET in "$@"; do
     drush queue:run ai_automator_field_modifier
     uli_path="/admin/config/services/clinical-trials-gov"
 
-  elif [ "$PRESET" = "trials-elastic" ]; then
+  elif [ "$PRESET" = "trials-data-elastic" ]; then
 
-    echo "Applying Clinical Trials Elasticsearch recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_elastic
-    echo "Applying Clinical Trials Elasticsearch autocomplete recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_elastic_autocomplete
-
+    echo "Applying ClinicalTrials.gov data Elasticsearch recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_data_elastic
+    echo "Importing ClinicalTrials.gov data autocomplete config..."
+    drush config:import -y --partial --source=../recipes/clinical_trials_gov_recipe_data_elastic/config/autocomplete
+    drush role:perm:add anonymous 'use search_api_autocomplete for trials_elasticsearch'
+    drush role:perm:add authenticated 'use search_api_autocomplete for trials_elasticsearch'
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit=10
     echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."
@@ -148,19 +149,10 @@ for PRESET in "$@"; do
     drush search-api:index trials_elasticsearch -y;
     uli_path="/trials"
 
-  elif [ "$PRESET" = "trials-milvus" ]; then
+  elif [ "$PRESET" = "trials-data-milvus" ]; then
 
-    echo "Applying Clinical Trials Milvus recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_milvus
-    echo "Indexing ClinicalTrials.gov studies in Milvus..."
-    drush search-api:clear trials_milvus -y
-    drush search-api:index trials_milvus -y;
-    uli_path="/trials"
-
-  elif [ "$PRESET" = "trials-chat" ]; then
-
-    echo "Applying Clinical Trials chat recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_milvus_chat
+    echo "Applying ClinicalTrials.gov data Milvus recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_data_milvus
     echo "Indexing ClinicalTrials.gov studies in Milvus..."
     drush search-api:clear trials_milvus -y
     drush search-api:index trials_milvus -y;

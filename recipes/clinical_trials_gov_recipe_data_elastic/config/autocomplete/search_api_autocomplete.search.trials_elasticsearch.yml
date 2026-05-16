@@ -1,0 +1,23 @@
+langcode: en
+status: true
+id: trials_elasticsearch
+label: 'Clinical Trials (Elasticsearch)'
+index_id: trials_elasticsearch
+suggester_settings:
+  clinical_trials_gov_data_search_api_autocomplete: {  }
+suggester_weights:
+  clinical_trials_gov_data_search_api_autocomplete: 0
+suggester_limits: {  }
+search_settings:
+  views:trials_elasticsearch:
+    displays:
+      default: false
+      selected:
+        - page_1
+options:
+  limit: 10
+  min_length: 1
+  show_count: false
+  delay: 300
+  submit_button_selector: ':submit'
+  autosubmit: false
