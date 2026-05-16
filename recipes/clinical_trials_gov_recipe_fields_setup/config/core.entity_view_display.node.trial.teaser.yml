@@ -52,7 +52,7 @@ content:
     region: content
   field_trial_condition:
     type: string
-    label: inline
+    label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -60,35 +60,35 @@ content:
     region: content
   field_trial_age:
     type: list_default
-    label: inline
+    label: above
     settings: {  }
     third_party_settings: {  }
     weight: 2
     region: content
   field_trial_sex:
     type: list_default
-    label: inline
+    label: above
     settings: {  }
     third_party_settings: {  }
     weight: 3
     region: content
   field_trial_phase:
     type: list_default
-    label: inline
+    label: above
     settings: {  }
     third_party_settings: {  }
     weight: 4
     region: content
   field_trial_status:
     type: list_default
-    label: inline
+    label: above
     settings: {  }
     third_party_settings: {  }
     weight: 5
     region: content
   field_trial_study_type:
     type: string
-    label: inline
+    label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -96,7 +96,7 @@ content:
     region: content
   field_trials_nct_id:
     type: string
-    label: inline
+    label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -104,7 +104,7 @@ content:
     region: content
   field_trials_nct_url:
     type: link
-    label: inline
+    label: above
     settings:
       trim_length: 80
       url_only: false

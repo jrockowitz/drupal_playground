@@ -119,7 +119,6 @@ processor_settings:
       preprocess_query: -8
     fields:
       - field_trial_title
-      - field_trial_condition
       - field_trials_nct_id
       - field_trial_status
       - field_trial_phase

@@ -128,7 +128,6 @@ for PRESET in "${PRESETS[@]}"; do
 
   elif [ "$PRESET" = "trials-fields-milvus" ]; then
 
-    docker restart ddev-drupal-playground-milvus >/dev/null
     echo "Applying ClinicalTrials.gov fields Milvus recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_fields_milvus
     echo "Indexing ClinicalTrials.gov studies in Milvus..."
@@ -157,7 +156,6 @@ for PRESET in "${PRESETS[@]}"; do
 
   elif [ "$PRESET" = "trials-data-milvus" ]; then
 
-    docker restart ddev-drupal-playground-milvus >/dev/null
     echo "Applying ClinicalTrials.gov data Milvus recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_data_milvus
     echo "Indexing ClinicalTrials.gov studies in Milvus..."
