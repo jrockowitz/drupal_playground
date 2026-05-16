@@ -42,7 +42,6 @@ class ClinicalTrialsGovEntityDisplayManager implements ClinicalTrialsGovEntityDi
   public function createFieldDisplayComponents(string $type, array $field_definitions): void {
     $form_display = $this->loadOrCreateFormDisplay($type);
     $default_view_display = $this->loadOrCreateViewDisplay($type);
-    $teaser_view_display = $this->loadOrCreateViewDisplay($type, 'teaser');
     $form_display_component = $this->getConfiguredFormDisplayComponent();
     $view_display_component = $this->getConfiguredViewDisplayComponent();
 
@@ -74,15 +73,11 @@ class ClinicalTrialsGovEntityDisplayManager implements ClinicalTrialsGovEntityDi
       $weight++;
     }
 
-    $this->resetTeaserViewDisplayComponents($field_definitions, $teaser_view_display);
-
     $default_display_id = 'node.' . $type . '.default';
-    $teaser_display_id = 'node.' . $type . '.teaser';
     $form_display->save();
     $default_view_display->save();
-    $teaser_view_display->save();
     $this->entityTypeManager->getStorage('entity_form_display')->resetCache([$default_display_id]);
-    $this->entityTypeManager->getStorage('entity_view_display')->resetCache([$default_display_id, $teaser_display_id]);
+    $this->entityTypeManager->getStorage('entity_view_display')->resetCache([$default_display_id]);
   }
 
   /**
@@ -168,23 +163,6 @@ class ClinicalTrialsGovEntityDisplayManager implements ClinicalTrialsGovEntityDi
       'mode' => $mode,
       'status' => TRUE,
     ]);
-  }
-
-  /**
-   * Removes generated components from the teaser display.
-   */
-  protected function resetTeaserViewDisplayComponents(array $field_definitions, EntityViewDisplayInterface $teaser_view_display): void {
-    foreach ($field_definitions as $definition) {
-      if (empty($definition['selectable']) || !empty($definition['group_only']) || empty($definition['field_name'])) {
-        continue;
-      }
-
-      $teaser_view_display->removeComponent($definition['field_name']);
-    }
-
-    foreach (array_keys($teaser_view_display->getThirdPartySettings('field_group')) as $field_group_name) {
-      $teaser_view_display->unsetThirdPartySetting('field_group', $field_group_name);
-    }
   }
 
   /**

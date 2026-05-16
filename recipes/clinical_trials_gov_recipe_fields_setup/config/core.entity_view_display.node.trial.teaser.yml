@@ -35,9 +35,79 @@ dependencies:
     - field.field.node.trial.trial_phase
     - node.type.trial
   module:
+    - field_group
     - link
     - options
     - user
+third_party_settings:
+  field_group:
+    group_trial_columns:
+      children:
+        - group_trial_left
+        - group_trial_right
+      parent_name: ''
+      weight: 1
+      format_type: html_element
+      region: content
+      format_settings:
+        classes: 'trial-teaser__grid'
+        id: ''
+        label_as_html: false
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        show_empty_fields: false
+      label: Columns
+    group_trial_left:
+      children:
+        - field_trial_condition
+        - field_trial_age
+        - field_trial_sex
+      parent_name: group_trial_columns
+      weight: 0
+      format_type: html_element
+      region: content
+      format_settings:
+        classes: 'trial-teaser__col trial-teaser__col--left'
+        id: ''
+        label_as_html: false
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        show_empty_fields: false
+      label: Left
+    group_trial_right:
+      children:
+        - field_trial_status
+        - field_trial_study_type
+        - field_trial_phase
+        - field_trials_nct_id
+        - field_trials_nct_url
+      parent_name: group_trial_columns
+      weight: 1
+      format_type: html_element
+      region: content
+      format_settings:
+        classes: 'trial-teaser__col trial-teaser__col--right'
+        id: ''
+        label_as_html: false
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        show_empty_fields: false
+      label: Right
 id: node.trial.teaser
 targetEntityType: node
 bundle: trial
@@ -56,35 +126,35 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 1
+    weight: 0
     region: content
   field_trial_age:
     type: list_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 2
+    weight: 1
     region: content
   field_trial_sex:
     type: list_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 3
+    weight: 2
     region: content
   field_trial_phase:
     type: list_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 4
+    weight: 2
     region: content
   field_trial_status:
     type: list_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 5
+    weight: 0
     region: content
   field_trial_study_type:
     type: string
@@ -92,7 +162,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 6
+    weight: 1
     region: content
   field_trials_nct_id:
     type: string
@@ -100,7 +170,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 7
+    weight: 3
     region: content
   field_trials_nct_url:
     type: link
@@ -112,7 +182,7 @@ content:
       rel: '0'
       target: '0'
     third_party_settings: {  }
-    weight: 8
+    weight: 4
     region: content
   links:
     settings: {  }

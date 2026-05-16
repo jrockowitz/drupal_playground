@@ -212,25 +212,9 @@ class ClinicalTrialsGovEntityDisplayManagerTest extends ClinicalTrialsGovContent
       ->set('field_prefix', 'trial')
       ->save();
 
-    // Check that the teaser display keeps generated field components hidden.
+    // Check that display generation does not create or modify the teaser display.
     $teaser_display = EntityViewDisplay::load('node.trial.teaser');
-    $this->assertNotNull($teaser_display);
-
-    $brief_summary_field_name = $this->entityManager->generateFieldName('protocolSection.descriptionModule.briefSummary');
-    $condition_field_name = $this->entityManager->generateFieldName('protocolSection.conditionsModule.conditions');
-    $keyword_field_name = $this->entityManager->generateFieldName('protocolSection.conditionsModule.keywords');
-    $minimum_age_field_name = $this->entityManager->generateFieldName('protocolSection.eligibilityModule.minimumAge');
-    $maximum_age_field_name = $this->entityManager->generateFieldName('protocolSection.eligibilityModule.maximumAge');
-    $standard_ages_field_name = $this->entityManager->generateFieldName('protocolSection.eligibilityModule.stdAges');
-
-    $this->assertNull($teaser_display->getComponent($brief_summary_field_name));
-    $this->assertNull($teaser_display->getComponent($condition_field_name));
-    $this->assertNull($teaser_display->getComponent($keyword_field_name));
-    $this->assertNull($teaser_display->getComponent($minimum_age_field_name));
-    $this->assertNull($teaser_display->getComponent($maximum_age_field_name));
-    $this->assertNull($teaser_display->getComponent($standard_ages_field_name));
-    $this->assertNull($teaser_display->getComponent('trial_resp_party'));
-    $this->assertSame([], $teaser_display->getThirdPartySettings('field_group'));
+    $this->assertNull($teaser_display);
   }
 
   /**

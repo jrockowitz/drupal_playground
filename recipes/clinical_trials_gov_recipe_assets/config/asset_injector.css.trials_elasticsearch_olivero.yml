@@ -75,6 +75,29 @@ code: |-
     margin-bottom: 0.15rem;
   }
 
+  /* Two-column grid for trial teaser metadata fields. */
+  body.path-trials .view-content .trial-teaser__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Each column stacks its fields vertically with consistent spacing. */
+  body.path-trials .view-content .trial-teaser__col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  /* Collapse to a single column on narrow viewports. */
+  @media (max-width: 600px) {
+    body.path-trials .view-content .trial-teaser__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
   /* Compact checkbox labels in the filter sidebar. */
   body.path-trials .view-filters .form-checkboxes .form-item {
     font-size: 0.8rem;

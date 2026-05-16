@@ -18,3 +18,15 @@ config:
     clinical_trials_gov.settings:
       setUp:
         query: 'query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'
+    core.entity_form_display.node.trial.default:
+      setProperties:
+        third_party_settings.field_group.group_clinical_trials_gov.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.weight: 20
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.open: false
+    core.entity_view_display.node.trial.default:
+      setProperties:
+        third_party_settings.field_group.group_clinical_trials_gov.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.weight: 20
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.open: false
