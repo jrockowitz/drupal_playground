@@ -1,0 +1,11 @@
+uuid: bec06d6a-ecfb-4bda-8279-00f1ea84258f
+langcode: en
+status: true
+dependencies: {  }
+name: Trial
+type: trial
+description: 'Imported ClinicalTrials.gov studies.'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false
