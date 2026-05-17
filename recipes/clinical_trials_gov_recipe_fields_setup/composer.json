@@ -1,0 +1,17 @@
+{
+  "name": "drupal/clinical_trials_gov_recipe_fields_setup",
+  "description": "Installs the ClinicalTrials.gov fields workflow recipe.",
+  "type": "drupal-recipe",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "require": {
+    "drupal/ai_automators": "^1",
+    "drupal/core": "^11",
+    "drupal/custom_field": "^4",
+    "drupal/field_group": "^4",
+    "drupal/migrate_plus": "^6",
+    "drupal/migrate_tools": "^6",
+    "drupal/pathauto": "^1",
+    "drupal/readonly_field_widget": "^2"
+  }
+}

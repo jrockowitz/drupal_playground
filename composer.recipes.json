@@ -73,6 +73,10 @@
             "url": "recipes/clinical_trials_gov_recipe_data_milvus"
         },
         {
+            "type": "path",
+            "url": "recipes/clinical_trials_gov_recipe_fields_setup"
+        },
+        {
             "type": "package",
             "package": {
                 "name": "recipes/schemadotorg_recipes",
@@ -103,6 +107,7 @@
         "drupal/clinical_trials_gov_recipe_data_setup": "*",
         "drupal/clinical_trials_gov_recipe_data_elastic": "*",
         "drupal/clinical_trials_gov_recipe_data_milvus": "*",
+        "drupal/clinical_trials_gov_recipe_fields_setup": "*",
         "drupal/drupal_playground_translation": "*",
         "recipes/schemadotorg_recipes": "*"
     }
