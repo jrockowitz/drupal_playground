@@ -1,0 +1,12 @@
+services:
+  _defaults:
+    autowire: true
+
+  ai_devel_cache.filesystem_cache:
+    class: Drupal\ai_devel_cache\Cache\FilesystemAiResponseCache
+  Drupal\ai_devel_cache\Cache\AiResponseCacheInterface: "@ai_devel_cache.filesystem_cache"
+
+  ai_devel_cache.response_subscriber:
+    class: Drupal\ai_devel_cache\EventSubscriber\AiResponseCacheSubscriber
+    tags:
+      - { name: event_subscriber }

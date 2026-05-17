@@ -1,0 +1,24 @@
+# PHPStan configuration for the AI Devel Cache module.
+includes:
+  - phar://phpstan.phar/conf/bleedingEdge.neon
+
+parameters:
+  level: 1
+
+  paths:
+    - .
+
+  fileExtensions:
+    - php
+    - module
+    - inc
+    - install
+
+  ignoreErrors:
+    # new static() is a best practice in Drupal.
+    - "#^Unsafe usage of new static#"
+
+  reportUnmatchedIgnoredErrors: false
+
+  excludePaths:
+    - vendor/*

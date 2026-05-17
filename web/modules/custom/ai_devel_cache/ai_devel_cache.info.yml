@@ -1,0 +1,7 @@
+name: "AI Devel Cache"
+type: module
+description: "Transparently caches AI provider responses on the local filesystem to avoid repeated provider costs during development."
+package: Development
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - ai:ai

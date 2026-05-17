@@ -1,0 +1,26 @@
+# Drupal contrib GitLab CI pipeline.
+# Uses the standard gitlab_templates project to provide composer, phpcs,
+# phpstan, phpunit, and cspell jobs against multiple core/PHP combinations.
+include:
+  - project: $_GITLAB_TEMPLATES_REPO
+    ref: main
+    file:
+      - '/includes/include.drupalci.main.yml'
+      - '/includes/include.drupalci.variables.yml'
+      - '/includes/include.drupalci.workflows.yml'
+
+variables:
+  OPT_IN_TEST_PREVIOUS_MAJOR: 0
+  OPT_IN_TEST_PREVIOUS_MINOR: 1
+  OPT_IN_TEST_NEXT_MINOR: 1
+  OPT_IN_TEST_NEXT_MAJOR: 0
+  OPT_IN_TEST_MAX_PHP: 1
+  SKIP_ESLINT: 1
+  SKIP_STYLELINT: 1
+
+cspell:
+  allow_failure: false
+phpcs:
+  allow_failure: false
+phpstan:
+  allow_failure: false
