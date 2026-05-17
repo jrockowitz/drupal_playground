@@ -12,8 +12,12 @@ install:
   - clinical_trials_gov_report
   - clinical_trials_gov_fields
   - link
+  - pathauto
 config:
   strict: false
+  import:
+    pathauto:
+      - pathauto.pattern.trial
   actions:
     clinical_trials_gov.settings:
       setUp:
