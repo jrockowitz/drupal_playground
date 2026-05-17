@@ -1,6 +1,6 @@
 {
   "name": "drupal/drupal_playground_ai",
-  "description": "Installs and configures the Drupal AI module suite: OpenAI + Anthropic providers, site-building agents, and dashboard configuration.",
+  "description": "Installs and configures the Drupal AI module suite: OpenAI, Anthropic, and Gemini providers, site-building agents, and dashboard configuration.",
   "type": "drupal-recipe",
   "license": "GPL-2.0-or-later",
   "version": "1.0.0",
@@ -8,6 +8,7 @@
     "drupal/core": "^11",
     "drupal/ai": "^1",
     "drupal/ai_dashboard": "^1",
+    "drupal/gemini_provider": "^1.0",
     "drupal/ai_provider_anthropic": "^1",
     "drupal/ai_provider_openai": "^1",
     "drupal/key": "^1"

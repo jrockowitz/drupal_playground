@@ -1,6 +1,6 @@
 # Drupal Playground AI Recipe
 
-Installs and configures the Drupal AI module suite: OpenAI + Anthropic providers,
+Installs and configures the Drupal AI module suite: OpenAI, Anthropic, and Gemini providers,
 site-building agents, and dashboard configuration.
 
 ## Prerequisites
@@ -13,6 +13,7 @@ mkdir -p keys
 echo '/keys/' >> .gitignore
 nano keys/openai.key      # paste your OpenAI API key
 nano keys/anthropic.key   # paste your Anthropic API key
+nano keys/gemini.key      # paste your Gemini API key
 ```
 
 Each file should contain only the raw API key with no trailing newline.

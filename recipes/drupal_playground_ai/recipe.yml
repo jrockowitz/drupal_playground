@@ -1,8 +1,8 @@
 name: 'Drupal Playground AI'
 description: >
-  Installs and configures the AI module suite: providers (OpenAI + Anthropic),
+  Installs and configures the AI module suite: providers (OpenAI + Anthropic + Gemini),
   site building agents, and dashboard configuration.
-  Prerequisites: keys/openai.key and keys/anthropic.key must exist before applying.
+  Prerequisites: keys/openai.key, keys/anthropic.key, and keys/gemini.key must exist before applying.
 type: 'Site'
 recipes:
   - drupal_playground_base
@@ -12,6 +12,7 @@ install:
   - ai_provider_anthropic
   - ai_provider_openai
   - ai_external_moderation
+  - gemini_provider
   - key
 config:
   strict: false
@@ -29,3 +30,6 @@ config:
         api_key: anthropic
         version: '20240229'
         openai_moderation: true
+    gemini_provider.settings:
+      simpleConfigUpdate:
+        api_key: gemini

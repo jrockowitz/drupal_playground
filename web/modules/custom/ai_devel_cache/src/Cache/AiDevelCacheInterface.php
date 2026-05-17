@@ -9,7 +9,7 @@ use Drupal\ai\OperationType\OutputInterface;
 /**
  * Stores and retrieves cached AI provider responses keyed by request hash.
  */
-interface AiResponseCacheInterface {
+interface AiDevelCacheInterface {
 
   /**
    * Returns the cached output for a hash, or NULL if not cached.

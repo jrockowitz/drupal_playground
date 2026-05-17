@@ -1,3 +1,4 @@
 #!/bin/bash
 
+docker logs ddev-drupal-playground-milvus;
 docker restart ddev-drupal-playground-milvus >/dev/null

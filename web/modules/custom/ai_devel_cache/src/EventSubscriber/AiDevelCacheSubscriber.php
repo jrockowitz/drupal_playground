@@ -10,7 +10,7 @@ use Drupal\ai\Event\PostGenerateResponseEvent;
 use Drupal\ai\Event\PreGenerateResponseEvent;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\InputBase;
-use Drupal\ai_devel_cache\Cache\AiResponseCacheInterface;
+use Drupal\ai_devel_cache\Cache\AiDevelCacheInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -20,7 +20,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * forced onto the event so the provider is never called. On a miss the
  * post-event stores the response under the same hash.
  */
-class AiResponseCacheSubscriber implements EventSubscriberInterface {
+class AiDevelCacheSubscriber implements EventSubscriberInterface {
 
   /**
    * Configuration keys that influence model output and belong in the hash.
@@ -66,13 +66,13 @@ class AiResponseCacheSubscriber implements EventSubscriberInterface {
   /**
    * Constructs the subscriber.
    *
-   * @param \Drupal\ai_devel_cache\Cache\AiResponseCacheInterface $cache
+   * @param \Drupal\ai_devel_cache\Cache\AiDevelCacheInterface $cache
    *   The response cache backend.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
    *   The logger channel factory.
    */
   public function __construct(
-    protected AiResponseCacheInterface $cache,
+    protected AiDevelCacheInterface $cache,
     LoggerChannelFactoryInterface $loggerFactory,
   ) {
     $this->logger = $loggerFactory->get('ai_devel_cache');

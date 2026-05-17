@@ -16,7 +16,7 @@ use Drupal\ai\OperationType\OutputInterface;
  * survive Drupal cache rebuilds (the `cache.ai` backend would not, which
  * makes it unsuitable for recipe re-applies).
  */
-class FilesystemAiResponseCache implements AiResponseCacheInterface {
+class AiDevelCacheFilesystemBackend implements AiDevelCacheInterface {
 
   /**
    * Subdirectory under sys_get_temp_dir() that holds cache files.

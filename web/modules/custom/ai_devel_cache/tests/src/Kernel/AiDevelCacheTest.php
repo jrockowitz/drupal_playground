@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @group ai_devel_cache
  */
 #[RunTestsInSeparateProcesses]
-class AiResponseCacheTest extends KernelTestBase {
+class AiDevelCacheTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
