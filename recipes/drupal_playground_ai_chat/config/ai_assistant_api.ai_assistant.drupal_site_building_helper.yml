@@ -16,8 +16,8 @@ specific_error_messages:
   AiQuotaException: ''
   AiSetupFailureException: ''
   AiRequestErrorException: ''
-llm_provider: openai
-llm_model: gpt-4o
+llm_provider: __default__
+llm_model: ''
 llm_configuration:
   max_tokens: 4096
   temperature: 1.0

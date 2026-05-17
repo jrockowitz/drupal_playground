@@ -1,22 +1,30 @@
+<!-- cspell:ignore Drupalize -->
 # Drupal Playground AI Recipe
 
-Installs and configures the Drupal AI module suite: OpenAI, Anthropic, and Gemini providers,
-site-building agents, and dashboard configuration.
+Installs and configures the Drupal AI module suite with OpenAI as the default
+provider, plus site-building agents and dashboard configuration.
 
 ## Prerequisites
 
-Create a `keys/` directory in the project root and add your API key files before
-applying the recipe. The recipe imports key config entities that reference these files.
+Create a `keys/` directory in the project root and add your OpenAI API key file
+before applying the recipe. The recipe imports a key config entity that
+references this file.
 
 ```bash
 mkdir -p keys
 echo '/keys/' >> .gitignore
 nano keys/openai.key      # paste your OpenAI API key
-nano keys/anthropic.key   # paste your Anthropic API key
-nano keys/gemini.key      # paste your Gemini API key
 ```
 
 Each file should contain only the raw API key with no trailing newline.
+
+If you want Anthropic or Gemini, apply the matching provider recipe after this
+base recipe and add the corresponding key file:
+
+```bash
+nano keys/anthropic.key   # paste your Anthropic API key
+nano keys/gemini.key      # paste your Gemini API key
+```
 
 ## Apply the Recipe
 

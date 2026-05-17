@@ -1,10 +1,11 @@
 #!/bin/bash
+# cspell:ignore pipefail milvus esac
 
 set -euo pipefail
 
 ## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-fields\nddev install trials-fields-setup\nddev install trials-fields-elastic\nddev install trials-fields-milvus\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
+## Example: ddev install\nddev install ai\nddev install openai\nddev install anthropic\nddev install gemini\nddev install anthropic ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install trials\nddev install trials-fields\nddev install trials-fields-setup\nddev install trials-fields-elastic\nddev install trials-fields-milvus\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
 ## ProjectTypes: drupal,drupal11
 
 uli_path="/"
@@ -21,6 +22,19 @@ reset_elasticsearch_index() {
     curl -fsS -X DELETE "http://elasticsearch:9200/${DDEV_SITENAME}_${index_name}" >/dev/null 2>&1 || true
   fi
 }
+
+
+PRESETS=("$@")
+
+# Expand the trials-data convenience preset into the default data-search flow.
+if [ "${#PRESETS[@]}" -eq 1 ] && [ "${PRESETS[0]}" = "trials-data" ]; then
+  PRESETS=("trials-data-setup" "trials-data-elastic" "trials-data-milvus")
+fi
+
+# Expand the trials-fields convenience preset into the field-based flow.
+if [ "${#PRESETS[@]}" -eq 1 ] && [ "${PRESETS[0]}" = "trials-fields" ]; then
+  PRESETS=("trials-fields-setup" "trials-fields-elastic" "trials-fields-milvus")
+fi
 
 drush sql:drop -y
 
@@ -43,18 +57,21 @@ drush cr;
 # Uninstall the toolbar module, which can't be done via a recipe.
 drush pm:uninstall toolbar
 
-PRESETS=("$@")
+# Set AI provider configuration before applying other presets.
+for PRESET in "${PRESETS[@]}"; do
+  if [ "$PRESET" = "openai" ] || [ "$PRESET" = "anthropic" ] || [ "$PRESET" = "gemini" ]; then
+    echo "Applying ${PRESET} provider recipe..."
+    if [ "$PRESET" = "anthropic" ]; then
+      drush recipe ../recipes/drupal_playground_ai_provider_anthropic
+    elif [ "$PRESET" = "gemini" ]; then
+      drush recipe ../recipes/drupal_playground_ai_provider_gemini
+    else
+      drush recipe ../recipes/drupal_playground_ai_provider_openai
+    fi
+  fi
+done
 
-# Expand the trials-data convenience preset into the default data-search flow.
-if [ "${#PRESETS[@]}" -eq 1 ] && [ "${PRESETS[0]}" = "trials-data" ]; then
-  PRESETS=("trials-data-setup" "trials-data-elastic" "trials-data-milvus")
-fi
-
-# Expand the trials-fields convenience preset into the field-based flow.
-if [ "${#PRESETS[@]}" -eq 1 ] && [ "${PRESETS[0]}" = "trials-fields" ]; then
-  PRESETS=("trials-fields-setup" "trials-fields-elastic" "trials-fields-milvus")
-fi
-
+# Apply presets.
 for PRESET in "${PRESETS[@]}"; do
   if [ "$PRESET" = "ai" ]; then
 

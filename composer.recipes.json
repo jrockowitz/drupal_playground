@@ -26,6 +26,18 @@
         },
         {
             "type": "path",
+            "url": "recipes/drupal_playground_ai_provider_openai"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai_provider_anthropic"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai_provider_gemini"
+        },
+        {
+            "type": "path",
             "url": "recipes/drupal_playground_ai_chat"
         },
         {
@@ -92,6 +104,9 @@
     ],
     "require": {
         "drupal/drupal_playground_admin": "*",
+        "drupal/drupal_playground_ai_provider_anthropic": "*",
+        "drupal/drupal_playground_ai_provider_gemini": "*",
+        "drupal/drupal_playground_ai_provider_openai": "*",
         "drupal/drupal_playground_ai": "*",
         "drupal/drupal_playground_ai_chat": "*",
         "drupal/drupal_playground_ai_ckeditor": "*",

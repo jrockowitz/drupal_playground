@@ -1,0 +1,11 @@
+{
+  "name": "drupal/drupal_playground_ai_provider_openai",
+  "description": "Configures the OpenAI provider for Drupal Playground AI.",
+  "type": "drupal-recipe",
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "require": {
+    "drupal/core": "^11",
+    "drupal/ai_provider_openai": "^1"
+  }
+}

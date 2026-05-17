@@ -27,8 +27,8 @@ plugin_config:
   automator_label: 'Tags Default'
   automator_weight: '100'
   automator_worker_type: field_widget_actions
-  automator_ai_provider: openai
-  automator_ai_model: gpt-4o-mini
+  automator_ai_provider: default
+  automator_ai_model: default
   automator_configuration_max_tokens: '4096'
   automator_configuration_temperature: '1'
   automator_configuration_frequency_penalty: '0'

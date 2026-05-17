@@ -36,4 +36,12 @@ interface AiDevelCacheInterface {
    */
   public function set(string $hash, OutputInterface $output, array $debug): void;
 
+  /**
+   * Deletes every entry from the cache.
+   *
+   * @return int
+   *   The number of cache entries that were deleted.
+   */
+  public function clear(): int;
+
 }

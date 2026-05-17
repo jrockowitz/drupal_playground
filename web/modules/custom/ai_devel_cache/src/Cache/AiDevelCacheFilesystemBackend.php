@@ -83,6 +83,28 @@ class AiDevelCacheFilesystemBackend implements AiDevelCacheInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function clear(): int {
+    $directory = $this->cacheDirectory();
+    if (!is_dir($directory)) {
+      return 0;
+    }
+    $deleted = 0;
+    foreach (glob($directory . '/*.bin') ?: [] as $payload) {
+      $hash = basename($payload, '.bin');
+      $sidecar = $this->sidecarPath($hash);
+      if (@unlink($payload)) {
+        $deleted++;
+      }
+      if (is_file($sidecar)) {
+        @unlink($sidecar);
+      }
+    }
+    return $deleted;
+  }
+
+  /**
    * Returns the cache directory path.
    *
    * @return string

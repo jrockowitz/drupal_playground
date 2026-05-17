@@ -1,0 +1,31 @@
+name: 'AI Provider Anthropic'
+description: >
+  Configures Anthropic defaults for Drupal Playground AI.
+type: 'Site'
+recipes:
+  - drupal_playground_ai
+install:
+  - ai_provider_anthropic
+config:
+  strict: false
+  import:
+    key:
+      - key.key.anthropic
+  actions:
+    ai.settings:
+      simpleConfigUpdate:
+        default_providers.chat.provider_id: anthropic
+        default_providers.chat.model_id: claude-haiku-4-5-20251001
+        default_providers.chat_with_complex_json.provider_id: anthropic
+        default_providers.chat_with_complex_json.model_id: claude-haiku-4-5-20251001
+        default_providers.chat_with_image_vision.provider_id: anthropic
+        default_providers.chat_with_image_vision.model_id: claude-haiku-4-5-20251001
+        default_providers.chat_with_structured_response.provider_id: anthropic
+        default_providers.chat_with_structured_response.model_id: claude-haiku-4-5-20251001
+        default_providers.chat_with_tools.provider_id: anthropic
+        default_providers.chat_with_tools.model_id: claude-haiku-4-5-20251001
+    ai_provider_anthropic.settings:
+      simpleConfigUpdate:
+        api_key: anthropic
+        version: '20240229'
+        openai_moderation: true

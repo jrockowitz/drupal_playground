@@ -40,7 +40,8 @@ To clear the cache, delete the directory. Uninstall the module to disable cachin
 
 ## What is excluded
 
-- Streaming chat responses (`ChatInput::isStreamedOutput() === TRUE`) are passed through unchanged.
+- Chat completions (`operation_type === 'chat'`) are not cached. Chat responses are non-deterministic enough that serving a stale completion would mask real provider behavior; cache embeddings, moderation, and image operations instead.
+- Streaming responses (`ChatInput::isStreamedOutput() === TRUE`) are passed through unchanged.
 - Requests whose input cannot be normalized to a stable representation are passed through unchanged.
 
 ## License

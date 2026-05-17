@@ -95,6 +95,9 @@ class AiDevelCacheSubscriber implements EventSubscriberInterface {
    *   The pre-generate event.
    */
   public function onPreGenerate(PreGenerateResponseEvent $event): void {
+    if ($event->getOperationType() === 'chat') {
+      return;
+    }
     if ($this->isStreaming($event->getInput())) {
       return;
     }
@@ -122,6 +125,9 @@ class AiDevelCacheSubscriber implements EventSubscriberInterface {
    *   The post-generate event.
    */
   public function onPostGenerate(PostGenerateResponseEvent $event): void {
+    if ($event->getOperationType() === 'chat') {
+      return;
+    }
     $thread = $event->getRequestThreadId();
     if (!isset($this->pendingHashes[$thread])) {
       return;

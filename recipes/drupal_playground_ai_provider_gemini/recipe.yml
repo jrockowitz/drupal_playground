@@ -1,0 +1,29 @@
+name: 'AI Provider Gemini'
+description: >
+  Configures Gemini defaults for Drupal Playground AI.
+type: 'Site'
+recipes:
+  - drupal_playground_ai
+install:
+  - gemini_provider
+config:
+  strict: false
+  import:
+    key:
+      - key.key.gemini
+  actions:
+    ai.settings:
+      simpleConfigUpdate:
+        default_providers.chat.provider_id: gemini
+        default_providers.chat.model_id: models/gemini-2.5-flash-lite
+        default_providers.chat_with_complex_json.provider_id: gemini
+        default_providers.chat_with_complex_json.model_id: models/gemini-2.5-flash-lite
+        default_providers.chat_with_image_vision.provider_id: gemini
+        default_providers.chat_with_image_vision.model_id: models/gemini-2.5-flash-lite
+        default_providers.chat_with_structured_response.provider_id: gemini
+        default_providers.chat_with_structured_response.model_id: models/gemini-2.5-flash-lite
+        default_providers.chat_with_tools.provider_id: gemini
+        default_providers.chat_with_tools.model_id: models/gemini-2.5-flash-lite
+    gemini_provider.settings:
+      simpleConfigUpdate:
+        api_key: gemini
