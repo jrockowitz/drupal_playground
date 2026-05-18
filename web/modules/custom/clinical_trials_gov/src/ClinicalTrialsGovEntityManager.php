@@ -90,6 +90,28 @@ class ClinicalTrialsGovEntityManager implements ClinicalTrialsGovEntityManagerIn
 
     $this->entityDisplayManager->createFieldDisplayComponents($type, $field_definitions);
     $this->entityDisplayManager->createFieldGroups($type, $fields, $field_definitions);
+    $this->createEmptyTeaserDisplay($type);
+  }
+
+  /**
+   * Creates an empty teaser display so Views can avoid falling back to default.
+   */
+  protected function createEmptyTeaserDisplay(string $type): void {
+    $display_id = 'node.' . $type . '.teaser';
+    $storage = $this->entityTypeManager->getStorage('entity_view_display');
+    if ($storage->load($display_id)) {
+      return;
+    }
+
+    $display = $storage->create([
+      'targetEntityType' => 'node',
+      'bundle' => $type,
+      'mode' => 'teaser',
+      'status' => TRUE,
+    ]);
+
+    $display->save();
+    $storage->resetCache([$display_id]);
   }
 
   /**

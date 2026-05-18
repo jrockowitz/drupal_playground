@@ -1,10 +1,13 @@
 <?php
 
+// cspell:ignore elig
+
 declare(strict_types=1);
 
 namespace Drupal\Tests\clinical_trials_gov\Kernel;
 
 use Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\NodeType;
@@ -92,6 +95,31 @@ class ClinicalTrialsGovEntityManagerTest extends ClinicalTrialsGovContentTestBas
     // Check that the bundle field config exists for the created type.
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.nctId')));
     $this->assertNotNull(FieldConfig::loadByName('node', 'trial', $this->entityManager->generateFieldName('protocolSection.identificationModule.briefTitle')));
+
+    // Check that field creation also creates an empty teaser display.
+    $teaser_display = EntityViewDisplay::load('node.trial.teaser');
+    $this->assertNotNull($teaser_display);
+    $this->assertArrayNotHasKey($this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'), $teaser_display->getComponents());
+    $this->assertArrayNotHasKey($this->entityManager->generateFieldName('protocolSection.descriptionModule.briefSummary'), $teaser_display->getComponents());
+
+    $teaser_display->setComponent('title', [
+      'type' => 'string',
+      'label' => 'hidden',
+      'weight' => -5,
+      'region' => 'content',
+      'settings' => [
+        'link_to_entity' => FALSE,
+      ],
+    ])->save();
+
+    $this->entityManager->createFields('trial', [
+      'protocolSection.identificationModule.nctId',
+    ]);
+
+    $teaser_display = EntityViewDisplay::load('node.trial.teaser');
+    $this->assertNotNull($teaser_display);
+    $this->assertArrayHasKey('title', $teaser_display->getComponents());
+    $this->assertArrayNotHasKey($this->entityManager->generateFieldName('protocolSection.identificationModule.nctId'), $teaser_display->getComponents());
 
     $long_name = $this->entityManager->generateFieldName('protocolSection.contactsLocationsModule.locations.contacts.phoneExt');
     $alias_name = $this->entityManager->generateFieldName('protocolSection.identificationModule.nctIdAliases');
