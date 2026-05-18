@@ -5,7 +5,7 @@ dependencies:
     - field.field.node.trial.field_trial_details
 id: node.trial.field_trial_details.default
 label: 'Patient Details Default'
-rule: llm_text_long
+rule: llm_simple_text_long
 input_mode: token
 weight: 100
 worker_type: queue
@@ -18,7 +18,7 @@ prompt: ''
 token: "Rewrite the following clinical trial description in plain language for patients and caregivers.\n\nFocus on what will happen during the trial. Use short sentences.\n\nWrite a single patient-friendly result as HTML content only. The stored value should be an HTML fragment such as <p>...</p> or a short HTML list when helpful. Do not return a full HTML document. Do not use markdown. Do not use code fences. Do not add explanations before or after the content. Do not apologize. Do not say that you need the original description.\n\nIf the description is empty, unusable, or missing, return this HTML fragment only:\n<p>Trial activity details are not yet available.</p>\n\nDescription: [node:clinical-trials-gov:DetailedDescription]"
 plugin_config:
   automator_enabled: 1
-  automator_rule: llm_text_long
+  automator_rule: llm_simple_text_long
   automator_mode: token
   automator_base_field: ''
   automator_prompt: ''

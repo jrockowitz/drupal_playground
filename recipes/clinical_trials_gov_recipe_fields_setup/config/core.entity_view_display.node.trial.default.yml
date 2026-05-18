@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.trial.field_trial_contact
     - field.field.node.trial.field_trial_details
     - field.field.node.trial.field_trial_eligibility
+    - field.field.node.trial.field_trial_full_title
     - field.field.node.trial.field_trial_goal
     - field.field.node.trial.field_trial_location
     - field.field.node.trial.field_trial_phase
@@ -29,6 +30,13 @@ targetEntityType: node
 bundle: trial
 mode: default
 content:
+  field_trial_full_title:
+    type: basic_string
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
   field_trial_goal:
     type: text_default
     label: above

@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.trial.field_trial_contact
     - field.field.node.trial.field_trial_details
     - field.field.node.trial.field_trial_eligibility
+    - field.field.node.trial.field_trial_full_title
     - field.field.node.trial.field_trial_goal
     - field.field.node.trial.field_trial_location
     - field.field.node.trial.field_trial_phase
@@ -194,6 +195,7 @@ hidden:
   field_trial_contact: true
   field_trial_details: true
   field_trial_eligibility: true
+  field_trial_full_title: true
   field_trial_goal: true
   field_trial_location: true
   field_trial_title: true

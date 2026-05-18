@@ -5,7 +5,7 @@ dependencies:
     - field.field.node.trial.field_trial_eligibility
 id: node.trial.field_trial_eligibility.default
 label: 'Patient Eligibility Default'
-rule: llm_text_long
+rule: llm_simple_text_long
 input_mode: token
 weight: 100
 worker_type: queue
@@ -15,14 +15,14 @@ field_name: field_trial_eligibility
 edit_mode: false
 base_field: ''
 prompt: ''
-token: "Rewrite the following eligibility criteria in plain language for patients and caregivers.\n\nWrite exactly two sections in this order: <h2>Who can join</h2> followed by a <ul>, then <h2>Who cannot join</h2> followed by a <ul>. Use plain-language list items only.\n\nWrite a single patient-friendly result as HTML content only. The stored value should be an HTML fragment only. Do not return a full HTML document. Do not use <html> or <body>. Do not use markdown. Do not use code fences. Do not add explanations before or after the content. Do not apologize. Do not restate the task.\n\nIf the criteria are empty, unusable, or missing, return this HTML fragment only:\n<p>Eligibility details are not yet available.</p>\n\nCriteria: [node:clinical-trials-gov:EligibilityCriteria]"
+token: "Rewrite the following eligibility criteria in plain language for patients and caregivers.\n\nWrite exactly two sections in this order: <p><strong>Who can join</strong></p> followed by a <ul>, then <p><strong>Who cannot join</strong></p> followed by a <ul>. Use plain-language list items only.\n\nWrite a single patient-friendly result as HTML content only. The stored value should be an HTML fragment only. Do not return a full HTML document. Do not use <html> or <body>. Do not use markdown. Do not use code fences. Do not add explanations before or after the content. Do not apologize. Do not restate the task.\n\nIf the criteria are empty, unusable, or missing, return this HTML fragment only:\n<p>Eligibility details are not yet available.</p>\n\nCriteria: [node:clinical-trials-gov:EligibilityCriteria]"
 plugin_config:
   automator_enabled: 1
-  automator_rule: llm_text_long
+  automator_rule: llm_simple_text_long
   automator_mode: token
   automator_base_field: ''
   automator_prompt: ''
-  automator_token: "Rewrite the following eligibility criteria in plain language for patients and caregivers.\n\nWrite exactly two sections in this order: <h2>Who can join</h2> followed by a <ul>, then <h2>Who cannot join</h2> followed by a <ul>. Use plain-language list items only.\n\nWrite a single patient-friendly result as HTML content only. The stored value should be an HTML fragment only. Do not return a full HTML document. Do not use <html> or <body>. Do not use markdown. Do not use code fences. Do not add explanations before or after the content. Do not apologize. Do not restate the task.\n\nIf the criteria are empty, unusable, or missing, return this HTML fragment only:\n<p>Eligibility details are not yet available.</p>\n\nCriteria: [node:clinical-trials-gov:EligibilityCriteria]"
+  automator_token: "Rewrite the following eligibility criteria in plain language for patients and caregivers.\n\nWrite exactly two sections in this order: <p><strong>Who can join</strong></p> followed by a <ul>, then <p><strong>Who cannot join</strong></p> followed by a <ul>. Use plain-language list items only.\n\nWrite a single patient-friendly result as HTML content only. The stored value should be an HTML fragment only. Do not return a full HTML document. Do not use <html> or <body>. Do not use markdown. Do not use code fences. Do not add explanations before or after the content. Do not apologize. Do not restate the task.\n\nIf the criteria are empty, unusable, or missing, return this HTML fragment only:\n<p>Eligibility details are not yet available.</p>\n\nCriteria: [node:clinical-trials-gov:EligibilityCriteria]"
   automator_edit_mode: 0
   automator_label: 'Patient Eligibility Default'
   automator_weight: '100'

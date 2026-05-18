@@ -45,6 +45,7 @@ class ClinicalTrialsGovFieldsMigrateHooks {
       $definition['process']['field_trial_study_type'] = 'normalized_trial_study_type';
       $definition['process']['field_trial_status'] = 'normalized_trial_status';
       $definition['process']['field_trial_sex'] = 'normalized_trial_sex';
+      $definition['process']['field_trial_full_title'] = 'normalized_trial_full_title';
       $definition['process']['field_trials_nct_id'] = 'normalized_trial_nct_id';
       $definition['process']['field_trials_nct_url'] = 'normalized_trial_nct_url';
       $definition['process']['field_trial_age'] = 'normalized_trial_age';

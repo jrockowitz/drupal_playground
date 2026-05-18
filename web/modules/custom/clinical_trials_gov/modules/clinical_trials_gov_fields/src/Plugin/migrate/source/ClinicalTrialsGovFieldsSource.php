@@ -27,6 +27,7 @@ class ClinicalTrialsGovFieldsSource extends ClinicalTrialsGovSource {
     $row->setSourceProperty('normalized_trial_study_type', $this->normalizeScalarValue($row->getSourceProperty('protocolSection.designModule.studyType')));
     $row->setSourceProperty('normalized_trial_status', $this->normalizeScalarValue($row->getSourceProperty('protocolSection.statusModule.overallStatus')));
     $row->setSourceProperty('normalized_trial_sex', $this->normalizeScalarValue($row->getSourceProperty('protocolSection.eligibilityModule.sex')));
+    $row->setSourceProperty('normalized_trial_full_title', $this->normalizeScalarValue($row->getSourceProperty('protocolSection.identificationModule.officialTitle')));
     $row->setSourceProperty('normalized_trial_nct_id', $this->normalizeScalarValue($row->getSourceProperty('protocolSection.identificationModule.nctId')));
     $row->setSourceProperty('normalized_trial_nct_url', $this->normalizeNctUrl($row->getSourceProperty('protocolSection.identificationModule.nctId')));
     $row->setSourceProperty('normalized_trial_age', $this->normalizeListValue($row->getSourceProperty('protocolSection.eligibilityModule.stdAges')));

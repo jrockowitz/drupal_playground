@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.trial.field_trial_condition
     - field.field.node.trial.field_trial_details
     - field.field.node.trial.field_trial_eligibility
+    - field.field.node.trial.field_trial_full_title
     - field.field.node.trial.field_trial_goal
     - field.field.node.trial.field_trial_phase
     - field.field.node.trial.field_trial_sex
@@ -57,6 +58,14 @@ field_settings:
     dependencies:
       config:
         - field.field.node.trial.field_trial_summary
+  field_trial_full_title:
+    label: 'Full title'
+    datasource_id: 'entity:node'
+    property_path: field_trial_full_title
+    type: text
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_full_title
   field_trial_title:
     label: Title
     datasource_id: 'entity:node'

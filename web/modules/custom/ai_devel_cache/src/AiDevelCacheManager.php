@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Drupal\ai_devel_cache\Cache;
+namespace Drupal\ai_devel_cache;
 
+use Drupal\ai\OperationType\OutputInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
-use Drupal\ai\OperationType\OutputInterface;
+use Drupal\Core\Site\Settings;
 
 /**
  * Filesystem-backed cache for AI provider responses.
@@ -16,17 +17,18 @@ use Drupal\ai\OperationType\OutputInterface;
  * survive Drupal cache rebuilds (the `cache.ai` backend would not, which
  * makes it unsuitable for recipe re-applies).
  */
-class AiDevelCacheFilesystemBackend implements AiDevelCacheInterface {
+class AiDevelCacheManager implements AiDevelCacheManagerInterface {
 
   /**
-   * Subdirectory under sys_get_temp_dir() that holds cache files.
+   * Default subdirectory under sys_get_temp_dir() that holds cache files.
+   *
+   * Tests override this via the `ai_devel_cache_directory_name` Settings key
+   * so that test runs don't trample a developer's local cache.
    */
   const DIRECTORY_NAME = 'drupal_ai_devel_cache';
 
   /**
    * The module's logger channel.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
   protected LoggerChannelInterface $logger;
 
@@ -78,6 +80,10 @@ class AiDevelCacheFilesystemBackend implements AiDevelCacheInterface {
       $this->logger->warning('Unable to prepare AI cache directory @directory.', ['@directory' => $directory]);
       return;
     }
+    // Cached prompts and responses can include sensitive content; restrict the
+    // directory to the owner since sys_get_temp_dir() is world-readable on
+    // many systems.
+    @chmod($directory, 0700);
     file_put_contents($this->payloadPath($hash), serialize($output));
     file_put_contents($this->sidecarPath($hash), json_encode($debug, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
   }
@@ -105,13 +111,55 @@ class AiDevelCacheFilesystemBackend implements AiDevelCacheInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function list(): array {
+    $directory = $this->cacheDirectory();
+    if (!is_dir($directory)) {
+      return [];
+    }
+    $entries = [];
+    foreach (glob($directory . '/*.json') ?: [] as $sidecar) {
+      $hash = basename($sidecar, '.json');
+      $payload = $this->payloadPath($hash);
+      $contents = @file_get_contents($sidecar);
+      if ($contents === FALSE) {
+        continue;
+      }
+      $metadata = json_decode($contents, TRUE);
+      if (!is_array($metadata)) {
+        continue;
+      }
+      $entries[] = [
+        'hash' => $hash,
+        'provider_id' => $metadata['provider_id'] ?? '',
+        'operation_type' => $metadata['operation_type'] ?? '',
+        'model_id' => $metadata['model_id'] ?? '',
+        'tags' => is_array($metadata['tags'] ?? NULL) ? $metadata['tags'] : [],
+        'input_preview' => $metadata['input_preview'] ?? '',
+        'cached_at' => $metadata['cached_at'] ?? '',
+        'bytes' => is_file($payload) ? (int) filesize($payload) : 0,
+      ];
+    }
+    return $entries;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function directory(): string {
+    return $this->cacheDirectory();
+  }
+
+  /**
    * Returns the cache directory path.
    *
    * @return string
    *   Absolute filesystem path to the cache directory.
    */
   protected function cacheDirectory(): string {
-    return rtrim(sys_get_temp_dir(), '/') . '/' . self::DIRECTORY_NAME;
+    $name = Settings::get('ai_devel_cache_directory_name', self::DIRECTORY_NAME);
+    return rtrim(sys_get_temp_dir(), '/') . '/' . $name;
   }
 
   /**

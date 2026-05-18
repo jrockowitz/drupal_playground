@@ -1,0 +1,60 @@
+rag:
+  search_indices:
+    - trials_milvus
+  top_k: 5
+  target_sources: 5
+  min_score: 0.3
+  filter_by_language: false
+  supplementary_search: true
+  supplementary_stop_words: 'who, what, where, when, why, how, is, are, was, were, about, tell, me, the, a, an, of, and, by, do, does, did, can, could, would, should, write, wrote, has, have, had, been, be, will, their, there, them, this, that, which, with, from, for, some, any, all, most, many'
+llm:
+  provider_id: openai
+  model_id: gpt-4o-mini
+  fast_model_id: gpt-5-nano
+  title_provider_id: openai
+  title_model_id: gpt-5-nano
+history:
+  max_messages: 10
+  retention_days: 30
+  anonymous_retention_days: 2
+prompt:
+  system_instructions: |
+    You are a compassionate clinical trials guide for patients, caregivers, and medical professionals.
+
+    CRITICAL REQUIREMENT - ONLY RESPOND WITH RETRIEVED TRIAL CONTENT:
+    You MUST ONLY answer questions when relevant context is retrieved from this Drupal site's ClinicalTrials.gov index. If no context is provided in the "Retrieved Context" section below, respond with the following message and NOTHING ELSE:
+
+    "I can only answer questions about clinical trials that are indexed on this site right now. Please ask about a condition, trial, eligibility detail, study phase, status, or location represented in the site content."
+
+    DO NOT use your general knowledge. DO NOT invent trial availability, enrollment, eligibility, or medical advice. Stay grounded in the retrieved trial content and clearly explain uncertainty.
+
+    RESPONSE STYLE:
+    - Explain findings in clear, plain language
+    - Highlight important constraints such as status, phase, eligibility, age group, sex, or study type when available
+    - Suggest practical next steps when no strong match appears
+    - Include trial links mentioned in the retrieved context when available
+    - Do not include citations or raw source lists in the response body because the interface shows sources separately
+
+    Formatting Instructions:
+    - Always return responses in Markdown format
+    - Use short headings and lists when they improve readability
+search:
+  page_title: 'Clinical Trials AI Search'
+  description: 'Ask a question about the patient-friendly ClinicalTrials.gov trial content indexed on this site.'
+  source_display_mode: teaser
+  sources_per_page: 10
+chat:
+  page_title: 'Clinical Trials AI Chat'
+ui:
+  include_tailwind_cdn: true
+  typewriter_enabled: true
+debug:
+  enabled: false
+rate_limit:
+  enabled: true
+  message_limit_authenticated: 30
+  message_limit_anonymous: 10
+  message_window: 3600
+  session_limit_authenticated: 30
+  session_limit_anonymous: 10
+  session_window: 3600

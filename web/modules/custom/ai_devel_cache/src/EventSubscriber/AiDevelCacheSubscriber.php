@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\ai_devel_cache\EventSubscriber;
 
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\ai\Event\PostGenerateResponseEvent;
 use Drupal\ai\Event\PreGenerateResponseEvent;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\InputBase;
-use Drupal\ai_devel_cache\Cache\AiDevelCacheInterface;
+use Drupal\ai_devel_cache\AiDevelCacheManagerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -23,23 +24,24 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class AiDevelCacheSubscriber implements EventSubscriberInterface {
 
   /**
-   * Configuration keys that influence model output and belong in the hash.
+   * Configuration keys that must NOT contribute to the hash.
    *
-   * Other configuration keys (API keys, request identifiers, retry counters)
-   * are intentionally excluded so that ephemeral changes do not invalidate
-   * the cache.
+   * Everything else is hashed so provider-specific options (Gemini's
+   * safety_settings, Anthropic's system, o-series reasoning_effort, …)
+   * remain part of the cache key without an ever-growing allowlist.
    */
-  const HASHABLE_CONFIGURATION_KEYS = [
-    'temperature',
-    'top_p',
-    'top_k',
-    'max_tokens',
-    'max_output_tokens',
-    'frequency_penalty',
-    'presence_penalty',
-    'seed',
-    'stop',
-    'response_format',
+  const NON_HASHABLE_CONFIGURATION_KEYS = [
+    'api_key',
+    'apikey',
+    'authorization',
+    'auth_token',
+    'request_id',
+    'request_thread_id',
+    'retries',
+    'retry_count',
+    'timeout',
+    'user',
+    'user_id',
   ];
 
   /**
@@ -51,28 +53,27 @@ class AiDevelCacheSubscriber implements EventSubscriberInterface {
    * Hashes computed in the pre-event, keyed by request thread id.
    *
    * Used by the post-event so it doesn't have to recompute the hash.
-   *
-   * @var array
    */
   protected array $pendingHashes = [];
 
   /**
    * The module's logger channel.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
   protected LoggerChannelInterface $logger;
 
   /**
    * Constructs the subscriber.
    *
-   * @param \Drupal\ai_devel_cache\Cache\AiDevelCacheInterface $cache
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The configuration factory.
+   * @param \Drupal\ai_devel_cache\AiDevelCacheManagerInterface $cache
    *   The response cache backend.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
    *   The logger channel factory.
    */
   public function __construct(
-    protected AiDevelCacheInterface $cache,
+    protected ConfigFactoryInterface $configFactory,
+    protected AiDevelCacheManagerInterface $cache,
     LoggerChannelFactoryInterface $loggerFactory,
   ) {
     $this->logger = $loggerFactory->get('ai_devel_cache');
@@ -95,7 +96,7 @@ class AiDevelCacheSubscriber implements EventSubscriberInterface {
    *   The pre-generate event.
    */
   public function onPreGenerate(PreGenerateResponseEvent $event): void {
-    if ($event->getOperationType() === 'chat') {
+    if ($this->isUncacheableChat($event)) {
       return;
     }
     if ($this->isStreaming($event->getInput())) {
@@ -105,7 +106,6 @@ class AiDevelCacheSubscriber implements EventSubscriberInterface {
     if ($hash === NULL) {
       return;
     }
-    $this->pendingHashes[$event->getRequestThreadId()] = $hash;
     $cached = $this->cache->get($hash);
     if ($cached !== NULL) {
       $this->logger->info('AI cache hit for @provider/@operation/@model (@hash).', [
@@ -115,7 +115,9 @@ class AiDevelCacheSubscriber implements EventSubscriberInterface {
         '@hash' => $hash,
       ]);
       $event->setForcedOutputObject($cached);
+      return;
     }
+    $this->pendingHashes[$event->getRequestThreadId()] = $hash;
   }
 
   /**
@@ -125,7 +127,7 @@ class AiDevelCacheSubscriber implements EventSubscriberInterface {
    *   The post-generate event.
    */
   public function onPostGenerate(PostGenerateResponseEvent $event): void {
-    if ($event->getOperationType() === 'chat') {
+    if ($this->isUncacheableChat($event)) {
       return;
     }
     $thread = $event->getRequestThreadId();
@@ -141,10 +143,34 @@ class AiDevelCacheSubscriber implements EventSubscriberInterface {
       'provider_id' => $event->getProviderId(),
       'operation_type' => $event->getOperationType(),
       'model_id' => $event->getModelId(),
+      'tags' => array_values($event->getTags()),
       'input_preview' => $this->inputPreview($event->getInput()),
-      'cached_at' => date(\DateTimeInterface::ATOM),
+      'cached_at' => date('Y-m-d H:i:s'),
     ];
     $this->cache->set($hash, $event->getOutput(), $debug);
+  }
+
+  /**
+   * Returns TRUE if the request is a chat that the configured tags exclude.
+   *
+   * Non-chat operations always pass through. Chat operations are only skipped
+   * when their tag set intersects the configured uncacheable list — this keeps
+   * interactive chat UIs (AI Assistant, deepchat blocks, ai_rag_search_chat)
+   * uncached while still caching chat from automators, ckeditor, translate,
+   * content suggestions, etc.
+   *
+   * @param \Drupal\ai\Event\PreGenerateResponseEvent|\Drupal\ai\Event\PostGenerateResponseEvent $event
+   *   The event.
+   *
+   * @return bool
+   *   TRUE if the request must skip the cache.
+   */
+  protected function isUncacheableChat(PreGenerateResponseEvent|PostGenerateResponseEvent $event): bool {
+    if ($event->getOperationType() !== 'chat') {
+      return FALSE;
+    }
+    $deny = $this->configFactory->get('ai_devel_cache.settings')->get('uncacheable_chat_tags');
+    return (bool) array_intersect($event->getTags(), $deny);
   }
 
   /**
@@ -161,9 +187,9 @@ class AiDevelCacheSubscriber implements EventSubscriberInterface {
     if ($normalized === NULL) {
       return NULL;
     }
-    $configuration = array_intersect_key(
+    $configuration = array_diff_key(
       $event->getConfiguration(),
-      array_flip(self::HASHABLE_CONFIGURATION_KEYS)
+      array_flip(self::NON_HASHABLE_CONFIGURATION_KEYS)
     );
     ksort($configuration);
     $material = [
@@ -232,7 +258,7 @@ class AiDevelCacheSubscriber implements EventSubscriberInterface {
    *   A short preview string.
    */
   protected function inputPreview(mixed $input): string {
-    if ($input instanceof InputBase && method_exists($input, 'toString')) {
+    if ($input instanceof InputBase) {
       $text = $input->toString();
     }
     elseif (is_string($input)) {

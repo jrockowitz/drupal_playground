@@ -10,20 +10,6 @@ set -euo pipefail
 
 uli_path="/"
 
-# Delete Elasticsearch indexes that can survive across repeated local installs.
-# The Search API Elasticsearch backend can reuse stale mappings unless the
-# physical index is removed before the recipe recreates the Drupal index.
-reset_elasticsearch_index() {
-  local index_name="$1"
-
-  curl -fsS -X DELETE "http://elasticsearch:9200/${index_name}" >/dev/null 2>&1 || true
-
-  if [ -n "${DDEV_SITENAME:-}" ]; then
-    curl -fsS -X DELETE "http://elasticsearch:9200/${DDEV_SITENAME}_${index_name}" >/dev/null 2>&1 || true
-  fi
-}
-
-
 PRESETS=("$@")
 
 # Expand the trials-data convenience preset into the default data-search flow.
@@ -101,7 +87,8 @@ for PRESET in "${PRESETS[@]}"; do
 
   elif [ "$PRESET" = "elastic" ]; then
 
-    reset_elasticsearch_index "drupal_playground_elasticsearch"
+    echo "Resetting ClinicalTrials.gov studies in Elasticsearch..."
+    curl -fsS -X DELETE "http://elasticsearch:9200/drupal_playground_elasticsearch" >/dev/null 2>&1 || true
     echo "Applying Elasticsearch recipe..."
     drush recipe ../recipes/drupal_playground_elasticsearch
     uli_path="/elasticsearch"
@@ -128,16 +115,17 @@ for PRESET in "${PRESETS[@]}"; do
     echo "Applying ClinicalTrials.gov fields setup recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_fields_setup
     echo "Importing ClinicalTrials.gov studies..."
-    drush migrate:import clinical_trials_gov --limit=3
+    drush migrate:import clinical_trials_gov --limit=10
     echo "Running AI Automator queue..."
     drush queue:run ai_automator_field_modifier
     uli_path="/admin/config/services/clinical-trials-gov"
 
   elif [ "$PRESET" = "trials-fields-elastic" ]; then
 
-    reset_elasticsearch_index "drupal_playground_elasticsearch"
     echo "Applying ClinicalTrials.gov fields Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_fields_elastic
+    echo "Resetting ClinicalTrials.gov studies in Elasticsearch..."
+    curl -fsS -X DELETE "http://elasticsearch:9200/trials_elasticsearch" >/dev/null 2>&1 || true
     echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."
     drush search-api:clear trials_elasticsearch -y
     drush search-api:index trials_elasticsearch -y;
@@ -157,7 +145,7 @@ for PRESET in "${PRESETS[@]}"; do
     echo "Applying ClinicalTrials.gov data setup recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_data_setup
     echo "Importing ClinicalTrials.gov studies..."
-    drush migrate:import clinical_trials_gov --limit=3
+    drush migrate:import clinical_trials_gov --limit=10
     uli_path="/admin/config/services/clinical-trials-gov"
 
   elif [ "$PRESET" = "trials-data-elastic" ]; then
@@ -165,7 +153,9 @@ for PRESET in "${PRESETS[@]}"; do
     echo "Applying ClinicalTrials.gov data Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_data_elastic
     echo "Importing ClinicalTrials.gov studies..."
-    drush migrate:import clinical_trials_gov --limit=3
+    drush migrate:import clinical_trials_gov --limit=10
+    echo "Resetting ClinicalTrials.gov studies in Elasticsearch..."
+    curl -fsS -X DELETE "http://elasticsearch:9200/trials_elasticsearch" >/dev/null 2>&1 || true
     echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."
     drush search-api:clear trials_elasticsearch -y
     drush search-api:index trials_elasticsearch -y;

@@ -1,0 +1,14 @@
+ai_devel_cache.settings:
+  type: config_object
+  label: "AI Devel Cache settings"
+  constraints:
+    FullyValidatable: ~
+  mapping:
+    uncacheable_chat_tags:
+      type: sequence
+      label: "Tags that prevent chat requests from being cached"
+      sequence:
+        type: string
+        label: "Tag"
+        constraints:
+          NotBlank: []

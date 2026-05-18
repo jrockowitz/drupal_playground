@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41e540577feb8020d81c5d19060353b2",
+    "content-hash": "ade4b80c3e79e810c9fb65f8d35721cd",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3050,6 +3050,64 @@
             }
         },
         {
+            "name": "drupal/ai_rag_search_chat",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ai_rag_search_chat.git",
+                "reference": "1.0.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ai_rag_search_chat-1.0.2.zip",
+                "reference": "1.0.2",
+                "shasum": "6714783d6b8c522f15074f4b7ba44f0fd981a641"
+            },
+            "require": {
+                "drupal/ai": "*",
+                "drupal/core": "^10 || ^11",
+                "drupal/search_api": "*"
+            },
+            "require-dev": {
+                "drupal/core-dev": "^11"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.0.2",
+                    "datestamp": "1777568268",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Project has not opted into security advisory coverage!"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "scripts": {
+                "phpcs": [
+                    "./vendor/bin/phpcs -v --report-full --report-summary --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml --ignore=node_modules,bower_components,vendor ./"
+                ],
+                "phpcbf": [
+                    "./vendor/bin/phpcbf -v --report-full --report-summary --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme,info,txt,md,yml --ignore=node_modules,bower_components,vendor ./"
+                ]
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "paulsheldrake",
+                    "homepage": "https://www.drupal.org/user/1350686",
+                    "email": "paul.sheldrake@gmail.com"
+                }
+            ],
+            "description": "AI-powered Drupal module providing RAG-based search and conversational chat interfaces backed by vector database retrieval and LLM providers.",
+            "homepage": "https://www.drupal.org/ai_rag_search_chat",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ai_rag_search_chat"
+            }
+        },
+        {
             "name": "drupal/ai_vdb_provider_milvus",
             "version": "1.1.0-beta3",
             "source": {
@@ -4871,22 +4929,20 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai",
-                "reference": "c5fff25bce98d58969efecc8d1c7da538be748d6"
+                "reference": "2b96d82e06e5c36fa49ff8b94d32dc507f7f8b2a"
             },
             "require": {
                 "drupal/ai": "^1",
                 "drupal/ai_dashboard": "^1",
-                "drupal/ai_provider_anthropic": "^1",
                 "drupal/ai_provider_openai": "^1",
                 "drupal/core": "^11",
-                "drupal/gemini_provider": "^1.0",
                 "drupal/key": "^1"
             },
             "type": "drupal-recipe",
             "license": [
                 "GPL-2.0-or-later"
             ],
-            "description": "Installs and configures the Drupal AI module suite: OpenAI, Anthropic, and Gemini providers, site-building agents, and dashboard configuration.",
+            "description": "Installs and configures the Drupal AI module suite with OpenAI as the default provider, plus site-building agents and dashboard configuration.",
             "transport-options": {
                 "relative": true
             }
@@ -5015,6 +5071,69 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Adds AI development tooling to the Drupal Playground AI recipe.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "drupal/drupal_playground_ai_provider_anthropic",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_ai_provider_anthropic",
+                "reference": "31a83fb84b848bc69c56886f3651fa99b2475e46"
+            },
+            "require": {
+                "drupal/ai_provider_anthropic": "^1",
+                "drupal/core": "^11"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Configures the Anthropic provider for Drupal Playground AI.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "drupal/drupal_playground_ai_provider_gemini",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_ai_provider_gemini",
+                "reference": "2725d6778c7f421ba6ac3154a16879f953d693e6"
+            },
+            "require": {
+                "drupal/core": "^11",
+                "drupal/gemini_provider": "^1.0"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Configures the Gemini provider for Drupal Playground AI.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "drupal/drupal_playground_ai_provider_openai",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_ai_provider_openai",
+                "reference": "8f10716fd71a0b4d6e43c9b28d4732d9c1a76ed5"
+            },
+            "require": {
+                "drupal/ai_provider_openai": "^1",
+                "drupal/core": "^11"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Configures the OpenAI provider for Drupal Playground AI.",
             "transport-options": {
                 "relative": true
             }

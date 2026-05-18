@@ -18,6 +18,10 @@ indexing_options:
     field_name: field_trial_summary
     indexing_option: contextual_content
     max: -1
+  field_trial_full_title:
+    field_name: field_trial_full_title
+    indexing_option: contextual_content
+    max: -1
   field_trial_title:
     field_name: field_trial_title
     indexing_option: contextual_content

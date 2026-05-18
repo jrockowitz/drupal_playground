@@ -1,0 +1,19 @@
+ai_devel_cache.report:
+  path: /admin/config/ai/devel-cache
+  defaults:
+    _form: '\Drupal\ai_devel_cache\Form\AiDevelCacheReportForm'
+    _title: 'AI Devel Cache'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE
+
+ai_devel_cache.settings:
+  path: /admin/config/ai/devel-cache/settings
+  defaults:
+    _form: '\Drupal\ai_devel_cache\Form\AiDevelCacheSettingsForm'
+    _title: 'AI Devel Cache settings'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _admin_route: TRUE

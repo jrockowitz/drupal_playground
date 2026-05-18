@@ -1,0 +1,5 @@
+ai_devel_cache.report:
+  title: 'AI Devel Cache'
+  description: 'Review cached AI provider responses written to disk during development.'
+  parent: ai.admin_config_safety
+  route_name: ai_devel_cache.report

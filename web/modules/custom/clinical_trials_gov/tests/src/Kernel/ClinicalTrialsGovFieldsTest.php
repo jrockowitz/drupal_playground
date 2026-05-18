@@ -106,6 +106,12 @@ class ClinicalTrialsGovFieldsTest extends ClinicalTrialsGovContentTestBase {
     $this->assertSame([
       [
         'plugin' => 'get',
+        'source' => 'normalized_trial_full_title',
+      ],
+    ], $migration->getProcess()['field_trial_full_title']);
+    $this->assertSame([
+      [
+        'plugin' => 'get',
         'source' => 'normalized_trial_age',
       ],
     ], $migration->getProcess()['field_trial_age']);
@@ -157,6 +163,7 @@ class ClinicalTrialsGovFieldsTest extends ClinicalTrialsGovContentTestBase {
     $this->assertSame('OBSERVATIONAL', $thyroid_study->getSourceProperty('normalized_trial_study_type'));
     $this->assertSame('RECRUITING', $thyroid_study->getSourceProperty('normalized_trial_status'));
     $this->assertSame('ALL', $thyroid_study->getSourceProperty('normalized_trial_sex'));
+    $this->assertSame('Longitudinal Evaluation of Objective Cognitive Function and Quality of Life in Patients Undergoing Surgery for Malignant and Benign Thyroid Nodules', $thyroid_study->getSourceProperty('normalized_trial_full_title'));
     $this->assertSame('NCT05088187', $thyroid_study->getSourceProperty('normalized_trial_nct_id'));
     $this->assertSame([
       'uri' => 'https://clinicaltrials.gov/study/NCT05088187',

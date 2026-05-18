@@ -7,6 +7,7 @@
     "require": {
         "drupal/core": "^11",
         "drupal/ai": "^1",
+        "drupal/ai_rag_search_chat": "^1",
         "drupal/ai_vdb_provider_milvus": "^1.1@beta",
         "drupal/search_api": "^1"
     }

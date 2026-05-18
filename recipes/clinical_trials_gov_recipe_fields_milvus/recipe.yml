@@ -8,6 +8,7 @@ install:
   - ai_agents
   - ai_assistant_api
   - ai_chatbot
+  - ai_rag_search_chat
   - ai_search
   - ai_vdb_provider_milvus
   - search_api
@@ -18,6 +19,8 @@ config:
     ai_assistant_api: '*'
     ai_vdb_provider_milvus:
       - ai_vdb_provider_milvus.settings
+    ai_rag_search_chat:
+      - ai_rag_search_chat.settings
     search_api:
       - search_api.server.trials_milvus
       - search_api.index.trials_milvus
@@ -30,4 +33,10 @@ config:
       simpleConfigUpdate:
         default_vdb_provider: milvus
     user.role.anonymous:
-      grantPermission: 'access deepchat api'
+      grantPermissions:
+        - 'access deepchat api'
+        - 'access ai rag search chat'
+    user.role.authenticated:
+      grantPermissions:
+        - 'access deepchat api'
+        - 'access ai rag search chat'

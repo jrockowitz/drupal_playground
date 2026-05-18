@@ -1,0 +1,18 @@
+_meta:
+  version: '1.0'
+  entity_type: shortcut
+  uuid: d862c6ec-87b7-4307-b237-3f4c1c78fef2
+  bundle: default
+  default_langcode: en
+default:
+  title:
+    -
+      value: 'AI Chat'
+  weight:
+    -
+      value: -12
+  link:
+    -
+      uri: 'internal:/ai-search/chat'
+      title: ''
+      options: {  }

@@ -1,0 +1,11 @@
+ai_devel_cache.report_tab:
+  title: 'Report'
+  route_name: ai_devel_cache.report
+  base_route: ai_devel_cache.report
+  weight: 0
+
+ai_devel_cache.settings_tab:
+  title: 'Settings'
+  route_name: ai_devel_cache.settings
+  base_route: ai_devel_cache.report
+  weight: 10

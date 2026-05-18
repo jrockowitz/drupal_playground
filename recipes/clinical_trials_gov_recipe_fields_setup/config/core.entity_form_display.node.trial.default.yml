@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.trial.field_trial_contact
     - field.field.node.trial.field_trial_details
     - field.field.node.trial.field_trial_eligibility
+    - field.field.node.trial.field_trial_full_title
     - field.field.node.trial.field_trial_goal
     - field.field.node.trial.field_trial_location
     - field.field.node.trial.field_trial_phase
@@ -28,6 +29,14 @@ targetEntityType: node
 bundle: trial
 mode: default
 content:
+  field_trial_full_title:
+    type: string_textarea
+    weight: 19
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings: {  }
   field_trial_title:
     type: string_textfield
     weight: 20
