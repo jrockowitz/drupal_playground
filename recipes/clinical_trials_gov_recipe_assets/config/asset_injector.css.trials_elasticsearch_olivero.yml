@@ -47,55 +47,10 @@ code: |-
     margin-top: 0;
   }
 
-  /* Hide empty teaser metadata blocks to reduce visual noise in results. */
-  body.path-trials .view-content .teaser__meta:empty {
-    display: none;
-  }
-
-  /* Reduce Olivero's default 54px grid gap between result rows. */
-  body.path-trials .view-content {
-    gap: 0.5rem;
-  }
-
-  /* Reduce Olivero's default 54px padding-bottom on each teaser article. */
-  body.path-trials .view-content article {
-    padding-bottom: 0.5rem;
-  }
-
   /* Keep the empty state visually separated from the filter stack on narrow screens. */
   body.path-trials .view-empty {
     display: block;
     margin-top: 1.5rem;
-  }
-
-  /* Reduce teaser title size for better result density. */
-  body.path-trials .view-content .teaser__title {
-    font-size: 1.1rem;
-    line-height: 1.3;
-    margin-bottom: 0.15rem;
-  }
-
-  /* Two-column grid for trial teaser metadata fields. */
-  body.path-trials .view-content .trial-teaser__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem 1.5rem;
-    margin-top: 0.5rem;
-  }
-
-  /* Each column stacks its fields vertically with consistent spacing. */
-  body.path-trials .view-content .trial-teaser__col {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    min-width: 0;
-  }
-
-  /* Collapse to a single column on narrow viewports. */
-  @media (max-width: 600px) {
-    body.path-trials .view-content .trial-teaser__grid {
-      grid-template-columns: 1fr;
-    }
   }
 
   /* Compact checkbox labels in the filter sidebar. */
@@ -235,12 +190,57 @@ code: |-
     }
 
     /* Keep result content in the right column and allow long text to shrink. */
-    body.path-trials .view-content,
+    .node--type-trial.teaser,
     body.path-trials .view-empty {
       grid-column: 2;
       grid-row: 2;
       align-self: start;
       min-width: 0;
+    }
+  }
+
+  /* Hide empty teaser metadata blocks to reduce visual noise in results. */
+  .node--type-trial.teaser .teaser__meta:empty {
+    display: none;
+  }
+
+  /* Reduce Olivero's default 54px grid gap between result rows. */
+  .node--type-trial.teaser {
+    gap: 0.5rem;
+  }
+
+  /* Reduce Olivero's default 54px padding-bottom on each teaser article. */
+  .node--type-trial.teaser article {
+    padding-bottom: 0.5rem;
+  }
+
+  /* Reduce teaser title size for better result density. */
+  .node--type-trial.teaser .teaser__title {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    margin-bottom: 0.15rem;
+  }
+
+  /* Two-column grid for trial teaser metadata fields. */
+  .node--type-trial.teaser .trial-teaser__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Each column stacks its fields vertically with consistent spacing. */
+  .node--type-trial.teaser .trial-teaser__col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  /* Collapse to a single column on narrow viewports. */
+  @media (max-width: 600px) {
+    .node--type-trial.teaser .trial-teaser__grid {
+      grid-template-columns: 1fr;
     }
   }
 media: all
@@ -249,7 +249,7 @@ conditions:
   request_path:
     id: request_path
     negate: false
-    pages: /trials
+    pages: "/trials\r\n/ai-search"
   current_theme:
     id: current_theme
     negate: false
