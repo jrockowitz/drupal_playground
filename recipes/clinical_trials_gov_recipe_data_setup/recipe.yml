@@ -3,6 +3,16 @@ description: >
   Installs and configures the ClinicalTrials.gov data workflow using the
   reusable setup config action.
 type: 'Site'
+recipes:
+  - clinical_trials_gov_recipe_content
+  - clinical_trials_gov_recipe_assets
+input:
+  query:
+    data_type: string
+    description: 'The ClinicalTrials.gov API query used to discover fields and build the migration configuration.'
+    default:
+      source: value
+      value: 'query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'
 install:
   - custom_field
   - field_group
@@ -16,4 +26,4 @@ config:
   actions:
     clinical_trials_gov.settings:
       setUp:
-        query: 'query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'
+        query: ${query}

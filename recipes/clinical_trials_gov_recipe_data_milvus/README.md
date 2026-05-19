@@ -81,9 +81,11 @@ These are the steps used to add Milvus to the local DDEV environment:
 
 ### 2. Choose an install flow
 
-- Run `ddev install trials-data-milvus` for the Milvus backend, assistant, chat, and indexing layer.
-- Run `ddev install trials-data-elastic` when you want the Elasticsearch-backed `/trials` page and the current preset-driven ClinicalTrials.gov content import.
-- Run `ddev install trials-data-elastic trials-data-milvus` for the full hybrid `/trials` page plus Olivero chat UI.
+- Run `ddev install trials-data-setup` to build the `trial` bundle and migration configuration with the default ClinicalTrials.gov query.
+- Run `ddev install trials-data-setup --query='query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'` to override the setup query.
+- Run `ddev install trials-data-setup trials-data-milvus` for the Milvus backend, assistant, chat, and indexing layer after setup.
+- Run `ddev install trials-data-setup trials-data-elastic` when you want the Elasticsearch-backed `/trials` page and the current preset-driven ClinicalTrials.gov content import.
+- Run `ddev install trials-data-setup trials-data-elastic trials-data-milvus` for the full hybrid `/trials` page plus Olivero chat UI.
 - If you install `trials-data-milvus` without `trials-data-elastic`, import content manually before relying on retrieval:
   - `ddev drush migrate:import clinical_trials_gov --limit=10`
 - Confirm the install output includes:

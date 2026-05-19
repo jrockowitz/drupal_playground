@@ -36,20 +36,26 @@ Sets up a ClinicalTrials.gov data search experience backed by Elasticsearch for 
 
 ## Prerequisite
 
-This recipe depends on the `clinical_trials_gov_recipe_fields_setup` recipe so the `trial` bundle and generated ClinicalTrials.gov fields already exist before Search API configuration is imported.
+Apply `clinical_trials_gov_recipe_fields_setup` before this recipe so the `trial` bundle and generated ClinicalTrials.gov fields already exist before Search API configuration is imported.
 
 The recipe uses `facets_exposed_filters` directly in the View configuration rather than separate facet blocks or separately managed facet entities.
 
 ## Installation
 
 ```shell
-# Install Drupal, import starter trials, and apply the ClinicalTrials.gov data search recipe.
-ddev install trials-data-elastic
+# Install Drupal, run setup, import starter trials, and apply the ClinicalTrials.gov field-based search recipe.
+ddev install trials-fields-setup trials-fields-elastic
+```
+
+To override the setup query while keeping the same two-step flow, run:
+
+```shell
+ddev install trials-fields-setup trials-fields-elastic --query='query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'
 ```
 
 ## Indexing
 
-The `trials-data-elastic` preset clears and rebuilds the `trials_elasticsearch` Search API index automatically.
+The `trials-fields-elastic` preset clears and rebuilds the `trials_elasticsearch` Search API index automatically.
 
 If you need to rebuild it manually later, run:
 
@@ -62,8 +68,8 @@ ddev drush search-api:index trials_elasticsearch
 
 ### Install and login
 
-- ⚫ Run `ddev install trials-data-elastic`.
-- ⚫ Confirm the install output includes `Applying ClinicalTrials.gov data Elasticsearch recipe...`.
+- ⚫ Run `ddev install trials-fields-setup trials-fields-elastic`.
+- ⚫ Confirm the install output includes `Applying ClinicalTrials.gov fields Elasticsearch recipe...`.
 - ⚫ Confirm the install output includes `Importing ClinicalTrials.gov studies...`.
 - ⚫ Confirm the one-time login URL includes `destination=/trials`.
 - ⚫ Open the one-time login URL and confirm you land on `/trials`.

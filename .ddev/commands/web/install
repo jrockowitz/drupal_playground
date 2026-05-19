@@ -11,16 +11,8 @@ set -euo pipefail
 uli_path="/"
 LIMIT="10"
 QUERY=""
+QUERY_IS_SET="false"
 PRESETS=()
-
-apply_clinical_trials_query_override() {
-  if [ -z "$QUERY" ]; then
-    return
-  fi
-
-  echo "Applying ClinicalTrials.gov query override..."
-  drush clinical-trials-gov:setup "$QUERY"
-}
 
 # Parse --options for limit and query.
 for argument in "$@"; do
@@ -31,6 +23,7 @@ for argument in "$@"; do
 
     --query=*)
       QUERY="${argument#*=}"
+      QUERY_IS_SET="true"
       ;;
 
     *)
@@ -156,8 +149,11 @@ for PRESET in "${PRESETS[@]}"; do
   elif [ "$PRESET" = "trials-fields-setup" ]; then
 
     echo "Applying ClinicalTrials.gov fields setup recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_fields_setup
-    apply_clinical_trials_query_override
+    recipe_arguments=(../recipes/clinical_trials_gov_recipe_fields_setup)
+    if [ "$QUERY_IS_SET" = "true" ]; then
+      recipe_arguments+=(--input="clinical_trials_gov_recipe_fields_setup.query=$QUERY")
+    fi
+    drush recipe "${recipe_arguments[@]}"
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit="$LIMIT"
     echo "Running AI Automator queue..."
@@ -168,7 +164,6 @@ for PRESET in "${PRESETS[@]}"; do
 
     echo "Applying ClinicalTrials.gov fields Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_fields_elastic
-    apply_clinical_trials_query_override
     echo "Resetting ClinicalTrials.gov studies in Elasticsearch..."
     curl -fsS -X DELETE "http://elasticsearch:9200/trials_elasticsearch" >/dev/null 2>&1 || true
     echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."
@@ -180,7 +175,6 @@ for PRESET in "${PRESETS[@]}"; do
 
     echo "Applying ClinicalTrials.gov fields Milvus recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_fields_milvus
-    apply_clinical_trials_query_override
     echo "Indexing ClinicalTrials.gov studies in Milvus..."
     drush search-api:clear trials_milvus -y
     drush search-api:index trials_milvus -y;
@@ -189,8 +183,11 @@ for PRESET in "${PRESETS[@]}"; do
   elif [ "$PRESET" = "trials-data-setup" ]; then
 
     echo "Applying ClinicalTrials.gov data setup recipe..."
-    drush recipe ../recipes/clinical_trials_gov_recipe_data_setup
-    apply_clinical_trials_query_override
+    recipe_arguments=(../recipes/clinical_trials_gov_recipe_data_setup)
+    if [ "$QUERY_IS_SET" = "true" ]; then
+      recipe_arguments+=(--input="clinical_trials_gov_recipe_data_setup.query=$QUERY")
+    fi
+    drush recipe "${recipe_arguments[@]}"
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit="$LIMIT"
     uli_path="/admin/config/services/clinical-trials-gov"
@@ -199,7 +196,6 @@ for PRESET in "${PRESETS[@]}"; do
 
     echo "Applying ClinicalTrials.gov data Elasticsearch recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_data_elastic
-    apply_clinical_trials_query_override
     echo "Importing ClinicalTrials.gov studies..."
     drush migrate:import clinical_trials_gov --limit="$LIMIT"
     echo "Resetting ClinicalTrials.gov studies in Elasticsearch..."
@@ -213,7 +209,6 @@ for PRESET in "${PRESETS[@]}"; do
 
     echo "Applying ClinicalTrials.gov data Milvus recipe..."
     drush recipe ../recipes/clinical_trials_gov_recipe_data_milvus
-    apply_clinical_trials_query_override
     echo "Indexing ClinicalTrials.gov studies in Milvus..."
     drush search-api:clear trials_milvus -y
     drush search-api:index trials_milvus -y;

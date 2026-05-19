@@ -4,7 +4,7 @@
 
 - Build the Milvus-backed assistant, retrieval layer, and chat interface for finding clinical trials as a patient, caregiver, or medical professional.
 - Implement a local Milvus database for trial retrieval in DDEV.
-- Provide `ddev install trials-data-milvus` to set up the Milvus backend, AI Search, assistant configuration, and Olivero chat interface.
+- Provide `ddev install trials-fields-milvus` to set up the Milvus backend, AI Search, assistant configuration, and Olivero chat interface.
 
 ## Summary
 
@@ -27,7 +27,7 @@ It configures:
 - a trials-specific AI assistant and AI agent
 - the Olivero DeepChat block for the public `/trials` chat experience
 
-When combined with `clinical_trials_gov_recipe_data_elastic`, the `/trials` page becomes hybrid:
+When combined with `clinical_trials_gov_recipe_fields_elastic`, the `/trials` page becomes hybrid:
 
 - Elasticsearch powers listing, filtering, and faceting
 - Milvus powers the chat-based RAG assistant
@@ -42,10 +42,10 @@ When combined with `clinical_trials_gov_recipe_data_elastic`, the `/trials` page
 
 ## Notes
 
-- This recipe is additive and does not replace `trials-data-elastic`.
+- This recipe is additive and does not replace `trials-fields-elastic`.
 - Retrieval is grounded in imported Drupal `trial` nodes, not live ClinicalTrials.gov API calls.
 - This recipe does not provide its own `/trials` route or fallback page.
-- The canonical `/trials` page comes from `clinical_trials_gov_recipe_data_elastic` when that recipe is installed.
+- The canonical `/trials` page comes from `clinical_trials_gov_recipe_fields_elastic` when that recipe is installed.
 - The Olivero DeepChat block and anonymous `access deepchat api` permission
   ship directly in this recipe.
 
@@ -81,16 +81,18 @@ These are the steps used to add Milvus to the local DDEV environment:
 
 ### 2. Choose an install flow
 
-- Run `ddev install trials-data-milvus` for the Milvus backend, assistant, chat, and indexing layer.
-- Run `ddev install trials-data-elastic` when you want the Elasticsearch-backed `/trials` page and the current preset-driven ClinicalTrials.gov content import.
-- Run `ddev install trials-data-elastic trials-data-milvus` for the full hybrid `/trials` page plus Olivero chat UI.
-- If you install `trials-data-milvus` without `trials-data-elastic`, import content manually before relying on retrieval:
+- Run `ddev install trials-fields-setup` to build the `trial` bundle and migration configuration with the default ClinicalTrials.gov query.
+- Run `ddev install trials-fields-setup --query='query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'` to override the setup query.
+- Run `ddev install trials-fields-setup trials-fields-milvus` for the Milvus backend, assistant, chat, and indexing layer after setup.
+- Run `ddev install trials-fields-setup trials-fields-elastic` when you want the Elasticsearch-backed `/trials` page and the current preset-driven ClinicalTrials.gov content import.
+- Run `ddev install trials-fields-setup trials-fields-elastic trials-fields-milvus` for the full hybrid `/trials` page plus Olivero chat UI.
+- If you install `trials-fields-milvus` without `trials-fields-elastic`, import content manually before relying on retrieval:
   - `ddev drush migrate:import clinical_trials_gov --limit=10`
 - Confirm the install output includes:
-  - `Applying ClinicalTrials.gov field content Milvus recipe...`
+  - `Applying ClinicalTrials.gov fields Milvus recipe...`
 - Confirm the install output also includes `Indexing ClinicalTrials.gov studies in Milvus...` when imported `trial` content is already available for indexing.
-- If `trials-data-elastic` is part of the install command, confirm ClinicalTrials.gov imports are limited to `10` items during install.
-- If `trials-data-elastic` is part of the install command, confirm the one-time login URL includes `destination=/trials`.
+- If `trials-fields-elastic` is part of the install command, confirm ClinicalTrials.gov imports are limited to `10` items during install.
+- If `trials-fields-elastic` is part of the install command, confirm the one-time login URL includes `destination=/trials`.
 
 ### 3. Review the Milvus provider configuration
 
@@ -133,7 +135,7 @@ These are the steps used to add Milvus to the local DDEV environment:
 
 ### Trials page
 
-- If `trials-data-elastic` is installed, visit `/trials`.
+- If `trials-fields-elastic` is installed, visit `/trials`.
 - Confirm the Elasticsearch trials page renders with its keyword search and filters.
 - Confirm search and listing behavior still come from Elasticsearch while retrieval for the Milvus assistant remains separate.
 

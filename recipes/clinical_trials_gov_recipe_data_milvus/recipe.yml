@@ -1,9 +1,6 @@
 name: 'ClinicalTrials.gov Data Milvus Recipe'
 description: 'Sets up AI Search, Milvus, and chat for ClinicalTrials.gov data discovery.'
 type: 'Site'
-recipes:
-  - clinical_trials_gov_recipe_data_setup
-  - clinical_trials_gov_recipe_content
 install:
   - ai_agents
   - ai_assistant_api

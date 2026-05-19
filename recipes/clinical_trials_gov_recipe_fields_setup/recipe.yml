@@ -1,6 +1,16 @@
 name: 'ClinicalTrials.gov Recipe Fields Setup'
 description: 'Adds fixed patient-friendly trial fields and AI automators to the ClinicalTrials.gov setup.'
 type: 'Site'
+recipes:
+  - clinical_trials_gov_recipe_content
+  - clinical_trials_gov_recipe_assets
+input:
+  query:
+    data_type: string
+    description: 'The ClinicalTrials.gov API query used to discover fields and build the migration configuration.'
+    default:
+      source: value
+      value: 'query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'
 install:
   - custom_field
   - field_group
@@ -21,7 +31,7 @@ config:
   actions:
     clinical_trials_gov.settings:
       setUp:
-        query: 'query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'
+        query: ${query}
     core.entity_form_display.node.trial.default:
       setProperties:
         third_party_settings.field_group.group_clinical_trials_gov.label: ClinicalTrials.gov data

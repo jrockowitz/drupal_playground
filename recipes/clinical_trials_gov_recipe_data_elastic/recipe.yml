@@ -1,10 +1,6 @@
 name: 'ClinicalTrials.gov Data Elastic Recipe'
 description: 'Sets up Search API, autocomplete, and Elasticsearch Connector for ClinicalTrials.gov data search.'
 type: 'Site'
-recipes:
-  - clinical_trials_gov_recipe_data_setup
-  - clinical_trials_gov_recipe_content
-  - clinical_trials_gov_recipe_assets
 install:
   - better_exposed_filters
   - clinical_trials_gov_data

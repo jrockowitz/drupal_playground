@@ -36,15 +36,21 @@ Sets up a ClinicalTrials.gov data search experience backed by Elasticsearch for 
 
 ## Prerequisite
 
-This recipe depends on the `clinical_trials_gov_recipe_data_setup` recipe so the `trial` bundle and generated ClinicalTrials.gov fields already exist before Search API configuration is imported.
+Apply `clinical_trials_gov_recipe_data_setup` before this recipe so the `trial` bundle and generated ClinicalTrials.gov fields already exist before Search API configuration is imported.
 
 The recipe uses `facets_exposed_filters` directly in the View configuration rather than separate facet blocks or separately managed facet entities.
 
 ## Installation
 
 ```shell
-# Install Drupal, import starter trials, and apply the ClinicalTrials.gov data search recipe.
-ddev install trials-data-elastic
+# Install Drupal, run setup, import starter trials, and apply the ClinicalTrials.gov data search recipe.
+ddev install trials-data-setup trials-data-elastic
+```
+
+To override the setup query while keeping the same two-step flow, run:
+
+```shell
+ddev install trials-data-setup trials-data-elastic --query='query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'
 ```
 
 ## Indexing
@@ -62,7 +68,7 @@ ddev drush search-api:index trials_elasticsearch
 
 ### Install and login
 
-- ⚫ Run `ddev install trials-data-elastic`.
+- ⚫ Run `ddev install trials-data-setup trials-data-elastic`.
 - ⚫ Confirm the install output includes `Applying ClinicalTrials.gov data Elasticsearch recipe...`.
 - ⚫ Confirm the install output includes `Importing ClinicalTrials.gov studies...`.
 - ⚫ Confirm the one-time login URL includes `destination=/trials`.

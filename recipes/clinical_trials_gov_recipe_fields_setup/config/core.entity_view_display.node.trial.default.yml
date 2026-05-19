@@ -32,7 +32,7 @@ mode: default
 content:
   field_trial_full_title:
     type: basic_string
-    label: hidden
+    label: above
     settings: {  }
     third_party_settings: {  }
     weight: 0
