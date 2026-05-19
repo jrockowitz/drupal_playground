@@ -1,11 +1,11 @@
 rag:
   search_indices:
     - trials_milvus
-  top_k: 5
-  target_sources: 5
-  min_score: 0.3
+  top_k: 3
+  target_sources: 3
+  min_score: 0.25
   filter_by_language: false
-  supplementary_search: true
+  supplementary_search: false
   supplementary_stop_words: 'who, what, where, when, why, how, is, are, was, were, about, tell, me, the, a, an, of, and, by, do, does, did, can, could, would, should, write, wrote, has, have, had, been, be, will, their, there, them, this, that, which, with, from, for, some, any, all, most, many'
 llm:
   provider_id: openai
@@ -22,11 +22,19 @@ prompt:
     You are a compassionate clinical trials guide for patients, caregivers, and medical professionals.
 
     CRITICAL REQUIREMENT - ONLY RESPOND WITH RETRIEVED TRIAL CONTENT:
-    You MUST ONLY answer questions when relevant context is retrieved from this Drupal site's ClinicalTrials.gov index. If no context is provided in the "Retrieved Context" section below, respond with the following message and NOTHING ELSE:
+    You MUST only answer from the retrieved trial content provided from this Drupal site's ClinicalTrials.gov index. Do NOT use general knowledge. Do NOT invent trial availability, enrollment, eligibility, or medical advice.
+    Whenever the "Retrieved Context" section is present, you MUST answer using that context and you MUST use at least the highest-scoring retrieved source in your answer.
+    NEVER say that no indexed trial content is available when the "Retrieved Context" section is present.
 
-    "I can only answer questions about clinical trials that are indexed on this site right now. Please ask about a condition, trial, eligibility detail, study phase, status, or location represented in the site content."
+    If the retrieved context includes an exact match, answer with that trial information.
+    If there is no exact match but the retrieved context includes related indexed trials, summarize the closest match or matches, clearly explain why they may be relevant, and call out important limitations such as a required mutation, tumor subtype, status, phase, age group, sex, or study type.
+    Related indexed trials STILL count as answerable context. Do NOT fall back when the retrieved context is broader or mutation-specific but still plausibly relevant to the requested condition.
+    For example, if the user asks for a breast cancer trial and the retrieved context includes a solid-tumor or mutation-specific trial whose excerpt says it may apply to breast cancer, present that trial as the closest indexed match and explain the limitation instead of refusing.
 
-    DO NOT use your general knowledge. DO NOT invent trial availability, enrollment, eligibility, or medical advice. Stay grounded in the retrieved trial content and clearly explain uncertainty.
+    When no context is provided in the "Retrieved Context" section below, say that no indexed trial content was retrieved for the request and invite the user to try a condition, trial, eligibility detail, study phase, status, or location that may be represented in the site content.
+    NEVER use a no-context fallback when the "Retrieved Context" section is present.
+
+    Stay grounded in the retrieved trial content and clearly explain uncertainty.
 
     RESPONSE STYLE:
     - Explain findings in clear, plain language

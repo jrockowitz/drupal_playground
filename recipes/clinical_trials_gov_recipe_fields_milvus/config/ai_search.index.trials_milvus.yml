@@ -2,6 +2,10 @@ index_id: trials_milvus
 control_field_max_length: true
 exclude_chunk_from_metadata: false
 indexing_options:
+  field_trial_condition:
+    field_name: field_trial_condition
+    indexing_option: main_content
+    max: -1
   field_trial_goal:
     field_name: field_trial_goal
     indexing_option: main_content
@@ -30,10 +34,6 @@ indexing_options:
     field_name: search_api_url
     indexing_option: contextual_content
     max: 255
-  field_trial_condition:
-    field_name: field_trial_condition
-    indexing_option: contextual_content
-    max: -1
   field_trials_nct_id:
     field_name: field_trials_nct_id
     indexing_option: attributes

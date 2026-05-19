@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41e540577feb8020d81c5d19060353b2",
+    "content-hash": "800ba0ee765765b2a02492256eb1017c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5268,7 +5268,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_admin",
-                "reference": "5cffed784a0084ceb4ea41bda315161bff94eff0"
+                "reference": "a1068f2743a46df6f8b38a5b6bb6b0a8ad16320d"
             },
             "require": {
                 "drupal/coffee": "^2",
@@ -5285,13 +5285,6 @@
             "extra": {
                 "patches": {
                     "drupal/core": [
-                        {
-                            "description": "Persist is_syncing across container rebuilds",
-                            "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
-                            "extra": {
-                                "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3572171"
-                            }
-                        },
                         {
                             "description": "Page scrolls away on modifying fields in text formats and editor form.",
                             "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/11425.diff",

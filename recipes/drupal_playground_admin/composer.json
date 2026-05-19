@@ -18,13 +18,6 @@
         "patches": {
             "drupal/core": [
                 {
-                    "description": "Persist is_syncing across container rebuilds",
-                    "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14721.diff",
-                    "extra": {
-                        "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3572171"
-                    }
-                },
-                {
                     "description": "Page scrolls away on modifying fields in text formats and editor form.",
                     "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/11425.diff",
                     "extra": {

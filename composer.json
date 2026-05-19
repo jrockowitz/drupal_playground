@@ -120,6 +120,14 @@
             ]
         },
         "composer-exit-on-patch-failure": false,
+        "patches": {
+            "drupal/ai_rag_search_chat": [
+                {
+                    "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",
+                    "url": "patches/drupal/ai_rag_search_chat-multi-value-excerpts.patch"
+                }
+            ]
+        },
         "patchLevel": {
             "drupal/core": "-p2"
         },

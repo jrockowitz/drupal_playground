@@ -1,0 +1,40 @@
+diff --git a/src/Service/DirectRagRetriever.php b/src/Service/DirectRagRetriever.php
+--- a/src/Service/DirectRagRetriever.php
++++ b/src/Service/DirectRagRetriever.php
+@@ -1454,23 +1454,25 @@
+         try {
+           $field = $item->getField($field_id);
+           if ($field && !empty($field->getValues())) {
+-            $values = $field->getValues();
+-            $content = reset($values);
+-            if (!empty($content)) {
+-              // Convert TextValue object to string if needed.
+-              $content_str = (string) $content;
+-              // Strip HTML tags, decode entities, and clean up whitespace.
++            $text_parts = [];
++            foreach ($field->getValues() as $value) {
++              $content_str = (string) $value;
+               $text = strip_tags($content_str);
+               $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+               $text = preg_replace('/\s+/', ' ', $text);
+               $text = trim($text);
+-              if (!empty($text)) {
+-                if (strlen($text) > 300) {
+-                  return substr($text, 0, 300) . '...';
+-                }
+-                return $text;
++              if ($text !== '') {
++                $text_parts[] = $text;
+               }
+             }
++
++            if (!empty($text_parts)) {
++              $excerpt = implode('; ', array_unique($text_parts));
++              if (strlen($excerpt) > 300) {
++                return substr($excerpt, 0, 300) . '...';
++              }
++              return $excerpt;
++            }
+           }
+         }
+         catch (\Exception $e) {
