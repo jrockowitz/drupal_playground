@@ -1,0 +1,48 @@
+name: 'Drupal Playground Webform Test'
+description: 'Provides the dependency layer for the local Webform test preset.'
+type: 'Site'
+recipes:
+  - drupal_playground_webform_setup
+install:
+  # webform_node_test_multiple and webform_test_submissions cannot be installed
+  # via a recipe because their install hooks expect entities that are not ready
+  # during recipe application.
+  - webform_attachment_test
+  - webform_cards_test
+  - webform_clientside_validation_test
+  - webform_image_select_test
+  - webform_options_custom_test
+  - webform_options_custom_entity_test
+  - webform_options_limit_test
+  - webform_scheduled_email_test
+  - webform_submission_export_import_test
+  - webform_test
+  - webform_test_ajax
+  - webform_test_element
+  - webform_test_entity_reference_views
+  - webform_test_handler
+  - webform_test_handler_remote_post
+  - webform_test_options
+  - webform_test_views
+  - webform_test_block_submission_limit
+config:
+  strict: false
+  import:
+    webform_attachment_test: '*'
+    webform_cards_test: '*'
+    webform_clientside_validation_test: '*'
+    webform_image_select_test: '*'
+    webform_options_custom_test: '*'
+    webform_options_custom_entity_test: '*'
+    webform_options_limit_test: '*'
+    webform_scheduled_email_test: '*'
+    webform_submission_export_import_test: '*'
+    webform_test: '*'
+    webform_test_ajax: '*'
+    webform_test_element: '*'
+    webform_test_entity_reference_views: '*'
+    webform_test_handler: '*'
+    webform_test_handler_remote_post: '*'
+    webform_test_options: '*'
+    webform_test_views: '*'
+    webform_test_block_submission_limit: '*'

@@ -1,0 +1,79 @@
+name: 'Drupal Playground Webform Setup'
+description: 'Installs Webform, supporting integrations, and Webform example modules.'
+type: 'Site'
+recipes:
+  - drupal_playground_base
+install:
+  - address
+  - captcha
+  - image_captcha
+  - imce
+  - recaptcha
+  - honeypot
+  - webform
+  - webform_ui
+  - webform_access
+  - webform_attachment
+  - webform_cards
+  - webform_clientside_validation
+  - webform_devel
+  - webform_entity_print
+  - webform_entity_print_attachment
+  - webform_image_select
+  - webform_node
+  - webform_options_custom
+  - webform_options_limit
+  - webform_scheduled_email
+  - webform_schema
+  - webform_share
+  - webform_submission_export_import
+  - webform_submission_log
+  - webform_templates
+  - webform_examples
+  - webform_examples_accessibility
+  - webform_example_remote_post
+  - webform_example_element
+  - webform_example_composite
+  - webform_example_handler
+  - webform_example_custom_form
+  - webform_example_variant
+config:
+  strict: false
+  import:
+    address: '*'
+    captcha: '*'
+    image_captcha: '*'
+    imce: '*'
+    recaptcha: '*'
+    honeypot: '*'
+    webform: '*'
+    webform_ui: '*'
+    webform_access: '*'
+    webform_attachment: '*'
+    webform_cards: '*'
+    webform_clientside_validation: '*'
+    webform_devel: '*'
+    webform_entity_print: '*'
+    webform_entity_print_attachment: '*'
+    webform_image_select: '*'
+    webform_node: '*'
+    webform_options_custom: '*'
+    webform_options_limit: '*'
+    webform_scheduled_email: '*'
+    webform_schema: '*'
+    webform_share: '*'
+    webform_submission_export_import: '*'
+    webform_submission_log: '*'
+    webform_templates: '*'
+    webform_examples: '*'
+    webform_examples_accessibility: '*'
+    webform_example_remote_post: '*'
+    webform_example_element: '*'
+    webform_example_composite: '*'
+    webform_example_handler: '*'
+    webform_example_custom_form: '*'
+    webform_example_variant: '*'
+  actions:
+    webform.settings:
+      simpleConfigUpdate:
+        file.file_public: true
