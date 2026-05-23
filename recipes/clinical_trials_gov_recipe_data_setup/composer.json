@@ -1,15 +1,15 @@
 {
-  "name": "drupal/clinical_trials_gov_recipe_data_setup",
-  "description": "Installs the ClinicalTrials.gov data workflow recipe.",
-  "type": "drupal-recipe",
-  "license": "GPL-2.0-or-later",
-  "version": "1.0.0",
-  "require": {
-    "drupal/core": "^11",
-    "drupal/custom_field": "^4",
-    "drupal/field_group": "^4",
-    "drupal/migrate_plus": "^6",
-    "drupal/migrate_tools": "^6",
-    "drupal/readonly_field_widget": "^2"
-  }
+    "name": "drupal/clinical_trials_gov_recipe_data_setup",
+    "description": "Installs the ClinicalTrials.gov data workflow recipe.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/core": "^11",
+        "drupal/custom_field": "^4",
+        "drupal/field_group": "^4",
+        "drupal/migrate_plus": "^6",
+        "drupal/migrate_tools": "^6",
+        "drupal/readonly_field_widget": "^2"
+    }
 }

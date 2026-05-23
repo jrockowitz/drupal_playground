@@ -1,11 +1,11 @@
 {
-  "name": "drupal/drupal_playground_ai_provider_anthropic",
-  "description": "Configures the Anthropic provider for Drupal Playground AI.",
-  "type": "drupal-recipe",
-  "license": "GPL-2.0-or-later",
-  "version": "1.0.0",
-  "require": {
-    "drupal/core": "^11",
-    "drupal/ai_provider_anthropic": "^1"
-  }
+    "name": "drupal/drupal_playground_ai_provider_anthropic",
+    "description": "Configures the Anthropic provider for Drupal Playground AI.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/core": "^11",
+        "drupal/ai_provider_anthropic": "^1"
+    }
 }

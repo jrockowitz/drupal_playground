@@ -7,7 +7,7 @@
                 "type": "drupal-module-sandbox",
                 "version": "1.0.x-dev",
                 "source": {
-                    "url": "git@git.drupalcode.org:project/ai_schemadotorg_jsonld.git",
+                    "url": "git@git.drupal.org:project/ai_schemadotorg_jsonld.git",
                     "type": "git",
                     "reference": "1.0.x"
                 }
@@ -85,7 +85,7 @@
                 "type": "drupal-module-sandbox",
                 "version": "1.0.x-dev",
                 "source": {
-                    "url": "git@git.drupalcode.org:project/plugin_report.git",
+                    "url": "git@git.drupal.org:project/plugin_report.git",
                     "type": "git",
                     "reference": "1.0.x"
                 }
@@ -197,6 +197,7 @@
         }
     ],
     "require": {
+        "drupal/ai_schemadotorg_jsonld": "*",
         "drupal/eca_report": "*",
         "drupal/entity_labels": "*",
         "drupal/field_data": "*",

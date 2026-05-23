@@ -1,18 +1,18 @@
 {
-  "name": "drupal/clinical_trials_gov_recipe_fields_elastic",
-  "description": "Installs Search API, autocomplete, and Elasticsearch Connector for the ClinicalTrials.gov field-based search experience.",
-  "type": "drupal-recipe",
-  "license": "GPL-2.0-or-later",
-  "version": "1.0.0",
-  "require": {
-    "drupal/better_exposed_filters": "^7",
-    "drupal/core": "^11",
-    "drupal/elasticsearch_connector": "^9@alpha",
-    "drupal/facets": "^3",
-    "drupal/search_api": "^1",
-    "drupal/search_api_autocomplete": "^1",
-    "drupal/search_api_spellcheck": "^4",
-    "drupal/views_ajax_history": "^1",
-    "drupal/views_filters_summary": "^3"
-  }
+    "name": "drupal/clinical_trials_gov_recipe_fields_elastic",
+    "description": "Installs Search API, autocomplete, and Elasticsearch Connector for the ClinicalTrials.gov field-based search experience.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/better_exposed_filters": "^7",
+        "drupal/core": "^11",
+        "drupal/elasticsearch_connector": "^9@alpha",
+        "drupal/facets": "^3",
+        "drupal/search_api": "^1",
+        "drupal/search_api_autocomplete": "^1",
+        "drupal/search_api_spellcheck": "^4",
+        "drupal/views_ajax_history": "^1",
+        "drupal/views_filters_summary": "^3"
+    }
 }
