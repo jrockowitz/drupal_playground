@@ -1,5 +1,20 @@
 # Vibing Webform
 
+## Local Preview
+
+Run the slide deck locally with:
+
+```bash
+npm install
+ddev slides vibing-webform
+```
+
+For the live Drupal demo links in the presentation, prepare the site with:
+
+```bash
+ddev install webform-setup
+```
+
 ## Part 1: Vibing Webform as a Module (20 min)
 
 ---

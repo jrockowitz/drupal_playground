@@ -1,0 +1,114 @@
+:root {
+  --webform-blue: #0d47a1;
+  --webform-cyan: #27c4d9;
+  --webform-ink: #16324f;
+  --webform-sand: #f6f3ea;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(39, 196, 217, 0.28), transparent 32rem),
+    linear-gradient(135deg, #f7fbff 0%, #eef7fb 45%, #f7f3ea 100%);
+}
+
+.reveal {
+  color: var(--webform-ink);
+  font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  color: var(--webform-blue);
+  font-family: "Gill Sans", "Avenir Next Condensed", "Trebuchet MS", sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.reveal h1 {
+  font-size: 2.6em;
+}
+
+.reveal h2 {
+  font-size: 1.6em;
+  margin-bottom: 0.6em;
+}
+
+.reveal p,
+.reveal li {
+  font-size: 0.82em;
+  line-height: 1.45;
+}
+
+.reveal ul,
+.reveal ol {
+  display: block;
+  margin-left: 0.8em;
+}
+
+.title-slide {
+  text-align: left;
+}
+
+.eyebrow {
+  color: var(--webform-cyan);
+  font-size: 0.5em;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.small-text {
+  font-size: 0.48em;
+}
+
+.callout-links,
+.link-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}
+
+.callout-links a,
+.link-grid a {
+  background: var(--webform-blue);
+  border-radius: 999px;
+  color: #fff;
+  display: inline-block;
+  font-size: 0.5em;
+  padding: 0.55rem 0.9rem;
+  text-decoration: none;
+}
+
+.pdf-export-view .pdf-export-link {
+  display: none;
+}
+
+.dense-list li {
+  margin-bottom: 0.35em;
+}
+
+.two-column {
+  display: grid;
+  gap: 1.4rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  text-align: left;
+}
+
+.link-grid a {
+  min-width: 12rem;
+  text-align: center;
+}
+
+.reveal code {
+  background: rgba(13, 71, 161, 0.08);
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.3rem;
+}
+
+@media print {
+  .pdf-export-link {
+    display: none !important;
+  }
+}

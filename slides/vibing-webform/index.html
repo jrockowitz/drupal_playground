@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibing Webform</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%230d47a1'/%3E%3Cpath d='M4 4h8v2H4zm0 3h8v2H4zm0 3h5v2H4z' fill='white'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/__slides_vendor__/reveal.js/dist/reset.css">
+  <link rel="stylesheet" href="/__slides_vendor__/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="/__slides_vendor__/reveal.js/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="/__slides_vendor__/reveal.js/dist/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="assets/vibing-webform.css">
+  <script>
+    window.isPdfExportView = new URLSearchParams(window.location.search).has('print-pdf');
+
+    if (window.isPdfExportView) {
+      document.documentElement.classList.add('pdf-export-view');
+      document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('pdf-export-view');
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="title-slide">
+        <p class="eyebrow">Drupal Playground</p>
+        <h1>Vibing Webform</h1>
+        <p>Building forms fast, then extending them with AI.</p>
+        <p class="small-text">Run <code>ddev install webform-setup</code> for the live demo site.</p>
+        <div class="callout-links pdf-export-link">
+          <a href="?print-pdf" target="_blank" rel="noreferrer">Download PDF</a>
+        </div>
+      </section>
+
+      <section>
+        <h2>Vibing with AI</h2>
+        <ul>
+          <li>AI makes it easier to build web forms.</li>
+          <li>AI helps research Webform features.</li>
+          <li>AI can generate custom features for Webform.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Vibing the Webform UI</h2>
+        <ul>
+          <li>Easy to get started.</li>
+          <li>Lots of help available.</li>
+          <li>Huge ecosystem of contributed modules.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>End-to-End Demo</h2>
+        <ol>
+          <li>Create a feedback form with email and feedback textarea.</li>
+          <li>Test the form via the test tab.</li>
+          <li>Confirm results in submissions.</li>
+          <li>Place the form as a block on the website.</li>
+          <li>Submit the form as a block and show results per page.</li>
+          <li>Create a Webform node for dedicated topic feedback.</li>
+          <li>Set up an email handler.</li>
+          <li>Configure a remote post handler.</li>
+        </ol>
+        <div class="callout-links">
+          <a href="https://drupal-playground.ddev.site/admin/structure/webform" target="_blank" rel="noreferrer">Open Webform admin</a>
+          <a href="https://drupal-playground.ddev.site/admin/structure/webform/manage/contact/test" target="_blank" rel="noreferrer">Open a test tab</a>
+        </div>
+      </section>
+
+      <section>
+        <section>
+          <h2>Elements</h2>
+          <ul class="dense-list">
+            <li>Textfield, Email, URL, Number, Tel, Password, Hidden.</li>
+            <li>Checkboxes, Radio buttons, Select, Combobox, Autocomplete.</li>
+            <li>Textarea, Markup, HTML, Processed text.</li>
+            <li>Details, Fieldset, Container, Columns, Tabs, Accordion.</li>
+            <li>Table, Table select, Image select, Signature pad.</li>
+            <li>File upload, Managed file.</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Elements</h2>
+          <ul class="dense-list">
+            <li>Rating, Likert, Range, Color.</li>
+            <li>Date, Time, DateTime, Datelist, Week, Month, Year.</li>
+            <li>Terms of service, Same-as checkbox.</li>
+            <li>Composite and custom composite elements.</li>
+            <li>Computed elements, prepopulation, and conditional logic.</li>
+            <li>Validation, masks, help text, and custom element plugins.</li>
+          </ul>
+        </section>
+      </section>
+
+      <section>
+        <h2>Handlers</h2>
+        <ul>
+          <li>Email with Twig templating.</li>
+          <li>Remote post with JSON or form data.</li>
+          <li>Action, settings, debug, and log handlers.</li>
+          <li>Conditional handler triggers.</li>
+          <li>Custom handler plugin API.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Integrations</h2>
+        <ul class="dense-list">
+          <li>Salesforce, HubSpot, Mailchimp, Stripe, and Slack.</li>
+          <li>Google Sheets and Jira.</li>
+          <li>Entity generation, Views, Rules, and webhooks.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Submissions Management</h2>
+        <ul class="dense-list">
+          <li>Customizable admin tables and exports.</li>
+          <li>View, edit, delete, resend, flag, star, and lock.</li>
+          <li>Audit logs, draft autosave, and submission limits.</li>
+          <li>Confirmation pages, serial numbers, and anonymous links.</li>
+        </ul>
+        <div class="callout-links">
+          <a href="https://drupal-playground.ddev.site/admin/structure/webform/manage/contact/results/submissions" target="_blank" rel="noreferrer">Open submissions</a>
+        </div>
+      </section>
+
+      <section>
+        <h2>Access and Security</h2>
+        <ul class="dense-list">
+          <li>Role-based access per form and per submission.</li>
+          <li>Element-level access control.</li>
+          <li>CAPTCHA, reCAPTCHA, Honeypot, and Antibot support.</li>
+          <li>Scheduled open and close dates plus IP tracking.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Display and Theming</h2>
+        <ul class="dense-list">
+          <li>Multiple display modes and confirmation experiences.</li>
+          <li>Block placement and entity reference support.</li>
+          <li>Per-form CSS and JavaScript.</li>
+          <li>Theme hook suggestions and print-friendly views.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Vibing Webform with AI</h2>
+        <div class="two-column">
+          <div>
+            <h3>Demo 1</h3>
+            <p>Ask AI for the right Webform prompt.</p>
+            <h3>Demo 2</h3>
+            <p>Generate the form structure.</p>
+          </div>
+          <div>
+            <h3>Demo 3</h3>
+            <p>Export a Webform into a Drupal Recipe.</p>
+            <h3>Demo 4</h3>
+            <p>Generate a custom handler for a Google Spreadsheet flow.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>AI Tips and Tricks</h2>
+        <ul>
+          <li>Ask Claude for help.</li>
+          <li>Always write tests.</li>
+          <li>Use planning.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Presenter Demo Links</h2>
+        <div class="link-grid">
+          <a href="https://drupal-playground.ddev.site/admin/structure/webform" target="_blank" rel="noreferrer">Webform admin</a>
+          <a href="https://drupal-playground.ddev.site/admin/modules" target="_blank" rel="noreferrer">Installed modules</a>
+          <a href="https://drupal-playground.ddev.site/admin/structure/block" target="_blank" rel="noreferrer">Block placement</a>
+          <a href="https://drupal-playground.ddev.site/node/add" target="_blank" rel="noreferrer">Create content</a>
+        </div>
+      </section>
+
+      <section>
+        <h2>Q&amp;A</h2>
+        <p>Questions, use cases, and prompts worth exploring next.</p>
+      </section>
+    </div>
+  </div>
+
+  <script src="/__slides_vendor__/reveal.js/dist/reveal.js"></script>
+  <script src="/__slides_vendor__/reveal.js/dist/plugin/notes.js"></script>
+  <script src="/__slides_vendor__/reveal.js/dist/plugin/search.js"></script>
+  <script src="/__slides_vendor__/reveal.js/dist/plugin/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      controls: true,
+      progress: true,
+      center: true,
+      transition: 'slide',
+      plugins: [RevealNotes, RevealSearch, RevealHighlight]
+    }).then(() => {
+      if (window.isPdfExportView) {
+        window.setTimeout(() => {
+          window.print();
+        }, 300);
+      }
+    });
+  </script>
+</body>
+</html>

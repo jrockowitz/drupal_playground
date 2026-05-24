@@ -1,0 +1,82 @@
+#!/bin/bash
+
+## Description: Serve a slides directory from the repo
+## Usage: slides <directory>
+## Example: ddev slides vibing-webform
+
+set -euo pipefail
+
+# DDEV runs this script from the host. It does only two things:
+# 1. Validate the requested deck directory and required npm dependency.
+# 2. Hand off to the Node static server, which actually serves the files.
+project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+slides_root="${project_root}/slides"
+reveal_directory="${project_root}/node_modules/reveal.js"
+
+# Prints the command usage message to stderr.
+print_usage() {
+  echo "Usage: ddev slides <directory>" >&2
+}
+
+# Prints an error for an unknown slides directory.
+print_unknown_directory() {
+  local directory_name="$1"
+
+  echo "Unknown slides directory: ${directory_name}" >&2
+}
+
+# Prints a missing reveal.js dependency message.
+print_missing_reveal() {
+  echo "Missing npm dependency: reveal.js" >&2
+  echo "Run 'npm install' in ${project_root} before serving slides." >&2
+}
+
+# Resolves a requested deck name to a concrete directory path.
+resolve_directory_path() {
+  local directory_name="$1"
+  local directory_path="${slides_root}/${directory_name}"
+
+  if [ ! -d "${directory_path}" ] || [ ! -f "${directory_path}/index.html" ]; then
+    return 1
+  fi
+
+  echo "${directory_path}"
+}
+
+directory_name="${1:-}"
+
+# `ddev slides vibing-webform` passes `vibing-webform` as the first argument.
+# If no directory name is provided, we stop here and print usage help.
+if [ -z "${directory_name}" ]; then
+  print_usage
+  exit 1
+fi
+
+# A deck is valid only if it has its own directory and an `index.html` entrypoint.
+directory_path="$(resolve_directory_path "${directory_name}")" || {
+  print_unknown_directory "${directory_name}"
+  exit 1
+}
+
+# The shell test uses this mode to inspect the resolved paths without requiring
+# a real npm install or starting the long-running Node server.
+if [ "${SLIDES_TEST_MODE:-0}" = "1" ]; then
+  echo "Deck directory: ${directory_path}"
+  echo "Reveal.js alias: /__slides_vendor__/reveal.js/"
+  exit 0
+fi
+
+# `reveal.js` is no longer committed inside the deck. It must come from the
+# repo-root npm install in `node_modules/reveal.js`.
+if [ "${SLIDES_FORCE_MISSING_REVEAL:-0}" = "1" ] || [ ! -d "${reveal_directory}" ]; then
+  print_missing_reveal
+  exit 1
+fi
+
+# At this point Bash is finished. `exec` replaces this shell process with the
+# Node server so Ctrl+C cleanly stops the HTTP server instead of leaving a child
+# process behind.
+exec node "${project_root}/scripts/slides-server.mjs" \
+  "${directory_path}" \
+  "${reveal_directory}" \
+  "${directory_name}"
