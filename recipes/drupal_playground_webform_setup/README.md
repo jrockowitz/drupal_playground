@@ -5,6 +5,8 @@ Webform example modules for Drupal Playground.
 
 ## What It Includes
 
+- Ten article nodes about the Webform module with custom Drupal mascot images
+  stored in recipe content
 - Webform core and builder modules such as `webform`, `webform_ui`,
   `webform_templates`, and `webform_submission_log`
 - Supporting integrations used by the source demo install, including

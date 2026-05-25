@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 48f88033-209c-4fa9-9b84-efa6a3b69ab0
+  default_langcode: en
+default:
+  filename:
+    -
+      value: webform-file-uploads-drupal-plush-library.png
+  uri:
+    -
+      value: 'public://webform-file-uploads-drupal-plush-library.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2217194
+  status:
+    -
+      value: true

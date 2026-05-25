@@ -1,0 +1,16 @@
+_meta:
+  version: '1.0'
+  entity_type: taxonomy_term
+  uuid: d92db764-167e-4a9f-8ea6-c88dd1f340b1
+  bundle: tags
+  default_langcode: en
+default:
+  status:
+    -
+      value: true
+  name:
+    -
+      value: Accessibility
+  weight:
+    -
+      value: 0

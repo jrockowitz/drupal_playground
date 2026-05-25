@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: c13279f9-dd95-43a6-ab12-f2bdc95f1efb
+  default_langcode: en
+default:
+  filename:
+    -
+      value: webform-email-automation-drupal-plush-office.png
+  uri:
+    -
+      value: 'public://webform-email-automation-drupal-plush-office.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2254486
+  status:
+    -
+      value: true

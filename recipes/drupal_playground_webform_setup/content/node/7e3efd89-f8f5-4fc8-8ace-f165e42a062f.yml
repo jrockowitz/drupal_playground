@@ -1,0 +1,49 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 7e3efd89-f8f5-4fc8-8ace-f165e42a062f
+  bundle: article
+  default_langcode: en
+  depends:
+    cd64feaa-5c5d-4b87-9761-445d0baab0bf: taxonomy_term
+    d92db764-167e-4a9f-8ea6-c88dd1f340b1: taxonomy_term
+    f407cc2f-93e0-4121-89ba-9ca55f5b03e9: file
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Accessible and mobile-friendly Webforms'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: cd64feaa-5c5d-4b87-9761-445d0baab0bf
+    -
+      entity: d92db764-167e-4a9f-8ea6-c88dd1f340b1
+  field_image:
+    -
+      alt: 'Fuzzy Drupal character reviewing an accessible Webform across desktop, tablet, and mobile screens.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: f407cc2f-93e0-4121-89ba-9ca55f5b03e9
+  body:
+    -
+      value: |-
+        <h2>Why Form Accessibility Deserves Attention</h2>
+        <p>Forms are one of the places where accessibility problems become immediately blocking. If labels are unclear, focus order is confusing, or error messages are hard to recover from, users may be unable to complete the task at all. That makes accessibility a functional requirement, not just a nice improvement.</p>
+        <p>The same is true for mobile experience. Many people will meet a form on a phone first. A form that feels acceptable on a desktop monitor can still be frustrating when fields stack awkwardly or validation interrupts the flow on a small screen.</p>
+        <h2>How Webform Supports Better Experiences</h2>
+        <p>The Webform ecosystem includes accessibility-focused examples and a builder that encourages structured field configuration. That gives teams a solid starting point for designing forms with clear labels, helpful descriptions, grouped questions, and predictable validation behavior.</p>
+        <p>The module does not make every form accessible automatically, but it gives teams a framework where accessible choices are possible and visible. That matters because the biggest accessibility gains often come from thoughtful form design rather than from a last-minute patch.</p>
+        <h2>Testing in Context</h2>
+        <p>A good Drupal workflow includes testing forms with keyboards, screen readers, and mobile layouts where possible. Contributors should pay attention to required-field messaging, inline help, step transitions, and whether the user can recover gracefully after a validation error.</p>
+        <p>Playground recipes help here because they give teams a shared place to test these details. Instead of discussing accessibility only in theory, contributors can open forms, submit them, and check the experience directly.</p>
+        <h2>The Practical Takeaway</h2>
+        <p>Accessible, mobile-friendly forms are usually calmer forms. They are clearer, more predictable, and easier for everyone to use.</p>
+        <p>That makes accessibility a strong lens for improving Webforms in general. The same changes that help someone using assistive technology often make the form easier for every visitor to complete.</p>
+      format: basic_html
+      summary: 'Accessible, mobile-friendly forms are essential for real users, and Webform works best when teams design with clarity, keyboard support, and small screens in mind from the start.'

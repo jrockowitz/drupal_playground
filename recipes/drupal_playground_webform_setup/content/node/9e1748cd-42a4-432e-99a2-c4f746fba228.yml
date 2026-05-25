@@ -1,0 +1,49 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 9e1748cd-42a4-432e-99a2-c4f746fba228
+  bundle: article
+  default_langcode: en
+  depends:
+    cd64feaa-5c5d-4b87-9761-445d0baab0bf: taxonomy_term
+    14478fb7-beb1-4b3c-a4e4-3f65254fef12: taxonomy_term
+    49fb24c9-e1af-4640-bd58-b48279293d5c: file
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Managing Webform submissions'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: cd64feaa-5c5d-4b87-9761-445d0baab0bf
+    -
+      entity: 14478fb7-beb1-4b3c-a4e4-3f65254fef12
+  field_image:
+    -
+      alt: 'Fuzzy Drupal character reviewing Webform submissions on a large monitor.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: 49fb24c9-e1af-4640-bd58-b48279293d5c
+  body:
+    -
+      value: |-
+        <h2>Why Submission Management Matters</h2>
+        <p>Collecting form data is only the beginning. Teams also need to review submissions, understand what was sent, export records when necessary, and sometimes route responses to the right staff members. If the submission layer is awkward, even a well-designed form can become frustrating once real work begins.</p>
+        <p>Drupal Webform treats submissions as part of the product rather than an afterthought. That is important for teams using forms in editorial, nonprofit, higher education, or internal operations contexts where form data needs to be searchable, reviewable, and occasionally auditable.</p>
+        <h2>How Webform Supports Review Work</h2>
+        <p>The module provides submission listings, per-submission detail views, export options, logging support, and handler-based workflows. That makes it possible to use the same form system for both public-facing interactions and staff-facing follow-up processes. A site can collect the data, acknowledge the user, and still keep the administrative review work organized inside Drupal.</p>
+        <p>Because the submission tools are integrated with the form definition, teams do not need to invent a separate data handling layer for common scenarios. They can focus on who needs access, what data should be retained, and how the submission process connects to downstream systems.</p>
+        <h2>Working with Submissions in a Team</h2>
+        <p>The review experience becomes more valuable as more people participate. Editors may need to inspect responses, operations staff may need exports, and developers may need logs while debugging or validating configuration changes. Webform helps keep those different needs connected to the same underlying submission model.</p>
+        <p>That is also why example content and example modules matter in a playground. Contributors can learn not only how to build a form, but how the form behaves after someone actually uses it. That second half of the experience is where many real project requirements live.</p>
+        <h2>The Practical Takeaway</h2>
+        <p>Good submission management keeps form projects sustainable. It helps teams trust that the information they collect can be reviewed, acted on, and shared appropriately.</p>
+        <p>In practice, that makes Webform a better fit for serious workflows than a lightweight form builder that stops at display and validation. Drupal teams often choose it because the operational side is already part of the package.</p>
+      format: basic_html
+      summary: 'Submission handling is where Drupal Webform becomes operational, giving teams tools to review, export, and respond to the data they collect.'

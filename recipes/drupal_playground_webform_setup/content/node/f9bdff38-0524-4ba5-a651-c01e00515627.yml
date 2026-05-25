@@ -1,0 +1,52 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: f9bdff38-0524-4ba5-a651-c01e00515627
+  bundle: article
+  default_langcode: en
+  depends:
+    cd64feaa-5c5d-4b87-9761-445d0baab0bf: taxonomy_term
+    8a87c4d8-1352-4777-b276-9b2159056d09: taxonomy_term
+    d92db764-167e-4a9f-8ea6-c88dd1f340b1: taxonomy_term
+    37defaae-9d04-43ee-867d-9d7e6a317140: file
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Designing multi-step Webforms'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: cd64feaa-5c5d-4b87-9761-445d0baab0bf
+    -
+      entity: 8a87c4d8-1352-4777-b276-9b2159056d09
+    -
+      entity: d92db764-167e-4a9f-8ea6-c88dd1f340b1
+  field_image:
+    -
+      alt: 'Fuzzy Drupal character designing a multi-step Webform on a laptop in a cafe.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: 37defaae-9d04-43ee-867d-9d7e6a317140
+  body:
+    -
+      value: |-
+        <h2>Why Multi-step Forms Matter</h2>
+        <p>A long form can feel heavy even when the questions are reasonable. Multi-step forms improve that experience by grouping related questions into smaller sections with a clearer sense of progress. For registrations, applications, and detailed intake workflows, that structure can make the difference between an abandoned form and a completed submission.</p>
+        <p>This is not only about aesthetics. Breaking a form into steps helps users focus on one category of information at a time. Personal details, preferences, uploads, and review screens can each have their own moment, which reduces scanning fatigue and makes validation messages easier to understand.</p>
+        <h2>How Webform Supports the Pattern</h2>
+        <p>Drupal Webform supports multi-step patterns through pages and wizard-style experiences. The builder can organize elements into sections that behave like a sequence rather than a single uninterrupted screen. Combined with conditional logic, required fields, and confirmation behavior, that gives teams a flexible way to model longer user journeys.</p>
+        <p>The value of this approach is that the form logic still lives in the same Webform system. Teams do not need one tool for simple forms and another for advanced guided experiences. A project can start with a straightforward form and later evolve it into a multi-step flow when requirements grow.</p>
+        <h2>Experience and Performance Considerations</h2>
+        <p>Good multi-step forms need careful pacing. Each step should earn its place and ask only for information that belongs together. If every step is short but confusing, the wizard pattern will not help. Clear labels, useful descriptions, and consistent navigation matter just as much as the technical structure.</p>
+        <p>Mobile behavior also deserves attention. A step sequence should still feel obvious on smaller screens, and the user should not lose their sense of progress. That is one reason Webform is useful in Drupal projects: teams can test the same configured form in realistic browser contexts and refine the experience iteratively.</p>
+        <h2>The Practical Takeaway</h2>
+        <p>Multi-step Webforms are a strong choice when the form needs to collect a lot of information without feeling punishing. They let teams shape a complex workflow into a guided conversation rather than a giant wall of inputs.</p>
+        <p>In a playground recipe, they also give contributors a concrete example of how far Webform can go beyond a simple contact form. That makes them a helpful teaching tool as well as a useful production pattern.</p>
+      format: basic_html
+      summary: 'Multi-step Webforms help break long forms into manageable sections, which improves completion rates and makes complex data collection feel less overwhelming.'

@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 49fb24c9-e1af-4640-bd58-b48279293d5c
+  default_langcode: en
+default:
+  filename:
+    -
+      value: webform-submissions-drupal-plush-monitor.png
+  uri:
+    -
+      value: 'public://webform-submissions-drupal-plush-monitor.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2106174
+  status:
+    -
+      value: true

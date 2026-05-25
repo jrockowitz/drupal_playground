@@ -74,6 +74,9 @@ config:
     webform_example_custom_form: '*'
     webform_example_variant: '*'
   actions:
+    node.type.article:
+      simpleConfigUpdate:
+        display_submitted: false
     webform.settings:
       simpleConfigUpdate:
         file.file_public: true

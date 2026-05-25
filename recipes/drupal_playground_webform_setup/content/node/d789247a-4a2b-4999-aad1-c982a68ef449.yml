@@ -1,0 +1,49 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: d789247a-4a2b-4999-aad1-c982a68ef449
+  bundle: article
+  default_langcode: en
+  depends:
+    cd64feaa-5c5d-4b87-9761-445d0baab0bf: taxonomy_term
+    54003021-fae7-4272-8312-56cc9b756506: taxonomy_term
+    047d6fb1-82be-494d-ac97-796db33916f7: file
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Integrating Webform with external services'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: cd64feaa-5c5d-4b87-9761-445d0baab0bf
+    -
+      entity: 54003021-fae7-4272-8312-56cc9b756506
+  field_image:
+    -
+      alt: 'Fuzzy Drupal character connecting a Webform to external services from a coworking desk.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: 047d6fb1-82be-494d-ac97-796db33916f7
+  body:
+    -
+      value: |-
+        <h2>Why Integrations Matter</h2>
+        <p>Forms often sit at the edge of a larger system. A submission may need to create a CRM lead, send data to a third-party service, trigger a webhook, or support an internal process outside Drupal. When a form cannot connect cleanly to those systems, teams end up copying data by hand or building brittle one-off bridges.</p>
+        <p>That is why integration support matters so much in Webform projects. The form should be able to act as a reliable entry point for structured data, not just as a mailbox that someone empties later.</p>
+        <h2>How Webform Supports Connected Workflows</h2>
+        <p>The Webform ecosystem includes handlers, examples, and contributed modules that demonstrate how forms can interact with remote services. In this recipe, example modules such as remote post integrations make that capability easier to explore in a local environment.</p>
+        <p>The important idea is that the integration layer still begins with a clear submission model. Drupal collects the data, validates it, and stores it as needed. Then the integration step can use that trusted structure to communicate with another system.</p>
+        <h2>What Teams Can Learn in a Playground</h2>
+        <p>A prepared playground is especially useful for integration work because developers can inspect how example handlers are wired before they build their own. They can see what data is available, how submission values are tokenized, and where custom code might be justified versus where a configured handler is enough.</p>
+        <p>That shortens the learning curve for teams who understand forms conceptually but have not yet connected Webform to external services in practice. It also makes review easier because the local environment can demonstrate the same module set for everyone.</p>
+        <h2>The Practical Takeaway</h2>
+        <p>Integrations turn Webform into part of a broader application workflow. Instead of stopping at data collection, the form can hand information to the systems that actually use it.</p>
+        <p>For Drupal teams, that makes Webform a more strategic module. It is not only about collecting answers. It is about moving structured information into the right place at the right time.</p>
+      format: basic_html
+      summary: 'Webform becomes even more useful when submissions can connect to external systems, APIs, and workflow tools instead of staying isolated inside Drupal.'

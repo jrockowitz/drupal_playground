@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: bc07b93c-ba46-4924-a58a-6cd729434a3c
+  default_langcode: en
+default:
+  filename:
+    -
+      value: webform-templates-drupal-plush-workshop.png
+  uri:
+    -
+      value: 'public://webform-templates-drupal-plush-workshop.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2262659
+  status:
+    -
+      value: true

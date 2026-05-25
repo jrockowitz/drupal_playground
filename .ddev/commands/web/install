@@ -63,6 +63,10 @@ drush cr;
 # Uninstall the toolbar module, which can't be done via a recipe.
 drush pm:uninstall toolbar
 
+# Unstall core modules that are not used in any demos.
+drush php:eval '\Drupal\field\Entity\FieldConfig::loadByName("node", "article", "comment")->delete();'
+drush pmu -y comment
+
 # Set AI provider configuration before applying other presets.
 for PRESET in "${PRESETS[@]}"; do
   if [ "$PRESET" = "openai" ] || [ "$PRESET" = "anthropic" ] || [ "$PRESET" = "gemini" ]; then

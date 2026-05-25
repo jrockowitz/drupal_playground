@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: a07e1738-0af1-4fb1-b3b4-8791608f41f8
+  default_langcode: en
+default:
+  filename:
+    -
+      value: webform-builder-drupal-plush-desk.png
+  uri:
+    -
+      value: 'public://webform-builder-drupal-plush-desk.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2315708
+  status:
+    -
+      value: true
