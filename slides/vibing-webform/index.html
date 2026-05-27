@@ -19,16 +19,22 @@
       });
     }
   </script>
+  <style>
+    strong {
+      color: var(--r-heading-color)
+    }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
+
       <section class="title-slide">
         <p>Drupal Playground</p>
         <h1>Vibing Webform</h1>
-        <p>Building webforms while vibing with AI.</p>
+        <p>Building webforms while vibing with AI</p>
         <div class="callout-links pdf-export-link">
-          <small><a href="?print-pdf" target="_blank" rel="noreferrer">Download</a></small>
+          <small><a href="?print-pdf" target="_blank" rel="noreferrer">PDF</a></small>
         </div>
       </section>
 
@@ -45,29 +51,35 @@
             <a href="https://www.jrockowitz.com" target="_blank" rel="noreferrer">jrockowitz.com</a>
           </p>
         </section>
+
         <section>
           <h2>Me &amp; AI</h2>
           <ul>
             <li>I have been experimenting with AI in my Drupal playground at <a href="https://jrockowitz.com/" target="_blank" rel="noreferrer">jrockowitz.com</a>.</li>
             <li>My goal is to recognize what AI can and can’t do.</li>
-            <li>While accepting what AI is doing to our industry.</li>
-            <li>Simply put, AI can’t be ignored, but it is still just a tool.</li>
+            <li>While accepting what AI is doing to our industry</li>
+            <li>Simply put, AI can’t be ignored, but it is still just a (powerful) tool.</li>
           </ul>
           <p>
             <a href="https://www.jrockowitz.com/#blog" target="_blank" rel="noreferrer">Read my blog</a>
           </p>
         </section>
+
+        <section>
+         <p>This is my first webform module presentation in 5 years. Have patience and ask questions.</p>
+        </section>
+
       </section>
 
       <section>
         <section>
         <h2>Part 1: Webforms</h2>
-        <p>Understanding and building webforms.</p>
+        <p>Understanding and building webforms</p>
         </section>
 
         <section>
           <h2>Part 2: AI &amp; Webforms</h2>
-          <p>Understanding how AI builds webforms.</p>
+          <p>Understanding how AI builds webforms</p>
         </section>
       </section>
 
@@ -79,6 +91,23 @@
             <a href="https://www.drupal.org/project/webform" target="_blank" rel="noreferrer">Learn more about Webform</a>
           </p>
         </section>
+        <section>
+          <h2>Why Webform (and Drupal)</h2>
+          <p>It provides all the features expected from an enterprise proprietary form builder combined with the flexibility and openness of Drupal.</p>
+        </section>
+
+        <section>
+          <h2>The Use Case…</h2>
+          <ul>
+            <li><strong>Build</strong> a form or copy a template.</li>
+            <li><strong>Publish</strong> the form as a page, node, or block.</li>
+            <li><strong>Collect</strong> form submissions.</li>
+            <li><strong>Send</strong> confirmations and notifications.</li>
+            <li><strong>Distribute</strong> submissions to external systems.</li>
+            <li><strong>Review</strong> results online.</li>
+            <li><strong>Download</strong> results as a CSV.</li>
+          </ul>
+        </section>
 
         <section>
           <h2>Building a Webform</h2>
@@ -86,8 +115,8 @@
             <li>Create a feedback form.</li>
             <li>Test the form.</li>
             <li>View the submissions.</li>
-            <li>Sending email.</li>
-            <li>Remote posting data.</li>
+            <li>Sending email</li>
+            <li>Remote posting data</li>
             <li>Place the form as a block.</li>
             <li>Create a Webform node.</li>
           </ol>
@@ -95,94 +124,324 @@
             <a href="https://drupal-webform.ddev.site/admin/structure/webform" target="_blank" rel="noreferrer">Let's do a demo</a>
           </p>
         </section>
+
       </section>
 
-      <!-- Start here -->
-
       <section>
+        <section>
+          <h2>Examples, Templates, &amp; Demos</h2>
+          <p>The Webform module provides examples, templates, &amp; demos that can be used as a starting point for building forms &amp; applications.</p>
+        </section>
 
         <section>
-          <h2>The Webform module has a lot of features</h2>
+          <h2>Examples Included in the Webform Module</h2>
           <ul>
-            <li>Elements &amp; Options</li>
-            <li>Templates &amp; Configuration</li>
-            <li>Submissions &amp; Handlers</li>
-            <li>Add-ons &amp; Extensions</li>
+            <li><strong>Cards </strong> - A multiple step 'cards' webform</li>
+            <li><strong>Computed </strong> - A computed elements</li>
+            <li><strong>Custom Options </strong> -	Custom options element</li>
+            <li><strong>Condition Logic </strong> - Elements using conditional logic</li>
+            <li><strong>Input Masks </strong> -	Elements with input masks</li>
+            <li><strong>Style Guide </strong> -	Examples of all elements and layouts</li>
+            <li><strong>Wizard </strong> - A multiple step form</li>
+          </ul>
+          <p>
+            <a href="https://drupal-webform.ddev.site/admin/structure/webform?category=Example" target="_blank" rel="noreferrer">Learn by examples</a>
+          </p>
+
+        </section>
+
+        <section>
+          <h2>Templates</h2>
+          <ul>
+            <li>Templates are reusable forms.</li>
+            <li>Changing or deleting a template does not change any existing forms.</li>
+            <li>A form created from a template is a copy (a.k.a duplicate).</li>
+          </ul>
+          <p>
+            <a href="https://drupal-webform.ddev.site/admin/structure/webform/templates" target="_blank" rel="noreferrer">Using templates</a>
+          </p>
+        </section>
+
+        <section>
+          <h2>Demos</h2>
+          <ul>
+            <li><strong>Application Evaluation </strong><br/>
+              An evaluation form attached to applications</li>
+            <li><strong>Event Registration </strong><br/>
+              A registration form that tracks which event a user has registered for</li>
+          </ul>
+        </section>
+      </section>
+
+      <section>
+        <section>
+          <h2>Features</h2>
+          <ul style="columns: 2; column-gap: 4rem;">
+            <li>Drag-n-drop form builder</li>
+            <li>Multi-column layout</li>
+            <li>Modal dialogs</li>
+            <li>Conditional logic</li>
+            <li>Open/close scheduling</li>
+            <li>Prepopulate</li>
+            <li>Email handling</li>
+            <li>Remote post</li>
+            <li>Submission limits</li>
+            <li>Submission preview</li>
+            <li>Autofill</li>
+            <li>Save draft</li>
+            <li>Auto purge</li>
+            <li>Access controls</li>
+            <li>Confirmation message</li>
+            <li>Confirmation redirects</li>
+            <li>Sharing</li>
           </ul>
         </section>
 
         <section>
-          <h2>The Webform module ships with reasonable default settings, but everything is customizable.</h2>
+          <h2>The Webform Module Ships With Reasonable Default Settings, but Everything Is Customizable.</h2>
           <p>(AI understands everything is customizable)</p>
         </section>
-
       </section>
 
       <section>
-        <h2>Elements &amp; Options</h2>
-        <ul>
-          <li>Textfield, Email, URL, Number, Telephone, Date.</li>
-          <li>Select, Checkboxes, Radios, Images.</li>
-          <li>Textarea, HTML, Processed text.</li>
-          <li>Container, Details, Fieldset, Table.</li>
-          <li>File upload, Rating, Likert, Range, Signatures.</li>
-          <li>Composite elements, Computed elements</li>
-          <li>Validation, Input masks, Conditional logic.</li>
-        </ul>
-        <p>
-          <a href="https://drupal-webform.ddev.site/form/example-style-guide" target="_blank" rel="noreferrer">Example: Style Guide</a>
-        </p>
+        <section>
+          <h2>Form Elements</h2>
+          <ul style="columns: 2; column-gap: 4rem;">
+            <li>Standard HTML inputs</li>
+            <li>Advanced HTML inputs</li>
+            <li>File uploads</li>
+            <li>Signatures</li>
+            <li>Buttons</li>
+            <li>Rating</li>
+            <li>Image selection</li>
+            <li>Addresses</li>
+            <li>Entity references</li>
+            <li>Select menu enhancement</li>
+            <li>Computed values</li>
+            <li>Tooltips</li>
+            <li>Slideouts</li>
+            <li>Input masks</li>
+            <li>Word/character counter</li>
+            <li>Regex validation</li>
+            <li>Access controls</li>
+            <li>Unique values</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Form Element Features</h2>
+          <ul>
+            <li><strong>Definition </strong> - Name, cardinality, &amp; default value</li>
+            <li><strong>Labels </strong> - Title, description, “help” text &amp; more</li>
+            <li><strong>Display </strong> - Prefix, suffix, size, input masks, etc</li>
+            <li><strong>Validation </strong> - Required, unique, pattern, counter, etc</li>
+            <li><strong>Conditions </strong> - Hide/show, required &amp; disabled</li>
+            <li><strong>Access </strong> - Roles, user, or permission</li>
+            <li><strong>Advanced </strong> - Custom attributes &amp; settings</li>
+          </ul>
+          <p>
+            <a href="https://drupal-webform.ddev.site/admin/structure/webform" target="_blank" rel="noreferrer">Dissecting a form element</a>
+          </p>
+        </section>
       </section>
 
       <section>
-        <h2>Templates &amp; Configuration</h2>
-        <ul>
-          <li>Templates provide an easy way to create a reusable starting point.</li>
-          <li>Configuration allows you to adjust the global behavior of all webforms.</li>
-        </ul>
-        <p>
-          <a href="https://drupal-webform.ddev.site/admin/structure/webform/templates" target="_blank" rel="noreferrer">Templates &amp; Configuration</a>
-        </p>
+        <section>
+          <h2>Webform Handlers</h2>
+          <p>A Webform Handler is a plugin in Drupal's Webform module that processes a webform submission — essentially, it defines what happens after someone submits a form.</p>
+        </section>
+
+        <section>
+          <h2>Webform Handler Use Cases</h2>
+          <ul>
+            <li>Email notification and confirmation</li>
+            <li>Push data to CRM.</li>
+            <li>Subscribe to mailing lists.</li>
+            <li>Flag a submission based on submitted values.</li>
+            <li>Conditionally change confirmation message.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Types of Webform Handlers</h2>
+          <ul>
+            <li><strong>Email &amp; Scheduled Email</strong><br/>
+              Sends a webform submission via an email</li>
+            <li><strong>Action &amp; Settings</strong><br/>
+              Trigger a conditional action or setting on a submission</li>
+            <li><strong>Remote Post</strong><br/>
+              Posts webform submissions to a URL</li>
+            <li><strong>Debug</strong><br/>
+              Debug webform submission</li>
+          </ul>
+        </section>
       </section>
 
       <section>
-        <h2>Submissions, Settings, &amp; Handlers</h2>
-        <ul>
-          <li>Collect, review, export, and manage submissions.</li>
-          <li>Settings allows you to adjust the behavior of a specific webforms.</li>
-          <li>Handlers allow you to take actions based on submitted values.</li>
-        </ul>
-        <p>
-          <a href="https://drupal-webform.ddev.site/admin/structure/webform/manage/feedback/results/submissions" target="_blank" rel="noreferrer">Submissions &amp; Handlers</a>
-        </p>
+        <section>
+          <h3>Form settings</h3>
+          <ul style="columns: 2; column-gap: 4rem;">
+            <li>General</li>
+            <li>Form</li>
+            <li>Submissions</li>
+            <li>Confirmation</li>
+            <li>Email/Handlers</li>
+            <li>CSS/JS</li>
+            <li>Access</li>
+          </ul>
+          <p>
+            <a href="https://drupal-webform.ddev.site/form/feedback" target="_blank" rel="noreferrer">Walk-thru settings</a>
+          </p>
+        </section>
+
+        <section>
+          <h2>General Settings</h2>
+          <ul>
+            <li>Disable saving of results.</li>
+            <li>Use the webform as a template.</li>
+            <li>Customize URL aliases.</li>
+            <li>Ajaxify the form.</li>
+            <li>Third party settings (for example, Honeypot &amp; Antibot)</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Form Settings &amp; Behaviors</h2>
+          <ul>
+            <li>Set open and close dates.</li>
+            <li>Customize messages and labels.</li>
+            <li>Pre-populate using query string parameters.</li>
+            <li>Tweak multi-step wizard progress bar.</li>
+            <li>Enable submission previews.</li>
+          </ul>
+
+        </section>
+        <section>
+          <h2>Submissions Settings &amp; Behaviors</h2>
+          <ul>
+            <li>Submission labels and messages</li>
+            <li>Submission limits</li>
+            <li>Save drafts</li>
+            <li>Submission purging</li>
+            <li>Autofill</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Confirmation Settings &amp; Behaviors</h2>
+          <ul>
+            <li>Dedicated confirmation page</li>
+            <li>Inline message</li>
+            <li>Status message</li>
+            <li>Modal confirmation dialog</li>
+            <li>Redirect to external or internal URLs.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Custom CSS &amp; JavaScript</h2>
+          <p>Site builders and front end developers can inject custom CSS &amp; JavaScript to tweak a webform's look-n-feel and client-side behaviors.</p>
+          <ul>
+            <li>Tweaks font types and sizes</li>
+            <li>Adjusts margins, padding, and layout</li>
+            <li>Client-side validation and/or hide/show logic</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Access Controls</h2>
+          <p>Set access rules by role, user, and/or permission.</p>
+          <ul style="columns: 2; column-gap: 4rem;">
+            <li>Create</li>
+            <li>View</li>
+            <li>Update</li>
+            <li>Delete</li>
+            <li>Purge</li>
+            <li>Administer</li>
+          </ul>
+        </section>
       </section>
 
       <section>
-        <h2>Add-ons &amp; Extensions</h2>
-        <ul>
-          <li>Contributed modules extend Webform in every direction. (Entity generation, Views, SPAM.)</li>
-          <li>Integrations connect Webform to services and platforms. (Salesforce, HubSpot, Mailchimp, Stripe, and Slack.)</li>
-        </ul>
-        <p>
-          <a href="https://www.drupal.org/docs/contributed-modules/webform/webform-add-ons" target="_blank" rel="noreferrer">Add-ons &amp; Extensions</a>
-        </p>
+        <section>
+          <h2>Global Configuration</h2>
+          <p>Configuration defines the default features, functionality, &amp; behaviors available to all webforms.</p>
+        </section>
+
+        <section>
+          <h2>Things That Should Be Configured</h2>
+          <ul>
+            <li>Private file access for file uploads</li>
+            <li>SPAM protection</li>
+            <li>Available elements</li>
+            <li>API keys</li>
+            <li>Reusable options</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Configuration</h2>
+          <ul style="columns: 2; column-gap: 4rem;">
+            <li>Forms</li>
+            <li>Elements</li>
+            <li>Options</li>
+            <li>Submissions</li>
+            <li>Handlers</li>
+            <li>Exporters</li>
+            <li>Libraries</li>
+            <li>Advanced</li>
+          </ul>
+          <p>
+            <a href="https://drupal-webform.ddev.site/admin/structure/webform/config" target="_blank" rel="noreferrer">Explore configuration</a>
+          </p>
+        </section>
+      </section>
+
+      <section>
+        <section>
+          <h2>Add-ons &amp; Extensions (a.k.a. modules)</h2>
+          <ul>
+            <li>Contributed modules extend Webform in every direction. (Entity generation, Views, and SPAM)</li>
+            <li>Integrations connect Webform to services and platforms. (Salesforce, HubSpot, Mailchimp, Stripe, and Slack)</li>
+          </ul>
+          <p>
+            <a href="https://www.drupal.org/docs/contributed-modules/webform/webform-add-ons" target="_blank" rel="noreferrer">Finding add-ons</a>
+          </p>
+        </section>
+
+        <section>
+          <h3>Types of Add-ons</h3>
+          <ul style="columns: 2; column-gap: 4rem;">
+            <li>SPAM Protection</li>
+            <li>Validation</li>
+            <li>Elements</li>
+            <li>Integration</li>
+            <li>Submissions</li>
+            <li>Mail</li>
+            <li>REST</li>
+            <li>Configuration</li>
+            <li>Migrate</li>
+            <li>Multilingual</li>
+            <li>Workflow</li>
+            <li>Development</li>
+          </ul>
+        </section>
       </section>
 
       <section>
         <section>
           <h2>Part 2: AI &amp; Webforms</h2>
-          <p>Understanding how AI builds webforms.</p>
+          <p>Understanding how AI builds webforms</p>
         </section>
 
         <section>
-          <h2>AI understands the Webform module because of the amount of documentation and examples.</h2>
+          <h2>AI Understands the Webform Module Because of the Amount of Documentation and Examples.</h2>
           <p>(Coding agents can figure out a module by reading the code.)</p>
         </section>
       </section>
 
       <section>
         <section>
-          <h2>Ways to approach using AI</h2>
+          <h2>Ways to Approach Using AI</h2>
           <ul>
             <li>Chat (ChatGPT)</li>
             <li>Harness (Claude Code)</li>
@@ -191,50 +450,60 @@
         </section>
 
         <section>
-          <h2>Webform specific prompts and questions?</h2>
+          <h2>Webform Specific Prompts and Questions?</h2>
           <ul>
             <li>What is the Webform module?</li>
             <li>How do I use Webform module?</li>
-            <li>When should you use Webform?</li>
-            <li>Why should you use Webform?</li>
-            <li>Where can you use a Webform?</li>
+            <li>When should I use Webform?</li>
+            <li>Why should I use Webform?</li>
+            <li>Where can I use a Webform?</li>
           </ul>
         </section>
       </section>
 
       <section>
-        <h2>Let's see what AI can do</h2>
-        <p>Create a 'Request a medical appointment' webform and place it in a 'recipes/webform_appointment' recipe.</p>
-        <hr/>
-        <p>Export my feedback form into a Drupal recipe called 'recipes/my_feedback'?</p>
-        <p>Add SPAM protection to the feedback webform in the 'recipes/my_feedback' recipe.</p>
+        <section>
+          <h2>Let's See What AI Can Do Via Chat</h2>
+          <p>What is the best way to prevent SPAM via a Drupal Webform?</p>
+          <hr/>
+          <p>Provide a prompt to create a 'Request a medical appointment' form using the Webform module for Drupal and place it in a Drupal Recipe.</p>
+        </section>
+        <section>
+          <h2>Let's See What AI Can Do Via a Harness</h2>
+          <p>Create a 'Request a medical appointment' webform and place it in a 'recipes/webform_appointment' recipe.</p>
+          <hr/>
+          <p>Export my feedback form into a Drupal recipe called 'recipes/my_feedback'?</p>
+          <hr/>
+          <p>Add SPAM protection, using Honeypot, to the feedback webform in the 'recipes/my_feedback' recipe.</p>
+        </section>
       </section>
 
       <section>
         <section>
           <h2>AI Tips &amp; Tricks</h2>
-          <p>AIs can make mistakes, especially when<br/>they have to guess at the answers.</p>
+          <p>Always have a plan and use skills like <A href="https://github.com/obra/superpowers">https://github.com/obra/superpowers</a> to brainstorm.</p>
+          <hr/>
+          <p>AIs can make mistakes, especially when they have to guess at the answers without context.</p>
           <hr/>
           <p>Use AI as a tool to learn Drupal,<br/>and not as a way to not learn Drupal.</p>
         </section>
         <section>
-          <h2>Requirements</h2>
+          <h2>Approaching AI</h2>
           <ul>
-            <li>Be curious</li>
-            <li>Open to a challenge</li>
-            <li>Share your experience</li>
-            <li>Understand, adapt, evolve, and share</li>
+            <li>Be <strong>curious</strong></li>
+            <li>Open to a <strong>challenge</strong></li>
+            <li>Share your <strong>experience</strong></li>
           </ul>
         </section>
       </section>
 
       <section>
         <h2>Q&amp;A</h2>
-        <p>Questions, use cases, and prompts worth exploring next.</p>
+        <p>Questions, use cases, and prompts worth exploring next</p>
         <hr/>
         <h2>Thanks!!!</h2>
         <p>
-          Learn more about me at <a href="https://www.jrockowitz.com" target="_blank" rel="noreferrer">jrockowitz.com</a>
+          Learn more about me at <a href="https://www.jrockowitz.com" target="_blank" rel="noreferrer">jrockowitz.com</a>.
         </p>
 
       </section>

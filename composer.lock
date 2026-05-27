@@ -4623,7 +4623,7 @@
             "extra": {
                 "drupal": {
                     "version": "4.0.8",
-                    "datestamp": "1779512837",
+                    "datestamp": "1779556253",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
