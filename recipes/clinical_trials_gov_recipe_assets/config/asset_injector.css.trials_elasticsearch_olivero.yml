@@ -6,6 +6,20 @@ dependencies:
 id: trials_elasticsearch_olivero
 label: 'Clinical Trials Olivero'
 code: |-
+  /* Let the AI search chat use the available Olivero page width. */
+  body.path-ai-search .main-content {
+    margin-inline-start: 0;
+    width: 100%;
+  }
+
+  body.path-ai-search .main-content__container {
+    max-width: none;
+  }
+
+  body.path-ai-search .region--content > .block-system-main-block {
+    grid-column: 1 / -1;
+  }
+
   /* Stack the exposed form controls in a predictable order on smaller screens. */
   body.path-trials .view-filters form.views-exposed-form.bef-exposed-form {
     display: flex;
@@ -237,7 +251,7 @@ code: |-
     min-width: 0;
   }
 
-  /* Collapse to a single column on narrow viewports. */
+  /* Collapse to a single column on narrow viewport sizes. */
   @media (max-width: 600px) {
     .node--type-trial.teaser .trial-teaser__grid {
       grid-template-columns: 1fr;
@@ -249,7 +263,7 @@ conditions:
   request_path:
     id: request_path
     negate: false
-    pages: "/trials\r\n/ai-search"
+    pages: "/trials\r\n/ai-search\r\n/ai-search/*"
   current_theme:
     id: current_theme
     negate: false
