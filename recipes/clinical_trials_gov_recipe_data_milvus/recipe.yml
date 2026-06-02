@@ -1,0 +1,30 @@
+name: 'ClinicalTrials.gov Data Milvus Recipe'
+description: 'Sets up AI Search, Milvus, and chat for ClinicalTrials.gov data discovery.'
+type: 'Site'
+install:
+  - ai_agents
+  - ai_assistant_api
+  - ai_chatbot
+  - ai_search
+  - ai_vdb_provider_milvus
+  - search_api
+config:
+  strict: false
+  import:
+    ai_agents: '*'
+    ai_assistant_api: '*'
+    ai_vdb_provider_milvus:
+      - ai_vdb_provider_milvus.settings
+    search_api:
+      - search_api.server.trials_milvus
+      - search_api.index.trials_milvus
+    block:
+      - block.block.olivero_trials_milvus_chat
+    ai_search:
+      - ai_search.index.trials_milvus
+  actions:
+    ai.settings:
+      simpleConfigUpdate:
+        default_vdb_provider: milvus
+    user.role.anonymous:
+      grantPermission: 'access deepchat api'

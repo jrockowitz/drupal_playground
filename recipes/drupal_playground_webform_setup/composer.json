@@ -1,0 +1,13 @@
+{
+    "name": "drupal/drupal_playground_webform_setup",
+    "description": "Installs Webform, supporting modules, and example modules for Drupal Playground.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/webform": "*",
+        "drupal/imce": "^3",
+        "drupal/honeypot": "^2",
+        "drupal/recaptcha": "^3"
+    }
+}

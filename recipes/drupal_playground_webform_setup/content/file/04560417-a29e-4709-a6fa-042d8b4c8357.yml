@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 04560417-a29e-4709-a6fa-042d8b4c8357
+  default_langcode: en
+default:
+  filename:
+    -
+      value: webform-spam-protection-drupal-plush-security.png
+  uri:
+    -
+      value: 'public://webform-spam-protection-drupal-plush-security.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2420912
+  status:
+    -
+      value: true

@@ -1,0 +1,48 @@
+name: 'Drupal Playground AI Automators'
+description: >
+  Adds AI automators for the Drupal Playground AI recipe.
+type: 'Site'
+recipes:
+  - drupal_playground_ai
+install:
+  - ai_automators
+  - field_widget_actions
+config:
+  strict: false
+  import:
+    ai_automators: '*'
+  actions:
+    core.entity_form_display.node.article.default:
+      setComponentThirdPartySetting:
+        - component: field_tags
+          provider: field_widget_actions
+          settings:
+            938415c3-dd86-4d94-a52c-ff799e744837:
+              plugin_id: automator_autocomplete_tags_on_taxonomy
+              enabled: true
+              button_label: 'Generate tags'
+              weight: 0
+              settings:
+                automator_id: node.article.field_tags.default
+        - component: field_image
+          provider: field_widget_actions
+          settings:
+            838b3ff2-d05c-467f-b37e-2221a7591943:
+              plugin_id: automator_alt_text
+              enabled: true
+              button_label: 'Generate image alt text'
+              weight: 0
+              settings:
+                automator_id: node.article.field_image.default
+              remove: 'Remove Action'
+        - component: body
+          provider: field_widget_actions
+          settings:
+            d241b863-b46d-4604-a673-c65dbe5862c7:
+              plugin_id: summary_textarea_with_summary
+              enabled: true
+              button_label: 'Generate summary'
+              weight: 0
+              settings:
+                automator_id: node.article.body.default
+

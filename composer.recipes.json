@@ -26,7 +26,83 @@
         },
         {
             "type": "path",
+            "url": "recipes/drupal_playground_ai_provider_openai"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai_provider_anthropic"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai_provider_gemini"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai_chat"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai_ckeditor"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai_ckeditor_explain"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai_content_suggestions"
+        },
+        {
+          "type": "path",
+          "url": "recipes/drupal_playground_ai_schemadotorg_jsonld"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai_devel"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_ai_automators"
+        },
+        {
+            "type": "path",
             "url": "recipes/drupal_playground_schemadotorg"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_elasticsearch"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_webform_setup"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_webform_test"
+        },
+        {
+            "type": "path",
+            "url": "recipes/clinical_trials_gov_recipe_data_setup"
+        },
+        {
+            "type": "path",
+            "url": "recipes/clinical_trials_gov_recipe_data_elastic"
+        },
+        {
+            "type": "path",
+            "url": "recipes/clinical_trials_gov_recipe_data_milvus"
+        },
+        {
+            "type": "path",
+            "url": "recipes/clinical_trials_gov_recipe_fields_setup"
+        },
+        {
+          "type": "path",
+          "url": "recipes/clinical_trials_gov_recipe_fields_elastic"
+        },
+        {
+          "type": "path",
+          "url": "recipes/clinical_trials_gov_recipe_fields_milvus"
         },
         {
             "type": "package",
@@ -44,11 +120,29 @@
     ],
     "require": {
         "drupal/drupal_playground_admin": "*",
+        "drupal/drupal_playground_ai_provider_anthropic": "*",
+        "drupal/drupal_playground_ai_provider_gemini": "*",
+        "drupal/drupal_playground_ai_provider_openai": "*",
         "drupal/drupal_playground_ai": "*",
+        "drupal/drupal_playground_ai_chat": "*",
+        "drupal/drupal_playground_ai_ckeditor": "*",
+        "drupal/drupal_playground_ai_ckeditor_explain": "*",
+        "drupal/drupal_playground_ai_content_suggestions": "*",
+        "drupal/drupal_playground_ai_devel": "*",
+        "drupal/drupal_playground_ai_automators": "*",
         "drupal/drupal_playground_base": "*",
         "drupal/drupal_playground_devel": "*",
+        "drupal/drupal_playground_elasticsearch": "*",
         "drupal/drupal_playground_eca": "*",
         "drupal/drupal_playground_schemadotorg": "*",
+        "drupal/drupal_playground_webform_setup": "*",
+        "drupal/drupal_playground_webform_test": "*",
+        "drupal/clinical_trials_gov_recipe_data_setup": "*",
+        "drupal/clinical_trials_gov_recipe_data_elastic": "*",
+        "drupal/clinical_trials_gov_recipe_data_milvus": "*",
+        "drupal/clinical_trials_gov_recipe_fields_setup": "*",
+        "drupal/clinical_trials_gov_recipe_fields_elastic": "*",
+        "drupal/clinical_trials_gov_recipe_fields_milvus": "*",
         "drupal/drupal_playground_translation": "*",
         "recipes/schemadotorg_recipes": "*"
     }

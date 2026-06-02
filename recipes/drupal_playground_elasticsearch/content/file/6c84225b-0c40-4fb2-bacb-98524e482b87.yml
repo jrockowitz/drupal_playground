@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 6c84225b-0c40-4fb2-bacb-98524e482b87
+  default_langcode: en
+default:
+  filename:
+    -
+      value: drupal-search-api-plush-research.png
+  uri:
+    -
+      value: 'public://drupal-search-api-plush-research.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2382697
+  status:
+    -
+      value: true

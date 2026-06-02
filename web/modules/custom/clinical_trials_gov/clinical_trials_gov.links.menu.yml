@@ -1,0 +1,6 @@
+clinical_trials_gov.index:
+  title: 'ClinicalTrials.gov'
+  description: 'Configure and run the ClinicalTrials.gov import wizard.'
+  route_name: clinical_trials_gov.index
+  parent: system.admin_config_services
+  weight: 10

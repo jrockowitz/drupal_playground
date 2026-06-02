@@ -1,0 +1,38 @@
+query: ""
+query_paths: {}
+title_path: "protocolSection.identificationModule.briefTitle"
+required_paths:
+  - "protocolSection.identificationModule.nctId"
+  - "protocolSection.identificationModule.briefTitle"
+  - "protocolSection.identificationModule.organization.fullName"
+  - "protocolSection.statusModule.overallStatus"
+  - "protocolSection.statusModule.lastUpdatePostDateStruct.date"
+  - "protocolSection.sponsorCollaboratorsModule.leadSponsor.name"
+  - "protocolSection.descriptionModule.briefSummary"
+  - "protocolSection.conditionsModule.conditions"
+  - "protocolSection.conditionsModule.keywords"
+  - "protocolSection.designModule.studyType"
+  - "protocolSection.designModule.phases"
+  - "protocolSection.armsInterventionsModule.interventions.type"
+  - "protocolSection.armsInterventionsModule.interventions.name"
+  - "protocolSection.armsInterventionsModule.interventions.description"
+  - "protocolSection.eligibilityModule.eligibilityCriteria"
+  - "protocolSection.eligibilityModule.healthyVolunteers"
+  - "protocolSection.eligibilityModule.sex"
+  - "protocolSection.eligibilityModule.minimumAge"
+  - "protocolSection.eligibilityModule.maximumAge"
+  - "protocolSection.eligibilityModule.stdAges"
+  - "protocolSection.contactsLocationsModule.overallOfficials"
+  - "protocolSection.contactsLocationsModule.locations.facility"
+  - "protocolSection.contactsLocationsModule.locations.city"
+  - "protocolSection.contactsLocationsModule.locations.state"
+  - "protocolSection.contactsLocationsModule.locations.country"
+type: trial
+field_prefix: trial
+fields: {}
+view_display_root: details_opened
+view_display_component: visible
+view_display_field_group: details_opened
+form_display_root: details_opened
+form_display_component: visible
+form_display_field_group: details_opened

@@ -1,0 +1,34 @@
+<div class="chat-interface border border-gray-200 rounded-lg flex flex-col h-[600px]">
+  <div class="chat-transcript flex-1 overflow-y-auto p-4 space-y-4" id="chat-transcript">
+    {# Messages are loaded via AJAX for page cache optimization #}
+    <div class="transcript-loading text-center text-gray-500 mt-8 animate-pulse">
+      {{ 'Loading conversation...'|t }}
+    </div>
+    <div class="start-message hidden text-center text-gray-500 mt-8">
+      <p class="text-lg font-semibold">{{ 'Tell us what kind of trial you’re looking for'|t }}</p>
+    </div>
+  </div>
+
+  <div class="chat-input-container border-t border-gray-200 p-4">
+    <p class="text-sm text-gray-600 mb-2">{{ 'Share what you know: diagnosis, age, location, prior treatments, biomarkers, and travel preferences.'|t }}</p>
+    <div class="flex gap-2">
+      <textarea
+        id="chat-message-input"
+        class="flex-1 border border-gray-300 rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+        rows="3"
+        placeholder="{{ 'Condition, age, location, prior treatments, biomarkers...'|t }}"
+        ></textarea>
+      <button
+        type="button"
+        id="chat-send-button"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 rounded-lg"
+        disabled>
+        {{ 'Find trials'|t }}
+      </button>
+    </div>
+    <div id="chat-loading" class="hidden mt-2 text-sm text-gray-600">
+      <span id="chat-loading-text" class="inline-block animate-pulse">{{ 'Looking for matching trials...'|t }}</span>
+    </div>
+    <div id="chat-error" class="hidden mt-2 text-sm text-red-600"></div>
+  </div>
+</div>

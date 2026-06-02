@@ -1,24 +1,79 @@
 #!/bin/bash
+# cspell:ignore pipefail milvus esac
 
-## Description: Install Drupal, optionally with one or more presets or all presets
+set -euo pipefail
+
+## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install eca\nddev install schemadotorg\nddev install translation\nddev install all
+## Example: ddev install\nddev install ai\nddev install openai\nddev install anthropic\nddev install gemini\nddev install anthropic ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install webform-setup\nddev install webform-test\nddev install trials\nddev install trials-fields\nddev install trials-fields-setup\nddev install trials-fields-setup --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-data-setup trials-data-elastic --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-fields-elastic\nddev install trials-fields-milvus\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
+## Milvus indexing throttles provider requests by running 5 passes of 200 items with 30 second pauses.
 ## ProjectTypes: drupal,drupal11
 
-if [ "$#" -gt 1 ]; then
-  for PRESET in "$@"; do
-    if [ "$PRESET" = "all" ]; then
-      echo "The all preset must be used by itself."
-      exit 1
-    fi
-  done
-fi
+uli_path="/"
+LIMIT="10"
+QUERY=""
+QUERY_IS_SET="false"
+PRESETS=()
 
-if [ "$1" = "all" ]; then
-  set -- ai schemadotorg eca translation
-fi
+search_api_index_trials_milvus() {
+  echo "Resetting ClinicalTrials.gov studies in Milvus..."
+  drush search-api:clear trials_milvus -y
 
-drush site:install core/recipes/standard \
+  echo "Indexing ClinicalTrials.gov studies in Milvus..."
+  drush search-api:index trials_milvus --limit=200 -y
+  sleep 30
+  drush search-api:index trials_milvus --limit=200 -y
+  sleep 30
+  drush search-api:index trials_milvus --limit=200 -y
+  sleep 30
+  drush search-api:index trials_milvus --limit=200 -y
+  sleep 30
+  drush search-api:index trials_milvus --limit=200 -y
+}
+
+search_api_index_trials_elasticsearch() {
+  echo "Resetting ClinicalTrials.gov studies in Elasticsearch..."
+  curl -fsS -X DELETE "http://elasticsearch:9200/trials_elasticsearch" >/dev/null 2>&1 || true
+  drush search-api:clear trials_elasticsearch -y
+
+  echo "Indexing ClinicalTrials.gov studies in Elasticsearch..."
+  drush search-api:index trials_elasticsearch -y;
+}
+
+# Parse --options for limit and query.
+for argument in "$@"; do
+  case "$argument" in
+    --limit=*)
+      LIMIT="${argument#*=}"
+      ;;
+
+    --query=*)
+      QUERY="${argument#*=}"
+      QUERY_IS_SET="true"
+      ;;
+
+    *)
+      PRESETS+=("$argument")
+      ;;
+  esac
+done
+
+# Expand trials convenience presets into their corresponding flows.
+expanded_presets=()
+for PRESET in "${PRESETS[@]}"; do
+  if [ "$PRESET" = "trials-data" ]; then
+    expanded_presets+=("trials-data-setup" "trials-data-elastic" "trials-data-milvus")
+  elif [ "$PRESET" = "trials-fields" ]; then
+    expanded_presets+=("trials-fields-setup" "trials-fields-elastic" "trials-fields-milvus")
+  else
+    expanded_presets+=("$PRESET")
+  fi
+done
+PRESETS=("${expanded_presets[@]}")
+
+drush sql:drop -y
+
+drush site:install standard \
   --db-url=mysql://db:db@db/db \
   --site-name="Drupal Playground" \
   --account-name=admin \
@@ -29,29 +84,157 @@ drush site:install core/recipes/standard \
 drush recipe ../recipes/drupal_playground_base
 drush recipe ../recipes/drupal_playground_admin
 drush recipe ../recipes/drupal_playground_devel
+drush recipe ../recipes/drupal_playground_ai
+drush recipe ../recipes/drupal_playground_ai_devel
+
 drush cr;
 
 # Uninstall the toolbar module, which can't be done via a recipe.
 drush pm:uninstall toolbar
 
-# Install custom and sandbox modules.
-drush en -y telephone_filter entity_labels
+# Unstall core modules that are not used in any demos.
+drush php:eval '\Drupal\field\Entity\FieldConfig::loadByName("node", "article", "comment")->delete();'
+drush pmu -y comment
 
-for PRESET in "$@"; do
+# Set AI provider configuration before applying other presets.
+for PRESET in "${PRESETS[@]}"; do
+  if [ "$PRESET" = "openai" ] || [ "$PRESET" = "anthropic" ] || [ "$PRESET" = "gemini" ]; then
+    echo "Applying ${PRESET} provider recipe..."
+    if [ "$PRESET" = "openai" ]; then
+      drush recipe ../recipes/drupal_playground_ai_provider_openai
+    elif [ "$PRESET" = "anthropic" ]; then
+      drush recipe ../recipes/drupal_playground_ai_provider_anthropic
+    elif [ "$PRESET" = "gemini" ]; then
+      drush recipe ../recipes/drupal_playground_ai_provider_gemini
+    fi
+  fi
+done
+
+# Apply presets.
+for PRESET in "${PRESETS[@]}"; do
   if [ "$PRESET" = "ai" ]; then
+
     echo "Applying AI recipe..."
-    drush recipe ../recipes/drupal_playground_ai
+    drush recipe ../recipes/drupal_playground_ai_chat
+    drush recipe ../recipes/drupal_playground_ai_ckeditor
+    drush recipe ../recipes/drupal_playground_ai_content_suggestions
+    drush recipe ../recipes/drupal_playground_ai_devel
+    drush recipe ../recipes/drupal_playground_ai_automators
+    drush recipe ../recipes/drupal_playground_ai_ckeditor_explain
+
+    echo "Applying AI Schema.org JSON-LD recipe..."
+    drush recipe ../recipes/drupal_playground_ai_schemadotorg_jsonld
+    uli_path="/admin/config/ai"
+
   elif [ "$PRESET" = "schemadotorg" ]; then
+
     echo "Applying Schema.org Blueprints recipe..."
     drush recipe ../recipes/drupal_playground_schemadotorg
+    uli_path="/admin/config/schemadotorg"
+
   elif [ "$PRESET" = "eca" ]; then
+
     echo "Applying ECA Starterkit recipe..."
     drush recipe ../recipes/drupal_playground_eca
+    uli_path="/admin/config/workflow/eca"
+
+  elif [ "$PRESET" = "elastic" ]; then
+
+    echo "Resetting ClinicalTrials.gov studies in Elasticsearch..."
+    curl -fsS -X DELETE "http://elasticsearch:9200/drupal_playground_elasticsearch" >/dev/null 2>&1 || true
+    echo "Applying Elasticsearch recipe..."
+    drush recipe ../recipes/drupal_playground_elasticsearch
+    uli_path="/elasticsearch"
+
   elif [ "$PRESET" = "translation" ]; then
+
     echo "Applying translation recipe..."
     drush recipe ../recipes/drupal_playground_translation
     drush locale-check
     drush locale-update
+
+  elif [ "$PRESET" = "webform-setup" ] || [ "$PRESET" = "webform" ]; then
+
+    echo "Applying Webform setup recipe..."
+    drush recipe ../recipes/drupal_playground_webform_setup
+    uli_path="/admin/structure/webform"
+
+  elif [ "$PRESET" = "webform-test" ]; then
+
+    echo "Applying Webform setup recipe..."
+    drush recipe ../recipes/drupal_playground_webform_setup
+    echo "Applying Webform test recipe..."
+    drush recipe ../recipes/drupal_playground_webform_test
+    echo "Enabling Webform node multiple and submissions test modules..."
+    drush en -y webform_node_test_multiple webform_test_submissions
+    uli_path="/admin/structure/webform"
+
+  elif [ "$PRESET" = "modules" ]; then
+
+    drush en -y telephone_filter entity_labels
+
+  elif [ "$PRESET" = "trials" ]; then
+
+    echo "Installing ClinicalTrials.gov module..."
+    drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
+    uli_path="/admin/config/services/clinical-trials-gov"
+
+  elif [ "$PRESET" = "trials-fields-setup" ]; then
+
+    echo "Applying ClinicalTrials.gov fields setup recipe..."
+    recipe_arguments=(../recipes/clinical_trials_gov_recipe_fields_setup)
+    if [ "$QUERY_IS_SET" = "true" ]; then
+      recipe_arguments+=(--input="clinical_trials_gov_recipe_fields_setup.query=$QUERY")
+    fi
+    drush recipe "${recipe_arguments[@]}"
+    echo "Importing ClinicalTrials.gov studies..."
+    drush migrate:import clinical_trials_gov --limit="$LIMIT"
+    echo "Running AI Automator queue..."
+    drush queue:run ai_automator_field_modifier
+    uli_path="/admin/config/services/clinical-trials-gov"
+
+  elif [ "$PRESET" = "trials-fields-elastic" ]; then
+
+    echo "Applying ClinicalTrials.gov fields Elasticsearch recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_fields_elastic
+    search_api_index_trials_elasticsearch
+    uli_path="/trials"
+
+  elif [ "$PRESET" = "trials-fields-milvus" ]; then
+
+    echo "Applying ClinicalTrials.gov fields Milvus recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_fields_milvus
+    search_api_index_trials_milvus
+    uli_path="/trials"
+
+  elif [ "$PRESET" = "trials-data-setup" ]; then
+
+    echo "Applying ClinicalTrials.gov data setup recipe..."
+    recipe_arguments=(../recipes/clinical_trials_gov_recipe_data_setup)
+    if [ "$QUERY_IS_SET" = "true" ]; then
+      recipe_arguments+=(--input="clinical_trials_gov_recipe_data_setup.query=$QUERY")
+    fi
+    drush recipe "${recipe_arguments[@]}"
+    echo "Importing ClinicalTrials.gov studies..."
+    drush migrate:import clinical_trials_gov --limit="$LIMIT"
+    uli_path="/admin/config/services/clinical-trials-gov"
+
+  elif [ "$PRESET" = "trials-data-elastic" ]; then
+
+    echo "Applying ClinicalTrials.gov data Elasticsearch recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_data_elastic
+    echo "Importing ClinicalTrials.gov studies..."
+    drush migrate:import clinical_trials_gov --limit="$LIMIT"
+    search_api_index_trials_elasticsearch
+    uli_path="/trials"
+
+  elif [ "$PRESET" = "trials-data-milvus" ]; then
+
+    echo "Applying ClinicalTrials.gov data Milvus recipe..."
+    drush recipe ../recipes/clinical_trials_gov_recipe_data_milvus
+    search_api_index_trials_milvus
+    uli_path="/trials"
+
   fi
 done
 
@@ -59,4 +242,4 @@ drush cr
 
 echo ""
 echo "Installation complete. One-time login URL:"
-drush uli
+drush uli "$uli_path"

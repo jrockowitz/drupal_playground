@@ -1,0 +1,9 @@
+services:
+  _defaults:
+    autowire: true
+
+  clinical_trials_gov_ai_rag_search_chat.component_override_subscriber:
+    class: Drupal\clinical_trials_gov_ai_rag_search_chat\EventSubscriber\ClinicalTrialsGovAiRagSearchChatComponentOverrideSubscriber
+    tags:
+      - { name: event_subscriber }
+  Drupal\clinical_trials_gov_ai_rag_search_chat\EventSubscriber\ClinicalTrialsGovAiRagSearchChatComponentOverrideSubscriberInterface: "@clinical_trials_gov_ai_rag_search_chat.component_override_subscriber"

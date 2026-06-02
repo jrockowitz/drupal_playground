@@ -1,0 +1,15 @@
+'$schema': 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/modules/sdc/src/metadata.schema.json'
+name: ClinicalTrials.gov Chat Interface
+status: stable
+description: 'ClinicalTrials.gov chat interface with trial-matching guidance'
+props:
+  type: object
+  properties:
+    session_id:
+      type: string
+      title: 'Session ID'
+      description: 'Current session ID'
+    messages:
+      type: array
+      title: 'Messages'
+      description: 'Array of chat messages'

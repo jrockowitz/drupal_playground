@@ -1,0 +1,49 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 74b43b98-45ee-4892-8ca5-b79f352e94a1
+  bundle: article
+  default_langcode: en
+  depends:
+    cd64feaa-5c5d-4b87-9761-445d0baab0bf: taxonomy_term
+    1997026e-f59c-4fa1-b86a-415ebf2d5faf: taxonomy_term
+    04560417-a29e-4709-a6fa-042d8b4c8357: file
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Protecting Drupal forms from spam'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: cd64feaa-5c5d-4b87-9761-445d0baab0bf
+    -
+      entity: 1997026e-f59c-4fa1-b86a-415ebf2d5faf
+  field_image:
+    -
+      alt: 'Fuzzy Drupal character testing spam protection around a Webform interface.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: 04560417-a29e-4709-a6fa-042d8b4c8357
+  body:
+    -
+      value: |-
+        <h2>Why Public Forms Need Protection</h2>
+        <p>Any public-facing form can attract automated abuse. Contact forms, surveys, and request forms are especially tempting because they often trigger email or create stored submissions. Without protection, spam can waste staff time, pollute exports, and make legitimate responses harder to find.</p>
+        <p>That makes anti-spam measures a core part of form design rather than an optional add-on. The right approach depends on the project, but teams usually need a balance between blocking abuse and keeping the form usable for real people.</p>
+        <h2>How the Webform Recipe Supports It</h2>
+        <p>The Webform setup recipe installs several related modules, including CAPTCHA, image CAPTCHA, reCAPTCHA, and honeypot support. That gives Drupal Playground a practical toolbox for experimenting with different protection strategies and understanding the trade-offs between them.</p>
+        <p>Some sites prefer a lightweight hidden-field approach such as honeypot, while others need a stronger challenge for high-risk forms. Because these modules are available together, contributors can test which option fits the audience and submission volume they expect.</p>
+        <h2>Security and Usability Have to Work Together</h2>
+        <p>A protection layer that frustrates legitimate users can be almost as damaging as spam. Accessibility, mobile behavior, and error recovery all matter here. Teams should test not only whether spam is blocked, but whether a real visitor can still complete the form without confusion.</p>
+        <p>Webform is a good place to manage that balance because the form definition, confirmation behavior, and protection settings can be reviewed together. Instead of treating spam defense as a separate system, the site can evaluate it as part of the overall form experience.</p>
+        <h2>The Practical Takeaway</h2>
+        <p>Spam protection is part of operating forms responsibly. It protects both the people receiving submissions and the people trying to send legitimate ones.</p>
+        <p>A playground recipe that includes these modules gives Drupal teams a better place to learn, compare options, and build a default approach before they need it on a live project.</p>
+      format: basic_html
+      summary: 'Spam protection is a core part of running public forms, and Drupal Webform works well with tools such as CAPTCHA, image CAPTCHA, reCAPTCHA, and honeypot defenses.'

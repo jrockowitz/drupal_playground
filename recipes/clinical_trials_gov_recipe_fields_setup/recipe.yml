@@ -1,0 +1,46 @@
+name: 'ClinicalTrials.gov Recipe Fields Setup'
+description: 'Adds fixed patient-friendly trial fields and AI automators to the ClinicalTrials.gov setup.'
+type: 'Site'
+recipes:
+  - clinical_trials_gov_recipe_content
+  - clinical_trials_gov_recipe_assets
+input:
+  query:
+    data_type: string
+    description: 'The ClinicalTrials.gov API query used to discover fields and build the migration configuration.'
+    default:
+      source: value
+      value: 'query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING'
+install:
+  - custom_field
+  - field_group
+  - migrate_plus
+  - migrate_tools
+  - readonly_field_widget
+  - ai_automators
+  - clinical_trials_gov
+  - clinical_trials_gov_report
+  - clinical_trials_gov_fields
+  - link
+  - pathauto
+config:
+  strict: false
+  import:
+    pathauto:
+      - pathauto.pattern.trial
+  actions:
+    clinical_trials_gov.settings:
+      setUp:
+        query: ${query}
+    core.entity_form_display.node.trial.default:
+      setProperties:
+        third_party_settings.field_group.group_clinical_trials_gov.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.weight: 50
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.open: false
+    core.entity_view_display.node.trial.default:
+      setProperties:
+        third_party_settings.field_group.group_clinical_trials_gov.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.label: ClinicalTrials.gov data
+        third_party_settings.field_group.group_clinical_trials_gov.weight: 50
+        third_party_settings.field_group.group_clinical_trials_gov.format_settings.open: false

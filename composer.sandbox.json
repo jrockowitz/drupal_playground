@@ -3,6 +3,19 @@
         {
             "type": "package",
             "package": {
+                "name": "drupal/ai_schemadotorg_jsonld",
+                "type": "drupal-module-sandbox",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/ai_schemadotorg_jsonld.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
                 "name": "drupal/eca_report",
                 "type": "drupal-module-sandbox",
                 "version": "1.0.x-dev",
@@ -60,6 +73,19 @@
                 "version": "1.0.x-dev",
                 "source": {
                     "url": "git@git.drupal.org:project/menu_export_csv.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "drupal/plugin_report",
+                "type": "drupal-module-sandbox",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/plugin_report.git",
                     "type": "git",
                     "reference": "1.0.x"
                 }
@@ -171,6 +197,7 @@
         }
     ],
     "require": {
+        "drupal/ai_schemadotorg_jsonld": "*",
         "drupal/eca_report": "*",
         "drupal/entity_labels": "*",
         "drupal/field_data": "*",

@@ -1,0 +1,318 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\clinical_trials_gov_report\Controller;
+
+use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
+use Drupal\clinical_trials_gov_report\Traits\ClinicalTrialsGovReportMarkupTrait;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Renders the ClinicalTrials.gov structs report.
+ */
+class ClinicalTrialsGovReportStructsController extends ControllerBase {
+
+  use ClinicalTrialsGovReportMarkupTrait;
+
+  /**
+   * Constructs a new ClinicalTrialsGovReportStructsController instance.
+   */
+  public function __construct(
+    protected DateFormatterInterface $dateFormatter,
+    protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
+    protected ClinicalTrialsGovStudyManagerInterface $studyManager,
+  ) {}
+
+  /**
+   * Creates the controller from the container.
+   */
+  public static function create(ContainerInterface $container): static {
+    /** @phpstan-ignore-next-line */
+    return new self(
+      $container->get('date.formatter'),
+      $container->get('clinical_trials_gov.field_manager'),
+      $container->get('clinical_trials_gov.study_manager'),
+    );
+  }
+
+  /**
+   * Renders the structs report page.
+   */
+  public function index(): array {
+    $metadata = $this->studyManager->getMetadataByPath();
+    $used_paths = $this->fieldManager->getAvailableFieldKeys();
+    $struct_rows = $this->buildStructRows($metadata, $used_paths);
+    $version = $this->studyManager->getVersion();
+    $api_url = ClinicalTrialsGovApi::BASE_URL . '/studies/metadata';
+
+    return [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-report-structs'],
+      ],
+      '#attached' => [
+        'library' => ['clinical_trials_gov_report/report'],
+      ],
+      'intro' => [
+        '#type' => 'item',
+        '#markup' => $this->t('This page displays ClinicalTrials.gov struct metadata and hierarchy returned by the API.'),
+      ],
+      'summary' => [
+        '#type' => 'item',
+        '#markup' => $this->t('Showing @count structs', ['@count' => count($struct_rows)]),
+      ],
+      'results' => $this->buildStructsTable($struct_rows),
+      'api_url' => [
+        '#type' => 'item',
+        '#markup' => $this->t('<small>ClinicalTrials.gov API: <a href=":url" class="font-monospace">@url</a></small>', [
+          ':url' => $api_url,
+          '@url' => $api_url,
+        ]),
+      ],
+      'version_separator' => [
+        '#type' => 'html_tag',
+        '#tag' => 'hr',
+      ],
+      'version' => [
+        '#type' => 'item',
+        '#markup' => $this->buildVersionMarkup($version),
+      ],
+    ];
+  }
+
+  /**
+   * Builds normalized struct rows from metadata.
+   */
+  protected function buildStructRows(array $metadata, array $used_paths = []): array {
+    $rows = [];
+    $used_path_lookup = array_fill_keys(array_values(array_filter($used_paths, 'is_string')), TRUE);
+
+    foreach ($metadata as $path => $row) {
+      if (!is_array($row) || (($row['sourceType'] ?? '') !== 'STRUCT')) {
+        continue;
+      }
+
+      $sub_properties = [];
+      foreach (($row['children'] ?? []) as $child_path) {
+        if (!is_string($child_path) || !isset($metadata[$child_path]) || !is_array($metadata[$child_path])) {
+          continue;
+        }
+        $sub_properties[] = [
+          'name' => (string) ($metadata[$child_path]['name'] ?? $child_path),
+          'is_struct' => (($metadata[$child_path]['sourceType'] ?? '') === 'STRUCT'),
+          'is_multiple' => str_ends_with((string) ($metadata[$child_path]['type'] ?? ''), '[]'),
+        ];
+      }
+
+      $rows[$path] = [
+        'path' => $path,
+        'name' => (string) ($row['name'] ?? ''),
+        'piece' => (string) ($row['piece'] ?? ''),
+        'title' => (string) ($row['title'] ?? ''),
+        'data_type' => (string) ($row['type'] ?? ''),
+        'parent_struct' => $this->findParentStructPath($path, $metadata),
+        'is_nested_multiple' => $this->isNestedMultipleStruct($path, $metadata),
+        'is_unused' => ($used_path_lookup && !isset($used_path_lookup[$path])),
+        'sub_properties' => $sub_properties,
+      ];
+    }
+
+    return $rows;
+  }
+
+  /**
+   * Finds the nearest ancestor path that is also a struct.
+   */
+  protected function findParentStructPath(string $path, array $metadata): string {
+    $parts = explode('.', $path);
+    array_pop($parts);
+
+    while ($parts) {
+      $candidate = implode('.', $parts);
+      if (isset($metadata[$candidate]) && is_array($metadata[$candidate]) && (($metadata[$candidate]['sourceType'] ?? '') === 'STRUCT')) {
+        return $candidate;
+      }
+      array_pop($parts);
+    }
+
+    return '';
+  }
+
+  /**
+   * Determines if a repeatable struct is nested within another repeatable struct.
+   */
+  protected function isNestedMultipleStruct(string $path, array $metadata): bool {
+    if (
+      !isset($metadata[$path])
+      || !is_array($metadata[$path])
+      || !str_ends_with((string) ($metadata[$path]['type'] ?? ''), '[]')
+    ) {
+      return FALSE;
+    }
+
+    $parent_struct = $this->findParentStructPath($path, $metadata);
+
+    while ($parent_struct) {
+      if (
+        isset($metadata[$parent_struct])
+        && is_array($metadata[$parent_struct])
+        && str_ends_with((string) ($metadata[$parent_struct]['type'] ?? ''), '[]')
+      ) {
+        return TRUE;
+      }
+
+      $parent_struct = $this->findParentStructPath($parent_struct, $metadata);
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Builds the structs table.
+   */
+  protected function buildStructsTable(array $struct_rows): array {
+    $rows = [];
+
+    foreach ($struct_rows as $row) {
+      $classes = [];
+      if ($row['is_nested_multiple']) {
+        $classes[] = 'color-warning';
+      }
+      if ($row['is_unused']) {
+        $classes[] = 'clinical-trials-gov-report-structs__row--unused';
+      }
+
+      $rows[] = [
+        'data' => [
+          $this->buildPrimarySecondaryCell(
+            primary: $row['name'],
+            secondary: ($row['title']) ? $row['title'] : $row['piece'],
+            depth: substr_count($row['path'], '.'),
+          ),
+          $this->buildTextCell($row['piece']),
+          $this->buildTextCell($row['data_type']),
+          $this->buildSubPropertiesCell($row['sub_properties']),
+        ],
+        'class' => $classes,
+      ];
+    }
+
+    return [
+      '#type' => 'table',
+      '#attributes' => [
+        'class' => ['clinical-trials-gov-table'],
+      ],
+      '#header' => [
+        $this->t('Struct'),
+        $this->t('Piece'),
+        $this->t('Data type'),
+        $this->t('Sub-properties'),
+      ],
+      '#rows' => $rows,
+      '#empty' => $this->t('No structs returned.'),
+    ];
+  }
+
+  /**
+   * Builds a cell with primary and secondary lines.
+   */
+  protected function buildPrimarySecondaryCell(string $primary, string $secondary, int $depth = 0): array {
+    $style = ($depth > 0) ? 'padding-left:' . ($depth * 1.5) . 'rem' : '';
+
+    $cell = [
+      'primary' => [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => ['clinical-trials-gov-report-metadata__primary'],
+        ],
+        'content' => [
+          '#type' => 'html_tag',
+          '#tag' => 'strong',
+          '#value' => $primary,
+        ],
+      ],
+    ];
+
+    if ($style) {
+      $cell['primary']['#attributes']['style'] = $style;
+    }
+
+    if ($secondary) {
+      $cell['secondary'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => ['clinical-trials-gov-report-metadata__secondary'],
+        ],
+        'content' => [
+          '#markup' => Html::escape($secondary),
+        ],
+      ];
+
+      if ($style) {
+        $cell['secondary']['#attributes']['style'] = $style;
+      }
+    }
+
+    return [
+      'data' => $cell,
+    ];
+  }
+
+  /**
+   * Builds the sub-properties cell as a small bullet list.
+   */
+  protected function buildSubPropertiesCell(array $values): array|string {
+    if (!$values) {
+      return '';
+    }
+
+    $items = [];
+    foreach ($values as $value) {
+      if (!is_array($value)) {
+        continue;
+      }
+
+      $name = (string) ($value['name'] ?? '');
+      if (!$name) {
+        continue;
+      }
+
+      if (!empty($value['is_multiple'])) {
+        $name .= '[]';
+      }
+
+      if (!empty($value['is_struct'])) {
+        $items[] = [
+          '#type' => 'html_tag',
+          '#tag' => 'strong',
+          '#value' => $name,
+        ];
+      }
+      else {
+        $items[] = $name;
+      }
+    }
+
+    if (!$items) {
+      return '';
+    }
+
+    return [
+      'data' => [
+        '#prefix' => '<small class="clinical-trials-gov-report-structs__sub-properties">',
+        '#theme' => 'item_list',
+        '#items' => $items,
+        '#suffix' => '</small>',
+      ],
+    ];
+  }
+
+}

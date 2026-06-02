@@ -1,0 +1,53 @@
+services:
+  _defaults:
+    autowire: true
+
+  clinical_trials_gov.api:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovApi
+    arguments: ["@http_client", "@logger.channel.clinical_trials_gov"]
+  Drupal\clinical_trials_gov\ClinicalTrialsGovApiInterface: "@clinical_trials_gov.api"
+
+  clinical_trials_gov.study_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface: "@clinical_trials_gov.study_manager"
+
+  clinical_trials_gov.paths_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovPathsManagerInterface: "@clinical_trials_gov.paths_manager"
+
+  clinical_trials_gov.names:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovNames
+  Drupal\clinical_trials_gov\ClinicalTrialsGovNamesInterface: "@clinical_trials_gov.names"
+
+  clinical_trials_gov.custom_field_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovCustomFieldManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovCustomFieldManagerInterface: "@clinical_trials_gov.custom_field_manager"
+
+  clinical_trials_gov.builder:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovBuilder
+  Drupal\clinical_trials_gov\ClinicalTrialsGovBuilderInterface: "@clinical_trials_gov.builder"
+
+  clinical_trials_gov.entity_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovEntityManagerInterface: "@clinical_trials_gov.entity_manager"
+
+  clinical_trials_gov.entity_display_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovEntityDisplayManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovEntityDisplayManagerInterface: "@clinical_trials_gov.entity_display_manager"
+
+  clinical_trials_gov.field_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovFieldManagerInterface: "@clinical_trials_gov.field_manager"
+
+  clinical_trials_gov.migration_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManager
+    arguments: ["@config.factory", "@plugin.manager.migration", "@clinical_trials_gov.paths_manager", "@clinical_trials_gov.field_manager", "@logger.channel.clinical_trials_gov"]
+  Drupal\clinical_trials_gov\ClinicalTrialsGovMigrationManagerInterface: "@clinical_trials_gov.migration_manager"
+
+  clinical_trials_gov.setup_manager:
+    class: Drupal\clinical_trials_gov\ClinicalTrialsGovSetupManager
+  Drupal\clinical_trials_gov\ClinicalTrialsGovSetupManagerInterface: "@clinical_trials_gov.setup_manager"
+
+  logger.channel.clinical_trials_gov:
+    parent: logger.channel_base
+    arguments: ["clinical_trials_gov"]

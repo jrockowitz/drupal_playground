@@ -1,0 +1,28 @@
+name: 'AI Provider OpenAI'
+description: >
+  Configures OpenAI defaults for Drupal Playground AI.
+type: 'Site'
+recipes:
+  - drupal_playground_ai
+config:
+  strict: false
+  import:
+    key:
+      - key.key.openai
+  actions:
+    ai.settings:
+      simpleConfigUpdate:
+        default_providers.chat.provider_id: openai
+        default_providers.chat.model_id: gpt-5-nano
+        default_providers.chat_with_complex_json.provider_id: openai
+        default_providers.chat_with_complex_json.model_id: gpt-5-nano
+        default_providers.chat_with_image_vision.provider_id: openai
+        default_providers.chat_with_image_vision.model_id: gpt-5-nano
+        default_providers.chat_with_structured_response.provider_id: openai
+        default_providers.chat_with_structured_response.model_id: gpt-5-nano
+        default_providers.chat_with_tools.provider_id: openai
+        default_providers.chat_with_tools.model_id: gpt-5-nano
+    ai_provider_openai.settings:
+      simpleConfigUpdate:
+        api_key: openai
+        moderation: true

@@ -1,0 +1,56 @@
+clinical_trials_gov_report.studies:
+  path: /admin/reports/status/clinical-trials-gov
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStudiesController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'access administration pages'
+
+clinical_trials_gov_report.study:
+  path: /admin/reports/status/clinical-trials-gov/{nct_id}
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStudyController::view'
+    _title_callback: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStudyController::title'
+  requirements:
+    _permission: 'access administration pages'
+    nct_id: 'NCT\d+'
+
+clinical_trials_gov_report.metadata:
+  path: /admin/reports/status/clinical-trials-gov/metadata
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportMetadataController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'access administration pages'
+
+clinical_trials_gov_report.required:
+  path: /admin/reports/status/clinical-trials-gov/required
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportRequiredController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'access administration pages'
+
+clinical_trials_gov_report.enums:
+  path: /admin/reports/status/clinical-trials-gov/enums
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportEnumsController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'access administration pages'
+
+clinical_trials_gov_report.structs:
+  path: /admin/reports/status/clinical-trials-gov/structs
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportStructsController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'access administration pages'
+
+clinical_trials_gov_report.names:
+  path: /admin/reports/status/clinical-trials-gov/names
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov_report\Controller\ClinicalTrialsGovReportNamesController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'access administration pages'

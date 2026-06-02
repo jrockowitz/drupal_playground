@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 37defaae-9d04-43ee-867d-9d7e6a317140
+  default_langcode: en
+default:
+  filename:
+    -
+      value: webform-multistep-drupal-plush-cafe.png
+  uri:
+    -
+      value: 'public://webform-multistep-drupal-plush-cafe.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2120160
+  status:
+    -
+      value: true

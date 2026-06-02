@@ -1,0 +1,142 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.page.body
+    - field.field.node.trial.trial_brief_summary
+    - field.field.node.trial.trial_cond
+    - field.field.node.trial.trial_keyword
+    - field.field.node.trial.trial_nct_id
+    - field.field.node.trial.trial_overall_status
+    - field.field.node.trial.trial_phase
+    - field.field.node.trial.trial_sex
+    - field.field.node.trial.trial_std_age
+    - field.field.node.trial.trial_study_type
+    - field.storage.node.body
+    - node.type.page
+    - node.type.trial
+    - search_api.server.drupal_playground_trials_milvus
+  module:
+    - node
+    - search_api
+id: drupal_playground_trials_milvus
+name: 'Drupal Playground Trials Milvus'
+description: 'Clinical Trials semantic search index powered by Milvus.'
+read_only: false
+field_settings:
+  body:
+    label: Body
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    dependencies:
+      config:
+        - field.field.node.page.body
+        - field.storage.node.body
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    dependencies:
+      module:
+        - node
+  trial_brief_summary:
+    label: 'Brief summary'
+    datasource_id: 'entity:node'
+    property_path: trial_brief_summary
+    type: text
+    dependencies:
+      config:
+        - field.field.node.trial.trial_brief_summary
+  trial_cond:
+    label: 'Condition/Disease'
+    datasource_id: 'entity:node'
+    property_path: trial_cond
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_cond
+  trial_keyword:
+    label: Keyword
+    datasource_id: 'entity:node'
+    property_path: trial_keyword
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_keyword
+  trial_nct_id:
+    label: 'NCT ID'
+    datasource_id: 'entity:node'
+    property_path: trial_nct_id
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_nct_id
+  trial_overall_status:
+    label: 'Overall status'
+    datasource_id: 'entity:node'
+    property_path: trial_overall_status
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_overall_status
+  trial_phase:
+    label: Phase
+    datasource_id: 'entity:node'
+    property_path: trial_phase
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_phase
+  trial_sex:
+    label: Sex
+    datasource_id: 'entity:node'
+    property_path: trial_sex
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_sex
+  trial_std_age:
+    label: 'Age group'
+    datasource_id: 'entity:node'
+    property_path: trial_std_age
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_std_age
+  trial_study_type:
+    label: 'Study type'
+    datasource_id: 'entity:node'
+    property_path: trial_study_type
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_study_type
+processor_settings:
+  content_access:
+    weights:
+      preprocess_index: -6
+      preprocess_query: -4
+  entity_status:
+    weights:
+      preprocess_index: -10
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: false
+      selected:
+        page: page
+        trial: trial
+    languages:
+      default: true
+      selected: {  }
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  cron_limit: 50
+  delete_on_fail: true
+  index_directly: false
+  track_changes_in_references: true
+server: drupal_playground_trials_milvus

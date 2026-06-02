@@ -1,0 +1,8 @@
+name: "ClinicalTrials.gov Test"
+type: module
+description: "Stub manager and fixtures for ClinicalTrials.gov testing."
+package: Testing
+core_version_requirement: ^10.3 || ^11
+hidden: true
+dependencies:
+  - clinical_trials_gov:clinical_trials_gov

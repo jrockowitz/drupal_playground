@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - ai_automators.automator_chain_type.explain
+    - field.field.automator_chain.explain.ai_automator_status
+    - field.field.automator_chain.explain.field_explain_input
+    - field.field.automator_chain.explain.field_explain_output
+  module:
+    - text
+id: automator_chain.explain.default
+targetEntityType: automator_chain
+bundle: explain
+mode: default
+content:
+  field_explain_input:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_explain_output:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  ai_automator_status: true

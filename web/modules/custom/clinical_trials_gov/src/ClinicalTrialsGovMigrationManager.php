@@ -1,0 +1,146 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\clinical_trials_gov;
+
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\migrate\Plugin\MigrationPluginManagerInterface;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Manages generated migration configuration for the import wizard.
+ */
+class ClinicalTrialsGovMigrationManager implements ClinicalTrialsGovMigrationManagerInterface {
+
+  /**
+   * The generated migration config name.
+   */
+  protected const MIGRATION_CONFIG_NAME = 'migrate_plus.migration.clinical_trials_gov';
+
+  /**
+   * Maximum node title length.
+   */
+  protected const TITLE_MAX_LENGTH = 255;
+
+  /**
+   * Constructs a new ClinicalTrialsGovMigrationManager instance.
+   */
+  public function __construct(
+    protected ConfigFactoryInterface $configFactory,
+    protected MigrationPluginManagerInterface $migrationPluginManager,
+    protected ClinicalTrialsGovPathsManagerInterface $pathsManager,
+    protected ClinicalTrialsGovFieldManagerInterface $fieldManager,
+    protected LoggerInterface $logger,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function updateMigration(): void {
+    $settings = $this->configFactory->get('clinical_trials_gov.settings');
+    $query = $settings->get('query');
+    $paths = $this->pathsManager->getQueryPathsRaw();
+    $type = $settings->get('type');
+    $field_mappings = $settings->get('fields');
+    $fields = array_values($field_mappings);
+    $migration_config = $this->configFactory->getEditable(self::MIGRATION_CONFIG_NAME);
+
+    if (!$query || !$paths || !$type || !$fields) {
+      $migration_config->delete();
+      $this->clearMigrationPluginDefinitions();
+      return;
+    }
+
+    $process = [];
+    $source_constants = [
+      'title_max_length' => self::TITLE_MAX_LENGTH,
+      'title_wordsafe' => FALSE,
+      'title_add_ellipsis' => TRUE,
+    ];
+    foreach ($fields as $path) {
+      $definition = $this->fieldManager->getFieldDefinition($path);
+      if (empty($definition['selectable'])) {
+        $this->logger->warning('Skipped ClinicalTrials.gov field mapping for @path: @reason', [
+          '@path' => $path,
+          '@reason' => (string) ($definition['reason'] ?? 'Unsupported mapping.'),
+        ]);
+        continue;
+      }
+      if (!empty($definition['group_only'])) {
+        continue;
+      }
+      if (($definition['destination_property'] ?? NULL) === 'title') {
+        $process['title'] = [
+          [
+            'plugin' => 'callback',
+            'callable' => '\\Drupal\\Component\\Utility\\Unicode::truncate',
+            'unpack_source' => TRUE,
+            'source' => [
+              $path,
+              'constants/title_max_length',
+              'constants/title_wordsafe',
+              'constants/title_add_ellipsis',
+            ],
+          ],
+        ];
+      }
+
+      if ($definition['field_type'] === 'custom') {
+        $source_constants[$definition['field_name'] . '_yaml_columns'] = $definition['yaml_columns'] ?? [];
+        $source_constants[$definition['field_name'] . '_source_key_map'] = $definition['source_key_map'] ?? [];
+        $process[$definition['field_name']] = [
+          [
+            'plugin' => 'clinical_trials_gov_custom_field',
+            'source' => [
+              $path,
+              'constants/' . $definition['field_name'] . '_yaml_columns',
+              'constants/' . $definition['field_name'] . '_source_key_map',
+            ],
+          ],
+        ];
+        if (!empty($definition['yaml_columns'])) {
+          $this->logger->warning('ClinicalTrials.gov field @path uses YAML fallback for custom field properties: @columns', [
+            '@path' => $path,
+            '@columns' => implode(', ', $definition['yaml_columns']),
+          ]);
+        }
+        continue;
+      }
+
+      $process[$definition['field_name']] = $path;
+    }
+
+    $migration_config->setData([
+      'id' => 'clinical_trials_gov',
+      'label' => 'ClinicalTrials.gov',
+      'status' => TRUE,
+      'migration_group' => 'default',
+      'migration_tags' => ['clinical_trials_gov'],
+      'source' => [
+        'plugin' => 'clinical_trials_gov',
+        'query' => $query,
+        'constants' => $source_constants,
+      ],
+      'process' => $process,
+      'destination' => [
+        'plugin' => 'entity:node',
+        'default_bundle' => $type,
+      ],
+    ])->save();
+
+    if (method_exists($this->migrationPluginManager, 'clearCachedDefinitions')) {
+      $this->migrationPluginManager->clearCachedDefinitions();
+    }
+  }
+
+  /**
+   * Clears cached migration plugin definitions after config changes.
+   */
+  protected function clearMigrationPluginDefinitions(): void {
+    if (method_exists($this->migrationPluginManager, 'clearCachedDefinitions')) {
+      $this->migrationPluginManager->clearCachedDefinitions();
+    }
+  }
+
+}

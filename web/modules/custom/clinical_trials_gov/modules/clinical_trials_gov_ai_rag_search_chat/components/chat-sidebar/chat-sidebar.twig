@@ -1,0 +1,41 @@
+<div class="chat-sidebar bg-gray-50 border border-gray-200 rounded-lg p-4" data-sessions-offset="0">
+  <button type="button"
+          class="new-chat-button w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded mb-4">
+    {{ 'New trial search'|t }}
+  </button>
+
+  <div class="search-container relative mb-4">
+    <div class="relative">
+      <input type="text"
+             class="search-input w-full border border-gray-300 rounded px-3 py-2 pr-8 text-sm focus:outline-none focus:border-blue-500"
+             placeholder="{{ 'Search previous trial searches...'|t }}"
+             autocomplete="off">
+      <button type="button"
+              class="clear-search-button hidden absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              aria-label="{{ 'Clear previous search filter'|t }}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="search-results hidden absolute left-0 right-0 z-10 bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-64 overflow-y-auto">
+      <!-- Search results will be populated here -->
+    </div>
+    <a href="/ai-search" class="text-sm text-blue-600 hover:text-blue-800 hover:underline mt-2 inline-block">&larr; {{ 'Back to trial search'|t }}</a>
+    <p class="text-xs text-gray-500 mt-1">{{ 'Trial search history is kept for @days days.'|t({'@days': retention_days}) }}</p>
+  </div>
+
+  <div class="sessions-list">
+    <h3 class="text-sm font-semibold text-gray-700 mb-2">{{ 'Recent Trial Searches'|t }}</h3>
+    {# Sessions are loaded via AJAX for page cache optimization #}
+    <div class="sessions-loading text-sm text-gray-500 animate-pulse">
+      {{ 'Loading trial searches...'|t }}
+    </div>
+    <ul class="space-y-2 sessions-container hidden"></ul>
+    <p class="no-sessions-message text-sm text-gray-500 hidden">{{ 'No previous trial searches'|t }}</p>
+    <button type="button"
+            class="load-more-button hidden w-full mt-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded text-sm">
+      {{ 'Load more searches'|t }}
+    </button>
+  </div>
+</div>

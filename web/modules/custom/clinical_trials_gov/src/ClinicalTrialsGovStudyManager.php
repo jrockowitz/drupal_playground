@@ -1,0 +1,246 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\clinical_trials_gov;
+
+/**
+ * Fetches and organizes ClinicalTrials.gov study data.
+ */
+class ClinicalTrialsGovStudyManager implements ClinicalTrialsGovStudyManagerInterface {
+
+  /**
+   * Per-instance cache of flattened study arrays, keyed by NCT ID.
+   */
+  protected array $studyCache = [];
+
+  /**
+   * Per-instance cache of the flattened metadata tree.
+   */
+  protected ?array $metadataByPathCache = NULL;
+
+  /**
+   * Per-instance cache of metadata rows keyed by piece.
+   */
+  protected ?array $metadataByPieceCache = NULL;
+
+  /**
+   * Per-instance cache of the raw enums response.
+   */
+  protected ?array $enumsCache = NULL;
+
+  /**
+   * Constructs a new ClinicalTrialsGovStudyManager.
+   */
+  public function __construct(
+    protected ClinicalTrialsGovApiInterface $api,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getStudies(array $parameters): array {
+    return $this->api->get('/studies', $parameters);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getVersion(): array {
+    return $this->api->get('/version');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getStudy(string $nct_id): array {
+    if (!array_key_exists($nct_id, $this->studyCache)) {
+      $data = $this->api->get('/studies/' . $nct_id);
+      $this->studyCache[$nct_id] = $this->flattenStudy($data);
+    }
+    return $this->studyCache[$nct_id];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMetadataByPath(?string $path = NULL): array {
+    if ($this->metadataByPathCache === NULL) {
+      $data = $this->api->get('/studies/metadata');
+      $this->metadataByPathCache = $this->flattenMetadata($data);
+    }
+    if (!$path) {
+      return $this->metadataByPathCache;
+    }
+    return $this->metadataByPathCache[$path] ?? [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMetadataByPiece(?string $piece = NULL): array {
+    if ($this->metadataByPieceCache === NULL) {
+      $this->metadataByPieceCache = [];
+      foreach ($this->getMetadataByPath() as $metadata) {
+        $metadata_piece = $metadata['piece'];
+        if (!$metadata_piece) {
+          continue;
+        }
+        $this->metadataByPieceCache[$metadata_piece] = $metadata;
+      }
+    }
+    if (!$piece) {
+      return $this->metadataByPieceCache;
+    }
+    return $this->metadataByPieceCache[$piece] ?? [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEnums(): array {
+    if ($this->enumsCache === NULL) {
+      $this->enumsCache = $this->api->get('/studies/enums');
+    }
+    return $this->enumsCache;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEnum(string $enum_type): array {
+    $enum_type = str_replace('[]', '', $enum_type);
+
+    foreach ($this->getEnums() as $enum) {
+      if ($enum['type'] === $enum_type) {
+        return array_column($enum['values'], 'value');
+      }
+    }
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEnumAsAllowedValues(string $enum_type, bool $key_label = FALSE): array {
+    $enum_type = str_replace('[]', '', $enum_type);
+
+    foreach ($this->getEnums() as $enum_definition) {
+      if ($enum_definition['type'] !== $enum_type) {
+        continue;
+      }
+
+      $allowed_values = [];
+      foreach ($enum_definition['values'] as $value) {
+        $allowed_values[(string) $value['value']] = (string) ($value['legacyValue'] ?? $value['value']);
+      }
+
+      if (!$key_label) {
+        return $allowed_values;
+      }
+
+      $normalized = [];
+      foreach ($allowed_values as $key => $label) {
+        $normalized[] = [
+          'key' => $key,
+          'label' => $label,
+        ];
+      }
+      return $normalized;
+    }
+
+    return [];
+  }
+
+  /**
+   * Recursively flattens nested study data to dot-notation Index field keys.
+   *
+   * Associative arrays (objects) are recursed into. Lists and scalar values
+   * are stored as-is under their full dotted key path.
+   *
+   * @param mixed $data
+   *   The data to flatten.
+   * @param string $prefix
+   *   The dot-notation prefix accumulated so far.
+   *
+   * @return array
+   *   A flat array of dot-notation key => value pairs.
+   */
+  protected function flattenStudy(mixed $data, string $prefix = ''): array {
+    if (is_array($data) && !array_is_list($data)) {
+      $result = [];
+      foreach ($data as $key => $value) {
+        $child_key = ($prefix) ? $prefix . '.' . $key : (string) $key;
+        $result += $this->flattenStudy($value, $child_key);
+      }
+      return $result;
+    }
+
+    if (is_array($data) && array_is_list($data)) {
+      $result = [$prefix => $data];
+      foreach ($data as $item) {
+        if (!is_array($item) || array_is_list($item)) {
+          continue;
+        }
+        $result += $this->flattenStudy($item, $prefix);
+      }
+      return $result;
+    }
+
+    return [$prefix => $data];
+  }
+
+  /**
+   * Recursively flattens the metadata tree to dot-notation name-path rows.
+   *
+   * @param array $items
+   *   The metadata items to flatten.
+   * @param string $parent
+   *   The dot-notation parent path accumulated so far.
+   *
+   * @return array
+   *   A flat array keyed by dot-notation path, each value a metadata row.
+   */
+  protected function flattenMetadata(array $items, string $parent = ''): array {
+    $rows = [];
+    foreach ($items as $item) {
+      $name = (string) $item['name'];
+      $path = ($parent && $name) ? $parent . '.' . $name : $name;
+      $children = [];
+      foreach ($item['children'] ?? [] as $child) {
+        $child_name = (string) $child['name'];
+        if (!$child_name) {
+          continue;
+        }
+        $children[] = ($path) ? $path . '.' . $child_name : $child_name;
+      }
+      $rows[$path] = [
+        'path' => $path,
+        'parent' => $parent,
+        'name' => $name,
+        'piece' => (string) $item['piece'],
+        'title' => (string) ($item['title'] ?? ''),
+        'type' => (string) $item['type'],
+        'isMultiple' => str_ends_with((string) $item['type'], '[]'),
+        'sourceType' => (string) $item['sourceType'],
+        'maxChars' => $item['maxChars'] ?? NULL,
+        'isEnum' => (bool) ($item['isEnum'] ?? FALSE),
+        'description' => (string) ($item['description'] ?? ''),
+        'children' => $children,
+        'rules' => (string) ($item['rules'] ?? ''),
+        'altPieceNames' => array_values(array_filter(
+          $item['altPieceNames'] ?? [],
+          fn(mixed $value): bool => is_string($value) && $value !== ''
+        )),
+        'synonyms' => (bool) ($item['synonyms'] ?? FALSE),
+        'dedLinkLabel' => (string) ($item['dedLink']['label'] ?? ''),
+        'dedLinkUrl' => (string) ($item['dedLink']['url'] ?? ''),
+      ];
+      if (($item['children'] ?? []) !== []) {
+        $rows += $this->flattenMetadata($item['children'], $path);
+      }
+    }
+    return $rows;
+  }
+
+}

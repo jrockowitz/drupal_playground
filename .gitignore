@@ -108,39 +108,53 @@ yarn-error.log
 # =============================================================================
 # Agents / Claude skills
 # =============================================================================
-
-.agents/skills/drupal-at-your-fingertips
-.agents/skills/drupal-config-mgmt
-.agents/skills/drupal-contrib-mgmt
-.agents/skills/drupal-ddev
-.agents/skills/ivangrynenko-cursorrules-drupal
-.agents/skills/drupal-work-on-issue
-.agents/skills/drupalorg-cli
-.agents/skills/drupalorg-issue-summary-update
-.agents/skills/drupalorg-contribution-helper
-.agents/skills/drupalorg-issue-helper
+.agents/skills/
+!.agents/skills/drupalorg-project-clone
+!.agents/skills/drupalorg-project-logo-prompt
+!.agents/skills/drupalorg-project-page
+!.agents/skills/drupalorg-projects-clone
+!.agents/skills/install
 
 # =============================================================================
 # Configuration
 # =============================================================================
-
 /config/sync
 
 # =============================================================================
 # Sandbox
 # =============================================================================
 
-/web/modules/sandbox/
+# /web/modules/sandbox/
+/web/modules/sandbox/ai_schemadotorg_jsonld
+/web/modules/sandbox/eca_report
+/web/modules/sandbox/entity_labels
+/web/modules/sandbox/field_data
+/web/modules/sandbox/local_tasks_more
+/web/modules/sandbox/menu_export_csv
+/web/modules/sandbox/plugin_report
+/web/modules/sandbox/schemadotorg
+/web/modules/sandbox/schemadotorg_experimental
+/web/modules/sandbox/webform
+/web/modules/sandbox/webform_confirmation_file
+/web/modules/sandbox/webform_javascript_setting
+/web/modules/sandbox/webform_no_submissions
+/web/modules/sandbox/webform_payment_element
+/web/modules/sandbox/webform_views
+
 
 # =============================================================================
 # Recipes
 # =============================================================================
-
 /recipes/eca_starterkit
 /recipes/schemadotorg_recipes
 
 # =============================================================================
 # Database backup
 # =============================================================================
-
 /db.sql
+
+# =============================================================================
+# Misc
+# =============================================================================
+/drupal-digests
+/.playwright-mcp

@@ -5,8 +5,8 @@
     "license": "GPL-2.0-or-later",
     "version": "1.0.0",
     "require": {
-        "drupal/core": "^11.3",
-        "drupal/schemadotorg": "^1.0@alpha",
-        "drupal/schemadotorg_experimental": "^1.0@alpha"
+        "drupal/core": "^11",
+        "drupal/schemadotorg": "^1@alpha",
+        "drupal/schemadotorg_experimental": "^1@alpha"
     }
 }

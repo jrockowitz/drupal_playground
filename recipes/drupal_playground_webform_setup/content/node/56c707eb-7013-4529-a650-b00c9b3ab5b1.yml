@@ -1,0 +1,49 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 56c707eb-7013-4529-a650-b00c9b3ab5b1
+  bundle: article
+  default_langcode: en
+  depends:
+    cd64feaa-5c5d-4b87-9761-445d0baab0bf: taxonomy_term
+    14478fb7-beb1-4b3c-a4e4-3f65254fef12: taxonomy_term
+    48f88033-209c-4fa9-9b84-efa6a3b69ab0: file
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'File uploads and attachments in Webform'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: cd64feaa-5c5d-4b87-9761-445d0baab0bf
+    -
+      entity: 14478fb7-beb1-4b3c-a4e4-3f65254fef12
+  field_image:
+    -
+      alt: 'Fuzzy Drupal character managing file uploads and attachments for a Webform at a library desk.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: 48f88033-209c-4fa9-9b84-efa6a3b69ab0
+  body:
+    -
+      value: |-
+        <h2>Why Uploads Change the Complexity of a Form</h2>
+        <p>The moment a form accepts files, it becomes more than a collection of text inputs. Teams now need to think about storage, validation, file size limits, permissions, and what should happen to those files after submission. That is common for job applications, grant forms, support requests, and internal review processes.</p>
+        <p>Because of that, file handling should be deliberate. A form that accepts attachments without clear limits or retention expectations can create technical and operational problems quickly.</p>
+        <h2>How Webform Helps Manage Attachments</h2>
+        <p>Drupal Webform supports file elements and can work with related modules for attachment handling and export workflows. That gives site builders a consistent way to collect supporting documents while keeping the upload process connected to the rest of the submission data.</p>
+        <p>This is useful because the upload is not isolated from the form. Validation, confirmation behavior, notifications, and submission review all remain part of one system. Teams can reason about the uploaded file in the same context as the answers that came with it.</p>
+        <h2>Operational Considerations</h2>
+        <p>Upload forms deserve extra attention around public file settings, access, and reviewer experience. Staff often need to know not only that a file exists, but where it belongs in the submission review process. Clear field descriptions and predictable attachment behavior make that much easier.</p>
+        <p>In a playground recipe, it is helpful to have this capability available up front. Contributors can see how file-based forms differ from simpler ones and experiment with workflows that are closer to real client requirements.</p>
+        <h2>The Practical Takeaway</h2>
+        <p>File upload support is one of the features that makes Webform suitable for serious intake workflows rather than only lightweight lead capture. It expands what kinds of business processes Drupal can support directly.</p>
+        <p>Handled thoughtfully, attachments can stay manageable and review-friendly while still giving users a straightforward way to provide the documents a workflow requires.</p>
+      format: basic_html
+      summary: 'File upload support lets Drupal Webform handle resumes, supporting documents, and other attachments as part of a structured submission workflow.'

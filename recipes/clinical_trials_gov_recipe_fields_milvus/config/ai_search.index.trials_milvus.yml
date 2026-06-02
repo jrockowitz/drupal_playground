@@ -1,0 +1,64 @@
+index_id: trials_milvus
+control_field_max_length: true
+exclude_chunk_from_metadata: false
+indexing_options:
+  field_trial_condition:
+    field_name: field_trial_condition
+    indexing_option: main_content
+    max: -1
+  field_trial_goal:
+    field_name: field_trial_goal
+    indexing_option: main_content
+    max: -1
+  field_trial_details:
+    field_name: field_trial_details
+    indexing_option: main_content
+    max: -1
+  field_trial_eligibility:
+    field_name: field_trial_eligibility
+    indexing_option: main_content
+    max: -1
+  field_trial_summary:
+    field_name: field_trial_summary
+    indexing_option: contextual_content
+    max: -1
+  field_trial_full_title:
+    field_name: field_trial_full_title
+    indexing_option: contextual_content
+    max: -1
+  field_trial_title:
+    field_name: field_trial_title
+    indexing_option: contextual_content
+    max: -1
+  search_api_url:
+    field_name: search_api_url
+    indexing_option: contextual_content
+    max: 255
+  field_trials_nct_id:
+    field_name: field_trials_nct_id
+    indexing_option: attributes
+    max: 255
+  field_trial_status:
+    field_name: field_trial_status
+    indexing_option: attributes
+    max: 255
+  field_trial_phase:
+    field_name: field_trial_phase
+    indexing_option: attributes
+    max: 255
+  field_trial_sex:
+    field_name: field_trial_sex
+    indexing_option: attributes
+    max: 255
+  field_trial_age:
+    field_name: field_trial_age
+    indexing_option: attributes
+    max: 255
+  field_trial_study_type:
+    field_name: field_trial_study_type
+    indexing_option: attributes
+    max: 255
+  field_trials_nct_url:
+    field_name: field_trials_nct_url
+    indexing_option: attributes
+    max: 255

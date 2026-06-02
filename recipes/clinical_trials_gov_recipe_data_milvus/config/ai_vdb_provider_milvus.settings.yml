@@ -1,0 +1,3 @@
+api_key: ''
+server: 'http://milvus'
+port: 19530

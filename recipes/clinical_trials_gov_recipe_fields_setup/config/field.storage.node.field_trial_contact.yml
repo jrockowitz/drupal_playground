@@ -1,0 +1,44 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - custom_field
+    - node
+id: node.field_trial_contact
+field_name: field_trial_contact
+entity_type: node
+type: custom
+settings:
+  columns:
+    name:
+      allowed_values: {  }
+      name: name
+      type: string
+      length: 255
+    role:
+      allowed_values: {  }
+      name: role
+      type: string
+      length: 255
+    phone:
+      allowed_values: {  }
+      name: phone
+      type: string
+      length: 255
+    phone_ext:
+      allowed_values: {  }
+      name: phone_ext
+      type: string
+      length: 255
+    email:
+      allowed_values: {  }
+      name: email
+      type: string
+      length: 255
+module: custom_field
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

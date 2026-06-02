@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 84d637b0-7351-4193-8678-b3898d72cabf
+  default_langcode: en
+default:
+  filename:
+    -
+      value: webform-conditional-logic-drupal-plush-studio.png
+  uri:
+    -
+      value: 'public://webform-conditional-logic-drupal-plush-studio.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2265665
+  status:
+    -
+      value: true

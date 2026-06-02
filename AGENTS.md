@@ -1,17 +1,15 @@
-## Project Overview
+# Environment
 
-Drupal 11 playground site managed with DDEV and Composer. The project is structured around custom Drupal Recipes that compose modules and configuration into reusable installation presets.
+- PHP: 8.3
+- DDEV project name: `drupal-playground`
+- DDEV URL: https://drupal-playground.ddev.site
+- Docroot: `web/`
 
-- **DDEV project name:** `drupal-playground` → site at `https://drupal-playground.ddev.site`
-- **Docroot:** `web/`
-- **PHP:** 8.3, **DB:** MariaDB 10.11, **Webserver:** nginx-fpm
+# Commands
 
-## Commands
+## DDEV
 
 ```bash
-# Open site and log in as admin (one-time login link)
-ddev uli
-
 # Runs PHPUnit
 ddev phpunit <file|directory>
 
@@ -22,39 +20,107 @@ ddev code-review <file|directory>
 ddev code-fix <file|directory>
 ```
 
-## Architecture
+## Config
 
-### Directory Structure
+```bash
+# Execute partial config import. Use this to test config changes.
+ddev drush config:import -y --partial --source=<directory>
+```
+
+# Architecture
+
+## Directories
 
 - `recipes/` — Custom Drupal Recipes (each has `recipe.yml` + `composer.json`)
 - `web/` — Drupal docroot (managed by Composer scaffolding)
 - `.ddev/` — DDEV configuration, custom commands, PHP/Nginx overrides
 - `docs/` — Project documentation (DDEV setup, PHPStorm config)
 
-## HTML
+# Drupal
 
-- Only add returns after block tags. (<p>, <div>, <ul>, <li>, <br/>, etc...)
+- Config
+  - Use `#config_target` when extending `ConfigFormBase`. @see https://www.drupal.org/node/3373502
+  - When simple config is schema-validated, trust the schema-backed return type instead of adding defensive casts like `(array) $config->get('query_paths')`.
+  - Treat schema-backed `config->get('key')` values as the expected datatype and do not add fallback values for required config contracts.
+  - Treat required API payload values the same way: do not add defensive casts or fallback rendering for data that must exist for the feature to function.
+  - In tests, only model `NULL` when the contract explicitly allows it.
+- Services
+  - Always use `autowire`
+  - Always create an interface
+  - Only use public methods when absolutely necessary
+  - For injected service order them from general to specific services.
+    (i.e. `ConfigFactoryInterface` before `EntityTypeManagerInterface` before `EntityRepositoryInterface)
+- Hooks
+  - Use OOP hooks instead of procedural hooks with legacy support. @see https://www.drupal.org/node/3442349
+- PHPUnit
+  - `::setUp` and `::test` methods should come before protected helper methods.
+  - Prefer a single test method per Kernel, Functional, and Browser test class when scenarios can share one Drupal install/bootstrap.
+  - Keep separate test methods only when scenarios require incompatible module sets, exception-driven control flow, or setup/reset sequences that would make one combined test misleading.
+  - Tests for focus on checking expected behavior, instead of exact labels or markup, since these can easily change.
+- Markup
+  - Use render arrays over Markup::create().
+    - Use `['#markup' => t('Some text'), '#prefix' => '<h2>', '#suffix' => '</h2>']`
+      or `['#markup' => '<h2>'. t('Some text') . '</h2>']`
+      over `Markup::create('<h2>' . t('Some text') . '</h2>')`
+- Comments
+  - Make sure every function, method, class, and constructor has a comment.
 
-## Git
+# Drush
 
-- Never commit or push code unless explicitly asked to do so.
-- All commits made by AI should end with a note that says: `AI-assisted by {code agent name}`.
+- Always use `autowire`
+- Do not create any aliases.
 
-## Python
+# Programming
 
-- Use `python3` instead of `python` when invoking Python.
+## General
 
-## Code Style & Standards
-
-- Never use abbreviations in names.
+- Never use abbreviations in names
   - Write the full word every time
-  - Example include:
+  - Examples include use:
     - `$definition` not `$def`
     - `$parameters` not `$params`
     - `$temporary` not `$tmp`
   - Exceptions for widely accepted conventions:
     - `$io`, `src`, `href`, `url`, `id`, `$config`
     - `html`, `csv`, `api`, `sql`, `php`, language codes like `$langcode`.
-- In tests, assertion blocks should have comments that typically begin with `// Check that ...`.
-  - Do not use `/* *** {comments} *** */` comments.
+
+## Git
+
+- Never commit or push code unless explicitly asked to do so.
+- All commits made by AI should end with a note that says: `AI-assisted by {code agent name}`.
+
+## PHP
+
+- For ternary operator always use parentheses around the condition.
+- Don't use `private` with methods, use `protected` so that a method can be overridden.
+- Don't use `final` with classes and allow a class to be extended.
+- Don't use $strict with in_array() calls.
+- In PHPDoc, use plain `array` instead of shaped array annotations like `array<...>`, `int[]`, or `string[]`.
+- Don't try to align array keys and values.
+
+```php
+$array = [
+  'key' => 'value'
+  'key1' => 'value1',
+];
+```
+
+### PHPUnit
+
+- For Browser, Functional, and Kernel tests, prefer one test method with clear assertion blocks to improve performance when one bootstrap can cover the full scenario.
+- Assertion blocks should have comments that typically begin with `// Check that ...`.
+  - Do not use `/* * {comments} * */` comments.
   - Look at existing tests in the module for the expected style.
+- Avoid using Nullsafe Operator '?->' in tests and allow the test to fail if the property/method is not set.
+
+## HTML
+
+- Only add returns after block tags. (<p>, <div>, <ul>, <li>, <br/>, etc...)
+
+## CSS
+
+- For Drupal, always namespace module-specific CSS selectors.
+
+## Python
+
+- Use `python3` instead of `python` when invoking Python.

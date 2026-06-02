@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.trial.field_trial_title
+id: node.trial.field_trial_title.default
+label: 'Patient Title Default'
+rule: llm_simple_string
+input_mode: token
+weight: 100
+worker_type: queue
+entity_type: node
+bundle: trial
+field_name: field_trial_title
+edit_mode: false
+base_field: ''
+prompt: ''
+token: "Rewrite the following clinical trial title in plain language for patients and caregivers.\n\nUse simple words. Keep it under 20 words. Return only the title text with no explanation, no quotation marks, and no extra formatting.\n\nIf the title is empty, unusable, or missing, return only: Trial details are not yet available.\n\nTitle: [node:clinical-trials-gov:BriefTitle]"
+plugin_config:
+  automator_enabled: 1
+  automator_rule: llm_simple_string
+  automator_mode: token
+  automator_base_field: ''
+  automator_prompt: ''
+  automator_token: "Rewrite the following clinical trial title in plain language for patients and caregivers.\n\nUse simple words. Keep it under 20 words. Return only the title text with no explanation, no quotation marks, and no extra formatting.\n\nIf the title is empty, unusable, or missing, return only: Trial details are not yet available.\n\nTitle: [node:clinical-trials-gov:BriefTitle]"
+  automator_edit_mode: 0
+  automator_label: 'Patient Title Default'
+  automator_weight: '100'
+  automator_worker_type: queue
+  automator_ai_provider: openai
+  automator_ai_model: gpt-5-nano
+  automator_configuration_max_completion_tokens: '128'
+  automator_configuration_reasoning_effort: low
+  automator_joiner: ''
+  automator_joiner_other: ''

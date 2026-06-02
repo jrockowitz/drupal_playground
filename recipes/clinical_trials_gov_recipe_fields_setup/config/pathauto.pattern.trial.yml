@@ -1,0 +1,24 @@
+uuid: b2e7c8a1-9f0d-4f26-bd1f-2f4f54d6d4c3
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.trial
+  module:
+    - node
+id: trial
+label: 'Trial path pattern'
+type: 'canonical_entities:node'
+pattern: '/trials/[node:field_trials_nct_id]'
+selection_criteria:
+  6ea7c588-4a26-4b16-b935-994c17836d8d:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 6ea7c588-4a26-4b16-b935-994c17836d8d
+    context_mapping:
+      node: node
+    bundles:
+      trial: trial
+selection_logic: and
+weight: 0
+relationships: {  }

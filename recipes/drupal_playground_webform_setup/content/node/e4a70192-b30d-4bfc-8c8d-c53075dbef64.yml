@@ -1,0 +1,49 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: e4a70192-b30d-4bfc-8c8d-c53075dbef64
+  bundle: article
+  default_langcode: en
+  depends:
+    cd64feaa-5c5d-4b87-9761-445d0baab0bf: taxonomy_term
+    54003021-fae7-4272-8312-56cc9b756506: taxonomy_term
+    c13279f9-dd95-43a6-ab12-f2bdc95f1efb: file
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Webform email handlers and automation'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: cd64feaa-5c5d-4b87-9761-445d0baab0bf
+    -
+      entity: 54003021-fae7-4272-8312-56cc9b756506
+  field_image:
+    -
+      alt: 'Fuzzy Drupal character configuring Webform email automation at a desk.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: c13279f9-dd95-43a6-ab12-f2bdc95f1efb
+  body:
+    -
+      value: |-
+        <h2>Why Post-submission Automation Matters</h2>
+        <p>A form rarely ends when the user clicks submit. Most forms need to trigger something next, whether that is a confirmation email, a staff notification, a routed workflow, or a scheduled follow-up message. If that next step is unreliable, the form experience feels incomplete even if the submission itself succeeds.</p>
+        <p>Webform handlers make this practical inside Drupal. They let teams define what should happen after submission without forcing every project into custom module code for common notification and routing patterns.</p>
+        <h2>What Email Handlers Offer</h2>
+        <p>Email handlers can send acknowledgements to the submitter, alerts to staff, and messages shaped by tokenized submission data. Combined with scheduling or additional integration modules, they can support richer workflows that go well beyond a generic thank-you message.</p>
+        <p>The advantage is that the automation remains close to the form it belongs to. When a contributor reviews a Webform configuration, they can see not only the fields and validation, but also the actions that run when a response arrives. That keeps the feature understandable in one place.</p>
+        <h2>Operational Benefits for Drupal Teams</h2>
+        <p>A configured automation flow reduces manual handoffs. Support teams can be notified immediately, campaign teams can receive structured leads, and internal request forms can push the right information to the right inbox with less copy-and-paste work. That makes forms feel like part of a process instead of a dead-end collection point.</p>
+        <p>It also helps during maintenance. Because the automation is configuration-driven, teams can adjust recipients, conditions, and message behavior in development and move those changes through the same workflow they use for other Drupal configuration.</p>
+        <h2>The Practical Takeaway</h2>
+        <p>Handlers are one of the reasons Webform scales well from simple forms to serious operational forms. They let the site respond immediately and consistently when new data arrives.</p>
+        <p>For a recipe like Drupal Playground Webform Setup, including automation-oriented modules and examples gives contributors a much more realistic picture of how forms work in production.</p>
+      format: basic_html
+      summary: 'Email handlers and related automation let Webform do useful work after submission, from confirmations to staff notifications and scheduled follow-up.'

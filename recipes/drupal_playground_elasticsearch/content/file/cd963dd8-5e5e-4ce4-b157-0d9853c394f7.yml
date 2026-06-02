@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: cd963dd8-5e5e-4ce4-b157-0d9853c394f7
+  default_langcode: en
+default:
+  filename:
+    -
+      value: search-relevance-plush-ranking.png
+  uri:
+    -
+      value: 'public://search-relevance-plush-ranking.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2413628
+  status:
+    -
+      value: true

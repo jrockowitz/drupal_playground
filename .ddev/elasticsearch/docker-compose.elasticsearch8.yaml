@@ -1,0 +1,30 @@
+services:
+  elasticsearch:
+    container_name: "ddev-${DDEV_SITENAME}-elasticsearch"
+    hostname: ${DDEV_SITENAME}-elasticsearch
+    image: ${ELASTICSEARCH_DOCKER_IMAGE}
+    labels:
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: ${DDEV_APPROOT}
+    restart: "no"
+    ports:
+      - "9200"
+    environment:
+      - VIRTUAL_HOST=${DDEV_HOSTNAME}
+      - HTTP_EXPOSE=9200:9200
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - TAKE_FILE_OWNERSHIP=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - "elasticsearch:/usr/share/elasticsearch/data"
+      - "./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9200 >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  elasticsearch:
+    name: "ddev-${DDEV_SITENAME}_elasticsearch"

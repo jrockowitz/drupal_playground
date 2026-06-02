@@ -1,0 +1,314 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.trial.field_trial_age
+    - field.field.node.trial.field_trial_condition
+    - field.field.node.trial.field_trial_contact
+    - field.field.node.trial.field_trial_details
+    - field.field.node.trial.field_trial_eligibility
+    - field.field.node.trial.field_trial_full_title
+    - field.field.node.trial.field_trial_goal
+    - field.field.node.trial.field_trial_location
+    - field.field.node.trial.field_trial_phase
+    - field.field.node.trial.field_trial_sex
+    - field.field.node.trial.field_trial_status
+    - field.field.node.trial.field_trial_study_type
+    - field.field.node.trial.field_trial_summary
+    - field.field.node.trial.field_trial_title
+    - field.field.node.trial.field_trials_nct_id
+    - field.field.node.trial.field_trials_nct_url
+    - node.type.trial
+  module:
+    - custom_field
+    - link
+    - options
+    - text
+    - user
+id: node.trial.default
+targetEntityType: node
+bundle: trial
+mode: default
+content:
+  field_trial_full_title:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_trial_goal:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_trial_details:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_trial_eligibility:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_trial_phase:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_trial_status:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_trial_study_type:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_trial_sex:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_trial_age:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_trial_condition:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_trial_contact:
+    type: custom_formatter
+    label: above
+    settings:
+      fields:
+        name:
+          weight: 0
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: Name
+            prefix_suffix: false
+        role:
+          weight: 1
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: Role
+            prefix_suffix: false
+        phone:
+          weight: 2
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: Phone
+            prefix_suffix: false
+        phone_ext:
+          weight: 3
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: 'Phone Extension'
+            prefix_suffix: false
+        email:
+          weight: 4
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: Email
+            prefix_suffix: false
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_trial_location:
+    type: custom_table
+    label: above
+    settings:
+      sort_by: _delta
+      sort_order: asc
+      hide_empty: false
+      hide_header: false
+      fields:
+        facility:
+          weight: 0
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: Facility
+            prefix_suffix: false
+        city:
+          weight: 1
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: City
+            prefix_suffix: false
+        state:
+          weight: 2
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: State
+            prefix_suffix: false
+        zip:
+          weight: 3
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: ZIP
+            prefix_suffix: false
+        country:
+          weight: 4
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: Country
+            prefix_suffix: false
+        status:
+          weight: 5
+          format_type: string
+          wrappers:
+            field_wrapper_tag: ''
+            field_wrapper_classes: ''
+            field_tag: ''
+            field_classes: ''
+            label_tag: ''
+            label_classes: ''
+          formatter_settings:
+            key_label: label
+            label_display: above
+            field_label: Status
+            prefix_suffix: false
+    third_party_settings: {  }
+    weight: 11
+    region: content
+  field_trials_nct_id:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 12
+    region: content
+  field_trials_nct_url:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: '0'
+      target: '0'
+    third_party_settings: {  }
+    weight: 13
+    region: content
+hidden:
+  field_trial_summary: true
+  field_trial_title: true
+  links: true
+  trial_nct_id: true

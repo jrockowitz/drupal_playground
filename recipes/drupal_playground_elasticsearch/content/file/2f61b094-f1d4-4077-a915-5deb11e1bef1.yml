@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 2f61b094-f1d4-4077-a915-5deb11e1bef1
+  default_langcode: en
+default:
+  filename:
+    -
+      value: autocomplete-facets-spellcheck-plush.png
+  uri:
+    -
+      value: 'public://autocomplete-facets-spellcheck-plush.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2334125
+  status:
+    -
+      value: true

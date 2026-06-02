@@ -1,0 +1,35 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.trial.field_trial_summary
+id: node.trial.field_trial_summary.default
+label: 'Patient Summary Default'
+rule: llm_simple_string_long
+input_mode: token
+weight: 110
+worker_type: queue
+entity_type: node
+bundle: trial
+field_name: field_trial_summary
+edit_mode: false
+base_field: ''
+prompt: ''
+token: "Write one plain-language sentence for a clinical trial teaser for patients and caregivers.\n\nThe sentence must add useful information that is not already obvious from the title. Prefer mentioning who may be eligible when the source supports it. If eligibility is not useful or not available, mention another important detail such as the condition, treatment context, phase, or participation context.\n\nUse plain text only. Do not use HTML. Do not use markdown. Do not use quotation marks. Do not use bullet points. Do not apologize. Do not restate the task. Do not repeat the title.\n\nIf the information is empty, unusable, or too sparse, return only: Additional trial details are not yet available.\n\nPatient-friendly title if available: [node:field_trial_title:value]\nOfficial trial title: [node:clinical-trials-gov:BriefTitle]\nSummary: [node:clinical-trials-gov:BriefSummary]\nDescription: [node:clinical-trials-gov:DetailedDescription]\nEligibility: [node:clinical-trials-gov:EligibilityCriteria]"
+plugin_config:
+  automator_enabled: 1
+  automator_rule: llm_simple_string_long
+  automator_mode: token
+  automator_base_field: ''
+  automator_prompt: ''
+  automator_token: "Write one plain-language sentence for a clinical trial teaser for patients and caregivers.\n\nThe sentence must add useful information that is not already obvious from the title. Prefer mentioning who may be eligible when the source supports it. If eligibility is not useful or not available, mention another important detail such as the condition, treatment context, phase, or participation context.\n\nUse plain text only. Do not use HTML. Do not use markdown. Do not use quotation marks. Do not use bullet points. Do not apologize. Do not restate the task. Do not repeat the title.\n\nIf the information is empty, unusable, or too sparse, return only: Additional trial details are not yet available.\n\nPatient-friendly title if available: [node:field_trial_title:value]\nOfficial trial title: [node:clinical-trials-gov:BriefTitle]\nSummary: [node:clinical-trials-gov:BriefSummary]\nDescription: [node:clinical-trials-gov:DetailedDescription]\nEligibility: [node:clinical-trials-gov:EligibilityCriteria]"
+  automator_edit_mode: 0
+  automator_label: 'Patient Summary Default'
+  automator_weight: '110'
+  automator_worker_type: queue
+  automator_ai_provider: openai
+  automator_ai_model: gpt-5-nano
+  automator_configuration_max_completion_tokens: '384'
+  automator_configuration_reasoning_effort: low
+  automator_joiner: ''
+  automator_joiner_other: ''

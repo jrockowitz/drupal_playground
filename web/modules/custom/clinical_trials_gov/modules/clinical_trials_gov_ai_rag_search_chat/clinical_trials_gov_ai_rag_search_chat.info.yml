@@ -1,0 +1,8 @@
+name: "ClinicalTrials.gov AI RAG Search Chat"
+type: module
+description: "ClinicalTrials.gov overrides for the AI RAG Search Chat experience."
+package: ClinicalTrials.gov
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - clinical_trials_gov:clinical_trials_gov
+  - ai_rag_search_chat:ai_rag_search_chat

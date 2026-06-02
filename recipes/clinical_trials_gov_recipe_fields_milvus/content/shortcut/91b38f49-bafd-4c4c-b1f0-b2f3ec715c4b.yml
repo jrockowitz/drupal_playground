@@ -1,0 +1,18 @@
+_meta:
+  version: '1.0'
+  entity_type: shortcut
+  uuid: 91b38f49-bafd-4c4c-b1f0-b2f3ec715c4b
+  bundle: default
+  default_langcode: en
+default:
+  title:
+    -
+      value: 'AI Search'
+  weight:
+    -
+      value: -11
+  link:
+    -
+      uri: 'internal:/ai-search'
+      title: ''
+      options: {  }

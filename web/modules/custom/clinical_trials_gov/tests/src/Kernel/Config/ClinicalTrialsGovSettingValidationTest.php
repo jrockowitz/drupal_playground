@@ -1,0 +1,107 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\clinical_trials_gov\Kernel\Config;
+
+use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
+use PHPUnit\Framework\Attributes\Group;
+
+/**
+ * Kernel tests for ClinicalTrials.gov settings validation.
+ *
+ * @group clinical_trials_gov
+ */
+#[Group('clinical_trials_gov')]
+class ClinicalTrialsGovSettingValidationTest extends ClinicalTrialsGovTestBase {
+
+  /**
+   * The typed config manager.
+   */
+  protected TypedConfigManagerInterface $typedConfigManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = [
+    'migrate_plus',
+    'migrate_tools',
+    'system',
+    'user',
+  ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->installConfig('clinical_trials_gov');
+    $this->typedConfigManager = $this->container->get('config.typed');
+  }
+
+  /**
+   * Tests typed config validation accepts valid settings and rejects invalid ones.
+   */
+  public function testSettingsValidation(): void {
+    $typed_config = $this->typedConfigManager->createFromNameAndData('clinical_trials_gov.settings', [
+      'query' => '',
+      'query_paths' => [
+        'protocolSection.identificationModule.briefTitle',
+      ],
+      'title_path' => 'protocolSection.identificationModule.briefTitle',
+      'required_paths' => [
+        'protocolSection.identificationModule.nctId',
+        'protocolSection.identificationModule.briefTitle',
+        'protocolSection.descriptionModule.briefSummary',
+        'protocolSection.conditionsModule.conditions',
+        'protocolSection.statusModule.overallStatus',
+        'protocolSection.eligibilityModule.eligibilityCriteria',
+        'protocolSection.contactsLocationsModule.overallOfficials',
+      ],
+      'type' => 'trial',
+      'field_prefix' => 'trial',
+      'view_display_root' => 'details',
+      'view_display_component' => 'visible',
+      'view_display_field_group' => 'details',
+      'form_display_root' => 'details',
+      'form_display_component' => 'visible',
+      'form_display_field_group' => 'details',
+      'fields' => [],
+    ]);
+
+    // Check that the default metadata paths are accepted.
+    $this->assertCount(0, $typed_config->validate());
+    $typed_config = $this->typedConfigManager->createFromNameAndData('clinical_trials_gov.settings', [
+      'query' => '',
+      'query_paths' => [
+        'protocolSection.identificationModule.notARealPath',
+      ],
+      'title_path' => 'protocolSection.identificationModule.notARealPath',
+      'required_paths' => [
+        'protocolSection.identificationModule.nctId',
+        'protocolSection.identificationModule.alsoNotReal',
+      ],
+      'type' => 'trial',
+      'field_prefix' => 'trial',
+      'view_display_root' => 'invalid',
+      'view_display_component' => 'invalid',
+      'view_display_field_group' => 'invalid',
+      'form_display_root' => 'invalid',
+      'form_display_component' => 'invalid',
+      'form_display_field_group' => 'invalid',
+      'fields' => [],
+    ]);
+
+    $violations = iterator_to_array($typed_config->validate());
+    $invalid_values = array_map(static fn ($violation): string => (string) $violation->getInvalidValue(), $violations);
+
+    // Check that invalid query, title, required metadata paths, and display options are rejected.
+    $this->assertCount(9, $violations);
+    $this->assertContains('protocolSection.identificationModule.notARealPath', $invalid_values);
+    $this->assertContains('protocolSection.identificationModule.notARealPath', $invalid_values);
+    $this->assertContains('protocolSection.identificationModule.alsoNotReal', $invalid_values);
+    $this->assertContains('invalid', $invalid_values);
+  }
+
+}

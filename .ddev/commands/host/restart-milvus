@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker restart ddev-drupal-playground-milvus >/dev/null

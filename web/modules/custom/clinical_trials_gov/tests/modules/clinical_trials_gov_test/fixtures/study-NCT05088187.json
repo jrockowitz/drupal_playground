@@ -1,0 +1,241 @@
+{
+    "protocolSection": {
+        "identificationModule": {
+            "nctId": "NCT05088187",
+            "orgStudyIdInfo": {
+                "id": "CogniThyr"
+            },
+            "organization": {
+                "fullName": "Karolinska University Hospital",
+                "class": "OTHER"
+            },
+            "briefTitle": "Cognition and QoL After Thyroid Surgery",
+            "officialTitle": "Longitudinal Evaluation of Objective Cognitive Function and Quality of Life in Patients Undergoing Surgery for Malignant and Benign Thyroid Nodules"
+        },
+        "statusModule": {
+            "statusVerifiedDate": "2023-01",
+            "overallStatus": "RECRUITING",
+            "expandedAccessInfo": {
+                "hasExpandedAccess": false
+            },
+            "startDateStruct": {
+                "date": "2023-01-17",
+                "type": "ACTUAL"
+            },
+            "primaryCompletionDateStruct": {
+                "date": "2023-11-01",
+                "type": "ESTIMATED"
+            },
+            "completionDateStruct": {
+                "date": "2026-11-01",
+                "type": "ESTIMATED"
+            },
+            "studyFirstSubmitDate": "2021-10-11",
+            "studyFirstSubmitQcDate": "2021-10-11",
+            "studyFirstPostDateStruct": {
+                "date": "2021-10-21",
+                "type": "ACTUAL"
+            },
+            "lastUpdateSubmitDate": "2023-01-16",
+            "lastUpdatePostDateStruct": {
+                "date": "2023-01-18",
+                "type": "ACTUAL"
+            }
+        },
+        "sponsorCollaboratorsModule": {
+            "responsibleParty": {
+                "type": "PRINCIPAL_INVESTIGATOR",
+                "investigatorFullName": "Renske Altena",
+                "investigatorTitle": "MD PhD",
+                "investigatorAffiliation": "Karolinska University Hospital"
+            },
+            "leadSponsor": {
+                "name": "Karolinska University Hospital",
+                "class": "OTHER"
+            },
+            "collaborators": [
+                {
+                    "name": "The Netherlands Cancer Institute",
+                    "class": "OTHER"
+                }
+            ]
+        },
+        "oversightModule": {
+            "oversightHasDmc": false,
+            "isFdaRegulatedDrug": false,
+            "isFdaRegulatedDevice": false
+        },
+        "descriptionModule": {
+            "briefSummary": "The development of cognitive dysfunction can profoundly affect HR-QoL as well as the possibility of societal participation and ability to work, and thereby relevantly impacts prospects for cancer survivorship. The aim of the study is to obtain improved understanding of the scope and magnitude of objective cognitive dysfunction in DTC survivors, and its relation to subjective cognitive dysfunction, thyroid hormone levels, physical activity and HRQoL. This is done in a prospective study where patients operated for a thyroid nodule (Bethesda IV-VI, i.e., benign \\[goitre with nodule and fibroadenomas\\], low-risk DTC and intermediate-high risk DTC) are included and asked to serially perform online neuropsychological testing as well as to complete questionnaires related to HR-QoL, physical activity and additional psychological and physical complaints. Blood is analysed for levels of thyroid hormones and systemic inflammation.",
+            "detailedDescription": "The primary aim of this study is to prospectively assess objective cognitive functioning in patients undergoing thyroid surgery for different indications by means of an online neuropsychological test, the Amsterdam Cognition Scale (ACS).\n\nThree patient groups are defined; 1) patients with follicular adenomas, 2) patients with extreme low-risk differentiated thyroid cancer (DTC; pT1a and pN0/x tumours), 3) patients in all other DTC risk groups (i.e., low, intermediate and high-risk). The primary comparison confers to groups 1 and 3."
+        },
+        "conditionsModule": {
+            "conditions": [
+                "Thyroid Nodule",
+                "Thyroid Cancer",
+                "Cognitive Decline",
+                "Survivorship",
+                "Symptoms, Cognitive"
+            ]
+        },
+        "designModule": {
+            "studyType": "OBSERVATIONAL",
+            "patientRegistry": false,
+            "designInfo": {
+                "observationalModel": "COHORT",
+                "timePerspective": "PROSPECTIVE"
+            },
+            "enrollmentInfo": {
+                "count": 320,
+                "type": "ESTIMATED"
+            }
+        },
+        "outcomesModule": {
+            "primaryOutcomes": [
+                {
+                    "measure": "Objective cognitive functioning by means of an online neuropsychological test (Amsterdam Cognition Scale, ACS)",
+                    "description": "change in total score on ACS",
+                    "timeFrame": "pre-surgery to 12 months post-surgery"
+                }
+            ]
+        },
+        "eligibilityModule": {
+            "eligibilityCriteria": "Inclusion Criteria:\n\n* Age \\>18 years old, indication for surgery because of a thyroid nodule Bethesda IV-VI\n* Able to read and understand the Swedish language\n* Access to desktop computer or laptop with internet connection\n* Able and willing to provide written informed consent\n\nExclusion Criteria:\n\n* A previous diagnosis of (auto-immune) hypothyroidism\n* A previous cancer diagnosis (excluding basal cell cancer of the skin)\n* Indications for surgery other than (solely) a thyroid nodule (i.e., concomitant Graves)\n* A diagnosis of medullary and anaplastic thyroid cancer",
+            "healthyVolunteers": false,
+            "sex": "ALL",
+            "minimumAge": "18 Years",
+            "stdAges": [
+                "ADULT",
+                "OLDER_ADULT"
+            ],
+            "studyPopulation": "All consecutive patients who are visiting the Medical Unit Endocrine Tumours at the Karolinska University Hospital and scheduled for thyroid surgery for Bethesda IV-VI thyroid lesions, will be informed about the possibility to participate in this study.",
+            "samplingMethod": "PROBABILITY_SAMPLE"
+        },
+        "contactsLocationsModule": {
+            "centralContacts": [
+                {
+                    "name": "Renske Altena, MD PhD",
+                    "role": "CONTACT",
+                    "phone": "+46724698719",
+                    "email": "renske.altena@ki.se"
+                },
+                {
+                    "name": "Cia Ihre Lundgren, MD Ass Professor",
+                    "role": "CONTACT"
+                }
+            ],
+            "overallOfficials": [
+                {
+                    "name": "Renske Altena, MD PhD",
+                    "affiliation": "Karolinska Institutet",
+                    "role": "PRINCIPAL_INVESTIGATOR"
+                }
+            ],
+            "locations": [
+                {
+                    "facility": "Medical Unit Breast-, Endocrine tumors and Sarcoma",
+                    "status": "RECRUITING",
+                    "city": "Stockholm",
+                    "zip": "17176",
+                    "country": "Sweden",
+                    "contacts": [
+                        {
+                            "name": "Renske Altena, MD PhD",
+                            "role": "CONTACT",
+                            "phone": "+46812375518",
+                            "email": "renske.altena@ki.se"
+                        }
+                    ],
+                    "geoPoint": {
+                        "lat": 59.32938,
+                        "lon": 18.06871
+                    }
+                }
+            ]
+        },
+        "ipdSharingStatementModule": {
+            "ipdSharing": "UNDECIDED",
+            "description": "We plan to share IPD upon request directly to the investigators"
+        }
+    },
+    "derivedSection": {
+        "miscInfoModule": {
+            "versionHolder": "2026-04-24"
+        },
+        "conditionBrowseModule": {
+            "meshes": [
+                {
+                    "id": "D016606",
+                    "term": "Thyroid Nodule"
+                },
+                {
+                    "id": "D013964",
+                    "term": "Thyroid Neoplasms"
+                },
+                {
+                    "id": "D060825",
+                    "term": "Cognitive Dysfunction"
+                },
+                {
+                    "id": "D019954",
+                    "term": "Neurobehavioral Manifestations"
+                }
+            ],
+            "ancestors": [
+                {
+                    "id": "D004701",
+                    "term": "Endocrine Gland Neoplasms"
+                },
+                {
+                    "id": "D009371",
+                    "term": "Neoplasms by Site"
+                },
+                {
+                    "id": "D009369",
+                    "term": "Neoplasms"
+                },
+                {
+                    "id": "D006258",
+                    "term": "Head and Neck Neoplasms"
+                },
+                {
+                    "id": "D004700",
+                    "term": "Endocrine System Diseases"
+                },
+                {
+                    "id": "D013959",
+                    "term": "Thyroid Diseases"
+                },
+                {
+                    "id": "D003072",
+                    "term": "Cognition Disorders"
+                },
+                {
+                    "id": "D019965",
+                    "term": "Neurocognitive Disorders"
+                },
+                {
+                    "id": "D001523",
+                    "term": "Mental Disorders"
+                },
+                {
+                    "id": "D009461",
+                    "term": "Neurologic Manifestations"
+                },
+                {
+                    "id": "D009422",
+                    "term": "Nervous System Diseases"
+                },
+                {
+                    "id": "D012816",
+                    "term": "Signs and Symptoms"
+                },
+                {
+                    "id": "D013568",
+                    "term": "Pathological Conditions, Signs and Symptoms"
+                }
+            ]
+        }
+    },
+    "hasResults": false
+}

@@ -5,3 +5,5 @@ recipes:
 install:
   - devel
   - devel_generate
+config:
+  strict: false

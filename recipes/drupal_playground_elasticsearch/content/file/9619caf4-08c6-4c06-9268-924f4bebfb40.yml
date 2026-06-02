@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 9619caf4-08c6-4c06-9268-924f4bebfb40
+  default_langcode: en
+default:
+  filename:
+    -
+      value: elasticsearch-connector-plush-workbench.png
+  uri:
+    -
+      value: 'public://elasticsearch-connector-plush-workbench.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2287537
+  status:
+    -
+      value: true

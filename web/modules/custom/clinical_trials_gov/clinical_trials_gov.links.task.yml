@@ -1,0 +1,44 @@
+clinical_trials_gov.index:
+  route_name: clinical_trials_gov.index
+  base_route: clinical_trials_gov.index
+  title: 'Overview'
+
+clinical_trials_gov.find:
+  route_name: clinical_trials_gov.find
+  base_route: clinical_trials_gov.index
+  title: '1. Find'
+
+clinical_trials_gov.review:
+  route_name: clinical_trials_gov.review
+  base_route: clinical_trials_gov.index
+  title: '2. Review'
+
+clinical_trials_gov.review.studies:
+  route_name: clinical_trials_gov.review
+  parent_id: clinical_trials_gov.review
+  title: 'Studies'
+
+clinical_trials_gov.review.metadata:
+  route_name: clinical_trials_gov.review.metadata
+  parent_id: clinical_trials_gov.review
+  title: 'Metadata'
+
+clinical_trials_gov.configure:
+  route_name: clinical_trials_gov.configure
+  base_route: clinical_trials_gov.index
+  title: '3. Configure'
+
+clinical_trials_gov.import:
+  route_name: clinical_trials_gov.import
+  base_route: clinical_trials_gov.index
+  title: '4. Import'
+
+clinical_trials_gov.manage:
+  route_name: clinical_trials_gov.manage
+  base_route: clinical_trials_gov.index
+  title: '5. Manage'
+
+clinical_trials_gov.settings:
+  route_name: clinical_trials_gov.settings
+  base_route: clinical_trials_gov.index
+  title: 'Settings'

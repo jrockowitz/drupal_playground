@@ -1,0 +1,10 @@
+{
+    "name": "drupal/clinical_trials_gov_recipe_content",
+    "description": "Installs shared ClinicalTrials.gov content used by search and chat recipes.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/core": "^11"
+    }
+}

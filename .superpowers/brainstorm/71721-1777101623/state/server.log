@@ -1,0 +1,4 @@
+{"type":"server-started","port":53185,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:53185","screen_dir":"/Users/rockowij/Sites/drupal_playground/.superpowers/brainstorm/71721-1777101623/content","state_dir":"/Users/rockowij/Sites/drupal_playground/.superpowers/brainstorm/71721-1777101623/state"}
+{"type":"screen-added","file":"/Users/rockowij/Sites/drupal_playground/.superpowers/brainstorm/71721-1777101623/content/study-detail-structure.html"}
+{"type":"screen-added","file":"/Users/rockowij/Sites/drupal_playground/.superpowers/brainstorm/71721-1777101623/content/waiting-1.html"}
+{"type":"server-stopped","reason":"idle timeout"}

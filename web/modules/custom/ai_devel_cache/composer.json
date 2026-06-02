@@ -1,0 +1,15 @@
+{
+    "name": "drupal/ai_devel_cache",
+    "description": "Transparently caches AI provider responses on the local filesystem to avoid repeated provider costs during development.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.drupal.org/project/ai_devel_cache",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/ai_devel_cache",
+        "source": "https://git.drupalcode.org/project/ai_devel_cache"
+    },
+    "require": {
+        "php": ">=8.3",
+        "drupal/ai": "^1.0"
+    }
+}

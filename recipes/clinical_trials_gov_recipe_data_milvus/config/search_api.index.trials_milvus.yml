@@ -1,0 +1,166 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.page.body
+    - field.field.node.trial.trial_desc_mod
+    - field.field.node.trial.trial_cond_mod
+    - field.field.node.trial.trial_nct_id
+    - field.field.node.trial.trial_overall_status
+    - field.field.node.trial.trial_phase
+    - field.field.node.trial.trial_elig_mod
+    - field.field.node.trial.trial_study_type
+    - field.storage.node.body
+    - node.type.page
+    - node.type.trial
+    - search_api.server.trials_milvus
+  module:
+    - node
+    - search_api
+id: trials_milvus
+name: 'Clinical Trials Milvus'
+description: 'Clinical Trials semantic search index powered by Milvus.'
+read_only: false
+field_settings:
+  body:
+    label: Body
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    dependencies:
+      config:
+        - field.field.node.page.body
+        - field.storage.node.body
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    dependencies:
+      module:
+        - node
+  search_api_url:
+    label: URI
+    datasource_id: null
+    property_path: search_api_url
+    type: string
+    configuration:
+      absolute: true
+  trial_brief_summary:
+    label: 'Brief summary'
+    datasource_id: 'entity:node'
+    property_path: 'trial_desc_mod:brief_summary'
+    type: text
+    dependencies:
+      config:
+        - field.field.node.trial.trial_desc_mod
+  trial_cond:
+    label: 'Condition/Disease'
+    datasource_id: 'entity:node'
+    property_path: trial_cond
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_cond_mod
+  trial_keyword:
+    label: Keyword
+    datasource_id: 'entity:node'
+    property_path: trial_keyword
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_cond_mod
+  trial_nct_id:
+    label: 'NCT ID'
+    datasource_id: 'entity:node'
+    property_path: trial_nct_id
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_nct_id
+  trial_overall_status:
+    label: 'Overall status'
+    datasource_id: 'entity:node'
+    property_path: trial_overall_status
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_overall_status
+  trial_phase:
+    label: Phase
+    datasource_id: 'entity:node'
+    property_path: trial_phase
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_phase
+  trial_sex:
+    label: Sex
+    datasource_id: 'entity:node'
+    property_path: 'trial_elig_mod:sex'
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_elig_mod
+  trial_std_age:
+    label: 'Age group'
+    datasource_id: 'entity:node'
+    property_path: trial_std_age
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_elig_mod
+  trial_study_type:
+    label: 'Study type'
+    datasource_id: 'entity:node'
+    property_path: trial_study_type
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.trial_study_type
+processor_settings:
+  add_url:
+    weights:
+      preprocess_index: -30
+  clinical_trials_gov_flattened_custom_field_values:
+    mappings:
+      -
+        property_path: trial_cond
+        field_name: trial_cond_mod
+        column_name: cond
+      -
+        property_path: trial_keyword
+        field_name: trial_cond_mod
+        column_name: keyword
+      -
+        property_path: trial_std_age
+        field_name: trial_elig_mod
+        column_name: std_age
+    weights:
+      add_properties: 0
+  content_access:
+    weights:
+      preprocess_index: -6
+      preprocess_query: -4
+  entity_status:
+    weights:
+      preprocess_index: -10
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: false
+      selected:
+        page: page
+        trial: trial
+    languages:
+      default: true
+      selected: {  }
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  cron_limit: 50
+  delete_on_fail: true
+  index_directly: false
+  track_changes_in_references: true
+server: trials_milvus

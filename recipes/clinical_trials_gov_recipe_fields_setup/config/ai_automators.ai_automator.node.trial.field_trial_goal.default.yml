@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.trial.field_trial_goal
+id: node.trial.field_trial_goal.default
+label: 'Patient Goal Default'
+rule: llm_simple_text_long
+input_mode: token
+weight: 100
+worker_type: queue
+entity_type: node
+bundle: trial
+field_name: field_trial_goal
+edit_mode: false
+base_field: ''
+prompt: ''
+token: "Rewrite the following clinical trial summary in plain language for patients and caregivers.\n\nExplain what the trial is studying and why it matters. Use short sentences.\n\nWrite a single patient-friendly result as HTML content only. The stored value should be an HTML fragment such as <p>...</p>. Use 1 to 3 short paragraphs. Do not return a full HTML document. Do not use markdown. Do not use code fences. Do not add explanations before or after the content. Do not apologize. Do not restate the instructions.\n\nIf the summary is empty, unusable, or missing, return this HTML fragment only:\n<p>Trial summary details are not yet available.</p>\n\nSummary: [node:clinical-trials-gov:BriefSummary]"
+plugin_config:
+  automator_enabled: 1
+  automator_rule: llm_simple_text_long
+  automator_mode: token
+  automator_base_field: ''
+  automator_prompt: ''
+  automator_token: "Rewrite the following clinical trial summary in plain language for patients and caregivers.\n\nExplain what the trial is studying and why it matters. Use short sentences.\n\nWrite a single patient-friendly result as HTML content only. The stored value should be an HTML fragment such as <p>...</p>. Use 1 to 3 short paragraphs. Do not return a full HTML document. Do not use markdown. Do not use code fences. Do not add explanations before or after the content. Do not apologize. Do not restate the instructions.\n\nIf the summary is empty, unusable, or missing, return this HTML fragment only:\n<p>Trial summary details are not yet available.</p>\n\nSummary: [node:clinical-trials-gov:BriefSummary]"
+  automator_edit_mode: 0
+  automator_label: 'Patient Goal Default'
+  automator_weight: '100'
+  automator_worker_type: queue
+  automator_ai_provider: openai
+  automator_ai_model: gpt-5-nano
+  automator_configuration_max_completion_tokens: '1024'
+  automator_configuration_reasoning_effort: low
+  automator_joiner: ''
+  automator_joiner_other: ''
+  automator_use_text_format: basic_html

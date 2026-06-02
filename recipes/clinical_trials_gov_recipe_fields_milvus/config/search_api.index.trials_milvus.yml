@@ -1,0 +1,176 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.trial.field_trial_age
+    - field.field.node.trial.field_trial_condition
+    - field.field.node.trial.field_trial_details
+    - field.field.node.trial.field_trial_eligibility
+    - field.field.node.trial.field_trial_full_title
+    - field.field.node.trial.field_trial_goal
+    - field.field.node.trial.field_trial_phase
+    - field.field.node.trial.field_trial_sex
+    - field.field.node.trial.field_trial_status
+    - field.field.node.trial.field_trial_study_type
+    - field.field.node.trial.field_trial_summary
+    - field.field.node.trial.field_trial_title
+    - field.field.node.trial.field_trials_nct_id
+    - field.field.node.trial.field_trials_nct_url
+    - node.type.trial
+    - search_api.server.trials_milvus
+  module:
+    - node
+    - search_api
+id: trials_milvus
+name: 'Clinical Trials Milvus'
+description: 'Clinical Trials semantic search index powered by Milvus.'
+read_only: false
+field_settings:
+  field_trial_goal:
+    label: Goal
+    datasource_id: 'entity:node'
+    property_path: field_trial_goal
+    type: text
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_goal
+  field_trial_details:
+    label: Details
+    datasource_id: 'entity:node'
+    property_path: field_trial_details
+    type: text
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_details
+  field_trial_eligibility:
+    label: Eligibility
+    datasource_id: 'entity:node'
+    property_path: field_trial_eligibility
+    type: text
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_eligibility
+  field_trial_summary:
+    label: Summary
+    datasource_id: 'entity:node'
+    property_path: field_trial_summary
+    type: text
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_summary
+  field_trial_full_title:
+    label: 'Full title'
+    datasource_id: 'entity:node'
+    property_path: field_trial_full_title
+    type: text
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_full_title
+  field_trial_title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: field_trial_title
+    type: text
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_title
+  search_api_url:
+    label: URI
+    datasource_id: null
+    property_path: search_api_url
+    type: string
+    configuration:
+      absolute: true
+  field_trial_condition:
+    label: 'Condition/Disease'
+    datasource_id: 'entity:node'
+    property_path: field_trial_condition
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_condition
+  field_trials_nct_id:
+    label: 'NCT ID'
+    datasource_id: 'entity:node'
+    property_path: field_trials_nct_id
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trials_nct_id
+  field_trial_status:
+    label: 'Overall status'
+    datasource_id: 'entity:node'
+    property_path: field_trial_status
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_status
+  field_trial_phase:
+    label: Phase
+    datasource_id: 'entity:node'
+    property_path: field_trial_phase
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_phase
+  field_trial_sex:
+    label: Sex
+    datasource_id: 'entity:node'
+    property_path: field_trial_sex
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_sex
+  field_trial_age:
+    label: 'Age group'
+    datasource_id: 'entity:node'
+    property_path: field_trial_age
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_age
+  field_trial_study_type:
+    label: 'Study type'
+    datasource_id: 'entity:node'
+    property_path: field_trial_study_type
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trial_study_type
+  field_trials_nct_url:
+    label: 'ClinicalTrials.gov URL'
+    datasource_id: 'entity:node'
+    property_path: 'field_trials_nct_url:uri'
+    type: string
+    dependencies:
+      config:
+        - field.field.node.trial.field_trials_nct_url
+processor_settings:
+  add_url:
+    weights:
+      preprocess_index: -30
+  content_access:
+    weights:
+      preprocess_index: -6
+      preprocess_query: -4
+  entity_status:
+    weights:
+      preprocess_index: -10
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: false
+      selected:
+        trial: trial
+    languages:
+      default: true
+      selected: {  }
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  cron_limit: 50
+  delete_on_fail: true
+  index_directly: false
+  track_changes_in_references: true
+server: trials_milvus

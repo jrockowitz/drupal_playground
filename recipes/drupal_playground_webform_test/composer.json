@@ -1,0 +1,10 @@
+{
+    "name": "drupal/drupal_playground_webform_test",
+    "description": "Installs Webform test modules on top of the Drupal Playground Webform setup recipe.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/webform": "*"
+    }
+}

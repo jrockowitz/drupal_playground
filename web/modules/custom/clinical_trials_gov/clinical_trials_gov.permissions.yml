@@ -1,0 +1,4 @@
+administer clinical_trials_gov:
+  title: 'Administer ClinicalTrials.gov'
+  description: 'Configure and run the ClinicalTrials.gov import wizard.'
+  restrict access: true

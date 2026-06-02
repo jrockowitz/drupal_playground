@@ -1,0 +1,49 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 00a3cb4b-0467-4a3a-bd15-ae65bf474208
+  bundle: article
+  default_langcode: en
+  depends:
+    cd64feaa-5c5d-4b87-9761-445d0baab0bf: taxonomy_term
+    8a87c4d8-1352-4777-b276-9b2159056d09: taxonomy_term
+    a07e1738-0af1-4fb1-b3b4-8791608f41f8: file
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'Building forms with Drupal Webform'
+  promote:
+    -
+      value: true
+  field_tags:
+    -
+      entity: cd64feaa-5c5d-4b87-9761-445d0baab0bf
+    -
+      entity: 8a87c4d8-1352-4777-b276-9b2159056d09
+  field_image:
+    -
+      alt: 'Fuzzy Drupal character building a Webform at a desktop computer in a tidy office.'
+      title: ''
+      width: 1254
+      height: 1254
+      entity: a07e1738-0af1-4fb1-b3b4-8791608f41f8
+  body:
+    -
+      value: |-
+        <h2>Why Webform Is a Foundation Module</h2>
+        <p>Drupal Webform is one of the most practical modules in the ecosystem because it turns form building into a site-building task instead of a repeated custom development task. Teams can create contact forms, registrations, applications, surveys, and internal workflow forms from the same interface. That flexibility matters because most Drupal sites need more than one form, and each form tends to evolve as content, operations, and user expectations change.</p>
+        <p>Instead of treating every new form like a standalone build, Webform gives editors and site builders a structured place to define elements, validation, confirmation behavior, access, and submission handling. The result is a workflow that feels native to Drupal. Fields, displays, permissions, and integrations can be composed in ways that are easier to review and maintain over time.</p>
+        <h2>How the Builder Helps Teams Move Faster</h2>
+        <p>The builder interface makes it possible to assemble useful forms quickly. Text fields, select lists, file uploads, addresses, radios, checkboxes, and more advanced composite elements can be arranged without writing a bespoke form class for every use case. That makes Webform a strong fit for teams that need to iterate with editors or non-developer stakeholders.</p>
+        <p>Because the builder is configuration-driven, the form definition can live alongside the project in version control. A team can refine labels, defaults, handlers, and structure in development, then move those changes through normal configuration workflows. That keeps form work visible and repeatable instead of hiding it in ad hoc production edits.</p>
+        <h2>What It Looks Like in Drupal Playground</h2>
+        <p>In Drupal Playground, the Webform setup recipe installs the main builder module plus a broad set of example and integration modules. That makes the site useful as a learning environment as well as a starting point for real experiments. You can inspect example forms, compare element choices, and see how the Webform UI fits into a typical Drupal site.</p>
+        <p>For a new team member, that sort of prepared environment is valuable. It shortens the distance between installing the site and understanding what Webform can actually do. Instead of reading documentation in the abstract, they can open the builder, review a form, make a change, and submit it.</p>
+        <h2>The Practical Takeaway</h2>
+        <p>Webform works best when teams think of it as shared infrastructure for collecting structured information. It is not limited to a contact form. It can support editorial workflows, event intake, campaign landing pages, internal requests, and customer feedback with the same core toolset.</p>
+        <p>That is why adding Webform to a playground recipe makes sense. It gives Drupal contributors a realistic form platform to explore and extend, while still staying inside a familiar configuration-first Drupal workflow.</p>
+      format: basic_html
+      summary: 'Drupal Webform gives teams a powerful builder for creating structured forms, collecting data, and shipping form experiences without custom code for every field.'

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset name="ai_devel_cache">
+  <description>PHP CodeSniffer configuration for the AI Devel Cache module.</description>
+
+  <file>.</file>
+
+  <arg name="extensions" value="php,module,install,inc,yml"/>
+  <arg name="cache" value=".phpcs-cache"/>
+  <arg value="sp"/>
+
+  <exclude-pattern>vendor/*</exclude-pattern>
+  <exclude-pattern>node_modules/*</exclude-pattern>
+
+  <rule ref="Drupal"/>
+  <rule ref="DrupalPractice"/>
+</ruleset>

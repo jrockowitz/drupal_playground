@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: f407cc2f-93e0-4121-89ba-9ca55f5b03e9
+  default_langcode: en
+default:
+  filename:
+    -
+      value: webform-accessibility-drupal-plush-mobile.png
+  uri:
+    -
+      value: 'public://webform-accessibility-drupal-plush-mobile.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2227158
+  status:
+    -
+      value: true

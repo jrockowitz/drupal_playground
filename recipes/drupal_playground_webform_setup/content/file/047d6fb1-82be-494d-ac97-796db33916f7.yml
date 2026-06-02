@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: file
+  uuid: 047d6fb1-82be-494d-ac97-796db33916f7
+  default_langcode: en
+default:
+  filename:
+    -
+      value: webform-integrations-drupal-plush-coworking.png
+  uri:
+    -
+      value: 'public://webform-integrations-drupal-plush-coworking.png'
+  filemime:
+    -
+      value: image/png
+  filesize:
+    -
+      value: 2167220
+  status:
+    -
+      value: true

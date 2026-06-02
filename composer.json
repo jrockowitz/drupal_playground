@@ -17,12 +17,10 @@
     "require": {
         "composer/installers": "^2.3",
         "cweagans/composer-patches": "^2",
-        "drupal/bluecheese": "^2.0",
         "drupal/core-composer-scaffold": "^11.0",
         "drupal/core-project-message": "^11.0",
         "drupal/core-recipe-unpack": "^11.0",
         "drupal/core-recommended": "^11.0",
-        "drupal/webform": "*",
         "drush/drush": "^13.7",
         "wikimedia/composer-merge-plugin": "^2.1"
     },
@@ -43,6 +41,14 @@
             "wikimedia/composer-merge-plugin": true
         },
         "sort-packages": true
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "cd web/core; corepack enable; yarn install"
+        ],
+        "post-update-cmd": [
+            "cd web/core; corepack enable; yarn install"
+        ]
     },
     "extra": {
         "drupal-scaffold": {
@@ -107,14 +113,26 @@
             ]
         },
         "composer-exit-on-patch-failure": false,
+        "patches": {
+            "drupal/ai_rag_search_chat": [
+                {
+                    "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",
+                    "url": "patches/drupal/ai_rag_search_chat-multi-value-excerpts.patch"
+                }
+            ]
+        },
         "patchLevel": {
             "drupal/core": "-p2"
         },
         "merge-plugin": {
             "include": [
+                "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
+                "web/modules/custom/clinical_trials_gov/composer.json",
+                "web/modules/sandbox/ai_schemadotorg_jsonld/composer.json",
                 "web/modules/sandbox/schemadotorg/composer.libraries.json",
+                "web/modules/sandbox/webform/composer.json",
                 "web/modules/sandbox/webform/composer.libraries.json"
             ],
             "merge-extra": true,
@@ -124,6 +142,7 @@
     "require-dev": {
         "behat/mink": "^1.13",
         "drupal/core-dev": "^11",
-        "phpunit/phpunit": "^11.5.50"
+        "phpunit/phpunit": "^11.5.50",
+        "rector/rector": "^2.4"
     }
 }

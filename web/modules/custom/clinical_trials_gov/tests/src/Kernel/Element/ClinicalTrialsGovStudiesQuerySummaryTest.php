@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\clinical_trials_gov\Kernel\Element;
+
+use Drupal\clinical_trials_gov\Element\ClinicalTrialsGovStudiesQuerySummary;
+use Drupal\Tests\clinical_trials_gov\Kernel\ClinicalTrialsGovTestBase;
+use PHPUnit\Framework\Attributes\Group;
+
+/**
+ * Kernel tests for the ClinicalTrialsGovStudiesQuerySummary render element.
+ *
+ * @group clinical_trials_gov
+ */
+#[Group('clinical_trials_gov')]
+class ClinicalTrialsGovStudiesQuerySummaryTest extends ClinicalTrialsGovTestBase {
+
+  /**
+   * Tests the studies query summary render element.
+   */
+  public function testRenderElementSummary(): void {
+    $build = ClinicalTrialsGovStudiesQuerySummary::preRenderSummary([
+      '#type' => 'clinical_trials_gov_studies_query_summary',
+      '#query' => 'filter.overallStatus=RECRUITING|COMPLETED&query.cond=cancer&unknown.parameter=custom',
+    ]);
+
+    // Check that known parameters render in the defined query order.
+    $this->assertCount(3, $build['#rows']);
+    $this->assertSame('container', $build['#rows'][0][0]['data']['#type']);
+    $this->assertSame('Condition or disease', (string) $build['#rows'][0][0]['data']['title']['#markup']);
+    $this->assertSame('Overall status', (string) $build['#rows'][1][0]['data']['title']['#markup']);
+
+    // Check that the title and raw key both render in the first column.
+    $this->assertSame('query.cond', $build['#rows'][0][0]['data']['key']['#plain_text']);
+
+    // Check that multi-value parameters render as a readable list.
+    $this->assertSame('RECRUITING, COMPLETED', $build['#rows'][1][1]);
+
+    // Check that unknown parameters fall back to the raw key.
+    $this->assertSame('unknown.parameter', $build['#rows'][2][0]['data']['key']['#plain_text']);
+    $this->assertSame('Unknown parameter', (string) $build['#rows'][2][0]['data']['fallback']['#markup']);
+    $this->assertSame('custom', $build['#rows'][2][1]);
+  }
+
+}

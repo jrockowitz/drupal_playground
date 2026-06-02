@@ -1,0 +1,166 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\clinical_trials_gov\Unit;
+
+use Drupal\clinical_trials_gov\ClinicalTrialsGovNames;
+use Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
+
+/**
+ * Unit tests for ClinicalTrialsGovNames.
+ *
+ * @coversDefaultClass \Drupal\clinical_trials_gov\ClinicalTrialsGovNames
+ * @group clinical_trials_gov
+ */
+#[Group('clinical_trials_gov')]
+class ClinicalTrialsGovNamesTest extends UnitTestCase {
+
+  /**
+   * The mocked ClinicalTrials.gov study manager.
+   *
+   * @var \Drupal\clinical_trials_gov\ClinicalTrialsGovStudyManagerInterface&\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected ClinicalTrialsGovStudyManagerInterface|MockObject $studyManager;
+
+  /**
+   * The names service under test.
+   */
+  protected ClinicalTrialsGovNames $names;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $this->studyManager = $this->createMock(ClinicalTrialsGovStudyManagerInterface::class);
+    $config_factory = $this->createMock(ConfigFactoryInterface::class);
+    $config = $this->getMockBuilder(ImmutableConfig::class)
+      ->disableOriginalConstructor()
+      ->onlyMethods(['get'])
+      ->getMock();
+    $config
+      ->method('get')
+      ->with('field_prefix')
+      ->willReturn('trial_version_holder');
+    $config_factory
+      ->method('get')
+      ->with('clinical_trials_gov.settings')
+      ->willReturn($config);
+
+    $this->names = new ClinicalTrialsGovNames($this->studyManager, $config_factory);
+  }
+
+  /**
+   * Tests field names are normalized from ClinicalTrials.gov pieces.
+   *
+   * @covers ::getFieldName
+   */
+  public function testGetFieldName(): void {
+    // Check that hard-coded overrides are respected.
+    $this->assertSame('trial_version_holder_nc_0591be62', $this->names->getFieldName('NCTIdAlias'));
+
+    // Check that non-overridden names are normalized to snake case.
+    $this->assertSame('trial_version_holder_resp_party', $this->names->getFieldName('ResponsibleParty'));
+    $this->assertSame('trial_version_holder_cond_mod', $this->names->getFieldName('ConditionsModule'));
+    $this->assertSame('trial_version_holder_elig_mod', $this->names->getFieldName('EligibilityModule'));
+  }
+
+  /**
+   * Tests group names are normalized from ClinicalTrials.gov pieces.
+   *
+   * @covers ::getGroupName
+   */
+  public function testGetGroupName(): void {
+    // Check that group names are prefixed and normalized.
+    $this->assertSame('group_location', $this->names->getGroupName('Location'));
+    $this->assertSame('group_cond_mod', $this->names->getGroupName('ConditionsModule'));
+    $this->assertSame('group_elig_mod', $this->names->getGroupName('EligibilityModule'));
+  }
+
+  /**
+   * Tests display labels prefer metadata titles when they are available.
+   *
+   * @covers ::getDisplayLabel
+   */
+  public function testGetDisplayLabelPrefersMetadataTitle(): void {
+    $this->studyManager
+      ->expects($this->once())
+      ->method('getMetadataByPiece')
+      ->willReturn([
+        'ResponsibleParty' => [
+          'piece' => 'ResponsibleParty',
+          'title' => 'Responsible Party',
+        ],
+      ]);
+
+    // Check that metadata titles take precedence over generated labels.
+    $this->assertSame('Responsible Party', $this->names->getDisplayLabel('ResponsibleParty'));
+  }
+
+  /**
+   * Tests display labels fall back to piece normalization.
+   *
+   * @covers ::getDisplayLabel
+   */
+  public function testGetDisplayLabelFallsBackToPiece(): void {
+    $this->studyManager
+      ->expects($this->once())
+      ->method('getMetadataByPiece')
+      ->willReturn([]);
+
+    // Check that camel case is split into human-readable words.
+    $this->assertSame('Protocol Section', $this->names->getDisplayLabel('ProtocolSection'));
+  }
+
+  /**
+   * Tests detail labels trim the parent piece and preserve piece casing.
+   *
+   * @covers ::getDetailLabel
+   */
+  public function testGetDetailLabel(): void {
+    // Check that the parent piece prefix is trimmed from the child piece.
+    $this->assertSame('InvestigatorFullName', $this->names->getDetailLabel('ResponsiblePartyInvestigatorFullName', 'ResponsibleParty'));
+
+    // Check that labels still preserve their original piece style without a parent.
+    $this->assertSame('Type', $this->names->getDetailLabel('Type'));
+  }
+
+  /**
+   * Tests normalized pieces apply seeded abbreviations by token.
+   *
+   * @covers ::normalizePiece
+   */
+  public function testNormalizePieceAppliesAbbreviations(): void {
+    // Check that seeded abbreviations shorten long normalized tokens.
+    $this->assertSame('res_first_submit_qc_date', $this->names->normalizePiece('ResultsFirstSubmitQCDate'));
+    $this->assertSame('cond_mod', $this->names->normalizePiece('ConditionsModule'));
+    $this->assertSame('elig_mod', $this->names->normalizePiece('EligibilityModule'));
+  }
+
+  /**
+   * Tests abbreviations only apply to whole underscore-delimited tokens.
+   *
+   * @covers ::normalizePiece
+   */
+  public function testNormalizePieceOnlyAbbreviatesWholeTokens(): void {
+    // Check that partial substrings are not abbreviated.
+    $this->assertSame('measured_val', $this->names->normalizePiece('MeasuredValue'));
+  }
+
+  /**
+   * Tests abbreviation tokens are not abbreviated twice.
+   *
+   * @covers ::normalizePiece
+   */
+  public function testNormalizePieceDoesNotDoubleAbbreviate(): void {
+    // Check that an existing abbreviation token is left intact.
+    $this->assertSame('base_desc', $this->names->normalizePiece('BaseDesc'));
+  }
+
+}

@@ -1,0 +1,71 @@
+clinical_trials_gov.index:
+  path: '/admin/config/services/clinical-trials-gov'
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.find:
+  path: '/admin/config/services/clinical-trials-gov/find'
+  defaults:
+    _form: '\Drupal\clinical_trials_gov\Form\ClinicalTrialsGovFindForm'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.review:
+  path: '/admin/config/services/clinical-trials-gov/review'
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.review.metadata:
+  path: '/admin/config/services/clinical-trials-gov/review/metadata'
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewMetadataController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.review.study:
+  path: '/admin/config/services/clinical-trials-gov/review/{nct_id}'
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController::study'
+    _title_callback: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovReviewStudiesController::title'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.configure:
+  path: '/admin/config/services/clinical-trials-gov/configure'
+  defaults:
+    _form: '\Drupal\clinical_trials_gov\Form\ClinicalTrialsGovConfigForm'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.import:
+  path: '/admin/config/services/clinical-trials-gov/import'
+  defaults:
+    _form: '\Drupal\clinical_trials_gov\Form\ClinicalTrialsGovImportForm'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.manage:
+  path: '/admin/config/services/clinical-trials-gov/manage'
+  defaults:
+    _controller: '\Drupal\clinical_trials_gov\Controller\ClinicalTrialsGovManageController::index'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'
+
+clinical_trials_gov.settings:
+  path: '/admin/config/services/clinical-trials-gov/settings'
+  defaults:
+    _form: '\Drupal\clinical_trials_gov\Form\ClinicalTrialsGovSettingsForm'
+    _title: 'ClinicalTrials.gov'
+  requirements:
+    _permission: 'administer clinical_trials_gov'

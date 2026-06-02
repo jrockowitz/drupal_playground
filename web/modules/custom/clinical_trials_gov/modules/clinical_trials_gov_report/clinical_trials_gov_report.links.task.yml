@@ -1,0 +1,35 @@
+clinical_trials_gov_report.studies:
+  route_name: clinical_trials_gov_report.studies
+  base_route: clinical_trials_gov_report.studies
+  title: 'Studies'
+
+clinical_trials_gov_report.metadata:
+  route_name: clinical_trials_gov_report.metadata
+  base_route: clinical_trials_gov_report.studies
+  title: 'Metadata'
+
+clinical_trials_gov_report.fields:
+  route_name: clinical_trials_gov_report.metadata
+  parent_id: clinical_trials_gov_report.metadata
+  title: 'Fields'
+
+clinical_trials_gov_report.structs:
+  route_name: clinical_trials_gov_report.structs
+  parent_id: clinical_trials_gov_report.metadata
+  title: 'Structs'
+
+clinical_trials_gov_report.enums:
+  route_name: clinical_trials_gov_report.enums
+  parent_id: clinical_trials_gov_report.metadata
+  title: 'Enums'
+
+clinical_trials_gov_report.names:
+  route_name: clinical_trials_gov_report.names
+  parent_id: clinical_trials_gov_report.metadata
+  title: 'Names'
+
+clinical_trials_gov_report.required:
+  route_name: clinical_trials_gov_report.required
+  parent_id: clinical_trials_gov_report.metadata
+  title: 'Required'
+  weight: 100
