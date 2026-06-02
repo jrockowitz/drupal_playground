@@ -1,0 +1,72 @@
+{# cspell:ignore WCAG #}
+<div class="ai-rag-chat-layout relative md:grid md:grid-cols-12 md:gap-4 p-4">
+
+  {# Backdrop overlay (mobile only) #}
+  <div class="sidebar-backdrop md:hidden fixed inset-0
+              top-[var(--drupal-displace-offset-top,0px)]
+              bg-black/50 z-20
+              hidden transition-opacity duration-300 opacity-0"
+       aria-hidden="true"></div>
+
+  {# Sidebar tray (toggle + panel move together) #}
+  {# top/height use --drupal-displace-offset-top to sit below admin toolbar #}
+  {# Translate is set via JS to avoid conflict between theme (transform) #}
+  {# and module (translate) Tailwind outputs for the same utility class. #}
+  <div class="sidebar-tray fixed left-0 z-30
+              top-[var(--drupal-displace-offset-top,0px)]
+              h-[calc(100dvh-var(--drupal-displace-offset-top,0px))]
+              transition-[translate] duration-300
+              md:relative md:top-auto md:left-auto
+              md:h-auto md:z-auto md:col-span-4"
+       id="chat-sidebar-tray">
+
+    {# Sidebar panel — acts as modal dialog on mobile #}
+    <div id="chat-sidebar-panel"
+         class="sidebar-panel w-72 h-full bg-white shadow-xl overflow-y-auto
+                md:w-auto md:h-auto md:shadow-none md:bg-transparent
+                md:overflow-visible"
+         role="dialog"
+         aria-modal="true"
+         aria-label="{{ 'Trial search sessions'|t }}"
+         aria-hidden="true">
+      {{ include('clinical_trials_gov_ai_rag_search_chat:chat-sidebar', {
+        session_id: session_id,
+        sessions: sessions,
+        retention_days: retention_days
+      }) }}
+    </div>
+
+    {# Toggle wrapper: flex column centers the button vertically #}
+    {# without translate, avoiding theme/module Tailwind conflicts. #}
+    <div class="md:hidden absolute inset-y-0 left-full flex items-center">
+      {# Toggle button (mobile only) #}
+      {# p-3 + w-5 h-5 icon = 44x44px minimum touch target (WCAG 2.5.5) #}
+      <button type="button"
+              class="sidebar-toggle bg-blue-600 hover:bg-blue-700 text-white
+                     rounded-r-lg p-3 shadow-lg
+                     focus:outline-none focus-visible:ring-2
+                     focus-visible:ring-white focus-visible:ring-offset-2
+                     focus-visible:ring-offset-blue-600"
+              aria-expanded="false"
+              aria-controls="chat-sidebar-panel"
+              aria-label="{{ 'Open trial search history'|t }}">
+        <svg class="sidebar-toggle-icon w-5 h-5
+                    transition-transform duration-300"
+             fill="none" stroke="currentColor" viewBox="0 0 24 24"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true"
+             focusable="false">
+          <path d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {# Chat interface (full width on mobile, 8-col on desktop) #}
+  <div class="chat-interface-column col-span-12 md:col-span-8">
+    {{ include('clinical_trials_gov_ai_rag_search_chat:chat-interface', {
+      session_id: session_id,
+      messages: messages
+    }) }}
+  </div>
+</div>

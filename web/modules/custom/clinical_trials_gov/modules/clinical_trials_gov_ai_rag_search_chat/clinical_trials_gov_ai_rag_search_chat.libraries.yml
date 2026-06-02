@@ -1,0 +1,7 @@
+chat:
+  version: 1.x
+  js:
+    js/clinical_trials_gov_ai_rag_search_chat.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

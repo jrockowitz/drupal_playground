@@ -1,0 +1,19 @@
+'$schema': 'https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/modules/sdc/src/metadata.schema.json'
+name: ClinicalTrials.gov Chat Sidebar
+status: stable
+description: 'ClinicalTrials.gov sidebar with trial search sessions'
+props:
+  type: object
+  properties:
+    session_id:
+      type: string
+      title: 'Session ID'
+      description: 'Current session ID'
+    sessions:
+      type: array
+      title: 'Sessions'
+      description: 'Array of user sessions'
+    retention_days:
+      type: integer
+      title: 'Retention Days'
+      description: 'Number of days chat history is retained'

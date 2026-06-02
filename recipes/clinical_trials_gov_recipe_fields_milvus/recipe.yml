@@ -1,3 +1,4 @@
+# cspell:ignore deepchat milvus
 name: 'ClinicalTrials.gov Fields Milvus Recipe'
 description: 'Sets up AI Search, Milvus, and chat for ClinicalTrials.gov field-based discovery.'
 type: 'Site'
@@ -8,6 +9,7 @@ install:
   - ai_rag_search_chat
   - ai_search
   - ai_vdb_provider_milvus
+  - clinical_trials_gov_ai_rag_search_chat
   - search_api
 config:
   strict: false
