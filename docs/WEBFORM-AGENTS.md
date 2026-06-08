@@ -55,8 +55,8 @@ git -C web/modules/sandbox/webform branch --show-current
 Local project assumptions:
 
 - PHP: 8.3
-- DDEV project: `drupal-playground`
-- DDEV URL: `https://drupal-playground.ddev.site`
+- DDEV project: `drupal-webform`
+- DDEV URL: `https://drupal-webform.ddev.site`
 - Drupal docroot: `web/`
 
 Common verification commands:
@@ -110,25 +110,40 @@ drupalorg project:issues webform rtbc --limit=25 --format=llm
 drupalorg issue:search webform "access" --format=llm
 ```
 
+Use `issue:search` for title keyword searches. The installed `0.10.2` command
+accepts `--status=all|open|closed|rtbc|review` and `--limit=<count>`:
+
+```bash
+drupalorg issue:search webform "access" --status=open --limit=10 --format=llm
+```
+
 Core issue commands:
 
 ```bash
-drupalorg issue:show 3470339 --format=llm
-drupalorg issue:show 3470339 --with-comments --format=llm
-drupalorg issue:get-fork 3470339 --format=llm
-drupalorg issue:branch 3470339
-drupalorg issue:apply 3470339
+drupalorg issue:show 3591835 --format=llm
+drupalorg issue:show 3591835 --with-comments --format=llm
+drupalorg issue:get-fork 3591835 --format=llm
+drupalorg issue:branch 3591835
 ```
+
+Use `issue:apply <issue-id>` only for classic patch-based issues that have an
+attached patch. For GitLab MR issues, use `issue:get-fork`,
+`issue:setup-remote`, and `issue:checkout` instead.
 
 Core merge request commands:
 
 ```bash
-drupalorg mr:list 3470339 --format=llm
-drupalorg mr:files 3470339 --format=llm
-drupalorg mr:diff 3470339 --format=llm
-drupalorg mr:status 3470339 --format=llm
-drupalorg mr:logs 3470339
+drupalorg mr:list project/webform --format=llm
+drupalorg mr:files 'project/webform!870' --format=llm
+drupalorg mr:diff 'project/webform!870' --format=llm
+drupalorg mr:status 'project/webform!870' --format=llm
+drupalorg mr:logs 'project/webform!870'
 ```
+
+For Webform GitLab merge requests, prefer the quoted `project/webform!<iid>`
+form after discovering the IID from `mr:list`, an MR URL, or issue comments.
+This avoids ambiguity when an issue search returns project-level MR data. Quote
+the argument in zsh because `!` triggers shell history expansion.
 
 Skill commands:
 
@@ -182,10 +197,13 @@ git branch --show-current
 Use `drupalorg-cli` for issue fork operations where possible:
 
 ```bash
-drupalorg issue:get-fork 3470339 --format=llm
-drupalorg issue:setup-remote 3470339
-drupalorg issue:checkout 3470339
+drupalorg issue:get-fork 3591835 --format=llm
+drupalorg issue:setup-remote 3591835
+drupalorg issue:checkout 3591835 3591835-webformelementbasecheckaccessrules-does-not
 ```
+
+Pass the branch name explicitly in agent/non-interactive work. Use
+`issue:get-fork` first and copy the relevant branch from the `<branches>` list.
 
 Do not commit or push unless the human explicitly asks. If commits are requested, AI-created commits should end with:
 
@@ -265,6 +283,10 @@ drupalorg issue:search webform "PHPStan" --format=llm
 drupalorg issue:search webform "test" --format=llm
 ```
 
+Use `--status=open` when you only want actionable open issues. Use
+`--status=review` when looking for review targets and `--status=rtbc` when
+checking whether anything is ready for maintainer attention.
+
 4. Build a short candidate list grouped by likely action:
 
 - fix target
@@ -279,7 +301,7 @@ drupalorg issue:search webform "test" --format=llm
 
 ```bash
 drupalorg issue:show <issue-id> --with-comments --format=llm
-drupalorg mr:list <issue-id> --format=llm
+drupalorg mr:list project/webform --format=llm
 ```
 
 6. Recommend 3-5 issues, not 20. For each, include:
@@ -417,10 +439,10 @@ Steps:
 
 ```bash
 drupalorg issue:show <issue-id> --with-comments --format=llm
-drupalorg mr:list <issue-id> --format=llm
-drupalorg mr:files <issue-id> --format=llm
-drupalorg mr:diff <issue-id> --format=llm
-drupalorg mr:status <issue-id> --format=llm
+drupalorg mr:list project/webform --format=llm
+drupalorg mr:files 'project/webform!<merge-request-iid>' --format=llm
+drupalorg mr:diff 'project/webform!<merge-request-iid>' --format=llm
+drupalorg mr:status 'project/webform!<merge-request-iid>' --format=llm
 ```
 
 Then check locally:
@@ -502,9 +524,12 @@ drupalorg issue:show <issue-id> --with-comments --format=llm
 2. Load MR/patch context:
 
 ```bash
-drupalorg mr:list <issue-id> --format=llm
+drupalorg mr:list project/webform --format=llm
 drupalorg issue:get-fork <issue-id> --format=llm
 ```
+
+In the `mr:list` output, match the issue number in the MR title or source
+branch, then use that MR IID with `project/webform!<merge-request-iid>`.
 
 3. Classify the work:
 
@@ -533,7 +558,141 @@ rg -n "RelevantClass|relevant_method|config_name" web/modules/sandbox/webform
 
 10. Stop before external action unless the human asks.
 
-## 9. Verification Standards
+## 9. Working CLI Examples for Current Issues
+
+These examples were checked against `Drupal.org CLI 0.10.2` on June 1, 2026.
+Issue state changes over time, so re-run the discovery commands before acting.
+
+### Example A: Review a Focused Access Fix
+
+Issue:
+
+- https://www.drupal.org/project/webform/issues/3591835
+- `WebformElementBase::checkAccessRules() does not handle AccessResult objects`
+- Current observed status: Needs Review
+- Current observed MR: `project/webform!870`
+- Current observed pipeline: passed
+- Changed file observed from the MR: `src/Plugin/WebformElementBase.php`
+
+Use this when looking for a narrow test/fix or MR review target:
+
+```bash
+cd /Users/rockowij/Sites/drupal_webform
+drupalorg issue:show 3591835 --with-comments --format=llm --no-cache
+drupalorg issue:get-fork 3591835 --format=llm --no-cache
+drupalorg mr:files 'project/webform!870' --format=llm --no-cache
+drupalorg mr:diff 'project/webform!870' --format=llm --no-cache
+drupalorg mr:status 'project/webform!870' --format=llm --no-cache
+```
+
+Notes:
+
+- Use `issue:show` first to understand the bug and the public security-team
+  note. Do not make security claims beyond the issue text and local evidence.
+- Use `issue:get-fork` to discover the issue fork remote and branch. On the
+  current scan, the relevant branch was
+  `3591835-webformelementbasecheckaccessrules-does-not`.
+- Use the MR IID `870` with `project/webform!870` for file, diff, and pipeline
+  commands. The IID comes from the MR URL or `mr:list project/webform`.
+- After inspecting the diff, search locally before changing anything:
+
+```bash
+rg -n "checkAccessRules|AccessResultInterface|#access" web/modules/sandbox/webform/src web/modules/sandbox/webform/tests
+```
+
+### Example B: Investigate a Drush Composer Library Bug
+
+Issue:
+
+- https://www.drupal.org/project/webform/issues/3470339
+- `Error: Attempt to assign property on array in WebformLibrariesCommands->setComposerLibraries()`
+- Current observed status: Needs Review
+
+Use this when looking for a reproduction or regression-test target:
+
+```bash
+cd /Users/rockowij/Sites/drupal_webform
+drupalorg issue:show 3470339 --with-comments --format=llm --no-cache
+drupalorg issue:get-fork 3470339 --format=llm --no-cache
+rg -n "setComposerLibraries|webform:composer:update|repositories" web/modules/sandbox/webform
+```
+
+Notes:
+
+- Start read-only with `issue:show` and `issue:get-fork`; the current observed
+  fork includes branch `3470339-error-attempt-to`.
+- Confirm `git -C web/modules/sandbox/webform status --short` before checking
+  out an issue branch or applying a patch so user work is not mixed with issue
+  testing.
+- If you need to review the issue fork branch locally, use:
+
+```bash
+cd /Users/rockowij/Sites/drupal_webform/web/modules/sandbox/webform
+drupalorg issue:setup-remote 3470339
+drupalorg issue:checkout 3470339 3470339-error-attempt-to
+```
+
+- The local reproduction target is the Drush command described by the issue:
+
+```bash
+ddev drush webform:composer:update
+```
+
+- If you write a test, prefer a focused test around the Composer repositories
+  array/object behavior rather than asserting exact prompt text.
+
+### Example C: Review an Access Restriction Policy Issue
+
+Issue:
+
+- https://www.drupal.org/project/webform/issues/3463152
+- `"Webform submissions" view default display does not have any access restriction`
+- Current observed status: Needs Review
+
+Use this when looking for a review target that may require maintainer judgment:
+
+```bash
+cd /Users/rockowij/Sites/drupal_webform
+drupalorg issue:show 3463152 --with-comments --format=llm --no-cache
+drupalorg issue:get-fork 3463152 --format=llm --no-cache
+rg -n "webform submissions|webform_submission|access content|display_options" web/modules/sandbox/webform/config web/modules/sandbox/webform/tests
+```
+
+Notes:
+
+- This is access-policy-adjacent. Agents can verify the current Views config,
+  inspect a patch or MR, and propose a test, but should pause before deciding
+  which permission is correct.
+- The current observed fork includes branch
+  `3463152-webform-submissions-view`.
+- If config changes are involved, verify with a partial config import from the
+  directory containing changed config:
+
+```bash
+ddev drush config:import -y --partial --source=<directory>
+```
+
+### Example D: Scout Current Review Targets
+
+Use this when preparing a short maintainer digest:
+
+```bash
+cd /Users/rockowij/Sites/drupal_webform
+drupalorg project:issues webform review --limit=10 --format=llm --no-cache
+drupalorg project:issues webform all --limit=10 --format=llm --no-cache
+drupalorg issue:search webform "access" --status=open --limit=10 --format=llm --no-cache
+drupalorg mr:list project/webform --format=llm --no-cache
+```
+
+Notes:
+
+- Keep the output small. Agents should recommend 3-5 candidates with evidence,
+  not paste an entire queue dump.
+- For each candidate, include the issue URL, observed status, likely work lane,
+  first local verification command, and why maintainer judgment may or may not
+  be needed.
+
+## 10. Verification Standards
 
 Before saying work is complete, provide evidence.
 
@@ -580,7 +739,7 @@ Remaining question:
 - ...
 ```
 
-## 10. Guardrails and Permissions
+## 11. Guardrails and Permissions
 
 Agents must not:
 
@@ -606,7 +765,7 @@ Agents should pause and ask before:
 - working around unclear requirements
 - accepting behavior that contradicts existing tests
 
-## 11. Proposed `webform-issue-maintenance` Skill
+## 12. Proposed `webform-issue-maintenance` Skill
 
 Purpose:
 
@@ -642,7 +801,7 @@ Skill output modes:
 
 The first version of the skill should focus on read-only scouting and issue recommendation. Add hands-on fix workflows after the scouting output proves useful.
 
-## 12. Candidate Automation
+## 13. Candidate Automation
 
 Useful future helpers:
 
@@ -657,7 +816,7 @@ Useful future helpers:
 
 Prefer simple Markdown reports before dashboards.
 
-## 13. Initial Pilot Plan
+## 14. Initial Pilot Plan
 
 Run a small pilot before automating heavily.
 
@@ -685,7 +844,7 @@ Suggested first pilot candidates from the initial scan:
   - `"Webform submissions" view default display does not have any access restriction`
   - Good review/test target, but permission policy may need maintainer judgment.
 
-## 14. Historical Notes and Current Findings
+## 15. Historical Notes and Current Findings
 
 This section preserves useful details from the initial conversation. Treat them as a snapshot, not live truth.
 

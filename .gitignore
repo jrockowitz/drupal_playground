@@ -114,6 +114,7 @@ yarn-error.log
 !.agents/skills/drupalorg-project-page
 !.agents/skills/drupalorg-projects-clone
 !.agents/skills/install
+!.agents/skills/webform-issue-maintenance
 
 # =============================================================================
 # Configuration
