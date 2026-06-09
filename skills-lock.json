@@ -47,25 +47,25 @@
       "source": "grasmash/drupal-claude-skills",
       "sourceType": "github",
       "skillPath": "skills/drupal-at-your-fingertips/SKILL.md",
-      "computedHash": "7dca7c2ebc0a1241cbeff6d53c63344257fc9c63738904ba03382d7f81ac0d9c"
+      "computedHash": "bb825815241cf41f2b44fb8fb8cf78248a9014fd72c35962fd3a201eb3e53d08"
     },
     "drupal-config-mgmt": {
       "source": "grasmash/drupal-claude-skills",
       "sourceType": "github",
       "skillPath": "skills/drupal-config-mgmt/SKILL.md",
-      "computedHash": "51377c134702729976d81ceabba0cd0904ba6a4cccda15dfa5f520d75b12e370"
+      "computedHash": "1d9aeb00426422c8317a8727716b1ffb37692d95abd91e149c2b2300339b2a87"
     },
     "drupal-contrib-mgmt": {
       "source": "grasmash/drupal-claude-skills",
       "sourceType": "github",
       "skillPath": "skills/drupal-contrib-mgmt/SKILL.md",
-      "computedHash": "97275f7474a125ac97912f245051ffa8502117f9e631b9829398caf96f34fdaa"
+      "computedHash": "5aa688542098c8c7b5efa12706d305e12ab84633b98db7aeec96906758ef3db2"
     },
     "drupal-ddev": {
       "source": "grasmash/drupal-claude-skills",
       "sourceType": "github",
       "skillPath": "skills/drupal-ddev/SKILL.md",
-      "computedHash": "0a57bb55add53d4ac84e3804914a43489e75d0544a2b3728b235b88775f74ab3"
+      "computedHash": "b43ab066dacd202522365838022a87f8704d44b752a6322a8696388161a2559c"
     },
     "drupal-search-api": {
       "source": "grasmash/drupal-claude-skills",
