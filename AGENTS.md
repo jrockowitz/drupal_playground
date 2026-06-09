@@ -86,7 +86,6 @@ ddev drush config:import -y --partial --source=<directory>
 
 ## Git
 
-- Never commit or push code unless explicitly asked to do so.
 - All commits made by AI should end with a note that says: `AI-assisted by {code agent name}`.
 
 ## PHP
