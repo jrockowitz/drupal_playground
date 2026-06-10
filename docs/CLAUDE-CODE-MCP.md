@@ -1,3 +1,4 @@
+<!-- cspell:ignore modelcontextprotocol sequentialthinking Supabase rockowij MCPcat -->
 # CLAUDE-CODE-MCP.md: Model Context Protocol (MCP) in Claude Code
 
 MCP (Model Context Protocol) is an open standard that connects Claude Code to external tools, databases, and APIs through a unified protocol. Each MCP server gives Claude new capabilities — query a database, manage GitHub issues, automate a browser, search the web — without leaving your terminal session.
@@ -215,13 +216,49 @@ claude mcp add sequential-thinking -- npx -y mcp-sequentialthinking-tools
 
 ### Drupal MCP Server
 
-The `drupal/mcp_server` module exposes Drupal's entity and configuration systems to MCP clients:
+The `drupal_playground_ai_mcp` recipe installs `drupal/mcp_server` as a local
+proof of concept for connecting Codex to Drupal through MCP. With this recipe
+Codex can connect to the Drupal MCP server and discover MCP prompts. The recipe
+also installs Tool Belt tools for Drupal's Tool API and Tool Explorer, and
+exposes enabled Tool Belt tools to Codex through MCP using
+`tool_belt_dynamic.tool_belt__*` names.
 
 ```bash
-# After installing the Drupal MCP module
-ddev composer require drupal/mcp_server
-ddev drush en mcp_server
+ddev composer update drupal/drupal_playground_ai_mcp drupal/mcp_server drupal/tool drupal/tool_belt --with-all-dependencies
+ddev exec drush recipe ../recipes/drupal_playground_ai_mcp
+ddev drush cr
 ```
+
+Recommended Codex STDIO configuration:
+
+```toml
+[mcp_servers.drupal_playground]
+command = "ddev"
+args = ["exec", "vendor/bin/drush", "mcp:server"]
+cwd = "/Users/rockowij/Sites/drupal_ai"
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+```
+
+Secondary HTTP configuration after STDIO works:
+
+```toml
+[mcp_servers.drupal_playground_http]
+url = "https://drupal-playground.ddev.site/mcp"
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+```
+
+Tool Belt provides Tool API content, entity, system, user, and translation
+tools. Use Tool Explorer at `/admin/config/tool/explorer` to inspect and
+manually try them. Codex can call dynamic MCP bridge tools such as
+`tool_belt_dynamic.tool_belt__entity_list`,
+`tool_belt_dynamic.tool_belt__entity_load_by_id`, and
+`tool_belt_dynamic.tool_belt__system_status`. The bridge also includes
+`tool_belt_content_create_entity`, which uses Tool Belt's `entity_stub`,
+`field_set_value`, and `entity_save` tools internally for an atomic content
+creation workflow. Omit `field_values` when no configurable fields need to be
+set, or pass it as a JSON object keyed by field machine name.
 
 ### Database Access via MCP
 

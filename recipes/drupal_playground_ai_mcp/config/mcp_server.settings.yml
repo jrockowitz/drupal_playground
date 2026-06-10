@@ -1,0 +1,7 @@
+server_name: 'Drupal Playground MCP Server'
+server_version: '1.0.0'
+pagination_limit: 50
+pending:
+  poll_interval_ms: 300
+  sampling_timeout: 25
+  elicitation_timeout: 600

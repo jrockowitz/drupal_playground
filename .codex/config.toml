@@ -1,0 +1,6 @@
+[mcp_servers.drupal_playground]
+command = "ddev"
+args = ["exec", "vendor/bin/drush", "mcp:server"]
+cwd = "/Users/rockowij/Sites/drupal_ai"
+startup_timeout_sec = 20
+tool_timeout_sec = 60

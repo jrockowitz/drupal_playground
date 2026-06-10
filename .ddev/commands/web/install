@@ -92,7 +92,7 @@ drush cr;
 # Uninstall the toolbar module, which can't be done via a recipe.
 drush pm:uninstall toolbar
 
-# Unstall core modules that are not used in any demos.
+# Uninstall core modules that are not used in any demos.
 drush php:eval '\Drupal\field\Entity\FieldConfig::loadByName("node", "article", "comment")->delete();'
 drush pmu -y comment
 
@@ -121,6 +121,7 @@ for PRESET in "${PRESETS[@]}"; do
     drush recipe ../recipes/drupal_playground_ai_devel
     drush recipe ../recipes/drupal_playground_ai_automators
     drush recipe ../recipes/drupal_playground_ai_ckeditor_explain
+    drush recipe ../recipes/drupal_playground_ai_mcp
 
     echo "Applying AI Schema.org JSON-LD recipe..."
     drush recipe ../recipes/drupal_playground_ai_schemadotorg_jsonld

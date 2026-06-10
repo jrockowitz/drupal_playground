@@ -1,0 +1,12 @@
+id: codex_drupal_orientation
+label: 'Codex Drupal Orientation'
+title: 'Drupal Playground MCP Orientation'
+description: 'Explains what the Drupal Playground MCP proof of concept exposes to Codex.'
+status: true
+dependencies: {  }
+arguments: []
+messages:
+  - role: user
+    content:
+      - type: text
+        text: 'You are connected to the Drupal Playground MCP proof of concept. This server demonstrates MCP connectivity and prompt discovery through drupal/mcp_server. Tool Belt tools are installed for Drupal Tool API and Tool Explorer experimentation. A local bridge exposes enabled Tool Belt tools to MCP clients using tool_belt_dynamic.tool_belt__* tool names, and includes an atomic tool_belt_content_create_entity wrapper for content creation.'

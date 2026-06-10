@@ -1,0 +1,41 @@
+name: 'Drupal Playground AI MCP'
+description: >
+  Installs and configures Drupal MCP Server as a local proof of concept for
+  Codex and other MCP clients.
+type: 'Site'
+recipes:
+  - drupal_playground_base
+install:
+  - mcp_server
+  - tool
+  - tool_explorer
+  - tool_belt
+  - tool_belt_content
+  - tool_belt_content_translation
+  - tool_belt_entity
+  - tool_belt_system
+  - tool_belt_user
+  - drupal_playground_ai_mcp_tool_bridge
+config:
+  strict: false
+  import:
+    mcp_server: '*'
+  actions:
+    mcp_server.settings:
+      simpleConfigUpdate:
+        server_name: 'Drupal Playground MCP Server'
+        server_version: '1.0.0'
+        pagination_limit: 50
+        pending.poll_interval_ms: 300
+        pending.sampling_timeout: 25
+        pending.elicitation_timeout: 600
+    user.role.administrator:
+      grantPermissions:
+        - 'access mcp server'
+    mcp_server.mcp_prompt_config.codex_drupal_orientation:
+      simpleConfigUpdate:
+        messages:
+          - role: user
+            content:
+              - type: text
+                text: 'You are connected to the Drupal Playground MCP proof of concept. This server demonstrates MCP connectivity and prompt discovery through drupal/mcp_server. Tool Belt tools are installed for Drupal Tool API and Tool Explorer experimentation. A local bridge exposes enabled Tool Belt tools to MCP clients using tool_belt_dynamic.tool_belt__* tool names, and includes an atomic tool_belt_content_create_entity wrapper for content creation.'
