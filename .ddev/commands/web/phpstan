@@ -1,12 +1,86 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#ddev-generated
 
-## Description: Runs PHPStan
-## Usage: phpstan [flags] [args]
-## Example: ddev phpstan\nddev phpstan web/modules/sandbox/schemadotorg
+## Description: Run PHPStan static analysis with the Drupal extension
+## Usage: phpstan [subcommand] [flags] [path]
+## Example: "ddev phpstan analyse web/modules/custom/mymodule"
+## ExecRaw: true
+## HostWorkingDir: true
 
-# @see https://mglaman.dev/blog/tighten-your-drupal-code-using-phpstan
-# @see https://phpstan.org/user-guide/rule-levels
+# Prefer the project-local phpstan binary (same as CI uses via $COMPOSER_BIN_DIR).
+PHPSTAN="${DDEV_APPROOT}/vendor/bin/phpstan"
+if [ ! -x "${PHPSTAN}" ]; then
+  PHPSTAN="phpstan"
+fi
 
-source .commands.sh
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
 
-./vendor/bin/phpstan --level=6 $OPTIONS analyse $PARAMETERS
+# phpstan requires an explicit subcommand (analyse, clear-result-cache, etc.).
+# When none is given, default to 'analyse .' so that `ddev phpstan` and
+# `ddev phpstan .` both work without the user spelling out the subcommand.
+if [ "$#" -eq 0 ]; then
+  set -- analyse .
+else
+  case "$1" in
+    analyse|analyze|clear-result-cache|dump-deps|fix|worker|diagnose|help|list|--version|-V|--help|-h)
+      ;;  # recognised subcommand or global flag — pass through unchanged
+    *)
+      set -- analyse "$@"
+      ;;
+  esac
+fi
+
+# If the project root provides its own phpstan config, use it as-is.
+for config in phpstan.neon phpstan.neon.dist phpstan.dist.neon; do
+  if [ -f "${DDEV_APPROOT}/${config}" ]; then
+    exec "${PHPSTAN}" "$@"
+  fi
+done
+
+# If the current directory (e.g. a module) has its own phpstan config, use it
+# with --autoload-file pointing at the project vendor. This matches exactly what
+# the Drupal GitLab CI template does: cd into the module dir and run
+# phpstan analyze . --autoload-file=<project>/vendor/autoload.php
+# The --autoload-file flag also lets mglaman/phpstan-drupal detect the Drupal
+# root by walking up from the autoload path, which is required for class stubs.
+for config in phpstan.neon phpstan.neon.dist phpstan.dist.neon; do
+  if [ -f "./${config}" ]; then
+    exec "${PHPSTAN}" --configuration="./${config}" --autoload-file="${DDEV_APPROOT}/vendor/autoload.php" "$@"
+  fi
+done
+
+# No config found at the project root or current directory. Build a temporary
+# neon that wires up mglaman/phpstan-drupal (pre-installed globally; in CI it
+# comes from the Docker image) and our bundled defaults.
+#
+# Use --autoload-file instead of a bootstrapFiles neon: it loads the project's
+# vendor/autoload.php before analysis so InstalledVersions knows about
+# drupal/core, and it gives mglaman the path it needs to detect the Drupal root.
+MGLAMAN_EXT="/usr/local/composer/vendor/mglaman/phpstan-drupal/extension.neon"
+MGLAMAN_RULES="/usr/local/composer/vendor/mglaman/phpstan-drupal/rules.neon"
+BUNDLED_CONFIG="/mnt/ddev_config/module-developer/config/phpstan.neon"
+
+TMPCONFIG=$(mktemp /tmp/phpstan-XXXXXX.neon)
+
+# If the project vendor already has mglaman/phpstan-drupal, phpstan/extension-installer
+# will auto-register it via GeneratedConfig.php. Including the global copy on top of
+# that produces duplicate ServiceMap services and a DI container error.
+if [ -f "${DDEV_APPROOT}/vendor/mglaman/phpstan-drupal/extension.neon" ]; then
+  cat > "${TMPCONFIG}" <<EOF
+includes:
+  - ${BUNDLED_CONFIG}
+EOF
+else
+  cat > "${TMPCONFIG}" <<EOF
+includes:
+  - ${MGLAMAN_EXT}
+  - ${MGLAMAN_RULES}
+  - ${BUNDLED_CONFIG}
+EOF
+fi
+
+"${PHPSTAN}" --configuration="${TMPCONFIG}" --autoload-file="${DDEV_APPROOT}/vendor/autoload.php" "$@"
+EXIT_CODE=$?
+rm -f "${TMPCONFIG}"
+exit ${EXIT_CODE}

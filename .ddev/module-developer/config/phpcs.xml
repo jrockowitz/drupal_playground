@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- #ddev-generated -->
+<!--
+  Default PHP_CodeSniffer configuration for a Drupal contrib project.
+  Matches the Drupal GitLab Templates default (assets/phpcs.xml.dist).
+
+  Place a phpcs.xml or phpcs.xml.dist in your project root to override this.
+  The set of coding standards should be defined using the short path:
+    <rule ref="Drupal"/>
+    <rule ref="DrupalPractice"/>
+-->
+<ruleset name="drupal-contrib-project">
+  <description>Default PHP CodeSniffer configuration for a Drupal contrib project.</description>
+
+  <!-- Include all rules in the Drupal ruleset. -->
+  <rule ref="Drupal"/>
+
+  <!-- Include all rules in the DrupalPractice ruleset. Uncomment if required. -->
+  <!-- <rule ref="DrupalPractice"/> -->
+
+  <!-- Keep the extensions in alphabetic order like Core. -->
+  <arg name="extensions" value="engine,inc,info,install,module,php,profile,test,theme,yml"/>
+
+</ruleset>

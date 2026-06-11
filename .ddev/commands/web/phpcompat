@@ -1,11 +1,17 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#ddev-generated
 
-## Description: Runs PHP CodeCompatibility
-## Usage: phpcompat [flags] [args]
-## Example: ddev phpcompat\nddev phpcompat web/modules/sandbox/schemadotorg
+## Description: Check PHP version compatibility using PHPCompatibility
+## Usage: phpcompat [flags] [path]
+## Example: "ddev phpcompat web/modules/custom/mymodule"
+## ExecRaw: true
+## HostWorkingDir: true
 
-# @see https://www.drupal.org/node/2924272
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
 
-source .commands.sh
-
-./vendor/bin/phpcs --runtime-set testVersion 8.2 --standard=./vendor/phpcompatibility/php-compatibility/PHPCompatibility --extensions=php,module,inc,install,test,profile,theme $OPTIONS $PARAMETERS
+exec /usr/local/phpcompat/vendor/bin/phpcs \
+  --runtime-set testVersion 8.2- \
+  --standard=PHPCompatibility \
+  --extensions=php,module,inc,install,test,profile,theme \
+  "$@"

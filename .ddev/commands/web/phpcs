@@ -1,13 +1,39 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#ddev-generated
 
-## Description: Runs PHP CodeSniffer
-## Usage: phpcs [flags] [args]
-## Example: ddev phpcs\nddev phpcs web/modules/sandbox/schemadotorg
+## Description: Run PHP_CodeSniffer with Drupal coding standards
+## Usage: phpcs [flags] [path]
+## Example: "ddev phpcs web/modules/custom/mymodule"
+## ExecRaw: true
+## HostWorkingDir: true
+## MutagenSync: true
 
-# @see https://www.drupal.org/docs/contributed-modules/code-review-module
-# @see https://www.drupal.org/docs/contributed-modules/code-review-module/installing-coder-sniffer
-# @see https://www.drupal.org/docs/contributed-modules/code-review-module/php-codesniffer-command-line-usage
+# Prefer the project-local phpcs (same binary CI uses via $COMPOSER_BIN_DIR).
+# Fall back to the globally installed binary if the project doesn't vendor it.
+PHPCS="${DDEV_APPROOT}/vendor/bin/phpcs"
+if [ ! -x "${PHPCS}" ]; then
+  PHPCS="phpcs"
+fi
 
-source .commands.sh
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
 
-./vendor/bin/phpcs $OPTIONS -s $PARAMETERS
+# Default to the current directory when no path is given, matching CI behaviour
+# where phpcs is always passed an explicit directory ($DRUPAL_PROJECT_FOLDER).
+if [ "$#" -eq 0 ]; then
+  set -- .
+fi
+
+# Use project-level config if present at the project root.
+for config in phpcs.xml phpcs.xml.dist .phpcs.xml; do
+  if [ -f "${DDEV_APPROOT}/${config}" ]; then
+    exec "${PHPCS}" -s "$@"
+  fi
+done
+
+# No project-level config found; download the Drupal GitLab Templates default
+# so local checks match what the Drupal CI pipeline enforces.
+curl -fsSL -o "${DDEV_APPROOT}/phpcs.xml.dist" \
+  https://git.drupalcode.org/project/gitlab_templates/-/raw/default-ref/assets/phpcs.xml.dist
+
+exec "${PHPCS}" -s "$@"
