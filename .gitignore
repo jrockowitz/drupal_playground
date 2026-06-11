@@ -108,13 +108,16 @@ yarn-error.log
 # =============================================================================
 # Agents / Claude skills
 # =============================================================================
-.agents/skills/
+.agents/skills/*
 !.agents/skills/drupalorg-project-clone
 !.agents/skills/drupalorg-project-logo-prompt
 !.agents/skills/drupalorg-project-page
 !.agents/skills/drupalorg-projects-clone
 !.agents/skills/install
 !.agents/skills/webform-issue-maintenance
+!.agents/skills/webform-security-gitlab/
+!.agents/skills/webform-security-gitlab/**
+.agents/private/
 
 # =============================================================================
 # Configuration
