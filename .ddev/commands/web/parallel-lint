@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#ddev-generated
+
+## Description: Check PHP files for syntax errors (php-parallel-lint)
+## Usage: parallel-lint [flags] [path]
+## Example: "ddev parallel-lint web/modules/custom/mymodule"
+## ExecRaw: true
+## HostWorkingDir: true
+
+# Prefer the project-local binary (installed via drupal/core-dev or composer
+# require php-parallel-lint/php-parallel-lint). Fall back to the global binary.
+PARALLEL_LINT="${DDEV_APPROOT}/vendor/bin/parallel-lint"
+if [ ! -x "${PARALLEL_LINT}" ]; then
+  if ! command -v parallel-lint >/dev/null 2>&1; then
+    echo "parallel-lint is not installed."
+    echo "Run 'ddev restart' to build the updated web container."
+    exit 0
+  fi
+  PARALLEL_LINT="parallel-lint"
+fi
+
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
+
+# Default to the current directory when no path is given, matching CI behaviour
+# where the tool is always passed an explicit path.
+if [ "$#" -eq 0 ]; then
+  set -- .
+fi
+
+# Parse _PARALLEL_LINT_EXTRA from .gitlab-ci.yml if present, replicating CI's
+# automatic variable injection.
+if [ -f ".gitlab-ci.yml" ]; then
+  value=$(grep -m1 "^\s*_PARALLEL_LINT_EXTRA:" ".gitlab-ci.yml" \
+          | sed -E "s/^\s*_PARALLEL_LINT_EXTRA:\s*//" | tr -d "'\"")
+  if [ -n "${value}" ]; then
+    export _PARALLEL_LINT_EXTRA="${value}"
+  fi
+fi
+
+# Drupal file extensions, matching the Drupal GitLab CI template.
+# --exclude flags prevent scanning vendored and generated code.
+# shellcheck disable=SC2086
+exec "${PARALLEL_LINT}" \
+  --extensions php,module,install,theme,inc,profile \
+  --exclude vendor \
+  --exclude node_modules \
+  ${_PARALLEL_LINT_EXTRA} \
+  "$@"

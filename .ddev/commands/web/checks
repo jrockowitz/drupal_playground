@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+#ddev-generated
+
+## Description: Run all Drupal GitLab CI code quality checks locally
+## Usage: checks [--bonus] [path]
+## Example: "ddev checks" or "ddev checks --bonus web/modules/custom/mymodule"
+## ExecRaw: true
+## HostWorkingDir: true
+
+# Directory containing the individual tool command scripts.
+COMMANDS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# .gitlab-ci.yml at the project root — read for SKIP_* and _*_ALLOW_FAILURE
+# variables that mirror what the Drupal GitLab CI pipeline respects.
+CI_YML="${DDEV_APPROOT}/.gitlab-ci.yml"
+
+# Normalize absolute host-path arguments before parsing, so an absolute host path
+# given as TARGET becomes a container path here. This matters because TARGET is
+# used to build derived arguments such as "${TARGET}/**/*.css" for stylelint — a
+# glob that the per-command normalization deliberately leaves untouched, so it must
+# already be a container path by the time it is constructed.
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
+
+# ---------------------------------------------------------------------------
+# Argument parsing
+# ---------------------------------------------------------------------------
+
+BONUS=0
+TARGET="."
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --bonus) BONUS=1 ;;
+    --*)     ;; # Ignore unrecognised flags.
+    *)       TARGET="$1" ;;
+  esac
+  shift
+done
+
+# ---------------------------------------------------------------------------
+# .gitlab-ci.yml helpers
+# ---------------------------------------------------------------------------
+
+# Return the raw string value of a top-level variable from .gitlab-ci.yml, or
+# an empty string when the file or variable is absent.
+_ci_var() {
+  local name="${1}"
+  if [ -f "${CI_YML}" ]; then
+    local val
+    val=$(grep -m1 "^\s*${name}:" "${CI_YML}" \
+          | sed -E "s/^\s*${name}:\s*//" | tr -d "'\"" | tr -d ' ')
+    echo "${val}"
+    return
+  fi
+  echo ""
+}
+
+# Echo "1" when the SKIP_* variable for a job is set to a truthy value.
+_is_skip() {
+  local val; val="$(_ci_var "${1}")"
+  [ "${val}" = "1" ] && echo 1 || echo 0
+}
+
+# Echo "1" when the job's allow_failure flag is enabled.
+# Per-tool variable (_PHPCS_ALLOW_FAILURE etc.) takes precedence over the
+# global _ALL_VALIDATE_ALLOW_FAILURE, matching GitLab CI precedence rules.
+_allow_failure() {
+  local per_tool; per_tool="$(_ci_var "${1}")"
+  if [ -n "${per_tool}" ]; then
+    [ "${per_tool}" = "1" ] && echo 1 || echo 0
+    return
+  fi
+  local global; global="$(_ci_var _ALL_VALIDATE_ALLOW_FAILURE)"
+  [ "${global}" = "1" ] && echo 1 || echo 0
+}
+
+# ---------------------------------------------------------------------------
+# Result accumulators
+# ---------------------------------------------------------------------------
+
+pass=0
+warn=0
+fail=0
+skip_count=0
+results=()
+
+# ---------------------------------------------------------------------------
+# run_check <label> <allow:0|1> <script> [args...]
+#   Runs a command script and records pass / warn (allow_failure) / fail.
+# ---------------------------------------------------------------------------
+
+run_check() {
+  local label="${1}" allow="${2}" script="${3}"
+  shift 3
+  printf "\n── %s ─────────────────────────────────────────────\n" "${label}"
+  if bash "${COMMANDS_DIR}/${script}" "$@"; then
+    results+=("  ✓  ${label}")
+    pass=$((pass + 1))
+  elif [ "${allow}" = "1" ]; then
+    results+=("  ⚠  ${label}  (warning — allow_failure is set)")
+    warn=$((warn + 1))
+  else
+    results+=("  ✗  ${label}")
+    fail=$((fail + 1))
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# ci_check <label> <SKIP_VAR> <ALLOW_VAR> <script> [args...]
+#   Skips when the SKIP variable is truthy; otherwise delegates to run_check
+#   with the computed allow_failure flag.
+# ---------------------------------------------------------------------------
+
+ci_check() {
+  local label="${1}" skip_var="${2}" allow_var="${3}" script="${4}"
+  shift 4
+  if [ "$(_is_skip "${skip_var}")" = "1" ]; then
+    results+=("  -  ${label}  (skipped — ${skip_var})")
+    skip_count=$((skip_count + 1))
+    return
+  fi
+  run_check "${label}" "$(_allow_failure "${allow_var}")" "${script}" "$@"
+}
+
+# ---------------------------------------------------------------------------
+# Phase 1: CI-equivalent checks in Drupal GitLab Templates job order
+# ---------------------------------------------------------------------------
+
+printf "Running Drupal GitLab CI checks on: %s\n" "${TARGET}"
+
+# PHP Lint — skip gracefully when parallel-lint is not installed. The binary
+# is installed at container build time; an older image may not have it yet.
+if [ "$(_is_skip "SKIP_COMPOSER_LINT")" = "1" ]; then
+  results+=("  -  PHP Lint  (skipped — SKIP_COMPOSER_LINT)")
+  skip_count=$((skip_count + 1))
+elif ! command -v parallel-lint >/dev/null 2>&1 && \
+     [ ! -x "${DDEV_APPROOT}/vendor/bin/parallel-lint" ]; then
+  results+=("  -  PHP Lint  (skipped — parallel-lint not installed; run 'ddev restart')")
+  skip_count=$((skip_count + 1))
+else
+  run_check "PHP Lint" "$(_allow_failure _COMPOSER_LINT_ALLOW_FAILURE)" parallel-lint "${TARGET}"
+fi
+ci_check "PHP CodeSniffer" SKIP_PHPCS          _PHPCS_ALLOW_FAILURE          phpcs          "${TARGET}"
+ci_check "PHPStan"         SKIP_PHPSTAN        _PHPSTAN_ALLOW_FAILURE        phpstan        "${TARGET}"
+ci_check "ESLint"          SKIP_ESLINT         _ESLINT_ALLOW_FAILURE         eslint         "${TARGET}"
+ci_check "Stylelint"       SKIP_STYLELINT      _STYLELINT_ALLOW_FAILURE      stylelint      "${TARGET}/**/*.css"
+ci_check "CSpell"          SKIP_CSPELL         _CSPELL_ALLOW_FAILURE         cspell         "${TARGET}"
+
+# ---------------------------------------------------------------------------
+# Phase 2: Bonus checks — not part of Drupal GitLab CI, enabled via --bonus
+# ---------------------------------------------------------------------------
+
+if [ "${BONUS}" = "1" ]; then
+  run_check "PHP Mess Detector" 0 phpmd     "${TARGET}" text
+  run_check "PHP Compatibility" 0 phpcompat "${TARGET}"
+fi
+
+# ---------------------------------------------------------------------------
+# Phase 3: PHPUnit — runs only when all preceding hard failures are zero.
+# Automatically skipped when the Drupal test bootstrap is absent (i.e. the
+# project has not run `ddev composer require --dev drupal/core-dev`).
+# ---------------------------------------------------------------------------
+
+BOOTSTRAP="${DDEV_APPROOT}/${DDEV_DOCROOT:-web}/core/tests/bootstrap.php"
+MINK_DIR="${DDEV_APPROOT}/vendor/behat/mink"
+
+if [ "$(_is_skip SKIP_PHPUNIT)" = "1" ]; then
+  results+=("  -  PHPUnit  (skipped — SKIP_PHPUNIT)")
+  skip_count=$((skip_count + 1))
+elif [ "${fail}" -gt 0 ]; then
+  results+=("  -  PHPUnit  (skipped — preceding checks failed)")
+  skip_count=$((skip_count + 1))
+elif [ ! -f "${BOOTSTRAP}" ] || [ ! -d "${MINK_DIR}" ]; then
+  results+=("  -  PHPUnit  (skipped — Drupal test bootstrap not installed)")
+  skip_count=$((skip_count + 1))
+else
+  run_check "PHPUnit" "$(_allow_failure _PHPUNIT_ALLOW_FAILURE)" phpunit "${TARGET}"
+fi
+
+# ---------------------------------------------------------------------------
+# Summary
+# ---------------------------------------------------------------------------
+
+printf "\n══════════════════════════════════════════════════════\n"
+printf '%s\n' "${results[@]}"
+printf "\n"
+
+if [ "${fail}" -gt 0 ]; then
+  printf "Result: FAILED  (%d failed, %d warned, %d skipped, %d passed)\n" \
+    "${fail}" "${warn}" "${skip_count}" "${pass}"
+  exit 1
+elif [ "${warn}" -gt 0 ]; then
+  printf "Result: passed with warnings  (%d warned, %d skipped, %d passed)\n" \
+    "${warn}" "${skip_count}" "${pass}"
+  exit 0
+else
+  printf "Result: passed  (%d skipped, %d passed)\n" "${skip_count}" "${pass}"
+  exit 0
+fi

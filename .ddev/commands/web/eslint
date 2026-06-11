@@ -9,7 +9,16 @@
 
 WEB_ROOT="${DDEV_DOCROOT:-web}"
 
-# Sourced before the no-path default below so downstream logic sees container paths.
+# Prefer web/core/node_modules/.bin/eslint (the binary CI uses), then
+# project-level node_modules, then the globally installed binary.
+ESLINT="${DDEV_APPROOT}/${WEB_ROOT}/core/node_modules/.bin/eslint"
+if [ ! -x "${ESLINT}" ]; then
+  ESLINT="${DDEV_APPROOT}/node_modules/.bin/eslint"
+  if [ ! -x "${ESLINT}" ]; then
+    ESLINT="eslint"
+  fi
+fi
+
 # shellcheck source=../../module-developer/lib/init.sh
 source /mnt/ddev_config/module-developer/lib/init.sh
 
@@ -25,16 +34,6 @@ if [ "${_has_path}" -eq 0 ]; then
   set -- "$@" .
 fi
 unset _has_path _arg
-
-# Prefer web/core/node_modules/.bin/eslint (the binary CI uses), then
-# project-level node_modules, then the globally installed binary.
-ESLINT="${DDEV_APPROOT}/${WEB_ROOT}/core/node_modules/.bin/eslint"
-if [ ! -x "${ESLINT}" ]; then
-  ESLINT="${DDEV_APPROOT}/node_modules/.bin/eslint"
-  if [ ! -x "${ESLINT}" ]; then
-    ESLINT="eslint"
-  fi
-fi
 
 # Priority 1: project-level ESLint config at the project root — use as-is.
 for config in .eslintrc .eslintrc.json .eslintrc.yaml .eslintrc.yml \

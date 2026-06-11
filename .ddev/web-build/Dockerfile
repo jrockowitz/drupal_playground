@@ -20,11 +20,13 @@ RUN composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-in
       mglaman/phpstan-drupal \
       phpmd/phpmd \
       palantirnet/drupal-rector \
-    && ln -sf /usr/local/composer/vendor/bin/phpcs   /usr/local/bin/phpcs \
-    && ln -sf /usr/local/composer/vendor/bin/phpcbf  /usr/local/bin/phpcbf \
-    && ln -sf /usr/local/composer/vendor/bin/phpstan /usr/local/bin/phpstan \
-    && ln -sf /usr/local/composer/vendor/bin/phpmd   /usr/local/bin/phpmd \
-    && ln -sf /usr/local/composer/vendor/bin/rector  /usr/local/bin/rector \
+      php-parallel-lint/php-parallel-lint \
+    && ln -sf /usr/local/composer/vendor/bin/phpcs          /usr/local/bin/phpcs \
+    && ln -sf /usr/local/composer/vendor/bin/phpcbf         /usr/local/bin/phpcbf \
+    && ln -sf /usr/local/composer/vendor/bin/phpstan        /usr/local/bin/phpstan \
+    && ln -sf /usr/local/composer/vendor/bin/phpmd          /usr/local/bin/phpmd \
+    && ln -sf /usr/local/composer/vendor/bin/rector         /usr/local/bin/rector \
+    && ln -sf /usr/local/composer/vendor/bin/parallel-lint  /usr/local/bin/parallel-lint \
     && mkdir -p /usr/local/phpcompat \
     && composer -d /usr/local/phpcompat init --no-interaction --name=internal/phpcompat \
     && composer -d /usr/local/phpcompat config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true \

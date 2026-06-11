@@ -29,19 +29,31 @@
 # is mounted at ${DDEV_APPROOT} (/var/www/html).
 #
 # This rewrites such arguments so callers — IDE external tools, file watchers, AI
-# agents — can pass absolute host paths. It is host-root agnostic: rather than
-# assuming a docroot or a known host prefix, it strips leading path components
-# until the remainder resolves under ${DDEV_APPROOT}. This covers paths anywhere
-# in the project (web/modules/..., top-level recipes/..., etc.).
+# agents — can pass absolute host paths. The host project root is NOT known inside
+# the container (DDEV exposes only the container ${DDEV_APPROOT}, never the host
+# path), so a precise prefix swap is impossible. Instead this is host-root agnostic:
+# it strips leading path components until the remainder resolves under
+# ${DDEV_APPROOT}, matching the longest (most specific) resolvable suffix. This
+# covers paths anywhere in the project (web/modules/..., top-level recipes/..., etc.).
 #
 # The rewrite is a no-op for relative arguments, flags, absolute paths that already
 # exist in the container, and absolute paths whose tail does not resolve under
-# ${DDEV_APPROOT}. Known limitation: arguments containing glob wildcards
-# (/abs/path/**/*.css) are left untouched because the existence test cannot match a
-# glob; pass those relative to the project root instead.
+# ${DDEV_APPROOT}.
+#
+# Known limitations:
+#   - Glob wildcards: arguments like /abs/path/**/*.css are left untouched because
+#     the existence test cannot match a glob; pass those relative to the project root.
+#   - Coincidental suffixes: because the match is by suffix, an absolute path that
+#     does not exist in the container but whose trailing component happens to equal a
+#     top-level project entry (e.g. /unrelated/web matches the docroot "web") is
+#     rewritten to that entry rather than passed through. Longest-match minimizes
+#     this, but for paths that are not inside the project, pass them relative or cd
+#     to them instead of passing an unrelated absolute path.
 #
 # The rewritten argument list is returned in the
-# DDEV_MODULE_DEVELOPER_NORMALIZED_ARGS array.
+# DDEV_MODULE_DEVELOPER_NORMALIZED_ARGS array, which is unset after use below so it
+# does not linger in the command's shell. (DDEV_MODULE_DEVELOPER_DIR/CONFIG_DIR are
+# plain, unexported shell variables, so they are not inherited by the tool process.)
 ddev_module_developer_normalize_host_paths() {
   DDEV_MODULE_DEVELOPER_NORMALIZED_ARGS=()
 

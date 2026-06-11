@@ -1,9 +1,11 @@
 name: module-developer
 repository: https://github.com/jrockowitz/ddev-module-developer/archive/refs/heads/feat/absolute-host-path-args.tar.gz
 version: ""
-install_date: "2026-06-11T08:00:52-04:00"
+install_date: "2026-06-11T11:11:16-04:00"
 project_files:
     - web-build/Dockerfile
+    - commands/web/checks
+    - commands/web/parallel-lint
     - commands/web/phpcs
     - commands/web/phpcbf
     - commands/web/phpstan
