@@ -1,7 +1,7 @@
 name: module-developer
-repository: https://github.com/jrockowitz/ddev-module-developer/archive/refs/heads/feat/absolute-host-path-args.tar.gz
-version: ""
-install_date: "2026-06-11T11:11:16-04:00"
+repository: mandclu/ddev-module-developer
+version: 0.2.0
+install_date: "2026-06-11T17:37:11-04:00"
 project_files:
     - web-build/Dockerfile
     - commands/web/checks

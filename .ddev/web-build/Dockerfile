@@ -12,6 +12,7 @@ ENV COMPOSER_HOME=/usr/local/composer
 # 4.x/9.x to match Drupal 11 CI. It is re-installed alongside its own phpcs 3.x
 # in /usr/local/phpcompat for use by the phpcompat command.
 RUN composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true \
+    && composer global config platform.php 8.3.0 \
     && composer global remove --no-interaction phpcompatibility/php-compatibility \
     && composer global require --no-interaction \
       squizlabs/php_codesniffer:^4.0 \
