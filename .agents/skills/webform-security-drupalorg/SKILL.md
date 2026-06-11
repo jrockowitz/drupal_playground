@@ -183,6 +183,25 @@ If a value is not visible or not yet decided, write a clear placeholder instead
 of inventing it. If using the browser to place draft text into Drupal.org, stop
 before clicking any publish, save, submit, or comment button.
 
+When a Drupal.org security issue has no draft SA and the human asks to create
+one, use the issue page's labeled link:
+
+```text
+Create Advisory for this issue
+```
+
+This opens a private advisory node form like:
+
+```text
+https://security.drupal.org/node/add/advisory?field_sa_for=<node-id>
+```
+
+Verify that the `SA For` field is prefilled with the expected issue before
+placing draft text into the form. Treat required risk scoring fields as draft
+recommendations for human review when the issue does not already show a final
+risk classification. Still stop before clicking `Save`, `Preview`, publish,
+submit, or any other final action.
+
 When filling Drupal.org security advisory forms in the Codex in-app Browser,
 rich text fields may reject Playwright `locator.fill()` with a clipboard or
 virtual clipboard error. For long advisory text fields, use the browser's
