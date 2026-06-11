@@ -6,7 +6,7 @@
 
 # @see https://www.drupal.org/node/2940458
 
-source .commands.sh
+source "$HOME/.commands.sh"
 
 if [ -d "$PARAMETERS" ]; then
   PARAMETERS=../../$PARAMETERS/**/*.css

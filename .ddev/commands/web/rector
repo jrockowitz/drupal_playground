@@ -6,6 +6,6 @@
 
 # @see https://github.com/palantirnet/drupal-rector
 
-source .commands.sh
+source "$HOME/.commands.sh"
 
 ./vendor/bin/rector process --dry-run $OPTIONS $PARAMETERS

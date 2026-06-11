@@ -6,6 +6,6 @@
 
 # @see https://www.drupal.org/docs/develop/development-tools/cspell
 
-source .commands.sh
+source "$HOME/.commands.sh"
 
 $DDEV_DOCROOT/core/node_modules/.bin/cspell -c  .cspell.json --show-suggestions --show-context --no-progress  $OPTIONS $PARAMETERS

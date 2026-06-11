@@ -6,6 +6,6 @@
 
 # @see https://github.com/mglaman/drupal-check
 
-source .commands.sh
+source "$HOME/.commands.sh"
 
 php vendor/bin/drupal-check $OPTIONS $PARAMETERS

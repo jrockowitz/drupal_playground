@@ -7,6 +7,6 @@
 # @see https://mglaman.dev/blog/tighten-your-drupal-code-using-phpstan
 # @see https://phpstan.org/user-guide/rule-levels
 
-source .commands.sh
+source "$HOME/.commands.sh"
 
 ./vendor/bin/phpstan --level=6 $OPTIONS analyse $PARAMETERS

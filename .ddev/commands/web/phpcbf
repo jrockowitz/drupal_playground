@@ -6,6 +6,6 @@
 
 # @see phpcbf
 
-source .commands.sh
+source "$HOME/.commands.sh"
 
 ./vendor/bin/phpcbf $OPTIONS $PARAMETERS
