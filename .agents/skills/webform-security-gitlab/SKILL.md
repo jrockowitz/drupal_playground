@@ -54,16 +54,31 @@ post a comment, the agent may draft the text and may place it in the comment
 box, but must stop before submission and ask the human maintainer to click
 `Comment`.
 
-## Private Issue Summary
+## Private Issue Notes
 
-Maintain the working summary at:
+Maintain the shared README at:
 
 ```text
-.agents/private/webform-security-issues.md
+.agents/private/webform-security/README.md
 ```
 
-This file is intentionally ignored by Git. Keep enough operational detail to
-resume work:
+Maintain the GitLab security work index at:
+
+```text
+.agents/private/webform-security/gitlab/index.md
+```
+
+Maintain one GitLab-specific Markdown file per security issue at:
+
+```text
+.agents/private/webform-security/gitlab/<security-id>.md
+```
+
+These locations are intentionally ignored by Git. Use the README only for the
+directory map and update order, duplicating no issue-specific status or next
+action. Use the GitLab index for security work status, branches, remotes, merge
+requests, and one row per private security issue. Use the individual GitLab
+file for issue-level details needed to resume work:
 
 - issue link or id
 - current status and priority if visible
@@ -72,9 +87,33 @@ resume work:
 - latest evidence and verification commands
 - next action
 
+When inspecting or updating an issue, create or update the individual GitLab
+note first, then update the GitLab index row. Update the README only if the
+directory map or update order changes. If a matching Drupal.org security issue
+is visible, link to the corresponding Drupal.org note instead of duplicating
+details.
+
 Do not copy exploit prose, secrets, tokens, private user data, or unnecessary
 vulnerability detail into the summary. Prefer concise paraphrase and links back
 to the private GitLab issue.
+
+### GitLab Issue Note Template
+
+```markdown
+# GitLab Security Issue <security-id>
+
+- GitLab issue/work item:
+- Drupal.org note: ../drupalorg/<node-id>.md
+- Security remote:
+- Local branch:
+- Merge request:
+- Status:
+- Priority / advisory state:
+- Risk area:
+- Latest evidence:
+- Verification:
+- Next action:
+```
 
 ## Branching Strategy
 
@@ -147,6 +186,51 @@ maintainer to submit. The draft must:
 Do not submit the comment. If using the browser, the agent may fill the comment
 box, but must stop before clicking `Comment`. The human maintainer always clicks
 `Comment` after reviewing or editing the draft.
+
+## Security Advisory Drafts
+
+When drafting a security advisory, use current visible facts from the private
+GitLab issue, merge request, and local verification notes. Draft advisory text
+only; do not publish it, submit forms, change issue metadata, or make final
+public security claims unless the human maintainer explicitly asks in the
+current conversation.
+
+Keep advisory language clear and useful without adding unnecessary exploit
+detail. Prefer high-level impact descriptions, affected feature areas,
+required conditions, and mitigation/fixed-version placeholders. Do not include
+secrets, tokens, private user data, proof-of-concept payloads, or detailed
+attack steps.
+
+Preserve the reviewable advisory structure expected by Drupal security work:
+
+- title
+- project and module
+- risk classification when visible
+- affected versions when visible
+- description and impact
+- mitigation or fixed-version placeholder when not yet known
+- credit, coordinator, or reporter fields when visible
+- maintainer checklist for unknowns that still need human confirmation
+
+If a value is not visible or not yet decided, write a clear placeholder instead
+of inventing it. If using the browser to place draft text into GitLab, stop
+before clicking any publish, save, or comment button.
+
+When filling Drupal.org security advisory forms in the Codex in-app Browser,
+rich text fields may reject Playwright `locator.fill()` with a clipboard or
+virtual clipboard error. For long advisory text fields, use the browser's
+focused typing path instead:
+
+```js
+await locator.click({});
+await locator.press('Meta+A', {});
+await locator.press('Backspace', {});
+await tab.cua.type({ text: value });
+```
+
+If the in-app Browser rotates tab IDs while the advisory form is open, list
+tabs, reconnect to the tab whose URL contains `www.drupal.org/node/add/sa`, and
+continue without reloading unless the human maintainer asks for a fresh form.
 
 ## Code Work Guardrails
 
