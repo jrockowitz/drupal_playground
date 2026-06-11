@@ -64,7 +64,10 @@
       "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies/NCT05088187\")",
       "Bash(curl -s \"https://clinicaltrials.gov/api/v2/studies/metadata\")",
       "mcp__plugin_playwright_playwright__browser_resize",
-      "mcp__plugin_playwright_playwright__browser_evaluate"
+      "mcp__plugin_playwright_playwright__browser_evaluate",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__list_connected_browsers",
+      "mcp__Claude_in_Chrome__tabs_create_mcp"
     ],
     "deny": [
       "Bash(ddev delete *)",
