@@ -1,0 +1,30 @@
+name: module-developer
+repository: mandclu/ddev-module-developer
+version: 0.2.0
+install_date: "2026-06-11T17:37:11-04:00"
+project_files:
+    - web-build/Dockerfile
+    - commands/web/checks
+    - commands/web/parallel-lint
+    - commands/web/phpcs
+    - commands/web/phpcbf
+    - commands/web/phpstan
+    - commands/web/phpmd
+    - commands/web/rector
+    - commands/web/stylelint
+    - commands/web/eslint
+    - commands/web/phpunit
+    - commands/web/cspell
+    - commands/web/phpcompat
+    - module-developer/lib/init.sh
+    - module-developer/config/phpcs.xml
+    - module-developer/config/phpstan.neon
+    - module-developer/config/phpmd-ruleset.xml
+    - module-developer/config/.stylelintrc.json
+    - module-developer/config/.eslintrc.json
+    - module-developer/config/.prettierrc.json
+global_files: []
+removal_actions:
+    - |
+      #ddev-description: Remind user to restart after removal
+      echo "ddev-module-developer removed. Run 'ddev restart' to rebuild the container."

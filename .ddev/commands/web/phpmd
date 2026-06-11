@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#ddev-generated
+
+## Description: Run PHP Mess Detector
+## Usage: phpmd <path> <format> [ruleset]
+## Example: "ddev phpmd web/modules/custom/mymodule text"
+## ExecRaw: true
+## HostWorkingDir: true
+
+DEFAULT_RULESET="/mnt/ddev_config/module-developer/config/phpmd-ruleset.xml"
+
+# Prefer the project-local phpmd binary (same as CI uses via $COMPOSER_BIN_DIR).
+PHPMD="${DDEV_APPROOT}/vendor/bin/phpmd"
+if [ ! -x "${PHPMD}" ]; then
+  PHPMD="phpmd"
+fi
+
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
+
+if [ $# -eq 0 ]; then
+  echo "Usage: ddev phpmd <path> <format> [ruleset]"
+  echo ""
+  echo "  path     File or directory to analyse"
+  echo "  format   Output format: text, xml, html, json, github, sarif"
+  echo "  ruleset  Path to ruleset XML (default: bundled Drupal ruleset)"
+  echo ""
+  echo "Example: ddev phpmd web/modules/custom/mymodule text"
+  exit 1
+fi
+
+# If caller supplies a path and format but no ruleset, inject the default.
+if [ $# -eq 2 ]; then
+  exec "${PHPMD}" "$1" "$2" "${DEFAULT_RULESET}"
+fi
+
+exec "${PHPMD}" "$@"
