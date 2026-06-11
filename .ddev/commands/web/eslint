@@ -1,24 +1,135 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#ddev-generated
 
-## Description: Runs Eslint
-## Usage: eslint [flags] [args]
-## Example: ddev eslint\nddev eslint web/modules/sandbox/schemadotorg
+## Description: Run ESLint for JS and YAML validation with Prettier (Drupal standards)
+## Usage: eslint [flags] [path]
+## Example: "ddev eslint"
+## ExecRaw: true
+## HostWorkingDir: true
 
-# @see https://www.drupal.org/node/2873849
+WEB_ROOT="${DDEV_DOCROOT:-web}"
 
-source "$HOME/.commands.sh"
+# Sourced before the no-path default below so downstream logic sees container paths.
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
 
-# Copy .prettierrc.json and .prettierignore.
-if [ -d "$PARAMETERS" ]; then
-  cp $DDEV_DOCROOT/core/.prettierrc.json $PARAMETERS/.prettierrc.json
-  echo '*.yml' > $PARAMETERS/.prettierignore
+# Default to the current directory when no path argument is given.
+_has_path=0
+for _arg in "$@"; do
+  case "${_arg}" in
+    -*) ;;
+    *) _has_path=1; break ;;
+  esac
+done
+if [ "${_has_path}" -eq 0 ]; then
+  set -- "$@" .
+fi
+unset _has_path _arg
+
+# Prefer web/core/node_modules/.bin/eslint (the binary CI uses), then
+# project-level node_modules, then the globally installed binary.
+ESLINT="${DDEV_APPROOT}/${WEB_ROOT}/core/node_modules/.bin/eslint"
+if [ ! -x "${ESLINT}" ]; then
+  ESLINT="${DDEV_APPROOT}/node_modules/.bin/eslint"
+  if [ ! -x "${ESLINT}" ]; then
+    ESLINT="eslint"
+  fi
 fi
 
-# Run eslint.
-$DDEV_DOCROOT/core/node_modules/.bin/eslint --no-error-on-unmatched-pattern --resolve-plugins-relative-to=$DDEV_DOCROOT/core --ext=.js $OPTIONS $PARAMETERS
+# Priority 1: project-level ESLint config at the project root — use as-is.
+for config in .eslintrc .eslintrc.json .eslintrc.yaml .eslintrc.yml \
+              .eslintrc.js .eslintrc.cjs eslint.config.js eslint.config.cjs; do
+  if [ -f "${DDEV_APPROOT}/${config}" ]; then
+    exec "${ESLINT}" "$@"
+  fi
+done
 
-# Remove .prettierrc.json and .prettierignore.
-if [ -d "$PARAMETERS" ]; then
-  rm $PARAMETERS/.prettierrc.json
-  rm $PARAMETERS/.prettierignore
+# Parse _ESLINT_EXTRA from .gitlab-ci.yml, replicating CI's automatic variable
+# injection. Default matches the GitLab Templates default.
+if [ -f ".gitlab-ci.yml" ]; then
+  value=$(grep -m1 "^\s*_ESLINT_EXTRA:" ".gitlab-ci.yml" | sed -E "s/^\s*_ESLINT_EXTRA:\s*//" | tr -d "'\"")
+  if [ -n "${value}" ]; then
+    export _ESLINT_EXTRA="${value}"
+  fi
 fi
+_ESLINT_EXTRA="${_ESLINT_EXTRA:---quiet}"
+
+CORE_DIR="${DDEV_APPROOT}/${WEB_ROOT}/core"
+PARENT_DIR="$(dirname "$(pwd)")"
+CREATED_PARENT_ESLINTRC=""
+CREATED_PARENT_ESLINTRC_JQUERY=""
+CREATED_PRETTIERRC=""
+CREATED_PRETTIERIGNORE=""
+ESLINT_TMPDIR=""
+
+cleanup() {
+  [ -n "${CREATED_PARENT_ESLINTRC}" ] && rm -f "${CREATED_PARENT_ESLINTRC}"
+  [ -n "${CREATED_PARENT_ESLINTRC_JQUERY}" ] && rm -f "${CREATED_PARENT_ESLINTRC_JQUERY}"
+  [ -n "${CREATED_PRETTIERRC}" ] && rm -f "${CREATED_PRETTIERRC}"
+  [ -n "${CREATED_PRETTIERIGNORE}" ] && rm -f "${CREATED_PRETTIERIGNORE}"
+  [ -n "${ESLINT_TMPDIR}" ] && rm -rf "${ESLINT_TMPDIR}"
+}
+trap cleanup EXIT
+
+# Priority 2: Drupal core's .eslintrc.passing.json — the same default the
+# GitLab CI template uses. Only available when core's node_modules exists.
+if [ -f "${CORE_DIR}/.eslintrc.passing.json" ] && [ -d "${CORE_DIR}/node_modules" ]; then
+  # Mirror CI: symlink core's ESLint and jQuery configs into the parent of the
+  # module directory so ESLint finds them via directory traversal.
+  if [ ! -e "${PARENT_DIR}/.eslintrc.json" ]; then
+    ln -s "${CORE_DIR}/.eslintrc.passing.json" "${PARENT_DIR}/.eslintrc.json"
+    CREATED_PARENT_ESLINTRC="${PARENT_DIR}/.eslintrc.json"
+  fi
+  if [ ! -e "${PARENT_DIR}/.eslintrc.jquery.json" ]; then
+    ln -s "${CORE_DIR}/.eslintrc.jquery.json" "${PARENT_DIR}/.eslintrc.jquery.json"
+    CREATED_PARENT_ESLINTRC_JQUERY="${PARENT_DIR}/.eslintrc.jquery.json"
+  fi
+  # Mirror CI: configure Prettier in the current (module) directory if not present.
+  if [ ! -e ".prettierrc.json" ]; then
+    ln -s "${CORE_DIR}/.prettierrc.json" ".prettierrc.json"
+    CREATED_PRETTIERRC=".prettierrc.json"
+  fi
+  if [ ! -e ".prettierignore" ]; then
+    printf '*.yml\n' > ".prettierignore"
+    CREATED_PRETTIERIGNORE=".prettierignore"
+  fi
+
+  # shellcheck disable=SC2086
+  "${ESLINT}" --no-error-on-unmatched-pattern --ignore-pattern="*.es6.js" \
+    --resolve-plugins-relative-to="${CORE_DIR}" \
+    --ext=.js,.yml ${_ESLINT_EXTRA} "$@"
+  EXIT_CODE=$?
+  exit ${EXIT_CODE}
+fi
+
+# Priority 3: bundled fallback config (globally installed plugins).
+# ESLint 8 resolves 'extends' from the config file's own directory (not from
+# --resolve-plugins-relative-to). Stage the config in a temp dir with a
+# node_modules symlink pointing at the global installation so that both
+# 'extends' and 'plugins' entries resolve correctly.
+_ESLINT_REAL="$(readlink -f "$(command -v eslint)" 2>/dev/null)"
+_GLOBAL_MODULES="$(echo "${_ESLINT_REAL}" | sed 's|/node_modules/eslint/.*||')/node_modules"
+if [ ! -d "${_GLOBAL_MODULES}" ]; then
+  _GLOBAL_MODULES="$(npm root -g 2>/dev/null)"
+fi
+ESLINT_TMPDIR="$(mktemp -d /tmp/eslint-XXXXXX)"
+cp "${DDEV_APPROOT}/.ddev/module-developer/config/.eslintrc.json" "${ESLINT_TMPDIR}/.eslintrc.json"
+ln -s "${_GLOBAL_MODULES}" "${ESLINT_TMPDIR}/node_modules"
+# Mirror CI: configure Prettier in the current (module) directory if not present.
+if [ ! -e ".prettierrc.json" ]; then
+  if [ -f "${CORE_DIR}/.prettierrc.json" ]; then
+    ln -s "${CORE_DIR}/.prettierrc.json" ".prettierrc.json"
+  else
+    ln -s "${DDEV_APPROOT}/.ddev/module-developer/config/.prettierrc.json" ".prettierrc.json"
+  fi
+  CREATED_PRETTIERRC=".prettierrc.json"
+fi
+if [ ! -e ".prettierignore" ]; then
+  printf '*.yml\n' > ".prettierignore"
+  CREATED_PRETTIERIGNORE=".prettierignore"
+fi
+# shellcheck disable=SC2086
+"${ESLINT}" --no-error-on-unmatched-pattern --ignore-pattern="*.es6.js" \
+  --no-eslintrc -c "${ESLINT_TMPDIR}/.eslintrc.json" \
+  --resolve-plugins-relative-to="${ESLINT_TMPDIR}" \
+  --ext=.js,.yml ${_ESLINT_EXTRA} "$@"

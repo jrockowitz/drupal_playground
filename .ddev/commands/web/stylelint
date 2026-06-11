@@ -1,23 +1,73 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#ddev-generated
 
-## Description: Runs Stylelint
-## Usage: stylelint [flags] [args]
-## Example: ddev stylelint\nddev stylelint web/modules/sandbox/schemadotorg
+## Description: Run Stylelint for CSS/SCSS validation (Drupal standards)
+## Usage: stylelint [flags] [pattern]
+## Example: "ddev stylelint './**/*.css'"
+## ExecRaw: true
+## HostWorkingDir: true
 
-# @see https://www.drupal.org/node/2940458
+WEB_ROOT="${DDEV_DOCROOT:-web}"
 
-source "$HOME/.commands.sh"
-
-if [ -d "$PARAMETERS" ]; then
-  PARAMETERS=../../$PARAMETERS/**/*.css
+# Binary resolution: web/core/node_modules first, then project-local, then global.
+STYLELINT="${DDEV_APPROOT}/${WEB_ROOT}/core/node_modules/.bin/stylelint"
+if [ ! -x "${STYLELINT}" ]; then
+  STYLELINT="${DDEV_APPROOT}/node_modules/.bin/stylelint"
+  if [ ! -x "${STYLELINT}" ]; then
+    STYLELINT="stylelint"
+  fi
 fi
-$DDEV_DOCROOT/core/node_modules/.bin/stylelint --config=$DDEV_DOCROOT/core/.stylelintrc.json web/modules/sandbox/**/*.css
-$DDEV_DOCROOT/core/node_modules/.bin/stylelint --config=$DDEV_DOCROOT/core/.stylelintrc.json web/modules/custom/**/*.css
 
-#if [ -d "$PARAMETERS" ]; then
-#  PARAMETERS=../../$PARAMETERS/**/*.css
-#else
-#  PARAMETERS=$(echo $PARAMETERS | sed -r "s|$DDEV_DOCROOT/|../../$DDEV_DOCROOT/|g")
-#fi
-#
-#yarn --silent --cwd=$DDEV_DOCROOT/core stylelint --allow-empty-input --formatter --config=./.stylelintrc.json $OPTIONS $PARAMETERS
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
+
+# Parse _STYLELINT_EXTRA from .gitlab-ci.yml if present.
+if [ -f ".gitlab-ci.yml" ]; then
+  value=$(grep -m1 "^\s*_STYLELINT_EXTRA:" ".gitlab-ci.yml" | sed -E "s/^\s*_STYLELINT_EXTRA:\s*//" | tr -d "'\"")
+  if [ -n "${value}" ]; then
+    export _STYLELINT_EXTRA="${value}"
+  fi
+fi
+
+# Config detection: match CI behaviour — if a local stylelint config exists in the
+# current directory, pass no --config flag; otherwise use core's config, falling back
+# to the bundled default if core/node_modules isn't installed.
+FOUND_LOCAL_CONFIG=false
+for cfg in .stylelintrc .stylelintrc.json .stylelintrc.yaml .stylelintrc.yml \
+           .stylelintrc.js .stylelintrc.cjs stylelint.config.js stylelint.config.cjs; do
+  if [ -f "./${cfg}" ]; then
+    FOUND_LOCAL_CONFIG=true
+    break
+  fi
+done
+
+STYLELINT_CONFIG=""
+if [ "${FOUND_LOCAL_CONFIG}" = "false" ]; then
+  CORE_STYLELINTRC="${DDEV_APPROOT}/${WEB_ROOT}/core/.stylelintrc.json"
+  CORE_NODE_MODULES="${DDEV_APPROOT}/${WEB_ROOT}/core/node_modules"
+  if [ -f "${CORE_STYLELINTRC}" ] && [ -d "${CORE_NODE_MODULES}" ]; then
+    STYLELINT_CONFIG="--config ${CORE_STYLELINTRC}"
+  else
+    STYLELINT_CONFIG="--config ${DDEV_APPROOT}/.ddev/module-developer/config/.stylelintrc.json"
+  fi
+fi
+
+# Separate flags (--*) from file patterns so that flag-only invocations like
+# "ddev stylelint --fix" still get the default glob. Quoted so stylelint's own
+# glob library handles ** recursively (bash without globstar would only expand
+# one level deep).
+FLAGS=()
+PATTERNS=()
+for arg in "$@"; do
+  case "${arg}" in
+    --*) FLAGS+=("${arg}") ;;
+    *) PATTERNS+=("${arg}") ;;
+  esac
+done
+
+if [ "${#PATTERNS[@]}" -eq 0 ]; then
+  PATTERNS=('./**/*.css')
+fi
+
+# shellcheck disable=SC2086
+exec "${STYLELINT}" --allow-empty-input --ignore-path ./.stylelintignore ${STYLELINT_CONFIG} "${FLAGS[@]}" "${PATTERNS[@]}" --formatter verbose --color ${_STYLELINT_EXTRA}

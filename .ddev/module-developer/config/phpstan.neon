@@ -1,0 +1,25 @@
+# #ddev-generated
+# Default PHPStan configuration for Drupal module development.
+# Matches the Drupal GitLab Templates default (assets/phpstan.neon).
+#
+# Place a phpstan.neon or phpstan.neon.dist in your project root to override this.
+#
+# NOTE: The GitLab CI Docker image pre-installs the mglaman/phpstan-drupal
+# extension, so the template's phpstan.neon does not include it explicitly.
+# In DDEV there is no such pre-built image, so the ddev phpstan command
+# injects the extension automatically when no project-level config is found.
+# The extension is installed globally via Composer in the web container.
+
+parameters:
+  level: 0
+  fileExtensions:
+    - php
+    - module
+    - inc
+    - install
+    - theme
+    - profile
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    # new static() is a best practice in Drupal, so we cannot fix that.
+    - "#^Unsafe usage of new static#"

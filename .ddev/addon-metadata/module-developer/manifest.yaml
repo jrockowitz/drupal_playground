@@ -1,0 +1,28 @@
+name: module-developer
+repository: https://github.com/jrockowitz/ddev-module-developer/archive/refs/heads/feat/absolute-host-path-args.tar.gz
+version: ""
+install_date: "2026-06-11T08:00:52-04:00"
+project_files:
+    - web-build/Dockerfile
+    - commands/web/phpcs
+    - commands/web/phpcbf
+    - commands/web/phpstan
+    - commands/web/phpmd
+    - commands/web/rector
+    - commands/web/stylelint
+    - commands/web/eslint
+    - commands/web/phpunit
+    - commands/web/cspell
+    - commands/web/phpcompat
+    - module-developer/lib/init.sh
+    - module-developer/config/phpcs.xml
+    - module-developer/config/phpstan.neon
+    - module-developer/config/phpmd-ruleset.xml
+    - module-developer/config/.stylelintrc.json
+    - module-developer/config/.eslintrc.json
+    - module-developer/config/.prettierrc.json
+global_files: []
+removal_actions:
+    - |
+      #ddev-description: Remind user to restart after removal
+      echo "ddev-module-developer removed. Run 'ddev restart' to rebuild the container."

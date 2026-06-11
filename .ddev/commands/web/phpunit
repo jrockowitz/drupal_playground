@@ -1,11 +1,73 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#ddev-generated
 
-## Description: Runs PHPUnit
-## Usage: phpunit [flags] [args]
-## Example: ddev phpunit\nddev phpunit web/modules/custom
+## Description: Run PHPUnit tests for the current Drupal module
+## Usage: phpunit [flags] [path]
+## Example: "ddev phpunit" or "ddev phpunit --stop-on-failure"
+## Example: "ddev phpunit tests/src/Unit/MyTest.php"
+## ExecRaw: true
+## HostWorkingDir: true
 
-# @see https://www.drupal.org/docs/automated-testing/phpunit-in-drupal/running-phpunit-tests
+set -eu -o pipefail
 
-source "$HOME/.commands.sh"
+# Prefer the project-local phpunit binary (installed as part of drupal/core-dev
+# or similar); fall back to the globally installed phpunit if present.
+PHPUNIT="${DDEV_APPROOT}/vendor/bin/phpunit"
+if [ ! -x "${PHPUNIT}" ]; then
+  if ! command -v phpunit >/dev/null 2>&1; then
+    echo "phpunit is not available. Run 'ddev composer require --dev drupal/core-dev' first."
+    exit 1
+  fi
+  PHPUNIT="phpunit"
+fi
 
-./vendor/bin/phpunit $OPTIONS $PARAMETERS
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
+
+# Default to the current directory when no path is given. With HostWorkingDir: true
+# this runs tests for whichever module the developer cd'd into on the host.
+if [ "$#" -eq 0 ]; then
+  set -- .
+fi
+
+# Use project-level phpunit.xml if present — it already has all the
+# Drupal-specific bootstrap and environment settings configured.
+for config in phpunit.xml phpunit.xml.dist; do
+  if [ -f "${DDEV_APPROOT}/${config}" ]; then
+    exec "${PHPUNIT}" "$@"
+  fi
+done
+
+# No project-level config found. Provide DDEV-standard defaults so unit,
+# kernel, and functional tests can all run out of the box.
+BOOTSTRAP="${DDEV_APPROOT}/${DDEV_DOCROOT}/core/tests/bootstrap.php"
+
+if [ ! -f "${BOOTSTRAP}" ]; then
+  echo "Drupal core bootstrap not found at ${BOOTSTRAP}."
+  echo "Make sure Drupal is installed and ${DDEV_DOCROOT}/core exists."
+  exit 1
+fi
+
+# Drupal's bootstrap.php requires behat/mink (via drupal/core-dev). Without it
+# the bootstrap fails even for unit tests. Check before running to give a clear
+# error rather than a confusing class-not-found stack trace.
+if [ ! -d "${DDEV_APPROOT}/vendor/behat/mink" ]; then
+  echo "Drupal's test bootstrap requires drupal/core-dev (provides behat/mink)."
+  echo "Run: ddev composer require --dev drupal/core-dev"
+  exit 1
+fi
+
+# Drupal kernel and functional tests need a running database and base URL.
+# These DDEV defaults match the standard DDEV Drupal configuration.
+export SIMPLETEST_BASE_URL="${SIMPLETEST_BASE_URL:-${DDEV_PRIMARY_URL}}"
+export SIMPLETEST_DB="${SIMPLETEST_DB:-mysql://db:db@db/db}"
+export BROWSERTEST_OUTPUT_DIRECTORY="${BROWSERTEST_OUTPUT_DIRECTORY:-${DDEV_APPROOT}/${DDEV_DOCROOT}/sites/simpletest/browser_output}"
+
+# Default to showing all issue details (deprecations, notices, warnings, etc.).
+# Set PHPUNIT_DISPLAY_ALL_ISSUES=0 in .ddev/config.yaml web_environment to suppress.
+DISPLAY_FLAGS="--display-all-issues"
+if [ "${PHPUNIT_DISPLAY_ALL_ISSUES:-1}" = "0" ]; then
+  DISPLAY_FLAGS=""
+fi
+
+exec "${PHPUNIT}" --bootstrap="${BOOTSTRAP}" ${DISPLAY_FLAGS} "$@"

@@ -1,11 +1,81 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#ddev-generated
 
-## Description: Runs Drupal Rector
-## Usage: rector [flags] [args]
-## Example: ddev rector\nddev rector web/modules/sandbox/schemadotorg
+## Description: Run Drupal Rector for automated deprecation fixes and code upgrades
+## Usage: rector [subcommand] [flags] [path]
+## Example: "ddev rector process web/modules/custom/mymodule --dry-run"
+## ExecRaw: true
+## HostWorkingDir: true
+## MutagenSync: true
 
-# @see https://github.com/palantirnet/drupal-rector
+# Prefer the project-local rector binary (same as CI uses via $COMPOSER_BIN_DIR).
+RECTOR="${DDEV_APPROOT}/vendor/bin/rector"
+if [ ! -x "${RECTOR}" ]; then
+  RECTOR="rector"
+fi
 
-source "$HOME/.commands.sh"
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
 
-./vendor/bin/rector process --dry-run $OPTIONS $PARAMETERS
+# If the project provides its own rector config, use it as-is.
+for config in rector.php rector.php.dist; do
+  if [ -f "${DDEV_APPROOT}/${config}" ]; then
+    PROJECT_CONFIG="${DDEV_APPROOT}/${config}"
+    TEMP_PROJECT_CONFIG=""
+    if [ "${config}" = "rector.php.dist" ]; then
+      TEMP_PROJECT_CONFIG=$(mktemp /tmp/rector-project-XXXXXX.php)
+      cp "${PROJECT_CONFIG}" "${TEMP_PROJECT_CONFIG}"
+      PROJECT_CONFIG="${TEMP_PROJECT_CONFIG}"
+    fi
+
+    if [ "$#" -gt 0 ] && [ "$1" = "process" ]; then
+      "${RECTOR}" "$@" --config="${PROJECT_CONFIG}"
+      EXIT_CODE=$?
+      [ -n "${TEMP_PROJECT_CONFIG}" ] && rm -f "${TEMP_PROJECT_CONFIG}"
+      exit ${EXIT_CODE}
+    fi
+    [ -n "${TEMP_PROJECT_CONFIG}" ] && rm -f "${TEMP_PROJECT_CONFIG}"
+    exec "${RECTOR}" "$@"
+  fi
+done
+
+# No project config found. Generate a temporary rector.php that targets
+# custom modules and applies all available Drupal upgrade sets.
+TMPCONFIG=$(mktemp /tmp/rector-XXXXXX.php)
+cat > "${TMPCONFIG}" <<'EOF'
+<?php
+
+declare(strict_types=1);
+
+use DrupalRector\Set\Drupal9SetList;
+use DrupalRector\Set\Drupal10SetList;
+use DrupalRector\Set\Drupal11SetList;
+use Rector\Config\RectorConfig;
+
+return RectorConfig::configure()
+    ->withPaths([
+        '/var/www/html/web/modules/custom',
+    ])
+    ->withSets([
+        Drupal9SetList::DRUPAL_9,
+        Drupal10SetList::DRUPAL_10,
+        Drupal11SetList::DRUPAL_11,
+    ]);
+EOF
+
+echo "Note: No rector.php found in project root."
+echo "Using auto-generated config targeting web/modules/custom."
+echo "Create a rector.php in your project root to customise paths and rule sets."
+echo ""
+
+if [ $# -eq 0 ]; then
+  echo "No subcommand given; defaulting to 'process --dry-run'."
+  echo "Run 'ddev rector process' to apply changes."
+  echo ""
+  "${RECTOR}" --config="${TMPCONFIG}" process --dry-run
+else
+  "${RECTOR}" --config="${TMPCONFIG}" "$@"
+fi
+EXIT_CODE=$?
+rm -f "${TMPCONFIG}"
+exit ${EXIT_CODE}

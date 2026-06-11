@@ -1,11 +1,89 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#ddev-generated
 
-## Description: Runs Cspell
-## Usage: cspell [flags] [args]
-## Example: ddev cspell\nddev cspell web/modules/sandbox/schemadotorg\nddev cspell --words-only | sort | uniq
+## Description: Run CSpell spell-checking (Drupal standards)
+## Usage: cspell [flags] [pattern]
+## Example: "ddev cspell"
+## ExecRaw: true
+## HostWorkingDir: true
 
-# @see https://www.drupal.org/docs/develop/development-tools/cspell
+WEB_ROOT="${DDEV_DOCROOT:-web}"
 
-source "$HOME/.commands.sh"
+# Prefer web/core/node_modules/.bin/cspell (the binary CI uses), then
+# project-level node_modules, then the globally installed binary.
+CSPELL="${DDEV_APPROOT}/${WEB_ROOT}/core/node_modules/.bin/cspell"
+if [ ! -x "${CSPELL}" ]; then
+  CSPELL="${DDEV_APPROOT}/node_modules/.bin/cspell"
+  if [ ! -x "${CSPELL}" ]; then
+    CSPELL="cspell"
+  fi
+fi
 
-$DDEV_DOCROOT/core/node_modules/.bin/cspell -c  .cspell.json --show-suggestions --show-context --no-progress  $OPTIONS $PARAMETERS
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
+
+# Download prepare-cspell.php from the GitLab Templates repository, exactly
+# as the CI job does.
+PREPARE_SCRIPT=$(mktemp /tmp/prepare-cspell-XXXXXX.php)
+CONFIG_BACKUP=""
+
+cleanup() {
+  rm -f "${PREPARE_SCRIPT}"
+  [ -n "${CONFIG_BACKUP}" ] && rm -f "${CONFIG_BACKUP}"
+}
+trap cleanup EXIT
+
+curl -fsSL -o "${PREPARE_SCRIPT}" \
+  https://git.drupalcode.org/project/gitlab_templates/-/raw/default-ref/scripts/prepare-cspell.php
+
+# If the project has its own .cspell.json, back it up before prepare-cspell.php
+# modifies it in place. Otherwise download the canonical default from the
+# GitLab Templates repository (identical to the CI job).
+HAS_CONFIG=0
+if [ -f ".cspell.json" ]; then
+  HAS_CONFIG=1
+  CONFIG_BACKUP=$(mktemp /tmp/cspell-config-XXXXXX.json)
+  cp ".cspell.json" "${CONFIG_BACKUP}"
+else
+  curl -fsSL -o ".cspell.json" \
+    https://git.drupalcode.org/project/gitlab_templates/-/raw/default-ref/assets/.cspell.json
+fi
+
+# Parse _CSPELL_* variables from .gitlab-ci.yml if present, replicating what
+# CI sets automatically from the pipeline variables block.
+if [ -f ".gitlab-ci.yml" ]; then
+  for var in _CSPELL_WORDS _CSPELL_FLAGWORDS _CSPELL_IGNORE_PATHS _CSPELL_IGNORE_STANDARD_FILES _CSPELL_DICTIONARY; do
+    value=$(grep -m1 "^\s*${var}:" ".gitlab-ci.yml" | sed -E "s/^\s*${var}:\s*//" | tr -d "'\"")
+    if [ -n "${value}" ]; then
+      export "${var}=${value}"
+    fi
+  done
+fi
+
+# Mirror the CI default: _CSPELL_DICTIONARY defaults to .cspell-project-words.txt.
+# prepare-cspell.php only registers the dictionary when this variable is set,
+# so without this default the file is silently ignored when running locally.
+export _CSPELL_DICTIONARY="${_CSPELL_DICTIONARY:-.cspell-project-words.txt}"
+
+# Run prepare-cspell.php, which modifies .cspell.json in place.
+# Set the CI environment variables the script depends on.
+export _WEB_ROOT="${DDEV_APPROOT}/${WEB_ROOT}"
+export CI_PROJECT_NAME
+CI_PROJECT_NAME=$(basename "$(pwd)")
+export CI_PROJECT_DIR
+CI_PROJECT_DIR=$(pwd)
+php "${PREPARE_SCRIPT}"
+
+# Invoke cspell with the same flags and path as the CI job.
+"${CSPELL}" -c .cspell.json --show-suggestions --show-context --no-progress "${@:-.}"
+EXIT_CODE=$?
+
+# Restore or remove .cspell.json.
+if [ "${HAS_CONFIG}" -eq 1 ]; then
+  cp "${CONFIG_BACKUP}" ".cspell.json"
+else
+  rm -f ".cspell.json"
+fi
+rm -f ".cspell.json.bak"
+
+exit ${EXIT_CODE}

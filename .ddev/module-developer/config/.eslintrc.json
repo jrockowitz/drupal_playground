@@ -1,0 +1,35 @@
+{
+  "env": {
+    "browser": true,
+    "es2020": true,
+    "jquery": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "requireConfigFile": false
+  },
+  "parser": "@babel/eslint-parser",
+  "plugins": [
+    "prettier"
+  ],
+  "extends": [
+    "prettier"
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    "no-unused-vars": "warn",
+    "no-console": "warn",
+    "eqeqeq": ["warn", "always"]
+  },
+  "overrides": [
+    {
+      "files": ["*.yml", "*.yaml"],
+      "plugins": ["yml"],
+      "extends": ["plugin:yml/recommended"],
+      "rules": {
+        "yml/quotes": ["warn", {"prefer": "single"}]
+      }
+    }
+  ]
+}
