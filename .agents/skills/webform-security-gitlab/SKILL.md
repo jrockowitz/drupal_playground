@@ -154,6 +154,12 @@ Start from the security fork base branch when it exists. Otherwise, start from
 `origin/6.3.x` after fetching. Never push security work to the public `origin`
 remote.
 
+When creating a GitLab merge request with `git push -o merge_request.*`, keep
+each push option value on one line. GitLab rejects push options containing
+newline characters, including multi-line MR descriptions. Use a concise
+single-line description in push options, then edit the MR description afterward
+if longer Markdown is needed.
+
 ## New Issue Reproduction Branches
 
 When a security issue has no visible Codex branch, merge request, or other code
