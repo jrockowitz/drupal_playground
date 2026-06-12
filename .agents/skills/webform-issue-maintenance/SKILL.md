@@ -13,6 +13,9 @@ reduce queue friction; they do not replace maintainer judgment.
 
 Primary reference: `/Users/rockowij/Sites/drupal_webform/docs/WEBFORM-AGENTS.md`.
 
+Committed public tracker:
+`/Users/rockowij/Sites/drupal_webform/.agents/webform-issue-maintenance`.
+
 ## Required First Steps
 
 Run these before Drupal.org issue work:
@@ -36,6 +39,54 @@ human explicitly asks in the current conversation.
 
 Pause before changing public APIs, permissions, access policy, update hooks,
 large generated config, or behavior that contradicts existing tests.
+
+Do not infer approval for a later stage from approval of an earlier stage.
+Scanning, selection, local code work, commit, push, and Drupal.org updates are
+separate approval gates.
+
+Use `webform-security` instead of this public tracker for security-sensitive
+issues, private details, exploit prose, or confidential Drupal.org/GitLab data.
+
+## On-Demand Issue Worker Workflow
+
+Use this staged workflow when the user asks to scan for Webform issues, select
+issues to work on, or work locally on selected issues.
+
+1. Scan the Webform queue and recommend a short candidate list.
+2. Stop and ask the human to select issue numbers or URLs.
+3. Record selected public, non-security issues in the committed tracker.
+4. Work locally on selected issues, one issue at a time.
+5. Stop for maintainer code review before commit or push.
+6. Commit, push, post comments, change statuses, assign users, add labels, or
+   update merge requests only after explicit approval for that action.
+
+When the user asks for a count, such as "find 5 good candidates", treat it as a
+candidate report size, not permission to work on the top issues automatically.
+
+## Public Issue Tracker
+
+Track selected public Webform issue work in:
+
+```text
+.agents/webform-issue-maintenance/
+  README.md
+  index.md
+  issues/
+    <drupalorg-node-id>.md
+```
+
+Update order:
+
+1. Create or update the individual issue note.
+2. Update `.agents/webform-issue-maintenance/index.md`.
+3. Update the tracker README only if the layout or update order changes.
+
+Use issue notes for public links, Drupal.org status, work lane, branch or fork,
+why the issue was selected, local evidence, commands run, changed files,
+review-gate state, suggested comment draft, and next action.
+
+Do not add security issues, private details, secrets, tokens, exploit prose, or
+confidential Drupal.org/GitLab data to the public tracker.
 
 ## Queue Scouting
 
@@ -167,6 +218,8 @@ Queue scout report:
 - top 3-5 candidates
 - work lane and suitability notes for each
 - issues not worth agent time yet
+- selection prompt asking the maintainer which issues to work on
+- no local branch checkout or code edits before selection
 
 Review findings:
 
@@ -175,6 +228,8 @@ Review findings:
 - CI/pipeline status when available
 - concrete findings with local file references
 - suggested comment draft, but do not post it
+- tracker note path when the issue is selected for local work
+- review-gate status before commit or push
 
 Maintainer comment draft:
 

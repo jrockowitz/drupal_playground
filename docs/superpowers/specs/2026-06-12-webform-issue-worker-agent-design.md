@@ -17,6 +17,10 @@ The missing piece is an on-demand agent workflow that turns those instructions i
 
 This agent should reduce queue friction without becoming an autonomous maintainer.
 
+The workflow should live in the existing `webform-issue-maintenance` skill, not
+in a separate new skill. That keeps all Webform issue triage, review,
+reproduction, and local fix guidance in one place.
+
 ## Goals
 
 - Create an on-demand Webform issue worker workflow.
@@ -27,6 +31,7 @@ This agent should reduce queue friction without becoming an autonomous maintaine
 - Prefer regression tests before implementation when practical.
 - Run targeted local verification before presenting work for review.
 - Require explicit maintainer approval before commit, push, issue comments, status changes, labels, assignments, or merge request updates.
+- Maintain a committed public issue-in-progress tracker for selected Webform issue work.
 
 ## Non-Goals
 
@@ -86,6 +91,18 @@ The report uses the existing labels from `webform-issue-maintenance`:
 The agent stops after the candidate report and asks the maintainer to select issue numbers or URLs.
 
 No local issue branch checkout or code edits happen before selection.
+
+Selected issues are recorded in the committed public tracker:
+
+```text
+.agents/webform-issue-maintenance/
+  README.md
+  index.md
+  issues/
+    <drupalorg-node-id>.md
+```
+
+The issue note is updated first, then `index.md`.
 
 ### 4. Issue Preparation
 
@@ -226,11 +243,13 @@ Commit and push the fix for 3593810.
 
 Each prompt maps to a different approval stage. The agent should never infer approval for a later stage from approval of an earlier one.
 
-## Open Implementation Choice
+## Implementation Decision
 
-There are two reasonable implementation paths:
+Use the existing `webform-issue-maintenance` skill as the workflow entry point.
 
-1. Extend the existing `webform-issue-maintenance` skill with this staged workflow.
-2. Create a new `webform-issue-worker` skill that calls into the existing maintenance guidance.
+The skill should gain the staged on-demand workflow and public tracker rules.
+This avoids splitting Webform issue guidance across multiple skills.
 
-The recommended path is to create a new `webform-issue-worker` skill. That keeps queue scouting and per-issue maintenance reusable while giving this on-demand batch workflow a clear trigger and explicit approval gates.
+The public tracker is committed because non-security Webform issue work does not
+need private notes. Security issue notes remain in `.agents/private` and should
+continue to follow `webform-security`.
