@@ -44,9 +44,9 @@ Use the GitLab index and issue-note paths from the shared skill.
 Do Webform code work inside `web/modules/sandbox/webform`. Before switching security issues, return to the public base:
 
 ```bash
-git -C web/modules/sandbox/webform fetch origin 6.3.x
-git -C web/modules/sandbox/webform switch 6.3.x
-git -C web/modules/sandbox/webform pull --ff-only origin 6.3.x
+git -C web/modules/sandbox/webform fetch origin <target-version>
+git -C web/modules/sandbox/webform switch <target-version>
+git -C web/modules/sandbox/webform pull --ff-only origin <target-version>
 ```
 
 Use one branch and one private remote per issue:
@@ -56,7 +56,10 @@ codex/<security-id>-<short-slug>
 security-<security-id> -> git@git.drupal.org:security/<security-id>-webform-security.git
 ```
 
-Start from the security fork base branch when it exists, otherwise `origin/6.3.x`. Never push security work to public `origin`. When creating MRs with `git push -o merge_request.*`, keep each push option value on one line; use a short description and edit longer Markdown later.
+Start from the security fork base branch when it exists, otherwise
+`origin/<target-version>`. Never push security work to public `origin`. When
+creating MRs with `git push -o merge_request.*`, keep each push option value on
+one line; use a short description and edit longer Markdown later.
 
 ## New Issue Reproduction
 
