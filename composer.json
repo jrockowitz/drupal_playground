@@ -125,7 +125,7 @@
         },
         "merge-plugin": {
             "include": [
-                "composer.drupal_10.json",
+                "composer.drupal_11.json",
                 "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
