@@ -129,6 +129,7 @@
                 "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
+                "web/modules/sandbox/webform/composer.json",
                 "web/modules/sandbox/webform/composer.libraries.json"
             ],
             "merge-extra": true,

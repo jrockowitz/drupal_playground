@@ -48,12 +48,5 @@
         "drupal/trash": "^3.0",
         "drupal/type_tray": "^1",
         "drupal/webform": "6.2.x-dev"
-    },
-    "extra": {
-        "merge-plugin": {
-            "include": [
-                "web/modules/sandbox/webform/composer.json"
-            ]
-        }
     }
 }

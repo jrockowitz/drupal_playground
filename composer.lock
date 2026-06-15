@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8936d32a8a19517fc1b9ba0c4aaaf4bf",
+    "content-hash": "5ff7bb6785b99ed1462ade9859ddc2a7",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2791,54 +2791,13 @@
         },
         {
             "name": "drupal/ai_schemadotorg_jsonld",
-            "version": "1.0.0-alpha1",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/ai_schemadotorg_jsonld.git",
-                "reference": "1.0.0-alpha1"
+                "url": "git@git.drupal.org:project/ai_schemadotorg_jsonld.git",
+                "reference": "1.0.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ai_schemadotorg_jsonld-1.0.0-alpha1.zip",
-                "reference": "1.0.0-alpha1",
-                "shasum": "ed6b664950fc96941472ba59e7c2971486981f89"
-            },
-            "require": {
-                "drupal/ai": "^1.3",
-                "drupal/ai_automators": "*",
-                "drupal/core": "^11.3",
-                "drupal/field_widget_actions": "^1.3",
-                "drupal/json_field": "^1.7"
-            },
-            "require-dev": {
-                "drupal/token": "^1.0"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-alpha1",
-                    "datestamp": "1777585765",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                }
-            ],
-            "description": "Uses AI Automators to generate and attach Schema.org JSON-LD to content types.",
-            "homepage": "https://www.drupal.org/project/ai_schemadotorg_jsonld",
-            "support": {
-                "source": "https://git.drupalcode.org/project/ai_schemadotorg_jsonld"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/ai_vdb_provider_milvus",
@@ -4773,52 +4732,13 @@
         },
         {
             "name": "drupal/entity_labels",
-            "version": "1.0.0-alpha5",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/entity_labels.git",
-                "reference": "1.0.0-alpha5"
+                "url": "git@git.drupal.org:project/entity_labels.git",
+                "reference": "1.0.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/entity_labels-1.0.0-alpha5.zip",
-                "reference": "1.0.0-alpha5",
-                "shasum": "dc49d95b06a3eff6c7a2cb1316868c1ef7009a0b"
-            },
-            "require": {
-                "drupal/core": "^10 || ^11"
-            },
-            "require-dev": {
-                "drupal/custom_field": "^4",
-                "drupal/field_group": "^4"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-alpha5",
-                    "datestamp": "1775244959",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                }
-            ],
-            "description": "Report and CSV export/import for entity type, bundle, and field label metadata.",
-            "homepage": "https://drupal.org/project/entity_labels",
-            "support": {
-                "source": "https://git.drupalcode.org/project/entity_labels",
-                "issues": "https://drupal.org/project/issues/entity_labels"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/facets",
@@ -4904,50 +4824,13 @@
         },
         {
             "name": "drupal/field_data",
-            "version": "1.0.0-alpha12",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/field_data.git",
-                "reference": "1.0.0-alpha12"
+                "url": "git@git.drupal.org:project/field_data.git",
+                "reference": "1.0.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/field_data-1.0.0-alpha12.zip",
-                "reference": "1.0.0-alpha12",
-                "shasum": "25d1e9db2fec0aa71a7189d22ab5a2f07bac51fe"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-alpha12",
-                    "datestamp": "1747766201",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                }
-            ],
-            "description": "Field Data",
-            "homepage": "https://www.drupal.org/projecrt/field_data",
-            "keywords": [
-                "Drupal"
-            ],
-            "support": {
-                "source": "https://git.drupalcode.org/project/field_data"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/field_group",
@@ -5446,73 +5329,6 @@
             }
         },
         {
-            "name": "drupal/json_field",
-            "version": "1.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/json_field.git",
-                "reference": "8.x-1.7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/json_field-8.x-1.7.zip",
-                "reference": "8.x-1.7",
-                "shasum": "4243b6adc2dd9d44a8a243cede59f7935a0c9b65"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11",
-                "ext-json": "*"
-            },
-            "require-dev": {
-                "drupal/diff": "^1",
-                "drupal/feeds": "dev-3.x@dev",
-                "swaggest/json-schema": "^0"
-            },
-            "suggest": {
-                "drupal/diff": "^0",
-                "swaggest/json-schema": "^0"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-1.7",
-                    "datestamp": "1759661334",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "See contributors",
-                    "homepage": "https://www.drupal.org/node/2653746/committers",
-                    "role": "Developer"
-                },
-                {
-                    "name": "dawehner",
-                    "homepage": "https://www.drupal.org/user/99340"
-                },
-                {
-                    "name": "Jaesin",
-                    "homepage": "https://www.drupal.org/user/841054"
-                }
-            ],
-            "description": "Provides a JSON field, formatter and views integration",
-            "homepage": "https://www.drupal.org/project/json_field",
-            "keywords": [
-                "Drupal"
-            ],
-            "support": {
-                "source": "http://cgit.drupalcode.org/json_field",
-                "issues": "https://www.drupal.org/project/issues/json_field"
-            }
-        },
-        {
             "name": "drupal/key",
             "version": "1.22.0",
             "source": {
@@ -5589,97 +5405,23 @@
         },
         {
             "name": "drupal/local_tasks_more",
-            "version": "1.0.0-beta2",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/local_tasks_more.git",
-                "reference": "1.0.0-beta2"
+                "url": "git@git.drupal.org:project/local_tasks_more.git",
+                "reference": "1.0.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/local_tasks_more-1.0.0-beta2.zip",
-                "reference": "1.0.0-beta2",
-                "shasum": "4f424a2ca08c6f81687b68dcdcf7e8034c45656c"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-beta2",
-                    "datestamp": "1731944866",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                }
-            ],
-            "description": "Local Tasks More",
-            "homepage": "https://www.drupal.org/sandbox/jrockowitz/3485942",
-            "keywords": [
-                "Drupal"
-            ],
-            "support": {
-                "source": "https://git.drupalcode.org/project/local_tasks_more"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/menu_export_csv",
-            "version": "1.0.0-alpha3",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/menu_export_csv.git",
-                "reference": "1.0.0-alpha3"
+                "url": "git@git.drupal.org:project/menu_export_csv.git",
+                "reference": "1.0.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/menu_export_csv-1.0.0-alpha3.zip",
-                "reference": "1.0.0-alpha3",
-                "shasum": "22c9b22a4dc156e8a7dda1576a3ac0f3a31a7eea"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-alpha3",
-                    "datestamp": "1761154756",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                }
-            ],
-            "description": "Menu Export CSV",
-            "homepage": "https://www.drupal.org/project/menu_export_csv",
-            "keywords": [
-                "Drupal"
-            ],
-            "support": {
-                "source": "https://git.drupalcode.org/project/menu_export_csv"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/migrate_plus",
@@ -6391,165 +6133,23 @@
         },
         {
             "name": "drupal/schemadotorg",
-            "version": "1.0.0-alpha37",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/schemadotorg.git",
-                "reference": "1.0.0-alpha37"
+                "url": "git@git.drupal.org:project/schemadotorg.git",
+                "reference": "1.0.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/schemadotorg-1.0.0-alpha37.zip",
-                "reference": "1.0.0-alpha37",
-                "shasum": "d360c05a9f08e83c4649661d6f13e55f25cce9c6"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11"
-            },
-            "require-dev": {
-                "drupal/address": "^2.0",
-                "drupal/allowed_formats": "^3.0",
-                "drupal/auto_entitylabel": "^3.0",
-                "drupal/cer": "^5.0",
-                "drupal/config_rewrite": "^1.0",
-                "drupal/content_model_documentation": "^1.0",
-                "drupal/custom_field": "^3.0",
-                "drupal/devel": "^5.0",
-                "drupal/embed": "^1.0",
-                "drupal/entity_browser": "^2.0",
-                "drupal/entity_reference_override": "^2.0",
-                "drupal/entity_usage": "^2.0",
-                "drupal/epp": "^1.0",
-                "drupal/existing_values_autocomplete_widget": "^2.0",
-                "drupal/field_group": "^4.0",
-                "drupal/field_validation": "^3.0",
-                "drupal/focal_point": "^2.0",
-                "drupal/geolocation": "^3.0",
-                "drupal/inline_entity_form": "^3.0",
-                "drupal/jsonapi_extras": "^3.0",
-                "drupal/layout_paragraphs": "^2.0",
-                "drupal/markup": "^2.0",
-                "drupal/media_library_media_modify": "^2.0",
-                "drupal/mercury_editor": "^2.0 || ^3.0",
-                "drupal/metatag": "^2.0",
-                "drupal/office_hours": "^1.0",
-                "drupal/paragraphs": "^1.0",
-                "drupal/pathauto": "^1.0",
-                "drupal/physical": "^1.4",
-                "drupal/range": "^1.0",
-                "drupal/scheduler": "^2.0",
-                "drupal/schemadotorg_jsonapi": "*",
-                "drupal/schemadotorg_jsonld": "*",
-                "drupal/schemadotorg_layout_paragraphs": "*",
-                "drupal/schemadotorg_media": "*",
-                "drupal/schemadotorg_node": "*",
-                "drupal/schemadotorg_paragraphs": "*",
-                "drupal/simple_sitemap": "^4.0",
-                "drupal/smart_date": "^4.1",
-                "drupal/token": "^1.0",
-                "drupal/type_tray": "^1.0",
-                "league/commonmark": "^2.0"
-            },
-            "suggest": {
-                "drupal/address": "Provides functionality for storing, validating and displaying international postal addresses.",
-                "drupal/field_group": "Provides the ability to group your fields on both form and display.",
-                "drupal/inline_entity_form": "Provides a widget for inline management (creation, modification, removal) of referenced entities.",
-                "drupal/jsonapi_extras": "Builds on top of JSON:API to deliver extra functionality.",
-                "drupal/paragraphs": "Enables the creation of paragraphs (i.e. component) entities.",
-                "drush/drush": "(^12.0 || ^13.0) Provides CLI commands to quickly manage entity types based on Schema.org types.",
-                "league/commonmark": "Improve display of Markdown-format text in the help system."
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-alpha37",
-                    "datestamp": "1772716807",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Alpha releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Jacob Rockowitz (jrockowitz)",
-                    "homepage": "https://www.drupal.org/u/jrockowitz",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                }
-            ],
-            "description": "Uses Schema.org types and properties as the content architecture foundation for Drupal website.",
-            "homepage": "https://drupal.org/project/schemadotorg",
-            "support": {
-                "source": "https://git.drupalcode.org/project/schemadotorg",
-                "issues": "https://drupal.org/project/issues/schemadotorg"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/schemadotorg_experimental",
-            "version": "1.0.0-alpha37",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/schemadotorg_experimental.git",
-                "reference": "1.0.0-alpha37"
+                "url": "git@git.drupal.org:project/schemadotorg_experimental.git",
+                "reference": "1.0.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/schemadotorg_experimental-1.0.0-alpha37.zip",
-                "reference": "1.0.0-alpha37",
-                "shasum": "7e9bd9d3c6e1faafcc7ac292b0abc339ddba53f8"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11"
-            },
-            "require-dev": {
-                "drupal/config_rewrite": "*",
-                "drupal/embedded_content": "*",
-                "drupal/field_group": "*",
-                "drupal/inline_entity_form": "*",
-                "drupal/schemadotorg": "*",
-                "drupal/schemadotorg_allowed_formats": "*",
-                "drupal/schemadotorg_block_content": "*",
-                "drupal/schemadotorg_components": "*",
-                "drupal/schemadotorg_paragraphs": "*",
-                "drupal/schemadotorg_sidebar": "*"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-alpha37",
-                    "datestamp": "1772717175",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "fathershawn",
-                    "homepage": "https://www.drupal.org/user/628748"
-                },
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                }
-            ],
-            "homepage": "https://www.drupal.org/project/schemadotorg_experimental",
-            "support": {
-                "source": "https://git.drupalcode.org/project/schemadotorg_experimental"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/search_api",
@@ -7239,107 +6839,13 @@
         },
         {
             "name": "drupal/webform",
-            "version": "dev-6.3.x",
+            "version": "6.3.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/webform.git",
-                "reference": "3947922d3e6ac0bf4649c22c0ded5a049ec6bef0"
+                "url": "git@git.drupal.org:project/webform.git",
+                "reference": "6.3.x"
             },
-            "require": {
-                "drupal/core": "^10.3 || ^11.0"
-            },
-            "require-dev": {
-                "drupal/address": "^2.0",
-                "drupal/captcha": "^2.0",
-                "drupal/chosen": "^4.0",
-                "drupal/clientside_validation": "^4.0",
-                "drupal/clientside_validation_jquery": "*",
-                "drupal/devel": "^5.0",
-                "drupal/entity": "^1.0",
-                "drupal/entity_print": "^2.0",
-                "drupal/hal": "^2.0",
-                "drupal/jquery_ui": "^1.0",
-                "drupal/jquery_ui_button": "^2.0",
-                "drupal/jquery_ui_checkboxradio": "^2.0",
-                "drupal/jquery_ui_datepicker": "^2.0",
-                "drupal/mailsystem": "^4.0",
-                "drupal/metatag": "^2.0",
-                "drupal/paragraphs": "^1.0",
-                "drupal/select2": "^1.0 || ^2.0",
-                "drupal/smtp": "^1.0",
-                "drupal/styleguide": "^2.0",
-                "drupal/telephone_validation": "^2.0",
-                "drupal/token": "^1.0",
-                "drupal/webform_access": "*",
-                "drupal/webform_attachment": "*",
-                "drupal/webform_clientside_validation": "*",
-                "drupal/webform_devel": "*",
-                "drupal/webform_entity_print": "*",
-                "drupal/webform_node": "*",
-                "drupal/webform_options_limit": "*",
-                "drupal/webform_scheduled_email": "*",
-                "drupal/webform_share": "*",
-                "drupal/webform_ui": "*"
-            },
-            "suggest": {
-                "drupal/jquery_ui_buttons": "Provides jQuery UI Checkboxradio library. Required by the Webform jQueryUI Buttons module. The Webform jQueryUI Buttons module is deprecated because jQueryUI is no longer maintained.",
-                "drupal/jquery_ui_datepicker": "Provides jQuery UI Datepicker library. Required to support datepickers. The Webform jQueryUI Datepicker module is deprecated because jQueryUI is no longer maintained."
-            },
-            "type": "drupal-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-6.3.x": "6.3.x-dev"
-                },
-                "drupal": {
-                    "version": "6.3.0-rc1+3-dev",
-                    "datestamp": "1781532014",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Dev releases are not covered by Drupal security advisories."
-                    }
-                },
-                "drush": {
-                    "services": {
-                        "drush.services.yml": ">=11"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Jacob Rockowitz (jrockowitz)",
-                    "homepage": "https://www.drupal.org/u/jrockowitz",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Contributors",
-                    "homepage": "https://www.drupal.org/node/7404/committers",
-                    "role": "Contributor"
-                },
-                {
-                    "name": "liam morland",
-                    "homepage": "https://www.drupal.org/user/493050"
-                },
-                {
-                    "name": "mandclu",
-                    "homepage": "https://www.drupal.org/user/52136"
-                },
-                {
-                    "name": "quicksketch",
-                    "homepage": "https://www.drupal.org/user/35821"
-                }
-            ],
-            "description": "Enables the creation of webforms and questionnaires.",
-            "homepage": "https://drupal.org/project/webform",
-            "support": {
-                "source": "https://git.drupalcode.org/project/webform",
-                "issues": "https://www.drupal.org/project/issues/webform?version=8.x",
-                "docs": "https://www.drupal.org/docs/8/modules/webform",
-                "forum": "https://drupal.stackexchange.com/questions/tagged/webform"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/webform_confirmation_file",
@@ -7353,228 +6859,43 @@
         },
         {
             "name": "drupal/webform_javascript_setting",
-            "version": "1.0.0-alpha5",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/webform_javascript_setting.git",
-                "reference": "1.0.0-alpha5"
+                "url": "git@git.drupal.org:project/webform_javascript_setting.git",
+                "reference": "1.0.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/webform_javascript_setting-1.0.0-alpha5.zip",
-                "reference": "1.0.0-alpha5",
-                "shasum": "b8b4e3532baa239ab97d4da96f72134e872e5029"
-            },
-            "require": {
-                "drupal/core": "^9.4 || ^10 || ^11",
-                "drupal/webform": "^6.2"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-alpha5",
-                    "datestamp": "1740606287",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Jacob Rockowitz (jrockowitz)",
-                    "homepage": "https://www.drupal.org/u/jrockowitz",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "joelsteidl",
-                    "homepage": "https://www.drupal.org/user/658038"
-                },
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                }
-            ],
-            "description": "Provides a webform element that pulls a JavaScript object''s setting/property into a hidden field.",
-            "homepage": "https://drupal.org/project/webform_javascript_setting",
-            "support": {
-                "source": "https://git.drupalcode.org/project/webform_javascript_setting",
-                "issues": "https://www.drupal.org/project/issues/webform_javascript_setting"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/webform_no_submissions",
-            "version": "1.0.0-beta2",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/webform_no_submissions.git",
-                "reference": "1.0.0-beta2"
+                "url": "git@git.drupal.org:project/webform_no_submissions.git",
+                "reference": "1.0.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/webform_no_submissions-1.0.0-beta2.zip",
-                "reference": "1.0.0-beta2",
-                "shasum": "a59908d59649bfa84c6d9e62844d92ae1a787aaa"
-            },
-            "require": {
-                "drupal/core": "^10 || ^11",
-                "drupal/webform": "^6",
-                "drush/drush": "^12|| ^13"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-beta2",
-                    "datestamp": "1760974414",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                }
-            ],
-            "description": "Provides a toggle to disable all webforms that save submissions to the database.",
-            "homepage": "https://www.drupal.org/project/webform_no_submissions",
-            "keywords": [
-                "Drupal"
-            ],
-            "support": {
-                "source": "https://git.drupalcode.org/project/webform_no_submissions"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/webform_payment_element",
-            "version": "1.0.0-beta2",
+            "version": "1.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/webform_payment_element.git",
-                "reference": "1.0.0-beta2"
+                "url": "git@git.drupal.org:project/webform_payment_element.git",
+                "reference": "1.0.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/webform_payment_element-1.0.0-beta2.zip",
-                "reference": "1.0.0-beta2",
-                "shasum": "541ced74cc93b5dbf4bc2b864c61e13aeb36747d"
-            },
-            "require": {
-                "drupal/core": "^10 || ^11",
-                "drupal/webform": "^6"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-beta2",
-                    "datestamp": "1764177753",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "devanbicher",
-                    "homepage": "https://www.drupal.org/user/3560948"
-                },
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                }
-            ],
-            "description": "Provides webform elements to collect multiple payment amounts with payment totals.",
-            "homepage": "https://www.drupal.org/project/webform_payment_element",
-            "keywords": [
-                "Drupal"
-            ],
-            "support": {
-                "source": "https://git.drupalcode.org/project/webform_payment_element"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drupal/webform_views",
-            "version": "5.6.0",
+            "version": "5.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://git.drupalcode.org/project/webform_views.git",
-                "reference": "8.x-5.6"
+                "url": "git@git.drupal.org:project/webform_views.git",
+                "reference": "8.x-5.x"
             },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/webform_views-8.x-5.6.zip",
-                "reference": "8.x-5.6",
-                "shasum": "fe6330e6efc78c6b4a3c1d6f5ac92994cf67cbc3"
-            },
-            "require": {
-                "drupal/core": "^10 || ^11",
-                "drupal/webform": "^6.2"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-5.6",
-                    "datestamp": "1768179943",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "acbramley",
-                    "homepage": "https://www.drupal.org/user/1036766"
-                },
-                {
-                    "name": "bucefal91",
-                    "homepage": "https://www.drupal.org/user/504128"
-                },
-                {
-                    "name": "geek-merlin",
-                    "homepage": "https://www.drupal.org/user/229048"
-                },
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                },
-                {
-                    "name": "vladimiraus",
-                    "homepage": "https://www.drupal.org/user/673120"
-                },
-                {
-                    "name": "ws.agency",
-                    "homepage": "https://www.drupal.org/user/2851415"
-                }
-            ],
-            "description": "Webform integration with views.",
-            "homepage": "https://www.drupal.org/project/webform_views",
-            "keywords": [
-                "Drupal"
-            ],
-            "support": {
-                "source": "https://git.drupalcode.org/project/webform_views",
-                "issues": "https://www.drupal.org/project/issues/webform_views"
-            }
+            "type": "drupal-module-sandbox"
         },
         {
             "name": "drush/drush",
