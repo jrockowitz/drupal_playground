@@ -29,7 +29,7 @@ plugin_config:
   automator_worker_type: queue
   automator_ai_provider: openai
   automator_ai_model: gpt-5-nano
-  automator_configuration_max_completion_tokens: '128'
-  automator_configuration_reasoning_effort: low
+  automator_configuration_max_completion_tokens: '512'
+  automator_configuration_reasoning_effort: minimal
   automator_joiner: ''
   automator_joiner_other: ''
