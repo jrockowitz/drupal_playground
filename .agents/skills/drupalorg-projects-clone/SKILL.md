@@ -1,13 +1,6 @@
 ---
 name: drupalorg-projects-clone
-description: >
-  Discovers all Drupal.org projects maintained by a given username and clones
-  selected ones as git repositories into the local Composer sandbox. Use this
-  skill when the starting point is a Drupal.org username, not a known project
-  machine name. Fetches the maintainer's profile page, resolves each project's
-  type and recommended branch from Drupal.org git-instructions, retrieves release
-  info for each project, presents a numbered selection list, then delegates cloning
-  to the drupalorg-project-clone skill with the resolved type.
+description: Use when discovering and cloning Drupal.org projects maintained by a username.
 ---
 
 # Drupal.org Projects Clone Skill
