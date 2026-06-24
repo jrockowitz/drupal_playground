@@ -25,6 +25,188 @@
           "reference": "1.0.x"
         }
       }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_experimental",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_experimental.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_cms_migrate",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:sandbox/jrockowitz-3512163.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_demo",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_demo.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_demo_profile",
+        "type": "drupal-profile",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_demo_profile.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_deprecated",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_deprecated.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_migrate",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:sandbox/jrockowitz-3367618.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_starterkit_events",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_starterkit_events.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_starterkit_hospital",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_starterkit_hospital.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_starterkit_hotel",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_starterkit_hotel.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_starterkit_layout",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_starterkit_layout.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_starterkit_medical",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_starterkit_medical.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_starterkit_organization",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_starterkit_organization.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_starterkit_podcast",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_starterkit_podcast.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "drupal/schemadotorg_starterkit_recipes",
+        "type": "drupal-module-sandbox",
+        "version": "1.0.x-dev",
+        "source": {
+          "url": "git@git.drupal.org:project/schemadotorg_starterkit_recipes.git",
+          "type": "git",
+          "reference": "1.0.x"
+        }
+      }
     }
   ],
   "conflict": {
@@ -44,9 +226,11 @@
     "drupal/ai_provider_openai": "^1",
     "drupal/asset_injector": "^2",
     "drupal/captcha": "^2",
+    "drupal/clientside_validation": "^4.1",
     "drupal/coffee": "^2",
     "drupal/dashboard": "^2",
     "drupal/devel": "^5",
+    "drupal/entity_print": "^2.18",
     "drupal/gin": "^4.1 || ^5",
     "drupal/gin_toolbar": "^2.1 || ^3",
     "drupal/gin_type_tray": "^1",
@@ -57,6 +241,20 @@
     "drupal/navigation_extra_tools": "^1",
     "drupal/queue_ui": "^3",
     "drupal/recaptcha": "^3",
+    "drupal/schemadotorg_cms_migrate": "1.0.x-dev",
+    "drupal/schemadotorg_demo": "1.0.x-dev",
+    "drupal/schemadotorg_demo_profile": "1.0.x-dev",
+    "drupal/schemadotorg_deprecated": "1.0.x-dev",
+    "drupal/schemadotorg_experimental": "1.0.x-dev",
+    "drupal/schemadotorg_migrate": "1.0.x-dev",
+    "drupal/schemadotorg_starterkit_events": "1.0.x-dev",
+    "drupal/schemadotorg_starterkit_hospital": "1.0.x-dev",
+    "drupal/schemadotorg_starterkit_hotel": "1.0.x-dev",
+    "drupal/schemadotorg_starterkit_layout": "1.0.x-dev",
+    "drupal/schemadotorg_starterkit_medical": "1.0.x-dev",
+    "drupal/schemadotorg_starterkit_organization": "1.0.x-dev",
+    "drupal/schemadotorg_starterkit_podcast": "1.0.x-dev",
+    "drupal/schemadotorg_starterkit_recipes": "1.0.x-dev",
     "drupal/token": "^1",
     "drupal/trash": "^3.0",
     "drupal/type_tray": "^1",
@@ -66,7 +264,18 @@
   "extra": {
     "merge-plugin": {
       "include": [
-        "web/modules/sandbox/schemadotorg/composer.libraries.json"
+        "web/modules/sandbox/schemadotorg/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_cms_migrate/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_deprecated/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_migrate/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_starterkit_events/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_starterkit_hospital/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_starterkit_hotel/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_starterkit_layout/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_starterkit_medical/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_starterkit_organization/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_starterkit_podcast/composer.libraries.json",
+        "web/modules/sandbox/schemadotorg_starterkit_recipes/composer.libraries.json"
       ]
     }
   }
