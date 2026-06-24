@@ -5293,7 +5293,7 @@
         },
         {
             "name": "drupal/drupal_playground_eca",
-            "version": "dev-codex/schemadotorg-config-snaphots-command",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_eca",
