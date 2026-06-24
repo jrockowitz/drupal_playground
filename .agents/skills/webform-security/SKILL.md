@@ -1,6 +1,6 @@
 ---
 name: webform-security
-description: Use when working on shared Webform security guardrails, private security notes, advisory language, local verification, or cross-platform Drupal.org/GitLab security workflows.
+description: Use when shared Webform security guardrails or notes are needed.
 ---
 
 # Webform Security

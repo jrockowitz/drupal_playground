@@ -1,6 +1,6 @@
 ---
 name: drupalorg-project-logo-prompt
-description: Generate image-generation prompts for a Drupal module or theme logo based on the project README.md and Drupal.org project page.
+description: Use when creating logo prompt ideas for a Drupal.org module or theme.
 ---
 
 # Drupal.org Project Logo Prompt Generator

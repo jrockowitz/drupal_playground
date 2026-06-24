@@ -1,6 +1,6 @@
 ---
 name: webform-issue-maintenance
-description: Use when asked to inspect, triage, prioritize, reproduce, fix, test, review, summarize, or draft comments for Drupal.org Webform module issues.
+description: Use when working on public Drupal.org Webform module issues.
 ---
 
 # Webform Issue Maintenance

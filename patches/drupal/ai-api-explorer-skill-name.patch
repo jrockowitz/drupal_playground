@@ -1,0 +1,11 @@
+diff --git a/modules/ai_api_explorer/.agents/skills/create-ai-api-explorer/SKILL.md b/modules/ai_api_explorer/.agents/skills/create-ai-api-explorer/SKILL.md
+index 3f6764d..4a82c7f 100644
+--- a/modules/ai_api_explorer/.agents/skills/create-ai-api-explorer/SKILL.md
++++ b/modules/ai_api_explorer/.agents/skills/create-ai-api-explorer/SKILL.md
+@@ -1,5 +1,5 @@
+ ---
+-name: create-new-explorer
++name: create-ai-api-explorer
+ description: Scaffolds a new AiApiExplorer plugin for the AI API Explorer module. Verifies the operation type exists first, then generates the plugin class using AiProviderFormHelper::generateAiProvidersForm() for provider/model selection.
+ ---
+ 

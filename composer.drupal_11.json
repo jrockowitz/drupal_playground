@@ -3,6 +3,19 @@
         {
             "type": "path",
             "url": "recipes/drupal_playground_eca"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "drupal/webform",
+                "type": "drupal-module-sandbox",
+                "version": "6.3.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/webform.git",
+                    "type": "git",
+                    "reference": "6.3.x"
+                }
+            }
         }
     ],
     "conflict": {

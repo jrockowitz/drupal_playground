@@ -1,6 +1,6 @@
 ---
 name: webform-security-gitlab
-description: Use when working on private Webform security issues in Drupal GitLab, authenticated git.drupalcode.org searches, Project-webform security reports, security forks, or confidential Webform issue tracking.
+description: Use when working on private Webform security issues in Drupal GitLab.
 ---
 
 # Webform Security GitLab

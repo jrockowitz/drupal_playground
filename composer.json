@@ -17,6 +17,7 @@
     "require": {
         "composer/installers": "^2.3",
         "cweagans/composer-patches": "^2",
+        "drupal/ai_best_practices": "1.0.x-dev",
         "drupal/core-composer-scaffold": "^10 || ^11",
         "drupal/core-project-message": "^10 || ^11",
         "drupal/core-recommended": "^10 || ^11",
@@ -37,7 +38,8 @@
             "php-tuf/composer-integration": true,
             "phpstan/extension-installer": true,
             "tbachert/spi": true,
-            "wikimedia/composer-merge-plugin": true
+            "wikimedia/composer-merge-plugin": true,
+            "drupal/ai_best_practices": true
         },
         "sort-packages": true
     },
@@ -47,7 +49,8 @@
         ],
         "post-update-cmd": [
             "cd web/core; corepack enable; yarn install"
-        ]
+        ],
+        "drupal-ai": "Drupal\\AiBestPractices\\Console\\AiBestPracticesApplication::runFromComposer"
     },
     "extra": {
         "drupal-scaffold": {
@@ -113,6 +116,12 @@
         },
         "composer-exit-on-patch-failure": false,
         "patches": {
+            "drupal/ai": [
+                {
+                    "description": "Fix AI API Explorer skill name validation",
+                    "url": "patches/drupal/ai-api-explorer-skill-name.patch"
+                }
+            ],
             "_drupal/ai_rag_search_chat": [
                 {
                     "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",
@@ -125,10 +134,11 @@
         },
         "merge-plugin": {
             "include": [
-                "composer.drupal_10.json",
+                "composer.drupal_11.json",
                 "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
+                "web/modules/sandbox/webform/composer.json",
                 "web/modules/sandbox/webform/composer.libraries.json"
             ],
             "merge-extra": true,

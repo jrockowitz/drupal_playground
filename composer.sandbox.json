@@ -2,7 +2,6 @@
     "repositories": [
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/ai_schemadotorg_jsonld",
                 "type": "drupal-module-sandbox",
@@ -16,7 +15,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/eca_report",
                 "type": "drupal-module-sandbox",
@@ -30,7 +28,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/entity_labels",
                 "type": "drupal-module-sandbox",
@@ -44,7 +41,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/field_data",
                 "type": "drupal-module-sandbox",
@@ -58,7 +54,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/local_tasks_more",
                 "type": "drupal-module-sandbox",
@@ -72,7 +67,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/menu_export_csv",
                 "type": "drupal-module-sandbox",
@@ -86,7 +80,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/plugin_report",
                 "type": "drupal-module-sandbox",
@@ -100,7 +93,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/schemadotorg",
                 "type": "drupal-module-sandbox",
@@ -114,7 +106,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/schemadotorg_experimental",
                 "type": "drupal-module-sandbox",
@@ -128,21 +119,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
-            "package": {
-                "name": "drupal/webform",
-                "type": "drupal-module-sandbox",
-                "version": "6.3.x-dev",
-                "source": {
-                    "url": "git@git.drupal.org:project/webform.git",
-                    "type": "git",
-                    "reference": "6.3.x"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/webform_confirmation_file",
                 "type": "drupal-module-sandbox",
@@ -156,7 +132,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/webform_javascript_setting",
                 "type": "drupal-module-sandbox",
@@ -170,7 +145,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/webform_no_submissions",
                 "type": "drupal-module-sandbox",
@@ -184,7 +158,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/webform_payment_element",
                 "type": "drupal-module-sandbox",
@@ -198,7 +171,6 @@
         },
         {
             "type": "package",
-            "canonical": false,
             "package": {
                 "name": "drupal/webform_views",
                 "type": "drupal-module-sandbox",

@@ -1,0 +1,79 @@
+#!/bin/bash
+# cspell:ignore worktree drupal pipefail milvus esac WORKTREE
+
+## Description: Create and set up a Git worktree for this DDEV project
+## Usage: worktree <path>
+## Example: ddev worktree ../drupal_worktree
+
+# Exit on command failure, undefined variables, and failed pipeline commands.
+set -euo pipefail
+
+# Require a target directory argument because Git needs a worktree path.
+if [ "$#" -ne 1 ]; then
+  echo "Usage: ddev worktree <path>" >&2
+  exit 1
+fi
+
+# Resolve paths from the command location so the command works from any directory.
+source_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+target_parent="$(dirname "$1")"
+target_name="$(basename "$1")"
+
+# Require the parent directory to exist before showing the confirmation path.
+if [ ! -d "${target_parent}" ]; then
+  echo "Worktree target parent directory does not exist: ${target_parent}" >&2
+  exit 1
+fi
+
+# Use an absolute target path in prompts and commands for predictable output.
+target_root="$(cd "${target_parent}" && pwd)/${target_name}"
+
+# Refuse to overwrite an existing file, directory, or worktree.
+if [ -e "${target_root}" ]; then
+  echo "Worktree target already exists: ${target_root}" >&2
+  exit 1
+fi
+
+# Confirm before creating the worktree or copying local files.
+printf "Create worktree at %s? [y/N] " "${target_root}"
+if ! read -r confirmation; then
+  echo ""
+  echo "Cancelled."
+  exit 0
+fi
+
+case "${confirmation}" in
+  y|Y|yes|YES)
+    ;;
+
+  *)
+    echo "Cancelled."
+    exit 0
+    ;;
+esac
+
+# Create the Git worktree first so tracked files come from Git.
+git -C "${source_root}" worktree add "${target_root}"
+
+# Sync local checkout files into the new worktree.
+rsync -a \
+  --exclude=".git/" \
+  --exclude="vendor/" \
+  --exclude="node_modules/" \
+  --exclude="web/core/" \
+  --exclude="web/modules/contrib/" \
+  --exclude="web/themes/contrib/" \
+  --exclude="web/profiles/contrib/" \
+  --exclude="web/sites/default/files/" \
+  --exclude="web/sites/simpletest/" \
+  --exclude=".ddev/milvus/volumes/" \
+  "${source_root}/" "${target_root}/"
+
+# Run setup commands needed by a new Drupal Playground worktree.
+cd "${target_root}"
+ddev start
+ddev composer install
+ddev install
+npx skill update
+
+echo "Worktree setup complete: ${target_root}"
