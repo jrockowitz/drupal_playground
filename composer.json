@@ -17,10 +17,10 @@
     "require": {
         "composer/installers": "^2.3",
         "cweagans/composer-patches": "^2",
-        "drupal/core-composer-scaffold": "^11.0",
-        "drupal/core-project-message": "^11.0",
-        "drupal/core-recipe-unpack": "^11.0",
-        "drupal/core-recommended": "^11.0",
+        "drupal/ai_best_practices": "1.0.x-dev",
+        "drupal/core-composer-scaffold": "^10 || ^11",
+        "drupal/core-project-message": "^10 || ^11",
+        "drupal/core-recommended": "^10 || ^11",
         "drush/drush": "^13.7",
         "wikimedia/composer-merge-plugin": "^2.1"
     },
@@ -38,7 +38,8 @@
             "php-tuf/composer-integration": true,
             "phpstan/extension-installer": true,
             "tbachert/spi": true,
-            "wikimedia/composer-merge-plugin": true
+            "wikimedia/composer-merge-plugin": true,
+            "drupal/ai_best_practices": true
         },
         "sort-packages": true
     },
@@ -48,7 +49,8 @@
         ],
         "post-update-cmd": [
             "cd web/core; corepack enable; yarn install"
-        ]
+        ],
+        "drupal-ai": "Drupal\\AiBestPractices\\Console\\AiBestPracticesApplication::runFromComposer"
     },
     "extra": {
         "drupal-scaffold": {
@@ -114,7 +116,13 @@
         },
         "composer-exit-on-patch-failure": false,
         "patches": {
-            "drupal/ai_rag_search_chat": [
+            "drupal/ai": [
+                {
+                    "description": "Fix AI API Explorer skill name validation",
+                    "url": "patches/drupal/ai-api-explorer-skill-name.patch"
+                }
+            ],
+            "_drupal/ai_rag_search_chat": [
                 {
                     "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",
                     "url": "patches/drupal/ai_rag_search_chat-multi-value-excerpts.patch"
@@ -126,23 +134,19 @@
         },
         "merge-plugin": {
             "include": [
+                "composer.drupal_11.json",
                 "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
-                "web/modules/custom/clinical_trials_gov/composer.json",
-                "web/modules/sandbox/ai_schemadotorg_jsonld/composer.json",
-                "web/modules/sandbox/schemadotorg/composer.libraries.json",
                 "web/modules/sandbox/webform/composer.json",
                 "web/modules/sandbox/webform/composer.libraries.json"
             ],
             "merge-extra": true,
-            "merge-extra-deep": true
+            "merge-extra-deep": true,
+            "merge-dev": true
         }
     },
     "require-dev": {
-        "behat/mink": "^1.13",
-        "drupal/core-dev": "^11",
-        "phpunit/phpunit": "^11.5.50",
-        "rector/rector": "^2.4"
+        "drupal/core-dev": "^10 || ^11"
     }
 }

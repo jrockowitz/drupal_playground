@@ -90,7 +90,7 @@ drush recipe ../recipes/drupal_playground_ai_devel
 drush cr;
 
 # Uninstall the toolbar module, which can't be done via a recipe.
-drush pm:uninstall toolbar
+drush pm:uninstall -y toolbar
 
 # Uninstall core modules that are not used in any demos.
 drush php:eval '\Drupal\field\Entity\FieldConfig::loadByName("node", "article", "comment")->delete();'
@@ -239,7 +239,7 @@ for PRESET in "${PRESETS[@]}"; do
   fi
 done
 
-drush cr
+drush cr;
 
 echo ""
 echo "Installation complete. One-time login URL:"

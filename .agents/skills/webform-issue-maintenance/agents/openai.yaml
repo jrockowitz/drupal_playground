@@ -1,0 +1,4 @@
+interface:
+  display_name: "Webform Issue Maintenance"
+  short_description: "Triage and review Webform issues"
+  default_prompt: "Use $webform-issue-maintenance to scout Webform issues and recommend maintainer-ready next actions."

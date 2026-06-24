@@ -1,6 +1,6 @@
 ---
 name: drupalorg-project-page
-description: Generate or improve Drupal.org project page HTML markup using the bluecheese theme's CSS classes and established page conventions.
+description: Use when creating or improving Drupal.org project page body markup.
 ---
 
 # Drupal.org Project Page

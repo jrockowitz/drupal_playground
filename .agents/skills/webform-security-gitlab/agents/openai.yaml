@@ -1,0 +1,4 @@
+interface:
+  display_name: "Webform Security GitLab"
+  short_description: "Work on private Webform security issues"
+  default_prompt: "Use $webform-security-gitlab to review private Webform security issues and update the local operational summary."

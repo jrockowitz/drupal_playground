@@ -1,0 +1,47 @@
+{
+    "repositories": [
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_eca"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "drupal/webform",
+                "type": "drupal-module-sandbox",
+                "version": "6.3.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/webform.git",
+                    "type": "git",
+                    "reference": "6.3.x"
+                }
+            }
+        }
+    ],
+    "conflict": {
+        "drupal/core": "<11 || >=12",
+        "drupal/core-composer-scaffold": "<11 || >=12",
+        "drupal/core-dev": "<11 || >=12",
+        "drupal/core-project-message": "<11 || >=12",
+        "drupal/core-recommended": "<11 || >=12"
+    },
+    "require": {
+        "drupal/core-recipe-unpack": "^11",
+        "drupal/drupal_playground_eca": "*",
+        "drupal/webform": "6.3.x-dev"
+    },
+    "config": {
+        "allow-plugins": {
+            "drupal/core-recipe-unpack": true
+        }
+    },
+    "extra": {
+        "merge-plugin": {
+            "include": [
+                "web/modules/custom/clinical_trials_gov/composer.json",
+                "web/modules/sandbox/ai_schemadotorg_jsonld/composer.json",
+                "web/modules/sandbox/schemadotorg/composer.libraries.json"
+            ]
+        }
+    }
+}

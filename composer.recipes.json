@@ -10,10 +10,6 @@
         },
         {
             "type": "path",
-            "url": "recipes/drupal_playground_eca"
-        },
-        {
-            "type": "path",
             "url": "recipes/drupal_playground_translation"
         },
         {
@@ -138,7 +134,6 @@
         "drupal/drupal_playground_base": "*",
         "drupal/drupal_playground_devel": "*",
         "drupal/drupal_playground_elasticsearch": "*",
-        "drupal/drupal_playground_eca": "*",
         "drupal/drupal_playground_schemadotorg": "*",
         "drupal/drupal_playground_webform_setup": "*",
         "drupal/drupal_playground_webform_test": "*",

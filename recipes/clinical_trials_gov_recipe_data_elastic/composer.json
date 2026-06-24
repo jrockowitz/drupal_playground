@@ -6,7 +6,7 @@
     "version": "1.0.0",
     "require": {
         "drupal/better_exposed_filters": "^7",
-        "drupal/core": "^11",
+        "drupal/core": "^10 || ^11",
         "drupal/elasticsearch_connector": "^9@alpha",
         "drupal/facets": "^3",
         "drupal/search_api": "^1",

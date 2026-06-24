@@ -1,0 +1,4 @@
+interface:
+  display_name: "Webform Security Drupal.org"
+  short_description: "Work with Webform security issues on Drupal.org"
+  default_prompt: "Use $webform-security-drupalorg to review the Webform security issue queue and update the local operational summary."
