@@ -113,6 +113,7 @@ allday
 Acquia's
 Acromedia
 addtogroup
+APPROOT
 autocollapse
 autocompleteselect
 basemap
@@ -271,6 +272,7 @@ preinstall
 Preconfigured
 postsave
 phpcs
+pipefail
 Pinterest
 Podcaster's
 Postsave

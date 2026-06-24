@@ -1,0 +1,175 @@
+#!/usr/bin/env bash
+
+## Description: Tag and push a release for a supported project ecosystem.
+## Usage: schemadotorg:release TAG
+## Example: ddev schemadotorg:release 1.0.0-alpha10
+## Aliases: schemadotorg:release
+
+set -eu -o pipefail
+
+# Configure the release branch and sandbox checkout location.
+release_branch="1.0.x"
+sandbox_directory="${SCHEMADOTORG_RELEASE_SANDBOX_DIRECTORY:-${DDEV_APPROOT:-$(pwd)}/web/modules/sandbox}"
+
+# List every Schema.org ecosystem repository released together.
+schemadotorg_projects=(
+  "schemadotorg"
+  "schemadotorg_demo"
+  "schemadotorg_experimental"
+  "schemadotorg_starterkit_events"
+  "schemadotorg_starterkit_hospital"
+  "schemadotorg_starterkit_hotel"
+  "schemadotorg_starterkit_layout"
+  "schemadotorg_starterkit_medical"
+  "schemadotorg_starterkit_organization"
+  "schemadotorg_starterkit_podcast"
+  "schemadotorg_starterkit_recipes"
+)
+
+# Collect preflight failures so all repository issues are reported together.
+add_error() {
+  preflight_errors+=("$1")
+}
+
+# Check whether the release tag already exists on the origin remote.
+tag_exists_on_origin() {
+  local project_directory="$1"
+  local release_tag="$2"
+
+  git -C "${project_directory}" ls-remote --exit-code --tags origin "refs/tags/${release_tag}" >/dev/null 2>&1
+}
+
+# Check whether the release branch exists on the origin remote.
+branch_exists_on_origin() {
+  local project_directory="$1"
+  local branch_name="$2"
+
+  git -C "${project_directory}" ls-remote --exit-code --heads origin "${branch_name}" >/dev/null 2>&1
+}
+
+# Check whether the release branch already exists locally.
+branch_exists_locally() {
+  local project_directory="$1"
+  local branch_name="$2"
+
+  git -C "${project_directory}" show-ref --verify --quiet "refs/heads/${branch_name}"
+}
+
+# Run a Git command and stop immediately with repository context on failure.
+run_git_command() {
+  local repository_name="$1"
+  shift
+
+  echo "[${repository_name}] git $*"
+  if ! git "$@"; then
+    echo
+    echo "Release failed for ${repository_name} while running: git $*"
+    exit 1
+  fi
+}
+
+# Use the local release branch when available, otherwise track origin.
+checkout_release_branch() {
+  local repository_name="$1"
+  local project_directory="$2"
+
+  if branch_exists_locally "${project_directory}" "${release_branch}"; then
+    run_git_command "${repository_name}" -C "${project_directory}" checkout "${release_branch}"
+  else
+    run_git_command "${repository_name}" -C "${project_directory}" checkout --track "origin/${release_branch}"
+  fi
+}
+
+# Validate command input and tag format before inspecting repositories.
+if [ "$#" -ne 1 ]; then
+  echo "Release tag is required."
+  exit 1
+fi
+
+release_tag="$1"
+
+if ! [[ "${release_tag}" =~ ^1\.0\.0-alpha[0-9]+$ ]]; then
+  echo "Release tag must match 1.0.0-alphaN."
+  exit 1
+fi
+
+# Preflight every repository before running any release-changing command.
+preflight_errors=()
+
+for schemadotorg_project in "${schemadotorg_projects[@]}"; do
+  project_directory="${sandbox_directory}/${schemadotorg_project}"
+
+  if [ ! -d "${project_directory}" ]; then
+    add_error "${schemadotorg_project}: missing directory ${project_directory}"
+    continue
+  fi
+
+  if ! git -C "${project_directory}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    add_error "${schemadotorg_project}: ${project_directory} is not a Git repository"
+    continue
+  fi
+
+  if [ -n "$(git -C "${project_directory}" status --porcelain)" ]; then
+    add_error "${schemadotorg_project}: working tree is not clean"
+  fi
+
+  if ! git -C "${project_directory}" remote get-url origin >/dev/null 2>&1; then
+    add_error "${schemadotorg_project}: origin remote is not configured"
+  fi
+
+  if ! branch_exists_locally "${project_directory}" "${release_branch}" && ! branch_exists_on_origin "${project_directory}" "${release_branch}"; then
+    add_error "${schemadotorg_project}: ${release_branch} branch does not exist locally or on origin"
+  fi
+
+  if git -C "${project_directory}" show-ref --verify --quiet "refs/tags/${release_tag}"; then
+    add_error "${schemadotorg_project}: tag ${release_tag} already exists locally"
+  fi
+
+  if tag_exists_on_origin "${project_directory}" "${release_tag}"; then
+    add_error "${schemadotorg_project}: tag ${release_tag} already exists on origin"
+  fi
+done
+
+if [ "${#preflight_errors[@]}" -gt 0 ]; then
+  echo "Release preflight failed. No repositories were changed."
+  echo
+  printf ' - %s\n' "${preflight_errors[@]}"
+  exit 1
+fi
+
+# Show the complete release plan and require explicit confirmation.
+cat <<EOF
+Ready to release Schema.org ecosystem.
+
+Release branch: ${release_branch}
+Release tag:    ${release_tag}
+Sandbox path:   ${sandbox_directory}
+
+Projects:
+EOF
+
+printf ' - %s\n' "${schemadotorg_projects[@]}"
+
+echo
+printf "Type 'yes' to tag and push this release: "
+read -r confirmation
+
+if [ "${confirmation}" != "yes" ]; then
+  echo "Release cancelled. No repositories were changed."
+  exit 1
+fi
+
+# Checkout, fast-forward, tag, and push each repository.
+for schemadotorg_project in "${schemadotorg_projects[@]}"; do
+  project_directory="${sandbox_directory}/${schemadotorg_project}"
+
+  echo
+  echo "Releasing ${schemadotorg_project}..."
+  checkout_release_branch "${schemadotorg_project}" "${project_directory}"
+  run_git_command "${schemadotorg_project}" -C "${project_directory}" pull --ff-only origin "${release_branch}"
+  run_git_command "${schemadotorg_project}" -C "${project_directory}" tag "${release_tag}"
+  run_git_command "${schemadotorg_project}" -C "${project_directory}" push origin "refs/tags/${release_tag}"
+done
+
+echo
+echo "Release ${release_tag} pushed for the Schema.org ecosystem."
