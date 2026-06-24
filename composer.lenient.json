@@ -1,0 +1,17 @@
+{
+    "require": {
+        "mglaman/composer-drupal-lenient": "*"
+    },
+    "extra": {
+        "patches": {
+            "drupal/config_rewrite": {
+                "Issue #3528767: Tried to rewrite config by module without initial config": "https://www.drupal.org/files/issues/2025-06-24/config_rewrite-issue-3528767-comment-2.patch"
+            }
+        },
+        "drupal-lenient": {
+            "allowed-list": [
+                "drupal/flexfield"
+            ]
+        }
+    }
+}

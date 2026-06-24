@@ -37,6 +37,7 @@
             "php-http/discovery": true,
             "php-tuf/composer-integration": true,
             "phpstan/extension-installer": true,
+            "mglaman/composer-drupal-lenient": true,
             "tbachert/spi": true,
             "wikimedia/composer-merge-plugin": true,
             "drupal/ai_best_practices": true
@@ -135,6 +136,7 @@
         "merge-plugin": {
             "include": [
                 "composer.drupal_11.json",
+                "composer.lenient.json",
                 "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
