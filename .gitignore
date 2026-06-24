@@ -134,14 +134,29 @@ yarn-error.log
 
 # /web/modules/sandbox/
 /web/modules/sandbox/ai_schemadotorg_jsonld
+/web/modules/sandbox/config_action_report
 /web/modules/sandbox/eca_report
 /web/modules/sandbox/entity_labels
 /web/modules/sandbox/field_data
 /web/modules/sandbox/local_tasks_more
 /web/modules/sandbox/menu_export_csv
+/web/modules/sandbox/mercury_editor_task
 /web/modules/sandbox/plugin_report
 /web/modules/sandbox/schemadotorg
+/web/modules/sandbox/schemadotorg_cms_migrate
+/web/modules/sandbox/schemadotorg_demo
+/web/modules/sandbox/schemadotorg_deprecated
 /web/modules/sandbox/schemadotorg_experimental
+/web/modules/sandbox/schemadotorg_migrate
+/web/modules/sandbox/schemadotorg_starterkit_events
+/web/modules/sandbox/schemadotorg_starterkit_hospital
+/web/modules/sandbox/schemadotorg_starterkit_hotel
+/web/modules/sandbox/schemadotorg_starterkit_layout
+/web/modules/sandbox/schemadotorg_starterkit_medical
+/web/modules/sandbox/schemadotorg_starterkit_organization
+/web/modules/sandbox/schemadotorg_starterkit_podcast
+/web/modules/sandbox/schemadotorg_starterkit_recipes
+/web/modules/sandbox/telephone_filter
 /web/modules/sandbox/webform
 /web/modules/sandbox/webform_confirmation_file
 /web/modules/sandbox/webform_javascript_setting
@@ -153,6 +168,7 @@ yarn-error.log
 # =============================================================================
 # Recipes
 # =============================================================================
+/recipes/ckeditor_recipe
 /recipes/eca_starterkit
 /recipes/schemadotorg_recipes
 
