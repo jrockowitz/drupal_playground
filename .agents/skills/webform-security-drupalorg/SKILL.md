@@ -1,6 +1,6 @@
 ---
 name: webform-security-drupalorg
-description: Use when working with Webform security issues, advisory drafts, SA forms, or private project issue queue pages on security.drupal.org.
+description: Use when working on Webform security issues or advisory forms on security.drupal.org.
 ---
 
 # Webform Security Drupal.org

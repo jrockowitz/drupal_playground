@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d5c4d417f7b686e4a1beecd7c1786722",
+    "content-hash": "5f43cdb0eaa5295c55112cd4b1123c27",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1719,17 +1719,17 @@
         },
         {
             "name": "drupal/ai",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ai.git",
-                "reference": "1.4.1"
+                "reference": "1.4.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ai-1.4.1.zip",
-                "reference": "1.4.1",
-                "shasum": "8f7ecf9b75194d306443c72ca686707a55334d46"
+                "url": "https://ftp.drupal.org/files/projects/ai-1.4.2.zip",
+                "reference": "1.4.2",
+                "shasum": "a72bb24fc6e025c6feaabb68b1ccecc0ab636b8d"
             },
             "require": {
                 "drupal/core": "^10.5 || ^11.2",
@@ -1759,8 +1759,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.4.1",
-                    "datestamp": "1780493201",
+                    "version": "1.4.2",
+                    "datestamp": "1781100863",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -1861,7 +1861,7 @@
         },
         {
             "name": "drupal/ai-ai_search",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "require": {
                 "drupal/ai": "^1",
                 "drupal/core": "^10.4 || ^11"
@@ -1873,8 +1873,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.1",
-                    "datestamp": "1780493201",
+                    "version": "1.4.2",
+                    "datestamp": "1781100863",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2059,7 +2059,7 @@
         },
         {
             "name": "drupal/ai_api_explorer",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2067,8 +2067,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.1",
-                    "datestamp": "1780493201",
+                    "version": "1.4.2",
+                    "datestamp": "1781100863",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2169,7 +2169,7 @@
         },
         {
             "name": "drupal/ai_assistant_api",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2177,8 +2177,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.1",
-                    "datestamp": "1780493201",
+                    "version": "1.4.2",
+                    "datestamp": "1781100863",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2279,7 +2279,7 @@
         },
         {
             "name": "drupal/ai_automators",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11",
@@ -2288,8 +2288,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.1",
-                    "datestamp": "1780493201",
+                    "version": "1.4.2",
+                    "datestamp": "1781100863",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2389,8 +2389,57 @@
             }
         },
         {
+            "name": "drupal/ai_best_practices",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ai_best_practices.git",
+                "reference": "a63685ad9a53af5e0657ba99c3095b052f5ea110"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://git.drupalcode.org/api/v4/projects/project%2Fai_best_practices/repository/archive.zip?sha=a63685ad9a53af5e0657ba99c3095b052f5ea110",
+                "reference": "a63685ad9a53af5e0657ba99c3095b052f5ea110",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^2.0",
+                "php": "^8.1",
+                "symfony/console": "^6.0 || ^7.0",
+                "symfony/filesystem": "^6.0 || ^7.0",
+                "symfony/yaml": "^6.0 || ^7.0"
+            },
+            "require-dev": {
+                "composer/composer": "^2.2",
+                "friendsofphp/php-cs-fixer": "^3.59",
+                "phpunit/phpunit": "^10.0",
+                "ronaldtebrake/agent-skills-validator": "^1.0"
+            },
+            "default-branch": true,
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Drupal\\AiBestPractices\\Composer\\AiBestPracticesPlugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Drupal\\AiBestPractices\\": "src/AiBestPractices/",
+                    "Drupal\\AiBestPractices\\Agents\\": "src/Agents/",
+                    "Drupal\\AiBestPractices\\Skills\\": "src/Skills/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "A canonical place to put opinionated Drupal best practice guidance for AI agents",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ai_best_practices/-/tree/1.0.x"
+            },
+            "time": "2026-06-14T08:32:13+00:00"
+        },
+        {
             "name": "drupal/ai_chatbot",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "require": {
                 "drupal/ai": "^1",
                 "drupal/ai_assistant_api": "*",
@@ -2399,8 +2448,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.1",
-                    "datestamp": "1780493201",
+                    "version": "1.4.2",
+                    "datestamp": "1781100863",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2501,7 +2550,7 @@
         },
         {
             "name": "drupal/ai_ckeditor",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2509,8 +2558,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.1",
-                    "datestamp": "1780493201",
+                    "version": "1.4.2",
+                    "datestamp": "1781100863",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2732,7 +2781,7 @@
         },
         {
             "name": "drupal/ai_logging",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2740,8 +2789,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.1",
-                    "datestamp": "1780493201",
+                    "version": "1.4.2",
+                    "datestamp": "1781100863",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2978,17 +3027,17 @@
         },
         {
             "name": "drupal/ai_rag_search_chat",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ai_rag_search_chat.git",
-                "reference": "1.0.5"
+                "reference": "1.0.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ai_rag_search_chat-1.0.5.zip",
-                "reference": "1.0.5",
-                "shasum": "b9e5351900ba19ddc6c785352b8bc632aac65035"
+                "url": "https://ftp.drupal.org/files/projects/ai_rag_search_chat-1.0.6.zip",
+                "reference": "1.0.6",
+                "shasum": "2c87c2997833de61372741b5c24a1ad4ae769e59"
             },
             "require": {
                 "drupal/ai": "^1.3",
@@ -3003,8 +3052,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.0.5",
-                    "datestamp": "1781034524",
+                    "version": "1.0.6",
+                    "datestamp": "1781047186",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Project has not opted into security advisory coverage!"
@@ -3048,17 +3097,17 @@
         },
         {
             "name": "drupal/ai_vdb_provider_milvus",
-            "version": "1.1.0-beta3",
+            "version": "1.1.0-beta4",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ai_vdb_provider_milvus.git",
-                "reference": "1.1.0-beta3"
+                "reference": "1.1.0-beta4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ai_vdb_provider_milvus-1.1.0-beta3.zip",
-                "reference": "1.1.0-beta3",
-                "shasum": "e95a224a88d40b0ecb73686f9b5ad2da4a688d74"
+                "url": "https://ftp.drupal.org/files/projects/ai_vdb_provider_milvus-1.1.0-beta4.zip",
+                "reference": "1.1.0-beta4",
+                "shasum": "ff7fca01a3e0579345b379af5fb2b46bb13012ba"
             },
             "require": {
                 "drupal/ai": "^1.2",
@@ -3072,8 +3121,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.1.0-beta3",
-                    "datestamp": "1764257531",
+                    "version": "1.1.0-beta4",
+                    "datestamp": "1781163646",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Beta releases are not covered by Drupal security advisories."
@@ -3546,11 +3595,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/clinical_trials_gov_recipe_data_elastic",
-                "reference": "8bec6e9fe9636263caec6674f5fdea3ae9bac5ae"
+                "reference": "311f27b27ea30b971044a6f82d2296d32eb7e964"
             },
             "require": {
                 "drupal/better_exposed_filters": "^7",
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/elasticsearch_connector": "^9@alpha",
                 "drupal/facets": "^3",
                 "drupal/search_api": "^1",
@@ -3574,12 +3623,12 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/clinical_trials_gov_recipe_data_milvus",
-                "reference": "577e0230f21eb35f48c88520cd4640c8fc1f0bde"
+                "reference": "5ca84d5fa209b5c9672ae883fc5e285c46fc98e9"
             },
             "require": {
                 "drupal/ai": "^1",
                 "drupal/ai_vdb_provider_milvus": "^1.1@beta",
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/search_api": "^1"
             },
             "type": "drupal-recipe",
@@ -3597,10 +3646,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/clinical_trials_gov_recipe_data_setup",
-                "reference": "33a0ec90f8763a59becc083650ee809c3118621f"
+                "reference": "def9c73d6f5a2032a64ad69bd166b94a607e4d0d"
             },
             "require": {
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/custom_field": "^4",
                 "drupal/field_group": "^4",
                 "drupal/migrate_plus": "^6",
@@ -3622,11 +3671,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/clinical_trials_gov_recipe_fields_elastic",
-                "reference": "12199d70377d6eee3f62fa0244e7838361a6fb28"
+                "reference": "0c039b0c97402c5972ecc66c721e055ab8a404d0"
             },
             "require": {
                 "drupal/better_exposed_filters": "^7",
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/elasticsearch_connector": "^9@alpha",
                 "drupal/facets": "^3",
                 "drupal/search_api": "^1",
@@ -3650,13 +3699,13 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/clinical_trials_gov_recipe_fields_milvus",
-                "reference": "7d7539c73a6190395865c522f20f63f92f5ffcf6"
+                "reference": "1126e3eb5ce5fee5a1c206c3f1fd8c4dfdeb957d"
             },
             "require": {
                 "drupal/ai": "^1",
                 "drupal/ai_rag_search_chat": "^1",
                 "drupal/ai_vdb_provider_milvus": "^1.1@beta",
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/search_api": "^1"
             },
             "type": "drupal-recipe",
@@ -3674,11 +3723,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/clinical_trials_gov_recipe_fields_setup",
-                "reference": "3d2d5b56c1f60b84445ec52c0ea37b5b59e090ed"
+                "reference": "f1cfa535ba781fd80ab014dd2382f52862392c13"
             },
             "require": {
                 "drupal/ai_automators": "^1",
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/custom_field": "^4",
                 "drupal/field_group": "^4",
                 "drupal/migrate_plus": "^6",
@@ -4790,14 +4839,14 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_admin",
-                "reference": "1e83196b3c9b0328b9336983fd353475d890e198"
+                "reference": "92c6e8d280bf5a11210e4e96bf498123b40accfc"
             },
             "require": {
                 "drupal/coffee": "^2",
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/dashboard": "^2",
-                "drupal/gin": "^5",
-                "drupal/gin_toolbar": "^3",
+                "drupal/gin": "^4.1 || ^5",
+                "drupal/gin_toolbar": "^2.1 || ^3",
                 "drupal/gin_type_tray": "^1",
                 "drupal/navigation_extra_tools": "^1",
                 "drupal/queue_ui": "^3",
@@ -4839,13 +4888,13 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai",
-                "reference": "2d9439200e499f18f63077ca8a67dd29c0b2745a"
+                "reference": "9318601a86f475f7c970fd1ec56386de10cb3c7e"
             },
             "require": {
                 "drupal/ai": "^1",
                 "drupal/ai_dashboard": "^1",
                 "drupal/ai_provider_openai": "^1",
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/key": "^1"
             },
             "type": "drupal-recipe",
@@ -4863,10 +4912,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_automators",
-                "reference": "ec87a96e09676409b4002546f097f7397a7750f7"
+                "reference": "a0ca7871da8b236e334d501865fc68f4994e28cd"
             },
             "require": {
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/field_widget_actions": "^1"
             },
             "type": "drupal-recipe",
@@ -4884,12 +4933,12 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_chat",
-                "reference": "51c367e1b8927ddd772eae4aac6a58a05a232e52"
+                "reference": "345648ecb275d0d21749bc6d071917d86fab1fbf"
             },
             "require": {
                 "drupal/ai_agents": "^1",
                 "drupal/ai_chatbot": "^1",
-                "drupal/core": "^11"
+                "drupal/core": "^10 || ^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4906,11 +4955,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_ckeditor",
-                "reference": "6d6b29fb27039c1aff77abc7f74c35956186d857"
+                "reference": "a77b09dcbb485cb5f38fd5fff8c9459a0397e21a"
             },
             "require": {
                 "drupal/ai_ckeditor": "^1",
-                "drupal/core": "^11"
+                "drupal/core": "^10 || ^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4927,10 +4976,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_ckeditor_explain",
-                "reference": "6dfb085312f973b46437812fd122d983d71999cf"
+                "reference": "0655ed2e6651644ee486142570e16689d443e737"
             },
             "require": {
-                "drupal/core": "^11"
+                "drupal/core": "^10 || ^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4947,11 +4996,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_content_suggestions",
-                "reference": "19f2870101d2799cada1a986ff774559af1ac93b"
+                "reference": "a5ce03bce110c7ff4f780ad9fc0f406b77685674"
             },
             "require": {
                 "drupal/ai_content_suggestions": "^1",
-                "drupal/core": "^11"
+                "drupal/core": "^10 || ^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4968,13 +5017,13 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_devel",
-                "reference": "f185b78a57ad7ce890c72340b9c819585e9a5e46"
+                "reference": "2325bac296907ea524f5dc00c46df94c55669b12"
             },
             "require": {
                 "drupal/ai_api_explorer": "^1",
                 "drupal/ai_assistant_api": "^1",
                 "drupal/ai_logging": "^1",
-                "drupal/core": "^11"
+                "drupal/core": "^10 || ^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -4991,11 +5040,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_provider_anthropic",
-                "reference": "b7c5ab7b284ef27c556292c3a12e1b661483a8b6"
+                "reference": "feeeda1e3adee9317aa71c630e6856759dc7cef2"
             },
             "require": {
                 "drupal/ai_provider_anthropic": "^1",
-                "drupal/core": "^11"
+                "drupal/core": "^10 || ^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -5012,10 +5061,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_provider_gemini",
-                "reference": "3238e0369e49202f0ae2ec6d683a5337daa03dd1"
+                "reference": "77ed208f31f2b120ace651e53dc4ef92c4ffe9a6"
             },
             "require": {
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/gemini_provider": "^1.0"
             },
             "type": "drupal-recipe",
@@ -5033,11 +5082,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ai_provider_openai",
-                "reference": "85b7c2207ef03798bacafa6972317edf5a055390"
+                "reference": "09caacb5e45ddeb0037b367c8734be66514799f3"
             },
             "require": {
                 "drupal/ai_provider_openai": "^1",
-                "drupal/core": "^11"
+                "drupal/core": "^10 || ^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -5054,11 +5103,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_base",
-                "reference": "fc8199ca565e491699f2e32587dac48e14ad6f6c"
+                "reference": "4333ef215b1dc27630e2c57422249cc644cd51c8"
             },
             "require": {
                 "drupal/asset_injector": "^2",
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/key": "^1",
                 "drupal/token": "^1",
                 "drupal/trash": "^3.0"
@@ -5077,10 +5126,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_devel",
-                "reference": "0168756290f0c790d1c6210a7da799ec01bb7f4d"
+                "reference": "f1ea554f80918ca1564551ac456374d500a46a0b"
             },
             "require": {
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/devel": "^5"
             },
             "type": "drupal-recipe",
@@ -5120,11 +5169,11 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_elasticsearch",
-                "reference": "79026cb5079322a8a48cfe6ae54d3538f5cbda92"
+                "reference": "d594f9400b6d9042728ef75fc5378622b0754493"
             },
             "require": {
                 "drupal/better_exposed_filters": "^7",
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/elasticsearch_connector": "^9@alpha",
                 "drupal/facets": "^3",
                 "drupal/search_api": "^1",
@@ -5148,10 +5197,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_schemadotorg",
-                "reference": "d306bf7ca3648dca40c139d09b65adfb1b08dc7b"
+                "reference": "40ac065d5883438daab1103bc0fd4779cc5106a6"
             },
             "require": {
-                "drupal/core": "^11",
+                "drupal/core": "^10 || ^11",
                 "drupal/schemadotorg": "^1@alpha",
                 "drupal/schemadotorg_experimental": "^1@alpha"
             },
@@ -5170,10 +5219,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_translation",
-                "reference": "d2cca06d02bba6996df82ec3e3a76c8ef7eae0c4"
+                "reference": "3d81ca897b493bd6760e40b6da83d09ad50c2102"
             },
             "require": {
-                "drupal/core": "^11"
+                "drupal/core": "^10 || ^11"
             },
             "type": "drupal-recipe",
             "license": [
@@ -6297,17 +6346,17 @@
         },
         {
             "name": "drupal/field_validation",
-            "version": "3.0.0-beta6",
+            "version": "3.0.0-beta7",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/field_validation.git",
-                "reference": "3.0.0-beta6"
+                "reference": "3.0.0-beta7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/field_validation-3.0.0-beta6.zip",
-                "reference": "3.0.0-beta6",
-                "shasum": "e2ea8ebcc5c7da24bac55cc7ab6521efe8d48e15"
+                "url": "https://ftp.drupal.org/files/projects/field_validation-3.0.0-beta7.zip",
+                "reference": "3.0.0-beta7",
+                "shasum": "fea180c3e8225cdfb94b7892875457653a14e629"
             },
             "require": {
                 "drupal/core": "^10.2 || ^11",
@@ -6318,8 +6367,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "3.0.0-beta6",
-                    "datestamp": "1759823510",
+                    "version": "3.0.0-beta7",
+                    "datestamp": "1781256027",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Beta releases are not covered by Drupal security advisories."
@@ -10624,7 +10673,7 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.8.1",
+            "version": "2.8.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
@@ -10720,7 +10769,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.8.1"
+                "source": "https://github.com/guzzle/psr7/tree/2.8"
             },
             "funding": [
                 {
@@ -12154,16 +12203,16 @@
         },
         {
             "name": "openai-php/client",
-            "version": "v0.19.2",
+            "version": "v0.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/openai-php/client.git",
-                "reference": "12e3513527e22d5657f4f9809796f8fe254fd0a9"
+                "reference": "b5c0e1e0f210e6b9aca5ee048157fcf3039ca91f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/openai-php/client/zipball/12e3513527e22d5657f4f9809796f8fe254fd0a9",
-                "reference": "12e3513527e22d5657f4f9809796f8fe254fd0a9",
+                "url": "https://api.github.com/repos/openai-php/client/zipball/b5c0e1e0f210e6b9aca5ee048157fcf3039ca91f",
+                "reference": "b5c0e1e0f210e6b9aca5ee048157fcf3039ca91f",
                 "shasum": ""
             },
             "require": {
@@ -12225,7 +12274,7 @@
             ],
             "support": {
                 "issues": "https://github.com/openai-php/client/issues",
-                "source": "https://github.com/openai-php/client/tree/v0.19.2"
+                "source": "https://github.com/openai-php/client/tree/v0.20.0"
             },
             "funding": [
                 {
@@ -12241,7 +12290,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-19T20:35:01+00:00"
+            "time": "2026-06-13T12:14:23+00:00"
         },
         {
             "name": "pear/archive_tar",
@@ -17821,28 +17870,29 @@
         },
         {
             "name": "composer/pcre",
-            "version": "3.3.2",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/pcre.git",
-                "reference": "b2bed4734f0cc156ee1fe9c0da2550420d99a21e"
+                "reference": "d5a341b3fb61f3001970940afb1d332968a183ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/pcre/zipball/b2bed4734f0cc156ee1fe9c0da2550420d99a21e",
-                "reference": "b2bed4734f0cc156ee1fe9c0da2550420d99a21e",
+                "url": "https://api.github.com/repos/composer/pcre/zipball/d5a341b3fb61f3001970940afb1d332968a183ed",
+                "reference": "d5a341b3fb61f3001970940afb1d332968a183ed",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 || ^8.0"
             },
             "conflict": {
-                "phpstan/phpstan": "<1.11.10"
+                "phpstan/phpstan": "<2.2.2"
             },
             "require-dev": {
-                "phpstan/phpstan": "^1.12 || ^2",
-                "phpstan/phpstan-strict-rules": "^1 || ^2",
-                "phpunit/phpunit": "^8 || ^9"
+                "phpstan/phpstan": "^2",
+                "phpstan/phpstan-deprecation-rules": "^2",
+                "phpstan/phpstan-strict-rules": "^2",
+                "phpunit/phpunit": "^9"
             },
             "type": "library",
             "extra": {
@@ -17880,7 +17930,7 @@
             ],
             "support": {
                 "issues": "https://github.com/composer/pcre/issues",
-                "source": "https://github.com/composer/pcre/tree/3.3.2"
+                "source": "https://github.com/composer/pcre/tree/3.4.0"
             },
             "funding": [
                 {
@@ -17890,13 +17940,9 @@
                 {
                     "url": "https://github.com/composer",
                     "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
-                    "type": "tidelift"
                 }
             ],
-            "time": "2024-11-12T16:29:46+00:00"
+            "time": "2026-06-07T11:47:49+00:00"
         },
         {
             "name": "composer/spdx-licenses",
@@ -19435,17 +19481,17 @@
         },
         {
             "name": "drupal/telephone_validation",
-            "version": "2.5.0",
+            "version": "2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/telephone_validation.git",
-                "reference": "8.x-2.5"
+                "reference": "8.x-2.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/telephone_validation-8.x-2.5.zip",
-                "reference": "8.x-2.5",
-                "shasum": "16b922bafadcd0d9f4286f41e1775e732d9d4f7a"
+                "url": "https://ftp.drupal.org/files/projects/telephone_validation-8.x-2.6.zip",
+                "reference": "8.x-2.6",
+                "shasum": "b571403b41a949566ea2f38d13cd0f0f76f7b7c1"
             },
             "require": {
                 "drupal/core": "^10 || ^11",
@@ -19454,8 +19500,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-2.5",
-                    "datestamp": "1733491186",
+                    "version": "8.x-2.6",
+                    "datestamp": "1781535414",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -21901,66 +21947,6 @@
             "time": "2025-08-19T18:57:03+00:00"
         },
         {
-            "name": "rector/rector",
-            "version": "2.4.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/rectorphp/rector.git",
-                "reference": "cbd86024be5014d3c14d9f0b3f7aae8ecbffd62c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/cbd86024be5014d3c14d9f0b3f7aae8ecbffd62c",
-                "reference": "cbd86024be5014d3c14d9f0b3f7aae8ecbffd62c",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.4|^8.0",
-                "phpstan/phpstan": "^2.1.56"
-            },
-            "conflict": {
-                "rector/rector-doctrine": "*",
-                "rector/rector-downgrade-php": "*",
-                "rector/rector-phpunit": "*",
-                "rector/rector-symfony": "*"
-            },
-            "suggest": {
-                "ext-dom": "To manipulate phpunit.xml via the custom-rule command"
-            },
-            "bin": [
-                "bin/rector"
-            ],
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Instant Upgrade and Automated Refactoring of any PHP code",
-            "homepage": "https://getrector.com/",
-            "keywords": [
-                "automation",
-                "dev",
-                "migration",
-                "refactoring"
-            ],
-            "support": {
-                "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.4.5"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/tomasvotruba",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-05-26T21:03:22+00:00"
-        },
-        {
             "name": "sabberworm/php-css-parser",
             "version": "v9.3.0",
             "source": {
@@ -22961,16 +22947,16 @@
         },
         {
             "name": "seld/jsonlint",
-            "version": "1.11.0",
+            "version": "1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/jsonlint.git",
-                "reference": "1748aaf847fc731cfad7725aec413ee46f0cc3a2"
+                "reference": "9a90eb5d32d5a500296bf43f946d60246444d5f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/1748aaf847fc731cfad7725aec413ee46f0cc3a2",
-                "reference": "1748aaf847fc731cfad7725aec413ee46f0cc3a2",
+                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/9a90eb5d32d5a500296bf43f946d60246444d5f7",
+                "reference": "9a90eb5d32d5a500296bf43f946d60246444d5f7",
                 "shasum": ""
             },
             "require": {
@@ -23009,7 +22995,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/jsonlint/issues",
-                "source": "https://github.com/Seldaek/jsonlint/tree/1.11.0"
+                "source": "https://github.com/Seldaek/jsonlint/tree/1.12.1"
             },
             "funding": [
                 {
@@ -23021,7 +23007,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-07-11T14:55:45+00:00"
+            "time": "2026-06-12T11:32:29+00:00"
         },
         {
             "name": "seld/phar-utils",
@@ -24054,16 +24040,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "2.4.0",
+            "version": "2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "9007ea6f45ecf352a9422b36644e4bfc039b9155"
+                "reference": "2ccb7c2e821038c03a3e6e1700c570c158c55f70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/9007ea6f45ecf352a9422b36644e4bfc039b9155",
-                "reference": "9007ea6f45ecf352a9422b36644e4bfc039b9155",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/2ccb7c2e821038c03a3e6e1700c570c158c55f70",
+                "reference": "2ccb7c2e821038c03a3e6e1700c570c158c55f70",
                 "shasum": ""
             },
             "require": {
@@ -24114,14 +24100,17 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/2.4.0"
+                "source": "https://github.com/webmozarts/assert/tree/2.4.1"
             },
-            "time": "2026-05-20T13:07:01+00:00"
+            "time": "2026-06-15T15:31:57+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": {
+        "drupal/ai_best_practices": 20,
+        "drupal/webform": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

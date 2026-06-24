@@ -1,6 +1,6 @@
 ---
 name: install
-description: Install or reinstall Drupal with optional presets (ai, eca, schemadotorg, translation, all). Use when the user wants to (re)install the site or apply a named preset.
+description: Use when installing or reinstalling the local Drupal site.
 disable-model-invocation: true
 ---
 
