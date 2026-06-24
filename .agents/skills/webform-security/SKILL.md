@@ -44,6 +44,16 @@ Use the README only for directory map/update order. Use indexes for queue/work s
 
 Use visible facts from Drupal.org, GitLab, merge requests, and local notes. Keep advisory text high-level: impact, affected feature area, required conditions, mitigation/fixed-version placeholders, credit/coordinator/reporter when visible, and maintainer checklist for unknowns. Use clear placeholders for unknowns.
 
+For the advisory Solution section, use this template:
+
+```html
+Install the latest version:
+<ul>
+<li>If you use the Webform 6.2.x module for Drupal 10.x, upgrade to Webform 6.2.x</li>
+<li>If you use the Webform 6.3.x module for Drupal 11.x, upgrade to Webform 6.3.x</li>
+</ul>
+```
+
 ## Code Work
 
 Before code changes, use relevant process skills such as `webform-issue-maintenance`, `drupalorg-cli`, `systematic-debugging`, `test-driven-development`, and `verification-before-completion`.
