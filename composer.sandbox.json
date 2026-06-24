@@ -120,19 +120,6 @@
         {
             "type": "package",
             "package": {
-                "name": "drupal/webform",
-                "type": "drupal-module-sandbox",
-                "version": "6.3.x-dev",
-                "source": {
-                    "url": "git@git.drupal.org:project/webform.git",
-                    "type": "git",
-                    "reference": "6.3.x"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
                 "name": "drupal/webform_confirmation_file",
                 "type": "drupal-module-sandbox",
                 "version": "1.x-dev",

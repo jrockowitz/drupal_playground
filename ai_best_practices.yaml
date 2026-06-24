@@ -1,0 +1,32 @@
+# ai_best_practices.yaml — AI Best Practices (Composer script `drupal-ai`)
+#
+# Environment variables (optional; override behavior without editing this file):
+#   AI_BEST_PRACTICES_SKIP_COMPOSER_MUTATION=1 — do not add the `drupal-ai` script to composer.json
+#   AI_BEST_PRACTICES_SKIP_PACKAGE_SYNC=1 — skip deferred skills-sync and AGENTS.md sync on package install/update
+#
+# If this file is invalid YAML, the package falls back to built-in defaults with no error
+# message — validate YAML in your editor if settings seem ignored.
+
+# When false, the plugin does not register `drupal-ai` or post-install hooks in the host composer.json.
+auto_register_composer_scripts: true
+
+skills:
+  # Output directory for aggregated skills (default: .agents/skills)
+  output_directory: .agents/skills
+
+  # Discovery sources (both enabled by default)
+  discover_composer: true
+  discover_webroot: true
+
+  # Optional: override document root prefix (e.g. html/). Auto-detected from
+  # composer.json (drupal-scaffold, installer-paths) or web/html/docroot when unset.
+  # web_root: null
+
+  # Optional: only scan these Composer packages under vendor/ (vendor/package). Empty = all.
+  composer_package_whitelist: []
+
+  # Directories to exclude from scanning (in addition to defaults: .git, node_modules, .idea)
+  excluded_directories: []
+
+  # Exclude specific skills (format: 'vendor/package:skill-name' or 'extension-name:skill-name')
+  exclude_skills: []

@@ -6,7 +6,7 @@
     "version": "1.0.0",
     "require": {
         "drupal/ai_automators": "^1",
-        "drupal/core": "^11",
+        "drupal/core": "^10 || ^11",
         "drupal/custom_field": "^4",
         "drupal/field_group": "^4",
         "drupal/migrate_plus": "^6",

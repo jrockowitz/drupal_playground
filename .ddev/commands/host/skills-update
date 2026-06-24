@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+## Description: Update Drupal AI Best Practices and project skills
+## Usage: skills-update
+## Example: ddev skills-update
+
+set -euo pipefail
+
+if ! command -v npx >/dev/null 2>&1; then
+  echo "Error: npx is required on the host to update project skills." >&2
+  exit 1
+fi
+
+cd "${DDEV_APPROOT}"
+
+echo "Updating drupal/ai_best_practices..."
+ddev composer update drupal/ai_best_practices --with-all-dependencies
+
+echo "Syncing Drupal AI Best Practices skills..."
+ddev composer drupal-ai skills-sync
+
+echo "Updating project skills from skills-lock.json..."
+npx --yes skills update --project --yes

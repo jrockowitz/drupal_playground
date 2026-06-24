@@ -1,6 +1,6 @@
 ---
 name: webform-issue-maintenance
-description: Use when asked to inspect, triage, prioritize, reproduce, fix, test, review, summarize, or draft comments for Drupal.org Webform module issues.
+description: Use when working on public Drupal.org Webform module issues.
 ---
 
 # Webform Issue Maintenance
@@ -34,6 +34,16 @@ Use `drupalorg-cli` before raw Drupal.org API calls. Pass `--format=llm` to
 read commands and add `--no-cache` when recently changed issue data matters.
 If Webform has uncommitted changes, decide whether they belong to the current
 public issue before continuing.
+
+## Target Webform Version
+
+Default Webform issue work to `6.3.x` unless the human specifies another
+branch/version. When the human names a target such as `6.2.x`, use that branch
+for local checkout, patch testing, MR review, comment drafts, and backport work.
+
+When testing a patch or backport MR, report the exact Webform branch used. If
+the issue or MR targets a different branch than the human requested, call out
+the mismatch before editing or posting a draft.
 
 ## Guardrails
 
@@ -273,7 +283,7 @@ Maintainer comment draft:
 ```markdown
 From [AI-agent]
 
-I reviewed this locally against Webform 6.3.x.
+I reviewed this locally against Webform <target-version>.
 
 What I checked:
 - ...

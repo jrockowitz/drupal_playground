@@ -1,10 +1,6 @@
 ---
 name: drupalorg-project-clone
-description: Clone a single Drupal.org project by machine name (module, theme, or recipe) as
-  a git repository into composer.json or composer.sandbox.json for local contribution work.
-  Use when you already know the project machine name. Fetches Drupal.org git-instructions
-  to determine the correct branch, resolves project type before installing, follows the local
-  repo's Composer conventions, and swaps packaged releases to git-backed dev branches when needed.
+description: Use when cloning a known Drupal.org project machine name for local contribution work.
 ---
 
 # Drupal.org Project Clone Skill
