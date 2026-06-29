@@ -199,7 +199,7 @@ class TermReferenceFormTest extends BrowserTestBase {
     $this->clickLink('Tags (Content)');
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->addressEquals('/taxonomy/term/' . $term->id() . '/references/node.field_tags');
-    $this->assertSession()->titleEquals('Blue | Drupal');
+    $this->assertSession()->titleEquals('Add references to Blue | Drupal');
     $this->assertSession()->pageTextNotContains('Field summary');
     $this->assertSession()->pageTextContains('Add Content references to Blue');
     $this->assertSession()->elementExists('css', 'fieldset legend:contains("Add Content references to Blue")');
@@ -239,7 +239,7 @@ class TermReferenceFormTest extends BrowserTestBase {
     $this->assertSame((string) $term->id(), $article->get('field_tags')->target_id);
 
     $this->drupalGet('/taxonomy/term/' . $term->id() . '/references/media.field_tags');
-    $this->assertSession()->titleEquals('Blue | Drupal');
+    $this->assertSession()->titleEquals('Add references to Blue | Drupal');
     $this->submitForm([
       'entities' => 'Image reference (' . $media->id() . ')',
     ], 'Add');

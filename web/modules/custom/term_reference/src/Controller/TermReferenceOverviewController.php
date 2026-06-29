@@ -4,6 +4,7 @@ namespace Drupal\term_reference\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\taxonomy\TermInterface;
 use Drupal\term_reference\Access\TermReferenceAccessCheck;
@@ -64,11 +65,13 @@ class TermReferenceOverviewController extends ControllerBase {
    * @param \Drupal\taxonomy\TermInterface $taxonomy_term
    *   The taxonomy term.
    *
-   * @return string
-   *   The term label.
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The term reference page title.
    */
-  public function title(TermInterface $taxonomy_term): string {
-    return $taxonomy_term->label();
+  public function title(TermInterface $taxonomy_term): TranslatableMarkup {
+    return $this->t('Add references to %term', [
+      '%term' => $taxonomy_term->label(),
+    ]);
   }
 
 }

@@ -2,6 +2,11 @@
 
 namespace Drupal\term_reference\Form;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\AnnounceCommand;
+use Drupal\Core\Ajax\FocusFirstCommand;
+use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -18,6 +23,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides a form for managing entities that reference a taxonomy term.
  */
 class TermReferenceForm extends FormBase {
+
+  /**
+   * The AJAX wrapper ID.
+   */
+  protected const AJAX_WRAPPER_ID = 'term-reference-form-wrapper';
 
   /**
    * The current taxonomy term.
@@ -77,6 +87,13 @@ class TermReferenceForm extends FormBase {
     $this->field = $field;
     $bundle_labels = array_column($field['bundles'], 'label');
 
+    $form['#prefix'] = '<div id="' . static::AJAX_WRAPPER_ID . '">';
+    $form['#suffix'] = '</div>';
+    $form['messages'] = [
+      '#type' => 'status_messages',
+      '#weight' => -100,
+    ];
+
     $form['add'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Add @entity_type references to @term', [
@@ -103,6 +120,10 @@ class TermReferenceForm extends FormBase {
       '#type' => 'submit',
       '#value' => $this->t('Add'),
       '#submit' => ['::addReferenceSubmit'],
+      '#ajax' => [
+        'callback' => '::ajaxRefresh',
+        'wrapper' => static::AJAX_WRAPPER_ID,
+      ],
     ];
 
     $form['existing'] = [
@@ -111,6 +132,10 @@ class TermReferenceForm extends FormBase {
         '@entity_type' => $field['entity_type_label_plural'],
         '@term' => $taxonomy_term->label(),
       ]),
+      '#attributes' => [
+        'id' => 'term-reference-existing',
+        'tabindex' => '-1',
+      ],
     ];
     $form['existing']['references'] = [
       '#type' => 'table',
@@ -136,10 +161,47 @@ class TermReferenceForm extends FormBase {
         '#type' => 'submit',
         '#value' => $this->t('Remove'),
         '#submit' => ['::removeReferenceSubmit'],
+        '#ajax' => [
+          'callback' => '::ajaxRefresh',
+          'wrapper' => static::AJAX_WRAPPER_ID,
+        ],
       ];
     }
 
     return $form;
+  }
+
+  /**
+   * Refreshes the term reference form after an AJAX submission.
+   *
+   * @param array $form
+   *   The form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   The AJAX response.
+   */
+  public function ajaxRefresh(array &$form, FormStateInterface $form_state): AjaxResponse {
+    $response = new AjaxResponse();
+    $response->addCommand(new ReplaceCommand('#' . static::AJAX_WRAPPER_ID, $form));
+
+    if ($form_state->hasAnyErrors()) {
+      $response->addCommand(new AnnounceCommand($this->t('The form contains errors. Review the highlighted fields.'), AnnounceCommand::PRIORITY_ASSERTIVE));
+      $response->addCommand(new FocusFirstCommand('#' . static::AJAX_WRAPPER_ID . ' .form-item--error'));
+      return $response;
+    }
+
+    $operation = $this->getTriggeredOperation($form_state);
+    if ($operation === (string) $this->t('Remove')) {
+      $response->addCommand(new AnnounceCommand($this->t('The selected references were removed.')));
+      $response->addCommand(new InvokeCommand('#term-reference-existing', 'focus'));
+      return $response;
+    }
+
+    $response->addCommand(new AnnounceCommand($this->t('The selected references were added.')));
+    $response->addCommand(new InvokeCommand('[data-drupal-selector="edit-entities"]', 'focus'));
+    return $response;
   }
 
   /**
@@ -200,7 +262,7 @@ class TermReferenceForm extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $operation = (string) $form_state->getValue('op');
+    $operation = $this->getTriggeredOperation($form_state);
     if ($operation === (string) $this->t('Add')) {
       $this->validateAddReference($form_state);
     }
@@ -275,6 +337,11 @@ class TermReferenceForm extends FormBase {
       '@label' => $first_entity->label(),
       '@term' => $this->term->label(),
     ]));
+    $form_state->setValue('entities', []);
+    $user_input = $form_state->getUserInput();
+    unset($user_input['entities']);
+    $form_state->setUserInput($user_input);
+    $form_state->setRebuild();
   }
 
   /**
@@ -287,11 +354,19 @@ class TermReferenceForm extends FormBase {
    */
   public function removeReferenceSubmit(array &$form, FormStateInterface $form_state): void {
     $storage = $this->entityTypeManager->getStorage($this->field['entity_type_id']);
+    $removed_count = 0;
     foreach ($storage->loadMultiple($this->getSelectedReferenceIds($form_state)) as $entity) {
       if ($entity instanceof ContentEntityInterface && $this->entityCanBeManaged($entity, $this->field['field_name'])) {
         $this->termReferenceManager->removeReference($entity, $this->term, $this->field['field_name']);
+        $removed_count++;
       }
     }
+    if ($removed_count) {
+      $this->messenger()->addStatus($this->formatPlural($removed_count, 'Removed 1 reference from @term.', 'Removed @count references from @term.', [
+        '@term' => $this->term->label(),
+      ]));
+    }
+    $form_state->setRebuild();
   }
 
   /**
@@ -311,6 +386,23 @@ class TermReferenceForm extends FormBase {
       }
     }
     return $selected_ids;
+  }
+
+  /**
+   * Gets the triggered operation label.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return string
+   *   The triggered operation label.
+   */
+  protected function getTriggeredOperation(FormStateInterface $form_state): string {
+    $triggering_element = $form_state->getTriggeringElement();
+    if (isset($triggering_element['#value'])) {
+      return (string) $triggering_element['#value'];
+    }
+    return (string) $form_state->getValue('op');
   }
 
   /**
