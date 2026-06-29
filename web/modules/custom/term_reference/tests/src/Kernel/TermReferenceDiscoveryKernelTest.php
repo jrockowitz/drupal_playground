@@ -36,7 +36,7 @@ class TermReferenceDiscoveryKernelTest extends TermReferenceManagerKernelBase {
     // Check that getAllFields() discovers taxonomy term references.
     $this->assertArrayHasKey('node.field_tags', $all_fields);
     $this->assertSame('node.field_tags', $all_fields['node.field_tags']['id']);
-    $this->assertSame('Content', $all_fields['node.field_tags']['entity_type_label_plural']);
+    $this->assertSame('Content', $all_fields['node.field_tags']['entity_type_label']);
 
     $tag_fields = $this->discovery->getFieldsForVocabulary('tags');
 

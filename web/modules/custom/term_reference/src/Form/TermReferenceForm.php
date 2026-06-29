@@ -97,15 +97,15 @@ class TermReferenceForm extends FormBase {
     $form['add'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Add @entity_type references to @term', [
-        '@entity_type' => $field['entity_type_label_plural'],
+        '@entity_type' => $field['entity_type_label'],
         '@term' => $taxonomy_term->label(),
       ]),
     ];
     $form['add']['entities'] = [
       '#type' => 'entity_autocomplete',
-      '#title' => $this->t('@entity_type entities', ['@entity_type' => $field['entity_type_label_plural']]),
+      '#title' => $this->t('@entity_type entities', ['@entity_type' => $field['entity_type_label']]),
       '#description' => $this->t('Enter one or more existing @entity_type entities. Eligible bundles: @bundles.', [
-        '@entity_type' => $field['entity_type_label_plural'],
+        '@entity_type' => $field['entity_type_label'],
         '@bundles' => implode(', ', $bundle_labels),
       ]),
       '#target_type' => $field['entity_type_id'],
@@ -129,7 +129,7 @@ class TermReferenceForm extends FormBase {
     $form['existing'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Existing @entity_type references to @term', [
-        '@entity_type' => $field['entity_type_label_plural'],
+        '@entity_type' => $field['entity_type_label'],
         '@term' => $taxonomy_term->label(),
       ]),
       '#attributes' => [

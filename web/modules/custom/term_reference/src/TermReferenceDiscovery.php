@@ -108,7 +108,7 @@ class TermReferenceDiscovery implements TermReferenceDiscoveryInterface {
           $fields[$field_id] ??= [
             'id' => $field_id,
             'entity_type_id' => $entity_type_id,
-            'entity_type_label_plural' => (string) $entity_type->getLabel(),
+            'entity_type_label' => (string) $entity_type->getLabel(),
             'field_name' => $field_name,
             'field_label' => (string) $field_definition->label(),
             'vocabulary_id' => $vocabulary_id,

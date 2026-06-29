@@ -41,7 +41,7 @@ class TermReferenceLocalTasks extends DeriverBase implements ContainerDeriverInt
         'route_parameters' => [
           'field' => $field['id'],
         ],
-        'title' => $field['field_label'] . ' (' . $field['entity_type_label_plural'] . ')',
+        'title' => $field['field_label'] . ' (' . $field['entity_type_label'] . ')',
         'parent_id' => 'term_reference.references',
         'weight' => 0,
       ] + $base_plugin_definition;

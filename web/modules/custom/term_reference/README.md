@@ -49,6 +49,62 @@ only when the current account can update the taxonomy term and edit at least one
 eligible target field. Add and remove operations also check target entity update
 access and field edit access before changing entities.
 
+## Developer notes
+
+Routes are static and use a field parameter instead of generating one route per
+field:
+
+```text
+/taxonomy/term/{taxonomy_term}/references
+/taxonomy/term/{taxonomy_term}/references/{entity_type_id}.{field_name}
+```
+
+The primary `References` route redirects to the first accessible field-specific
+task. The field-specific page title is `Add references to %term`.
+
+Secondary local tasks are derived from discovered fields by
+`TermReferenceLocalTasks`. A task is keyed by `{entity_type_id}.{field_name}`;
+for example, `node.field_tags` can manage all eligible node bundles that have a
+`field_tags` field targeting the current term vocabulary.
+
+Important services:
+
+- `term_reference.discovery` discovers eligible taxonomy term reference fields
+  and caches results in `cache.discovery`.
+- `term_reference.manager` loads, adds, and removes term references on content
+  entities.
+- `term_reference.access_check` handles route and field access checks using term
+  update access and target field edit access.
+
+The add form uses Drupal core's `entity_autocomplete` element with
+`#tags => TRUE`, `#validate_reference => TRUE`, and bundle-restricted selection
+settings. Raw ID-only input and custom autocomplete routes are intentionally not
+supported.
+
+Add and remove submit buttons support Drupal AJAX and normal non-JavaScript form
+submissions. AJAX responses replace the `term-reference-form-wrapper`, refresh
+status messages, announce state changes, and move focus to the rebuilt
+autocomplete field or existing references fieldset.
+
+Useful verification commands:
+
+```bash
+ddev phpunit web/modules/custom/term_reference/tests
+ddev phpcs web/modules/custom/term_reference
+ddev phpstan web/modules/custom/term_reference
+ddev drush cr
+```
+
+After rebuilding caches, smoke test a route such as:
+
+```text
+/taxonomy/term/1/references/node.field_tags
+```
+
+For deeper architecture notes, see the `docs/` directory. Avoid running
+`ddev code-review` only against `docs/`; PHPStan expects PHP files and stylelint
+will try to parse Markdown as CSS.
+
 ## Documentation
 
 Design notes and the implementation plan are available in the `docs/` directory.

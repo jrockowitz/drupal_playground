@@ -75,7 +75,7 @@ Discovery returns arrays keyed by `{entity_type_id}.{field_name}` with:
 
 - `id`.
 - `entity_type_id`.
-- `entity_type_label_plural`.
+- `entity_type_label`.
 - `field_name`.
 - `field_label`.
 - `vocabulary_id`.

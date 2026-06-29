@@ -138,7 +138,7 @@ class TermReferenceFormTest extends BrowserTestBase {
     $this->assertArrayHasKey('media.field_tags', $fields);
     $this->assertSame(['article', 'page'], array_keys($fields['node.field_tags']['bundles']));
     $this->assertSame('Tags', $fields['node.field_tags']['field_label']);
-    $this->assertSame('Content', $fields['node.field_tags']['entity_type_label_plural']);
+    $this->assertSame('Content', $fields['node.field_tags']['entity_type_label']);
 
     $account = $this->drupalCreateUser([
       'access content',
