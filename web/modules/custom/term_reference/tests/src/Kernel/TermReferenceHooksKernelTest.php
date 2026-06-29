@@ -3,10 +3,6 @@
 namespace Drupal\Tests\term_reference\Kernel;
 
 use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\KernelTests\KernelTestBase;
-use Drupal\node\Entity\NodeType;
-use Drupal\taxonomy\Entity\Vocabulary;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -15,51 +11,17 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('term_reference')]
 #[RunTestsInSeparateProcesses]
-class TermReferenceHooksKernelTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'field',
-    'node',
-    'system',
-    'taxonomy',
-    'term_reference',
-    'text',
-    'user',
-  ];
+class TermReferenceHooksKernelTest extends TermReferenceManagerKernelBase {
 
   /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('taxonomy_term');
-    $this->installEntitySchema('user');
-    $this->installConfig(['node', 'system', 'taxonomy', 'user']);
-    Vocabulary::create([
-      'vid' => 'tags',
-      'name' => 'Tags',
-    ])->save();
-    Vocabulary::create([
-      'vid' => 'topics',
-      'name' => 'Topics',
-    ])->save();
-    NodeType::create([
-      'type' => 'page',
-      'name' => 'Basic page',
-    ])->save();
-    FieldStorageConfig::create([
-      'field_name' => 'field_tags',
-      'entity_type' => 'node',
-      'type' => 'entity_reference',
-      'cardinality' => -1,
-      'settings' => [
-        'target_type' => 'taxonomy_term',
-      ],
-    ])->save();
+    $this->createVocabulary('tags', 'Tags');
+    $this->createVocabulary('topics', 'Topics');
+    $this->createNodeType('page', 'Basic page');
+    $this->createTaxonomyFieldStorage();
   }
 
   /**
@@ -67,7 +29,7 @@ class TermReferenceHooksKernelTest extends KernelTestBase {
    */
   public function testFieldConfigHooksClearLocalTasks(): void {
     $discovery = $this->container->get('term_reference.discovery');
-    $this->assertSame([], $discovery->getReferenceFieldsForVocabulary('tags'));
+    $this->assertSame([], $discovery->getFieldsForVocabulary('tags'));
 
     $field_config = FieldConfig::create([
       'field_name' => 'field_tags',
@@ -87,7 +49,7 @@ class TermReferenceHooksKernelTest extends KernelTestBase {
 
     // Check that the OOP hook clears stale discovery and marks routes for rebuild.
     $this->assertTrue($this->routeBuilderNeedsRebuild());
-    $this->assertArrayHasKey('node.field_tags', $discovery->getReferenceFieldsForVocabulary('tags'));
+    $this->assertArrayHasKey('node.field_tags', $discovery->getFieldsForVocabulary('tags'));
     $this->setRouteBuilderNeedsRebuild(FALSE);
 
     $field_config->setLabel('Topics');
@@ -101,8 +63,8 @@ class TermReferenceHooksKernelTest extends KernelTestBase {
     ]);
     $field_config->save();
 
-    // Check that the OOP hook clears cached reference fields.
-    $this->assertArrayNotHasKey('node.field_tags', $discovery->getReferenceFieldsForVocabulary('tags'));
+    // Check that the OOP hook clears cached fields.
+    $this->assertArrayNotHasKey('node.field_tags', $discovery->getFieldsForVocabulary('tags'));
 
     term_reference_field_config_update($field_config);
 

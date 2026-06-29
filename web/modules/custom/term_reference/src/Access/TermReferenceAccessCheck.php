@@ -44,7 +44,7 @@ class TermReferenceAccessCheck {
    */
   public function overviewAccess(AccountInterface $account, TermInterface $taxonomy_term): AccessResultInterface {
     $access = AccessResult::neutral()->addCacheableDependency($taxonomy_term);
-    foreach ($this->termReferenceDiscovery->getReferenceFieldsForVocabulary($taxonomy_term->bundle()) as $field) {
+    foreach ($this->termReferenceDiscovery->getFieldsForVocabulary($taxonomy_term->bundle()) as $field) {
       $access = $access->orIf($this->fieldAccess($account, $taxonomy_term, $field));
     }
     return $access;
@@ -57,15 +57,15 @@ class TermReferenceAccessCheck {
    *   The current account.
    * @param \Drupal\taxonomy\TermInterface $taxonomy_term
    *   The taxonomy term.
-   * @param string $reference_field
-   *   The reference field ID.
+   * @param string $field
+   *   The field ID.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function access(AccountInterface $account, TermInterface $taxonomy_term, string $reference_field): AccessResultInterface {
-    [$entity_type_id, $field_name] = $this->splitReferenceField($reference_field);
-    $field = $this->termReferenceDiscovery->getReferenceField($taxonomy_term->bundle(), $entity_type_id, $field_name);
+  public function access(AccountInterface $account, TermInterface $taxonomy_term, string $field): AccessResultInterface {
+    [$entity_type_id, $field_name] = $this->splitField($field);
+    $field = $this->termReferenceDiscovery->getField($taxonomy_term->bundle(), $entity_type_id, $field_name);
     if (!$field) {
       return AccessResult::forbidden()->addCacheableDependency($taxonomy_term);
     }
@@ -73,14 +73,14 @@ class TermReferenceAccessCheck {
   }
 
   /**
-   * Checks whether the account can update the term and edit a reference field.
+   * Checks whether the account can update the term and edit a field.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The current account.
    * @param \Drupal\taxonomy\TermInterface $taxonomy_term
    *   The taxonomy term.
    * @param array $field
-   *   The reference field.
+   *   The field.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
@@ -100,16 +100,16 @@ class TermReferenceAccessCheck {
   }
 
   /**
-   * Splits a reference field ID into route parts.
+   * Splits a field ID into route parts.
    *
-   * @param string $reference_field
-   *   The reference field ID.
+   * @param string $field
+   *   The field ID.
    *
    * @return array
    *   The entity type ID and field name.
    */
-  protected function splitReferenceField(string $reference_field): array {
-    return explode('.', $reference_field, 2) + ['', ''];
+  protected function splitField(string $field): array {
+    return explode('.', $field, 2) + ['', ''];
   }
 
 }

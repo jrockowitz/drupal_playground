@@ -2,7 +2,7 @@
 
 Term Reference adds a **References** tab to taxonomy term pages. The tab lets
 editors add or remove the current term from eligible taxonomy term entity
-reference fields on content entities.
+fields on content entities.
 
 ## Features
 
@@ -13,7 +13,7 @@ reference fields on content entities.
   example, `node.field_tags` can manage Basic page and Article nodes from one
   `Tags (Content)` task.
 - **Bundle-aware autocomplete help** that shows which bundles can be added from
-  the current reference field.
+  the current field.
 - **Generic entity table** with Label, ID, Published, and Operations columns.
 - **Access-aware autocomplete and mutations** using entity update access and
   field edit access.
@@ -34,12 +34,12 @@ drush en term_reference
 
 ## Usage
 
-1. Add a taxonomy term entity reference field to a fieldable content entity type,
+1. Add a taxonomy term entity field to a fieldable content entity type,
    such as content or media.
 2. Configure the field instance to target one or more vocabularies.
 3. Visit a taxonomy term page from one of those vocabularies.
 4. Open the **References** tab.
-5. Choose the secondary tab for the reference field, add existing entities through
+5. Choose the secondary tab for the field, add existing entities through
    autocomplete, or remove existing references from the table.
 
 ## Access

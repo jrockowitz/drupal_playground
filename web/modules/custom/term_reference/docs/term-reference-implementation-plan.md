@@ -4,13 +4,13 @@
 
 Build a contrib-ready Drupal module that adds a `References` tab to taxonomy
 term pages and lets editors add or remove the current term from eligible
-taxonomy term entity reference fields.
+taxonomy term entity fields.
 
 ## Implemented Architecture
 
-Term Reference discovers configurable entity reference fields that target
+Term Reference discovers configurable entity fields that target
 taxonomy terms, keys them by `{entity_type_id}.{field_name}`, and derives a
-secondary local task for each reference field. Routes are static and parameterized so the
+secondary local task for each field. Routes are static and parameterized so the
 module does not need to generate one route per field.
 
 The main route pattern is:
@@ -29,7 +29,7 @@ for the current term vocabulary.
 - `term_reference.links.task.yml`: primary task and secondary task deriver.
 - `term_reference.services.yml`: autowired service definitions.
 - `src/TermReferenceDiscoveryInterface.php`: discovery contract.
-- `src/TermReferenceDiscovery.php`: reference field discovery.
+- `src/TermReferenceDiscovery.php`: field discovery.
 - `src/TermReferenceManagerInterface.php`: reference query and mutation contract.
 - `src/TermReferenceManager.php`: generic content entity reference operations.
 - `src/Access/TermReferenceAccessCheck.php`: term and field access checks.
@@ -48,7 +48,7 @@ The module intentionally does not define a custom permission.
 Route access requires:
 
 - Taxonomy term update access.
-- A valid `{entity_type_id}.{field_name}` reference field for the term vocabulary.
+- A valid `{entity_type_id}.{field_name}` field for the term vocabulary.
 - Field edit access for at least one eligible field instance, checked through
   the target entity type access handler with `fieldAccess('edit', ...)`.
 
@@ -56,7 +56,7 @@ Autocomplete, add, and remove operations also require:
 
 - Target entity update access.
 - The configured field to exist on the target entity.
-- The target entity bundle to be one of the eligible bundles for the reference field.
+- The target entity bundle to be one of the eligible bundles for the field.
 - Field edit access on the target entity field item list.
 
 ## Test Coverage

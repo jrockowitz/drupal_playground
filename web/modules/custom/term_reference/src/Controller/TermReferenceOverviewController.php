@@ -32,7 +32,7 @@ class TermReferenceOverviewController extends ControllerBase {
   ) {}
 
   /**
-   * Redirects the primary task to the first accessible reference field.
+   * Redirects the primary task to the first accessible field.
    *
    * @param \Drupal\taxonomy\TermInterface $taxonomy_term
    *   The taxonomy term.
@@ -41,20 +41,20 @@ class TermReferenceOverviewController extends ControllerBase {
    *   A redirect response or an empty-state render array.
    */
   public function overview(TermInterface $taxonomy_term): RedirectResponse|array {
-    foreach ($this->termReferenceDiscovery->getReferenceFieldsForVocabulary($taxonomy_term->bundle()) as $field) {
+    foreach ($this->termReferenceDiscovery->getFieldsForVocabulary($taxonomy_term->bundle()) as $field) {
       $access = $this->termReferenceAccessCheck->fieldAccess($this->account, $taxonomy_term, $field);
       if (!$access->isAllowed()) {
         continue;
       }
       $url = Url::fromRoute('term_reference.reference', [
         'taxonomy_term' => $taxonomy_term->id(),
-        'reference_field' => $field['id'],
+        'field' => $field['id'],
       ]);
       return new RedirectResponse($url->toString());
     }
 
     return [
-      '#markup' => $this->t('No reference fields are available for this term.'),
+      '#markup' => $this->t('No fields are available for this term.'),
     ];
   }
 

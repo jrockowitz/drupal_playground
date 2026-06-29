@@ -8,7 +8,7 @@ use Drupal\term_reference\TermReferenceDiscoveryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Derives local tasks for term reference fields.
+ * Derives local tasks for term fields.
  */
 class TermReferenceLocalTasks extends DeriverBase implements ContainerDeriverInterface {
 
@@ -35,11 +35,11 @@ class TermReferenceLocalTasks extends DeriverBase implements ContainerDeriverInt
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition): array {
-    foreach ($this->termReferenceDiscovery->getAllReferenceFields() as $field_id => $field) {
+    foreach ($this->termReferenceDiscovery->getAllFields() as $field_id => $field) {
       $this->derivatives[$field_id] = [
         'route_name' => 'term_reference.reference',
         'route_parameters' => [
-          'reference_field' => $field['id'],
+          'field' => $field['id'],
         ],
         'title' => $field['field_label'] . ' (' . $field['entity_type_label_plural'] . ')',
         'parent_id' => 'term_reference.references',

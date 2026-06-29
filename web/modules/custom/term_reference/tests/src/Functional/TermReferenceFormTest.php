@@ -131,9 +131,9 @@ class TermReferenceFormTest extends BrowserTestBase {
     $term->save();
 
     $fields = $this->container->get('Drupal\term_reference\TermReferenceDiscoveryInterface')
-      ->getReferenceFieldsForVocabulary('tags');
+      ->getFieldsForVocabulary('tags');
 
-    // Check that content and media reference fields are discovered.
+    // Check that content and media fields are discovered.
     $this->assertArrayHasKey('node.field_tags', $fields);
     $this->assertArrayHasKey('media.field_tags', $fields);
     $this->assertSame(['article', 'page'], array_keys($fields['node.field_tags']['bundles']));
@@ -200,7 +200,7 @@ class TermReferenceFormTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->addressEquals('/taxonomy/term/' . $term->id() . '/references/node.field_tags');
     $this->assertSession()->titleEquals('Blue | Drupal');
-    $this->assertSession()->pageTextNotContains('Reference field summary');
+    $this->assertSession()->pageTextNotContains('Field summary');
     $this->assertSession()->pageTextContains('Add Content references to Blue');
     $this->assertSession()->elementExists('css', 'fieldset legend:contains("Add Content references to Blue")');
     $this->assertSession()->pageTextContains('Enter the label or ID of an existing Content entity. Eligible bundles: Article, Basic page.');

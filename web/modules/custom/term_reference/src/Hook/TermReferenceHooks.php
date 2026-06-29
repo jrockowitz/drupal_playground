@@ -41,7 +41,7 @@ class TermReferenceHooks {
   #[Hook('field_config_update')]
   #[Hook('field_config_delete')]
   public function fieldConfigClearCache(FieldConfigInterface $fieldConfig): void {
-    $this->termReferenceDiscovery->clearCachedReferenceFields();
+    $this->termReferenceDiscovery->clearCachedFields();
     $this->localTaskManager->clearCachedDefinitions();
     $this->routeBuilder->setRebuildNeeded();
   }

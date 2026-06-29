@@ -13,12 +13,12 @@ workflow.
 
 - Entity Usage tracks relationships between entities.
 - Entity Reference Manager analyzes and replaces entity references.
-- Corresponding Entity References synchronizes paired reference fields.
+- Corresponding Entity References synchronizes paired fields.
 - EVA displays reverse-reference views attached to entities.
 - The `term_reference` project path on Drupal.org currently returns 404.
 
 The proposed module is a new workflow: from a taxonomy term page, add or remove
-the term on eligible entity reference fields across content entities.
+the term on eligible entity fields across content entities.
 
 ## Drupal.org Project Files
 
@@ -70,7 +70,7 @@ term_reference.autocomplete
 
 The route arguments identify the taxonomy term, content entity type, and field
 name. The form discovers eligible bundles for the current term's vocabulary at
-runtime. Static routes avoid route rebuilds for every reference field while the local
+runtime. Static routes avoid route rebuilds for every field while the local
 task deriver still creates one secondary tab per `{entity_type_id}.{field_name}`.
 
 ## Discovery

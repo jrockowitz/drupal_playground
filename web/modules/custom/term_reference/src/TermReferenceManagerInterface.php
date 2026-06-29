@@ -16,7 +16,7 @@ interface TermReferenceManagerInterface {
    * @param \Drupal\taxonomy\TermInterface $term
    *   The taxonomy term.
    * @param array $field
-   *   The reference field.
+   *   The field.
    *
    * @return \Drupal\Core\Entity\ContentEntityInterface[]
    *   The referencing entities.

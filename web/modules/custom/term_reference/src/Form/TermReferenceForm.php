@@ -26,9 +26,9 @@ class TermReferenceForm extends FormBase {
   protected ?TermInterface $term = NULL;
 
   /**
-   * The current reference field.
+   * The current field.
    */
-  protected array $referenceField = [];
+  protected array $field = [];
 
   /**
    * Constructs a TermReferenceForm object.
@@ -71,11 +71,11 @@ class TermReferenceForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ?TermInterface $taxonomy_term = NULL, string $reference_field = ''): array {
+  public function buildForm(array $form, FormStateInterface $form_state, ?TermInterface $taxonomy_term = NULL, string $field = ''): array {
     $this->term = $taxonomy_term;
-    [$entity_type_id, $field_name] = $this->splitReferenceField($reference_field);
-    $field = $this->termReferenceDiscovery->getReferenceField($taxonomy_term->bundle(), $entity_type_id, $field_name);
-    $this->referenceField = $field;
+    [$entity_type_id, $field_name] = $this->splitField($field);
+    $field = $this->termReferenceDiscovery->getField($taxonomy_term->bundle(), $entity_type_id, $field_name);
+    $this->field = $field;
     $bundle_labels = array_column($field['bundles'], 'label');
 
     $form['add'] = [
@@ -95,7 +95,7 @@ class TermReferenceForm extends FormBase {
       '#autocomplete_route_name' => 'term_reference.autocomplete',
       '#autocomplete_route_parameters' => [
         'taxonomy_term' => $taxonomy_term->id(),
-        'reference_field' => $field['id'],
+        'field' => $field['id'],
       ],
     ];
     $form['add']['submit'] = [
@@ -147,7 +147,7 @@ class TermReferenceForm extends FormBase {
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The referenced entity.
    * @param array $field
-   *   The reference field.
+   *   The field.
    *
    * @return array
    *   The table row render array.
@@ -227,12 +227,12 @@ class TermReferenceForm extends FormBase {
       return;
     }
     $entity_id = EntityAutocomplete::extractEntityIdFromAutocompleteInput($input) ?: $input;
-    $entity = $this->entityTypeManager->getStorage($this->referenceField['entity_type_id'])->load($entity_id);
+    $entity = $this->entityTypeManager->getStorage($this->field['entity_type_id'])->load($entity_id);
     if (!$entity instanceof ContentEntityInterface) {
       $form_state->setErrorByName('entity', $this->t('Select an entity from the autocomplete suggestions.'));
       return;
     }
-    if (!$this->entityCanBeManaged($entity, $this->referenceField['field_name'])) {
+    if (!$this->entityCanBeManaged($entity, $this->field['field_name'])) {
       $form_state->setErrorByName('entity', $this->t('The selected entity cannot be managed.'));
       return;
     }
@@ -262,7 +262,7 @@ class TermReferenceForm extends FormBase {
    */
   public function addReferenceSubmit(array &$form, FormStateInterface $form_state): void {
     $entity = $form_state->get('term_reference_entity');
-    $this->termReferenceManager->addReference($entity, $this->term, $this->referenceField['field_name']);
+    $this->termReferenceManager->addReference($entity, $this->term, $this->field['field_name']);
     $this->messenger()->addStatus($this->t('@label now references @term.', [
       '@label' => $entity->label(),
       '@term' => $this->term->label(),
@@ -278,10 +278,10 @@ class TermReferenceForm extends FormBase {
    *   The form state.
    */
   public function removeReferenceSubmit(array &$form, FormStateInterface $form_state): void {
-    $storage = $this->entityTypeManager->getStorage($this->referenceField['entity_type_id']);
+    $storage = $this->entityTypeManager->getStorage($this->field['entity_type_id']);
     foreach ($storage->loadMultiple($this->getSelectedReferenceIds($form_state)) as $entity) {
-      if ($entity instanceof ContentEntityInterface && $this->entityCanBeManaged($entity, $this->referenceField['field_name'])) {
-        $this->termReferenceManager->removeReference($entity, $this->term, $this->referenceField['field_name']);
+      if ($entity instanceof ContentEntityInterface && $this->entityCanBeManaged($entity, $this->field['field_name'])) {
+        $this->termReferenceManager->removeReference($entity, $this->term, $this->field['field_name']);
       }
     }
   }
@@ -320,12 +320,12 @@ class TermReferenceForm extends FormBase {
     if (!$entity->access('update', $this->currentUser) || !$entity->hasField($field_name)) {
       return FALSE;
     }
-    $entity_type = $this->entityTypeManager->getDefinition($this->referenceField['entity_type_id']);
+    $entity_type = $this->entityTypeManager->getDefinition($this->field['entity_type_id']);
     $bundle_key = $entity_type->getKey('bundle');
-    if ($bundle_key && !isset($this->referenceField['bundles'][$entity->bundle()])) {
+    if ($bundle_key && !isset($this->field['bundles'][$entity->bundle()])) {
       return FALSE;
     }
-    $access_handler = $this->entityTypeManager->getAccessControlHandler($this->referenceField['entity_type_id']);
+    $access_handler = $this->entityTypeManager->getAccessControlHandler($this->field['entity_type_id']);
     return $access_handler->fieldAccess('edit', $entity->get($field_name)->getFieldDefinition(), $this->currentUser, $entity->get($field_name));
   }
 
@@ -346,16 +346,16 @@ class TermReferenceForm extends FormBase {
   }
 
   /**
-   * Splits a reference field ID into route parts.
+   * Splits a field ID into route parts.
    *
-   * @param string $reference_field
-   *   The reference field ID.
+   * @param string $field
+   *   The field ID.
    *
    * @return array
    *   The entity type ID and field name.
    */
-  protected function splitReferenceField(string $reference_field): array {
-    return explode('.', $reference_field, 2) + ['', ''];
+  protected function splitField(string $field): array {
+    return explode('.', $field, 2) + ['', ''];
   }
 
 }

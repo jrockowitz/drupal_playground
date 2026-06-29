@@ -2,11 +2,6 @@
 
 namespace Drupal\Tests\term_reference\Kernel;
 
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\KernelTests\KernelTestBase;
-use Drupal\node\Entity\NodeType;
-use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\term_reference\TermReferenceDiscoveryInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -16,20 +11,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('term_reference')]
 #[RunTestsInSeparateProcesses]
-class TermReferenceDiscoveryKernelTest extends KernelTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'field',
-    'node',
-    'system',
-    'taxonomy',
-    'term_reference',
-    'text',
-    'user',
-  ];
+class TermReferenceDiscoveryKernelTest extends TermReferenceManagerKernelBase {
 
   /**
    * The discovery service under test.
@@ -41,10 +23,6 @@ class TermReferenceDiscoveryKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installEntitySchema('node');
-    $this->installEntitySchema('taxonomy_term');
-    $this->installEntitySchema('user');
-    $this->installConfig(['node', 'system', 'taxonomy', 'user']);
     $this->createFixtureFields();
     $this->discovery = $this->container->get('term_reference.discovery');
   }
@@ -53,85 +31,55 @@ class TermReferenceDiscoveryKernelTest extends KernelTestBase {
    * Tests each public discovery method.
    */
   public function testDiscoveryMethods(): void {
-    $all_fields = $this->discovery->getAllReferenceFields();
+    $all_fields = $this->discovery->getAllFields();
 
-    // Check that getAllReferenceFields() discovers taxonomy term references.
+    // Check that getAllFields() discovers taxonomy term references.
     $this->assertArrayHasKey('node.field_tags', $all_fields);
     $this->assertSame('node.field_tags', $all_fields['node.field_tags']['id']);
     $this->assertSame('Content', $all_fields['node.field_tags']['entity_type_label_plural']);
 
-    $tag_fields = $this->discovery->getReferenceFieldsForVocabulary('tags');
+    $tag_fields = $this->discovery->getFieldsForVocabulary('tags');
 
-    // Check that getReferenceFieldsForVocabulary() filters to matching fields.
+    // Check that getFieldsForVocabulary() filters to matching fields.
     $this->assertArrayHasKey('node.field_tags', $tag_fields);
     $this->assertSame(['article', 'page'], array_keys($tag_fields['node.field_tags']['bundles']));
     $this->assertSame('Tags', $tag_fields['node.field_tags']['field_label']);
 
     $cache_backend = $this->container->get('cache.discovery');
 
-    // Check that clearCachedReferenceFields() invalidates cached discovery.
-    $this->assertNotFalse($cache_backend->get('term_reference:reference_fields:tags'));
-    $this->discovery->clearCachedReferenceFields();
-    $this->assertFalse($cache_backend->get('term_reference:reference_fields:tags'));
+    // Check that clearCachedFields() invalidates cached discovery.
+    $this->assertNotFalse($cache_backend->get('term_reference:fields:tags'));
+    $this->discovery->clearCachedFields();
+    $this->assertFalse($cache_backend->get('term_reference:fields:tags'));
 
-    $topic_fields = $this->discovery->getReferenceFieldsForVocabulary('topics');
+    $topic_fields = $this->discovery->getFieldsForVocabulary('topics');
 
     // Check that unrelated vocabulary filtering excludes the tags field.
     $this->assertArrayNotHasKey('node.field_tags', $topic_fields);
 
-    $field = $this->discovery->getReferenceField('tags', 'node', 'field_tags');
+    $field = $this->discovery->getField('tags', 'node', 'field_tags');
 
-    // Check that getReferenceField() returns one matching field or NULL.
+    // Check that getField() returns one matching field or NULL.
     $this->assertIsArray($field);
     $this->assertSame('field_tags', $field['field_name']);
-    $this->assertNull($this->discovery->getReferenceField('tags', 'node', 'field_missing'));
+    $this->assertNull($this->discovery->getField('tags', 'node', 'field_missing'));
   }
 
   /**
    * Creates field fixtures for discovery.
    */
   protected function createFixtureFields(): void {
-    Vocabulary::create([
-      'vid' => 'tags',
-      'name' => 'Tags',
-    ])->save();
-    Vocabulary::create([
-      'vid' => 'topics',
-      'name' => 'Topics',
-    ])->save();
+    $this->createVocabulary('tags', 'Tags');
+    $this->createVocabulary('topics', 'Topics');
     foreach ([
       'article' => 'Article',
       'page' => 'Basic page',
     ] as $bundle => $label) {
-      NodeType::create([
-        'type' => $bundle,
-        'name' => $label,
-      ])->save();
+      $this->createNodeType($bundle, $label);
     }
-    FieldStorageConfig::create([
-      'field_name' => 'field_tags',
-      'entity_type' => 'node',
-      'type' => 'entity_reference',
-      'cardinality' => -1,
-      'settings' => [
-        'target_type' => 'taxonomy_term',
-      ],
-    ])->save();
+    $this->createTaxonomyFieldStorage();
     foreach (['article', 'page'] as $bundle) {
-      FieldConfig::create([
-        'field_name' => 'field_tags',
-        'entity_type' => 'node',
-        'bundle' => $bundle,
-        'label' => 'Tags',
-        'settings' => [
-          'handler' => 'default:taxonomy_term',
-          'handler_settings' => [
-            'target_bundles' => [
-              'tags' => 'tags',
-            ],
-          ],
-        ],
-      ])->save();
+      $this->createTaxonomyField(bundle: $bundle);
     }
   }
 

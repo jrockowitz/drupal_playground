@@ -3,31 +3,31 @@
 namespace Drupal\term_reference;
 
 /**
- * Discovers entity reference fields that can reference taxonomy terms.
+ * Discovers entity fields that can reference taxonomy terms.
  */
 interface TermReferenceDiscoveryInterface {
 
   /**
-   * Gets every unique reference field across vocabularies.
+   * Gets every unique field across vocabularies.
    *
    * @return array
-   *   Reference fields keyed by entity type ID and field name.
+   *   Fields keyed by entity type ID and field name.
    */
-  public function getAllReferenceFields(): array;
+  public function getAllFields(): array;
 
   /**
-   * Gets reference fields for a vocabulary.
+   * Gets fields for a vocabulary.
    *
    * @param string $vocabulary_id
    *   The taxonomy vocabulary ID.
    *
    * @return array
-   *   Reference fields keyed by entity type ID and field name.
+   *   Fields keyed by entity type ID and field name.
    */
-  public function getReferenceFieldsForVocabulary(string $vocabulary_id): array;
+  public function getFieldsForVocabulary(string $vocabulary_id): array;
 
   /**
-   * Gets one reference field for a vocabulary.
+   * Gets one field for a vocabulary.
    *
    * @param string $vocabulary_id
    *   The taxonomy vocabulary ID.
@@ -37,13 +37,13 @@ interface TermReferenceDiscoveryInterface {
    *   The field name.
    *
    * @return array|null
-   *   The reference field, or NULL when none exists.
+   *   The field, or NULL when none exists.
    */
-  public function getReferenceField(string $vocabulary_id, string $entity_type_id, string $field_name): ?array;
+  public function getField(string $vocabulary_id, string $entity_type_id, string $field_name): ?array;
 
   /**
-   * Clears cached reference field discovery.
+   * Clears cached field discovery.
    */
-  public function clearCachedReferenceFields(): void;
+  public function clearCachedFields(): void;
 
 }

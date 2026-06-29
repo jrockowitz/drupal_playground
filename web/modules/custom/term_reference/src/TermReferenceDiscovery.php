@@ -12,14 +12,14 @@ use Drupal\field\FieldConfigInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Discovers entity reference fields that can reference taxonomy vocabularies.
+ * Discovers entity fields that can reference taxonomy vocabularies.
  */
 class TermReferenceDiscovery implements TermReferenceDiscoveryInterface {
 
   /**
-   * The cache tag used for reference field discovery.
+   * The cache tag used for field discovery.
    */
-  protected const CACHE_TAG = 'term_reference:reference_fields';
+  protected const CACHE_TAG = 'term_reference:fields';
 
   /**
    * Constructs a TermReferenceDiscovery object.
@@ -47,43 +47,43 @@ class TermReferenceDiscovery implements TermReferenceDiscoveryInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAllReferenceFields(): array {
-    return $this->getReferenceFields();
+  public function getAllFields(): array {
+    return $this->getFields();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getReferenceFieldsForVocabulary(string $vocabulary_id): array {
-    return $this->getReferenceFields($vocabulary_id);
+  public function getFieldsForVocabulary(string $vocabulary_id): array {
+    return $this->getFields($vocabulary_id);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getReferenceField(string $vocabulary_id, string $entity_type_id, string $field_name): ?array {
-    $fields = $this->getReferenceFieldsForVocabulary($vocabulary_id);
+  public function getField(string $vocabulary_id, string $entity_type_id, string $field_name): ?array {
+    $fields = $this->getFieldsForVocabulary($vocabulary_id);
     return $fields[$entity_type_id . '.' . $field_name] ?? NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function clearCachedReferenceFields(): void {
+  public function clearCachedFields(): void {
     $this->cacheTagsInvalidator->invalidateTags([static::CACHE_TAG]);
   }
 
   /**
-   * Gets reference fields.
+   * Gets fields.
    *
    * @param string|null $vocabulary_id
    *   The taxonomy vocabulary ID, or NULL for all taxonomy references.
    *
    * @return array
-   *   Reference fields keyed by entity type ID and field name.
+   *   Fields keyed by entity type ID and field name.
    */
-  protected function getReferenceFields(?string $vocabulary_id = NULL): array {
-    $cache_id = $this->getReferenceFieldsCacheId($vocabulary_id);
+  protected function getFields(?string $vocabulary_id = NULL): array {
+    $cache_id = $this->getFieldsCacheId($vocabulary_id);
     $cached_fields = $this->cacheBackend->get($cache_id);
     if ($cached_fields !== FALSE) {
       /** @var array $fields */
@@ -130,7 +130,7 @@ class TermReferenceDiscovery implements TermReferenceDiscoveryInterface {
   }
 
   /**
-   * Gets the cache ID for reference field discovery.
+   * Gets the cache ID for field discovery.
    *
    * @param string|null $vocabulary_id
    *   The taxonomy vocabulary ID, or NULL for all taxonomy references.
@@ -138,8 +138,8 @@ class TermReferenceDiscovery implements TermReferenceDiscoveryInterface {
    * @return string
    *   The cache ID.
    */
-  protected function getReferenceFieldsCacheId(?string $vocabulary_id = NULL): string {
-    return 'term_reference:reference_fields:' . ($vocabulary_id ?? 'all');
+  protected function getFieldsCacheId(?string $vocabulary_id = NULL): string {
+    return 'term_reference:fields:' . ($vocabulary_id ?? 'all');
   }
 
   /**

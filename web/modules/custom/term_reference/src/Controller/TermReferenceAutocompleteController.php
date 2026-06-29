@@ -41,18 +41,18 @@ class TermReferenceAutocompleteController extends ControllerBase {
    *   The request.
    * @param \Drupal\taxonomy\TermInterface $taxonomy_term
    *   The taxonomy term.
-   * @param string $reference_field
-   *   The reference field ID.
+   * @param string $field
+   *   The field ID.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   The JSON autocomplete response.
    */
-  public function autocomplete(Request $request, TermInterface $taxonomy_term, string $reference_field): JsonResponse {
+  public function autocomplete(Request $request, TermInterface $taxonomy_term, string $field): JsonResponse {
     $matches = [];
     $input = Tags::explode($request->query->get('q', ''));
     $search = trim((string) end($input));
-    [$entity_type_id, $field_name] = $this->splitReferenceField($reference_field);
-    $field = $this->termReferenceDiscovery->getReferenceField($taxonomy_term->bundle(), $entity_type_id, $field_name);
+    [$entity_type_id, $field_name] = $this->splitField($field);
+    $field = $this->termReferenceDiscovery->getField($taxonomy_term->bundle(), $entity_type_id, $field_name);
     if (!$field || $search === '') {
       return new JsonResponse($matches);
     }
@@ -100,7 +100,7 @@ class TermReferenceAutocompleteController extends ControllerBase {
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity.
    * @param array $field
-   *   The reference field.
+   *   The field.
    * @param \Drupal\Core\Entity\EntityAccessControlHandlerInterface $access_handler
    *   The entity access handler.
    *
@@ -120,16 +120,16 @@ class TermReferenceAutocompleteController extends ControllerBase {
   }
 
   /**
-   * Splits a reference field ID into route parts.
+   * Splits a field ID into route parts.
    *
-   * @param string $reference_field
-   *   The reference field ID.
+   * @param string $field
+   *   The field ID.
    *
    * @return array
    *   The entity type ID and field name.
    */
-  protected function splitReferenceField(string $reference_field): array {
-    return explode('.', $reference_field, 2) + ['', ''];
+  protected function splitField(string $field): array {
+    return explode('.', $field, 2) + ['', ''];
   }
 
 }
