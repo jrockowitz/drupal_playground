@@ -117,19 +117,22 @@ configured field and leaves other referenced terms intact.
 
 ## Access
 
-Access should rely primarily on Drupal entity and field access.
+Access should rely on Drupal entity and field access instead of a module-specific
+permission.
 
 The route is available only when:
 
 - The route's entity type and field name are valid for the current term's
   vocabulary.
-- The account can update at least one eligible entity/field path or otherwise
-  has a narrowly defined administrative permission if route visibility proves
-  too expensive through entity access alone.
+- The account can update the taxonomy term.
+- The account has edit access to at least one eligible field definition, checked
+  through the target entity type access handler with
+  `EntityAccessControlHandlerInterface::fieldAccess('edit', ...)`.
 
-The form must check entity update access and field edit access before adding or
-removing the term. The autocomplete must avoid suggesting entities the current
-user cannot manage.
+`fieldAccess()` does not grant entity access by itself. The form must also check
+target entity update access and field edit access before adding or removing the
+term. The autocomplete must avoid suggesting entities the current user cannot
+manage.
 
 ## Test Module And Coverage
 

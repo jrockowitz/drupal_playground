@@ -4,7 +4,7 @@
 
 **Goal:** Build a contrib-ready Drupal module that adds a `References` tab to taxonomy term pages and lets editors add or remove the current term from eligible entity reference fields.
 
-**Architecture:** The module discovers taxonomy-term entity reference field groups by `{entity_type_id}.{field_name}`, generates dynamic routes for each group, and generates matching taxonomy term local tasks through a local-task deriver. A management form uses generic content entity APIs, entity queries, entity access, and field access to add and remove the current term.
+**Architecture:** The module discovers taxonomy-term entity reference field groups by `{entity_type_id}.{field_name}`, generates dynamic routes for each group, and generates matching taxonomy term local tasks through a local-task deriver. A management form uses generic content entity APIs, entity queries, taxonomy term update access, target entity update access, and `EntityAccessControlHandlerInterface::fieldAccess()` to add and remove the current term.
 
 **Tech Stack:** Drupal 10/11 custom module, PHP 8.3, Symfony routes, Drupal local task derivers, Drupal Form API, BrowserTestBase functional tests, DDEV.
 
@@ -16,7 +16,6 @@
 - Create `web/modules/custom/term_reference/term_reference.routing.yml`: route callback registration and autocomplete route.
 - Create `web/modules/custom/term_reference/term_reference.links.task.yml`: primary local task plus deriver registration for secondary local tasks.
 - Create `web/modules/custom/term_reference/term_reference.services.yml`: autowired services.
-- Create `web/modules/custom/term_reference/term_reference.permissions.yml`: one narrow administrative fallback permission.
 - Create `web/modules/custom/term_reference/.gitlab-ci.yml`: Drupal.org GitLab CI template include.
 - Create `web/modules/custom/term_reference/composer.json`: Drupal.org Composer package metadata.
 - Create `web/modules/custom/term_reference/phpcs.xml.dist`: Drupal coding standards configuration.
@@ -42,7 +41,6 @@
 
 **Files:**
 - Create: `web/modules/custom/term_reference/term_reference.info.yml`
-- Create: `web/modules/custom/term_reference/term_reference.permissions.yml`
 - Create: `web/modules/custom/term_reference/term_reference.routing.yml`
 - Create: `web/modules/custom/term_reference/term_reference.links.task.yml`
 - Create: `web/modules/custom/term_reference/term_reference.services.yml`
@@ -72,18 +70,7 @@ dependencies:
   - drupal:taxonomy
 ```
 
-- [ ] **Step 2: Create the narrow fallback permission**
-
-Create `web/modules/custom/term_reference/term_reference.permissions.yml`:
-
-```yaml
-administer term references:
-  title: 'Administer term references'
-  description: 'Manage taxonomy term references even when route visibility cannot be determined through entity and field access alone.'
-  restrict access: true
-```
-
-- [ ] **Step 3: Create route and task declaration files**
+- [ ] **Step 2: Create route and task declaration files**
 
 Create `web/modules/custom/term_reference/term_reference.routing.yml`:
 
@@ -139,7 +126,7 @@ services:
   Drupal\term_reference\Routing\TermReferenceRoutes: {}
 ```
 
-- [ ] **Step 4: Create the test helper module metadata**
+- [ ] **Step 3: Create the test helper module metadata**
 
 Create `web/modules/custom/term_reference/tests/modules/term_reference_test/term_reference_test.info.yml`:
 
@@ -157,7 +144,7 @@ dependencies:
   - term_reference:term_reference
 ```
 
-- [ ] **Step 5: Add fixture configuration**
+- [ ] **Step 4: Add fixture configuration**
 
 Create install config for a `tags` vocabulary, `page` and `article` node types, an `image` media type, and `field_tags` fields on nodes and media. Use standard Drupal field config YAML exported from a local throwaway site or generated through the UI, then normalize these values:
 
@@ -209,7 +196,7 @@ settings:
       tags: tags
 ```
 
-- [ ] **Step 6: Verify skeleton syntax**
+- [ ] **Step 5: Verify skeleton syntax**
 
 Run:
 
@@ -219,7 +206,7 @@ ddev code-review web/modules/custom/term_reference
 
 Expected: The command reports missing PHP classes referenced by services/routes. YAML syntax must not fail.
 
-- [ ] **Step 7: Commit skeleton**
+- [ ] **Step 6: Commit skeleton**
 
 ```bash
 git add web/modules/custom/term_reference
@@ -484,7 +471,13 @@ Append to `testReferenceDiscoveryAndTasks()` after discovery assertions:
 ```php
 $account = $this->drupalCreateUser([
   'access content',
-  'administer term references',
+  'administer taxonomy',
+  'create article content',
+  'create page content',
+  'create media',
+  'edit any article content',
+  'edit any image media',
+  'edit any page content',
 ]);
 $this->drupalLogin($account);
 $this->drupalGet($term->toUrl());
@@ -600,7 +593,7 @@ class TermReferenceRoutes {
       '_controller' => '\Drupal\term_reference\Controller\TermReferenceOverviewController::overview',
       '_title' => 'References',
     ]);
-    $overview_route->setRequirement('_permission', 'administer term references');
+    $overview_route->setRequirement('_custom_access', '\Drupal\term_reference\Access\TermReferenceAccessCheck::overviewAccess');
     $overview_route->setOption('_admin_route', TRUE);
     $overview_route->setOption('parameters', [
       'taxonomy_term' => [
@@ -803,6 +796,8 @@ Create `web/modules/custom/term_reference/src/Access/TermReferenceAccessCheck.ph
 namespace Drupal\term_reference\Access;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\taxonomy\TermInterface;
 use Drupal\term_reference\TermReferenceDiscoveryInterface;
@@ -817,10 +812,35 @@ class TermReferenceAccessCheck {
    *
    * @param \Drupal\term_reference\TermReferenceDiscoveryInterface $termReferenceDiscovery
    *   The term reference discovery service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager
+   *   The entity field manager.
    */
   public function __construct(
     protected TermReferenceDiscoveryInterface $termReferenceDiscovery,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected EntityFieldManagerInterface $entityFieldManager,
   ) {}
+
+  /**
+   * Checks access to the primary References task.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The current account.
+   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
+   *   The taxonomy term.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   The access result.
+   */
+  public function overviewAccess(AccountInterface $account, TermInterface $taxonomy_term): AccessResult {
+    $access = AccessResult::forbidden()->addCacheableDependency($taxonomy_term);
+    foreach ($this->termReferenceDiscovery->getReferenceGroupsForVocabulary($taxonomy_term->bundle()) as $group) {
+      $access = $access->orIf($this->fieldGroupAccess($account, $taxonomy_term, $group));
+    }
+    return $access;
+  }
 
   /**
    * Checks access to a term reference route.
@@ -842,8 +862,34 @@ class TermReferenceAccessCheck {
     if (!$group) {
       return AccessResult::forbidden()->addCacheableDependency($taxonomy_term);
     }
-    return AccessResult::allowedIfHasPermission($account, 'administer term references')
-      ->addCacheableDependency($taxonomy_term);
+    return $this->fieldGroupAccess($account, $taxonomy_term, $group);
+  }
+
+  /**
+   * Checks whether the account can update the term and edit one grouped field.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The current account.
+   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
+   *   The taxonomy term.
+   * @param array $group
+   *   The reference group.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   The access result.
+   */
+  protected function fieldGroupAccess(AccountInterface $account, TermInterface $taxonomy_term, array $group): AccessResult {
+    $term_access = $taxonomy_term->access('update', $account, TRUE);
+    $field_access = AccessResult::forbidden();
+    $access_handler = $this->entityTypeManager->getAccessControlHandler($group['entity_type_id']);
+    foreach (array_keys($group['bundles']) as $bundle_id) {
+      $field_definitions = $this->entityFieldManager->getFieldDefinitions($group['entity_type_id'], $bundle_id);
+      if (!isset($field_definitions[$group['field_name']])) {
+        continue;
+      }
+      $field_access = $field_access->orIf($access_handler->fieldAccess('edit', $field_definitions[$group['field_name']], $account, NULL, TRUE));
+    }
+    return $term_access->andIf($field_access)->addCacheableDependency($taxonomy_term);
   }
 
 }
@@ -1239,8 +1285,9 @@ class TermReferenceAutocompleteController extends ControllerBase {
       $query->condition($bundle_key, array_keys($group['bundles']), 'IN');
     }
 
+    $access_handler = $this->entityTypeManager->getAccessControlHandler($entity_type_id);
     foreach ($storage->loadMultiple($query->execute()) as $entity) {
-      if (!$entity->access('update', $this->currentUser) || !$entity->hasField($field_name) || !$entity->get($field_name)->access('edit', $this->currentUser)) {
+      if (!$entity->access('update', $this->currentUser) || !$entity->hasField($field_name) || !$access_handler->fieldAccess('edit', $entity->get($field_name)->getFieldDefinition(), $this->currentUser, $entity->get($field_name))) {
         continue;
       }
       $matches[] = [
@@ -1390,7 +1437,8 @@ public function validateForm(array &$form, FormStateInterface $form_state): void
     return;
   }
   $entity = $this->entityTypeManager->getStorage($this->referenceGroup['entity_type_id'])->load($matches[1]);
-  if (!$entity || !$entity->hasField($this->referenceGroup['field_name']) || !$entity->access('update') || !$entity->get($this->referenceGroup['field_name'])->access('edit')) {
+  $access_handler = $this->entityTypeManager->getAccessControlHandler($this->referenceGroup['entity_type_id']);
+  if (!$entity || !$entity->hasField($this->referenceGroup['field_name']) || !$entity->access('update') || !$access_handler->fieldAccess('edit', $entity->get($this->referenceGroup['field_name'])->getFieldDefinition(), $this->currentUser(), $entity->get($this->referenceGroup['field_name']))) {
     $form_state->setErrorByName('entity', $this->t('The selected entity cannot be managed.'));
     return;
   }
@@ -1429,8 +1477,9 @@ public function removeReferenceSubmit(array &$form, FormStateInterface $form_sta
       $selected_ids[] = $entity_id;
     }
   }
+  $access_handler = $this->entityTypeManager->getAccessControlHandler($this->referenceGroup['entity_type_id']);
   foreach ($this->entityTypeManager->getStorage($this->referenceGroup['entity_type_id'])->loadMultiple($selected_ids) as $entity) {
-    if ($entity->access('update') && $entity->hasField($this->referenceGroup['field_name']) && $entity->get($this->referenceGroup['field_name'])->access('edit')) {
+    if ($entity->access('update') && $entity->hasField($this->referenceGroup['field_name']) && $access_handler->fieldAccess('edit', $entity->get($this->referenceGroup['field_name'])->getFieldDefinition(), $this->currentUser(), $entity->get($this->referenceGroup['field_name']))) {
       $this->termReferenceManager->removeReference($entity, $this->term, $this->referenceGroup['field_name']);
     }
   }
@@ -1503,16 +1552,17 @@ Run:
 ddev phpunit web/modules/custom/term_reference/tests/src/Functional/TermReferenceManageFormTest.php
 ```
 
-Expected: FAIL until media permissions and access behavior are complete.
+Expected: FAIL until media and access behavior are complete.
 
 - [ ] **Step 3: Harden access and autocomplete**
 
-Update the route access checker to allow `administer term references` and to deny invalid groups. Keep form-level entity and field access checks for each mutation. In autocomplete, only return entities where:
+Update the route access checker to deny invalid groups and to require taxonomy term update access plus `EntityAccessControlHandlerInterface::fieldAccess('edit', ...)` for at least one eligible field definition. Keep form-level target entity update and field access checks for each mutation. In autocomplete, only return entities where:
 
 ```php
+$access_handler = $entity_type_manager->getAccessControlHandler($entity_type_id);
 $entity->access('update', $account)
   && $entity->hasField($field_name)
-  && $entity->get($field_name)->access('edit', $account);
+  && $access_handler->fieldAccess('edit', $entity->get($field_name)->getFieldDefinition(), $account, $entity->get($field_name));
 ```
 
 - [ ] **Step 4: Run the test**
@@ -1710,12 +1760,13 @@ eligible bundles for the selected entity type and field name.
 - Drupal core Field module.
 - Drupal core Taxonomy module.
 
-## Permissions
+## Access
 
-- **administer term references** - Access term reference management routes.
-
-Entity update access and field edit access are checked before references are
-changed.
+The **References** tab is available only when the current user can update the
+taxonomy term and has field edit access to at least one eligible reference field.
+Before any reference is changed, the module also checks update access on the
+target entity and field edit access through the target entity type access
+handler.
 
 ## Usage
 
