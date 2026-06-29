@@ -48,7 +48,8 @@ Add references to %term
 - `src/TermReferenceDiscovery.php`: cached field discovery.
 - `src/TermReferenceManagerInterface.php`: reference query and mutation contract.
 - `src/TermReferenceManager.php`: generic content entity reference operations.
-- `src/Access/TermReferenceAccessCheck.php`: term and field access checks.
+- `src/TermReferenceAccessInterface.php`: access contract.
+- `src/TermReferenceAccess.php`: term, field, and entity management access checks.
 - `src/Controller/TermReferenceOverviewController.php`: primary tab redirect and
   route title callback.
 - `src/Form/TermReferenceForm.php`: add/remove form, AJAX callback, and table.
@@ -58,6 +59,7 @@ Add references to %term
 - `tests/src/Functional/TermReferenceFormTest.php`: functional coverage.
 - `tests/src/FunctionalJavascript/TermReferenceFormAjaxTest.php`: AJAX coverage.
 - `tests/src/Kernel/TermReferenceDiscoveryKernelTest.php`: discovery contract coverage.
+- `tests/src/Kernel/TermReferenceAccessKernelTest.php`: access contract coverage.
 - `tests/src/Kernel/TermReferenceHooksKernelTest.php`: field config cache invalidation coverage.
 - `tests/src/Kernel/TermReferenceManagerKernelBase.php`: shared manager test setup.
 - `tests/src/Kernel/TermReferenceManagerKernelTest.php`: manager contract coverage.
@@ -139,15 +141,20 @@ Add and remove operations also require:
 - The target entity bundle to be one of the eligible bundles for the field.
 - Field edit access on the target entity field item list.
 
-The route requirements call the access checker class directly:
+Route requirements call thin controller and form access methods:
 
 ```yaml
-_custom_access: 'Drupal\term_reference\Access\TermReferenceAccessCheck::access'
+term_reference.references:
+  requirements:
+    _custom_access: '\Drupal\term_reference\Controller\TermReferenceOverviewController::access'
+term_reference.reference:
+  requirements:
+    _custom_access: '\Drupal\term_reference\Form\TermReferenceForm::access'
 ```
 
-`overviewAccess()` ORs access across every discovered field for the current
-vocabulary. `access()` validates the route field and delegates to
-`fieldAccess()`.
+Those methods delegate to `term_reference.access`. `overviewAccess()` ORs access
+across every discovered field for the current vocabulary. `routeAccess()`
+validates the route field and delegates to `fieldAccess()`.
 
 ## Manager Behavior
 
@@ -194,8 +201,9 @@ The FunctionalJavascript test verifies:
 - Focus moves to the existing references fieldset after remove.
 - Entity field values match the visible AJAX result.
 
-Kernel tests verify each method on the discovery and manager interfaces and
-confirm field config changes clear discovery and local task caches.
+Kernel tests verify each method on the access, discovery, and manager
+interfaces and confirm field config changes clear discovery and local task
+caches.
 
 ## Verification
 

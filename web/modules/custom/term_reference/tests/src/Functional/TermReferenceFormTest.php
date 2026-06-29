@@ -177,7 +177,7 @@ class TermReferenceFormTest extends BrowserTestBase {
     ]);
     $media->save();
 
-    $access = $this->container->get('Drupal\term_reference\Access\TermReferenceAccessCheck')
+    $access = $this->container->get('Drupal\term_reference\TermReferenceAccessInterface')
       ->overviewAccess($account, $term);
     $this->assertTrue($access->isAllowed());
     $local_tasks = $this->container->get('plugin.manager.menu.local_task')->getDefinitions();

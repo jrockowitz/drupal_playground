@@ -132,8 +132,8 @@ The module defines three autowired services and aliases their interfaces:
   `Drupal\term_reference\TermReferenceDiscoveryInterface`.
 - `term_reference.manager`:
   `Drupal\term_reference\TermReferenceManagerInterface`.
-- `term_reference.access_check`:
-  `Drupal\term_reference\Access\TermReferenceAccessCheck`.
+- `term_reference.access`:
+  `Drupal\term_reference\TermReferenceAccessInterface`.
 
 The service aliases are part of the developer-facing API for tests and custom
 integrations.
@@ -195,11 +195,18 @@ The route is available only when:
 target entity update access and field edit access before adding or removing the
 term.
 
-The field-specific route calls the access checker class directly:
+Route requirements call thin controller and form access methods:
 
 ```yaml
-_custom_access: 'Drupal\term_reference\Access\TermReferenceAccessCheck::access'
+term_reference.references:
+  requirements:
+    _custom_access: '\Drupal\term_reference\Controller\TermReferenceOverviewController::access'
+term_reference.reference:
+  requirements:
+    _custom_access: '\Drupal\term_reference\Form\TermReferenceForm::access'
 ```
+
+Those methods delegate to `term_reference.access`.
 
 ## Test Coverage
 

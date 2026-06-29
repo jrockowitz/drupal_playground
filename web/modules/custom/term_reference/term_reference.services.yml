@@ -11,6 +11,6 @@ services:
     class: Drupal\term_reference\TermReferenceManager
   Drupal\term_reference\TermReferenceManagerInterface: '@term_reference.manager'
 
-  term_reference.access_check:
-    class: Drupal\term_reference\Access\TermReferenceAccessCheck
-  Drupal\term_reference\Access\TermReferenceAccessCheck: '@term_reference.access_check'
+  term_reference.access:
+    class: Drupal\term_reference\TermReferenceAccess
+  Drupal\term_reference\TermReferenceAccessInterface: '@term_reference.access'

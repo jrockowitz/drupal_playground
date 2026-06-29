@@ -2,12 +2,13 @@
 
 namespace Drupal\term_reference\Controller;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\taxonomy\TermInterface;
-use Drupal\term_reference\Access\TermReferenceAccessCheck;
+use Drupal\term_reference\TermReferenceAccessInterface;
 use Drupal\term_reference\TermReferenceDiscoveryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -23,14 +24,29 @@ class TermReferenceOverviewController extends ControllerBase {
    *   The current user.
    * @param \Drupal\term_reference\TermReferenceDiscoveryInterface $termReferenceDiscovery
    *   The term reference discovery service.
-   * @param \Drupal\term_reference\Access\TermReferenceAccessCheck $termReferenceAccessCheck
-   *   The term reference access checker.
+   * @param \Drupal\term_reference\TermReferenceAccessInterface $termReferenceAccess
+   *   The term reference access service.
    */
   public function __construct(
     protected AccountInterface $account,
     protected TermReferenceDiscoveryInterface $termReferenceDiscovery,
-    protected TermReferenceAccessCheck $termReferenceAccessCheck,
+    protected TermReferenceAccessInterface $termReferenceAccess,
   ) {}
+
+  /**
+   * Checks access to the primary References task.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The current account.
+   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
+   *   The taxonomy term.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function access(AccountInterface $account, TermInterface $taxonomy_term): AccessResultInterface {
+    return $this->termReferenceAccess->overviewAccess($account, $taxonomy_term);
+  }
 
   /**
    * Redirects the primary task to the first accessible field.
@@ -43,7 +59,7 @@ class TermReferenceOverviewController extends ControllerBase {
    */
   public function overview(TermInterface $taxonomy_term): RedirectResponse|array {
     foreach ($this->termReferenceDiscovery->getFieldsForVocabulary($taxonomy_term->bundle()) as $field) {
-      $access = $this->termReferenceAccessCheck->fieldAccess($this->account, $taxonomy_term, $field);
+      $access = $this->termReferenceAccess->fieldAccess($this->account, $taxonomy_term, $field);
       if (!$access->isAllowed()) {
         continue;
       }

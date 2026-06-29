@@ -73,7 +73,7 @@ Important services:
   and caches results in `cache.discovery`.
 - `term_reference.manager` loads, adds, and removes term references on content
   entities.
-- `term_reference.access_check` handles route and field access checks using term
+- `term_reference.access` handles route, field, and entity management access using term
   update access and target field edit access.
 
 The add form uses Drupal core's `entity_autocomplete` element with

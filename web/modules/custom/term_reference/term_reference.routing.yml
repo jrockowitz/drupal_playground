@@ -4,7 +4,7 @@ term_reference.references:
     _controller: '\Drupal\term_reference\Controller\TermReferenceOverviewController::overview'
     _title: 'References'
   requirements:
-    _custom_access: 'Drupal\term_reference\Access\TermReferenceAccessCheck::overviewAccess'
+    _custom_access: '\Drupal\term_reference\Controller\TermReferenceOverviewController::access'
   options:
     _admin_route: TRUE
     parameters:
@@ -17,7 +17,7 @@ term_reference.reference:
     _form: '\Drupal\term_reference\Form\TermReferenceForm'
     _title_callback: '\Drupal\term_reference\Controller\TermReferenceOverviewController::title'
   requirements:
-    _custom_access: 'Drupal\term_reference\Access\TermReferenceAccessCheck::access'
+    _custom_access: '\Drupal\term_reference\Form\TermReferenceForm::access'
     field: '[a-z0-9_]+\.[a-z0-9_]+'
   options:
     _admin_route: TRUE

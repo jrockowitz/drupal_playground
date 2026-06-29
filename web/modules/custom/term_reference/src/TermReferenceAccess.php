@@ -1,22 +1,22 @@
 <?php
 
-namespace Drupal\term_reference\Access;
+namespace Drupal\term_reference;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\taxonomy\TermInterface;
-use Drupal\term_reference\TermReferenceDiscoveryInterface;
 
 /**
- * Checks access to term reference management routes.
+ * Checks access to term reference management routes and entities.
  */
-class TermReferenceAccessCheck {
+class TermReferenceAccess implements TermReferenceAccessInterface {
 
   /**
-   * Constructs a TermReferenceAccessCheck object.
+   * Constructs a TermReferenceAccess object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
@@ -32,15 +32,7 @@ class TermReferenceAccessCheck {
   ) {}
 
   /**
-   * Checks access to the primary References task.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The current account.
-   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
-   *   The taxonomy term.
-   *
-   * @return \Drupal\Core\Access\AccessResultInterface
-   *   The access result.
+   * {@inheritdoc}
    */
   public function overviewAccess(AccountInterface $account, TermInterface $taxonomy_term): AccessResultInterface {
     $access = AccessResult::neutral()->addCacheableDependency($taxonomy_term);
@@ -51,19 +43,9 @@ class TermReferenceAccessCheck {
   }
 
   /**
-   * Checks access to a term reference route.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The current account.
-   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
-   *   The taxonomy term.
-   * @param string $field
-   *   The field ID.
-   *
-   * @return \Drupal\Core\Access\AccessResultInterface
-   *   The access result.
+   * {@inheritdoc}
    */
-  public function access(AccountInterface $account, TermInterface $taxonomy_term, string $field): AccessResultInterface {
+  public function routeAccess(AccountInterface $account, TermInterface $taxonomy_term, string $field): AccessResultInterface {
     [$entity_type_id, $field_name] = $this->splitField($field);
     $field = $this->termReferenceDiscovery->getField($taxonomy_term->bundle(), $entity_type_id, $field_name);
     if (!$field) {
@@ -73,17 +55,7 @@ class TermReferenceAccessCheck {
   }
 
   /**
-   * Checks whether the account can update the term and edit a field.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The current account.
-   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
-   *   The taxonomy term.
-   * @param array $field
-   *   The field.
-   *
-   * @return \Drupal\Core\Access\AccessResultInterface
-   *   The access result.
+   * {@inheritdoc}
    */
   public function fieldAccess(AccountInterface $account, TermInterface $taxonomy_term, array $field): AccessResultInterface {
     $term_access = $taxonomy_term->access('update', $account, TRUE);
@@ -97,6 +69,22 @@ class TermReferenceAccessCheck {
       $field_access = $field_access->orIf($access_handler->fieldAccess('edit', $field_definitions[$field['field_name']], $account, NULL, TRUE));
     }
     return $term_access->andIf($field_access);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function entityCanBeManaged(ContentEntityInterface $entity, array $field, AccountInterface $account): bool {
+    if (!$entity->access('update', $account) || !$entity->hasField($field['field_name'])) {
+      return FALSE;
+    }
+    $entity_type = $this->entityTypeManager->getDefinition($field['entity_type_id']);
+    $bundle_key = $entity_type->getKey('bundle');
+    if ($bundle_key && !isset($field['bundles'][$entity->bundle()])) {
+      return FALSE;
+    }
+    $access_handler = $this->entityTypeManager->getAccessControlHandler($field['entity_type_id']);
+    return $access_handler->fieldAccess('edit', $entity->get($field['field_name'])->getFieldDefinition(), $account, $entity->get($field['field_name']));
   }
 
   /**

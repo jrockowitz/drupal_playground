@@ -2,6 +2,7 @@
 
 namespace Drupal\term_reference\Form;
 
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\AnnounceCommand;
 use Drupal\Core\Ajax\FocusFirstCommand;
@@ -15,6 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\taxonomy\TermInterface;
+use Drupal\term_reference\TermReferenceAccessInterface;
 use Drupal\term_reference\TermReferenceDiscoveryInterface;
 use Drupal\term_reference\TermReferenceManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -50,12 +52,15 @@ class TermReferenceForm extends FormBase {
    *   The term reference discovery service.
    * @param \Drupal\term_reference\TermReferenceManagerInterface $termReferenceManager
    *   The term reference manager.
+   * @param \Drupal\term_reference\TermReferenceAccessInterface $termReferenceAccess
+   *   The term reference access service.
    */
   public function __construct(
     protected EntityTypeManagerInterface $entityTypeManager,
     protected AccountInterface $currentUser,
     protected TermReferenceDiscoveryInterface $termReferenceDiscovery,
     protected TermReferenceManagerInterface $termReferenceManager,
+    protected TermReferenceAccessInterface $termReferenceAccess,
   ) {}
 
   /**
@@ -66,7 +71,8 @@ class TermReferenceForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('term_reference.discovery'),
-      $container->get('term_reference.manager')
+      $container->get('term_reference.manager'),
+      $container->get('term_reference.access')
     );
   }
 
@@ -75,6 +81,23 @@ class TermReferenceForm extends FormBase {
    */
   public function getFormId(): string {
     return 'term_reference_form';
+  }
+
+  /**
+   * Checks access to a term reference route.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The current account.
+   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
+   *   The taxonomy term.
+   * @param string $field
+   *   The field ID.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function access(AccountInterface $account, TermInterface $taxonomy_term, string $field): AccessResultInterface {
+    return $this->termReferenceAccess->routeAccess($account, $taxonomy_term, $field);
   }
 
   /**
@@ -235,7 +258,7 @@ class TermReferenceForm extends FormBase {
         '#type' => 'checkbox',
         '#title' => $this->t('Remove @label', ['@label' => $entity->label()]),
         '#title_display' => 'invisible',
-        '#access' => $this->entityCanBeManaged($entity, $field['field_name']),
+        '#access' => $this->termReferenceAccess->entityCanBeManaged($entity, $field, $this->currentUser),
       ],
       'label' => [
         '#plain_text' => $entity->label(),
@@ -298,7 +321,7 @@ class TermReferenceForm extends FormBase {
         $form_state->setErrorByName('entities', $this->t('Select entities from the autocomplete suggestions.'));
         return;
       }
-      if (!$this->entityCanBeManaged($entity, $this->field['field_name'])) {
+      if (!$this->termReferenceAccess->entityCanBeManaged($entity, $this->field, $this->currentUser)) {
         $form_state->setErrorByName('entities', $this->t('The selected entity cannot be managed.'));
         return;
       }
@@ -356,7 +379,7 @@ class TermReferenceForm extends FormBase {
     $storage = $this->entityTypeManager->getStorage($this->field['entity_type_id']);
     $removed_count = 0;
     foreach ($storage->loadMultiple($this->getSelectedReferenceIds($form_state)) as $entity) {
-      if ($entity instanceof ContentEntityInterface && $this->entityCanBeManaged($entity, $this->field['field_name'])) {
+      if ($entity instanceof ContentEntityInterface && $this->termReferenceAccess->entityCanBeManaged($entity, $this->field, $this->currentUser)) {
         $this->termReferenceManager->removeReference($entity, $this->term, $this->field['field_name']);
         $removed_count++;
       }
@@ -403,30 +426,6 @@ class TermReferenceForm extends FormBase {
       return (string) $triggering_element['#value'];
     }
     return (string) $form_state->getValue('op');
-  }
-
-  /**
-   * Checks whether an entity can be managed.
-   *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
-   *   The entity.
-   * @param string $field_name
-   *   The field name.
-   *
-   * @return bool
-   *   TRUE when the entity can be managed.
-   */
-  protected function entityCanBeManaged(ContentEntityInterface $entity, string $field_name): bool {
-    if (!$entity->access('update', $this->currentUser) || !$entity->hasField($field_name)) {
-      return FALSE;
-    }
-    $entity_type = $this->entityTypeManager->getDefinition($this->field['entity_type_id']);
-    $bundle_key = $entity_type->getKey('bundle');
-    if ($bundle_key && !isset($this->field['bundles'][$entity->bundle()])) {
-      return FALSE;
-    }
-    $access_handler = $this->entityTypeManager->getAccessControlHandler($this->field['entity_type_id']);
-    return $access_handler->fieldAccess('edit', $entity->get($field_name)->getFieldDefinition(), $this->currentUser, $entity->get($field_name));
   }
 
   /**
