@@ -3,7 +3,6 @@
 namespace Drupal\term_reference\Form;
 
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\Element\EntityAutocomplete;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -85,18 +84,20 @@ class TermReferenceForm extends FormBase {
         '@term' => $taxonomy_term->label(),
       ]),
     ];
-    $form['add']['entity'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('@entity_type entity', ['@entity_type' => $field['entity_type_label_plural']]),
-      '#description' => $this->t('Enter the label or ID of an existing @entity_type entity. Eligible bundles: @bundles.', [
+    $form['add']['entities'] = [
+      '#type' => 'entity_autocomplete',
+      '#title' => $this->t('@entity_type entities', ['@entity_type' => $field['entity_type_label_plural']]),
+      '#description' => $this->t('Enter one or more existing @entity_type entities. Eligible bundles: @bundles.', [
         '@entity_type' => $field['entity_type_label_plural'],
         '@bundles' => implode(', ', $bundle_labels),
       ]),
-      '#autocomplete_route_name' => 'term_reference.autocomplete',
-      '#autocomplete_route_parameters' => [
-        'taxonomy_term' => $taxonomy_term->id(),
-        'field' => $field['id'],
+      '#target_type' => $field['entity_type_id'],
+      '#tags' => TRUE,
+      '#selection_handler' => 'default',
+      '#selection_settings' => [
+        'target_bundles' => array_keys($field['bundles']),
       ],
+      '#validate_reference' => TRUE,
     ];
     $form['add']['submit'] = [
       '#type' => 'submit',
@@ -215,28 +216,32 @@ class TermReferenceForm extends FormBase {
   }
 
   /**
-   * Validates the entity selected for adding.
+   * Validates the entities selected for adding.
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
    */
   protected function validateAddReference(FormStateInterface $form_state): void {
-    $input = trim((string) $form_state->getValue('entity'));
-    if ($input === '') {
-      $form_state->setErrorByName('entity', $this->t('Select an entity from the autocomplete suggestions.'));
+    $values = $form_state->getValue('entities') ?? [];
+    if (!$values) {
+      $form_state->setErrorByName('entities', $this->t('Select at least one entity from the autocomplete suggestions.'));
       return;
     }
-    $entity_id = EntityAutocomplete::extractEntityIdFromAutocompleteInput($input) ?: $input;
-    $entity = $this->entityTypeManager->getStorage($this->field['entity_type_id'])->load($entity_id);
-    if (!$entity instanceof ContentEntityInterface) {
-      $form_state->setErrorByName('entity', $this->t('Select an entity from the autocomplete suggestions.'));
-      return;
+
+    $entity_ids = array_column($values, 'target_id');
+    $entities = $this->entityTypeManager->getStorage($this->field['entity_type_id'])->loadMultiple($entity_ids);
+    foreach ($entity_ids as $entity_id) {
+      $entity = $entities[$entity_id] ?? NULL;
+      if (!$entity instanceof ContentEntityInterface) {
+        $form_state->setErrorByName('entities', $this->t('Select entities from the autocomplete suggestions.'));
+        return;
+      }
+      if (!$this->entityCanBeManaged($entity, $this->field['field_name'])) {
+        $form_state->setErrorByName('entities', $this->t('The selected entity cannot be managed.'));
+        return;
+      }
     }
-    if (!$this->entityCanBeManaged($entity, $this->field['field_name'])) {
-      $form_state->setErrorByName('entity', $this->t('The selected entity cannot be managed.'));
-      return;
-    }
-    $form_state->set('term_reference_entity', $entity);
+    $form_state->set('term_reference_entities', $entities);
   }
 
   /**
@@ -253,7 +258,7 @@ class TermReferenceForm extends FormBase {
   }
 
   /**
-   * Adds the current term to the selected entity.
+   * Adds the current term to the selected entities.
    *
    * @param array $form
    *   The form.
@@ -261,10 +266,13 @@ class TermReferenceForm extends FormBase {
    *   The form state.
    */
   public function addReferenceSubmit(array &$form, FormStateInterface $form_state): void {
-    $entity = $form_state->get('term_reference_entity');
-    $this->termReferenceManager->addReference($entity, $this->term, $this->field['field_name']);
-    $this->messenger()->addStatus($this->t('@label now references @term.', [
-      '@label' => $entity->label(),
+    $entities = $form_state->get('term_reference_entities') ?? [];
+    foreach ($entities as $entity) {
+      $this->termReferenceManager->addReference($entity, $this->term, $this->field['field_name']);
+    }
+    $first_entity = reset($entities);
+    $this->messenger()->addStatus($this->formatPlural(count($entities), '@label now references @term.', '@count entities now reference @term.', [
+      '@label' => $first_entity->label(),
       '@term' => $this->term->label(),
     ]));
   }

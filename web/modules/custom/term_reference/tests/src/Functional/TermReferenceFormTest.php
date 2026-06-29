@@ -203,27 +203,22 @@ class TermReferenceFormTest extends BrowserTestBase {
     $this->assertSession()->pageTextNotContains('Field summary');
     $this->assertSession()->pageTextContains('Add Content references to Blue');
     $this->assertSession()->elementExists('css', 'fieldset legend:contains("Add Content references to Blue")');
-    $this->assertSession()->pageTextContains('Enter the label or ID of an existing Content entity. Eligible bundles: Article, Basic page.');
-
-    $this->drupalGet('/taxonomy/term/' . $term->id() . '/references/node.field_tags/autocomplete', [
-      'query' => [
-        'q' => (string) $page->id(),
-      ],
-    ]);
-    $this->assertSession()->statusCodeEquals(200);
-    $this->assertStringContainsString('Page reference (' . $page->id() . ')', $this->getSession()->getPage()->getContent());
-    $this->drupalGet('/taxonomy/term/' . $term->id() . '/references/node.field_tags');
+    $this->assertSession()->pageTextContains('Enter one or more existing Content entities. Eligible bundles: Article, Basic page.');
 
     $this->submitForm([
-      'entity' => (string) $page->id(),
+      'entities' => 'Page reference (' . $page->id() . '), Article reference (' . $article->id() . ')',
     ], 'Add');
 
-    // Check that the page now references the term and appears in the table.
-    $node_storage->resetCache([$page->id()]);
+    // Check that both selected entities now reference the term.
+    $node_storage->resetCache([$page->id(), $article->id()]);
     $page = $node_storage->load($page->id());
+    $article = $node_storage->load($article->id());
     $this->assertSame((string) $term->id(), $page->get('field_tags')->target_id);
+    $this->assertSame((string) $term->id(), $article->get('field_tags')->target_id);
     $this->assertSession()->pageTextContains('Page reference');
     $this->assertSession()->pageTextContains((string) $page->id());
+    $this->assertSession()->pageTextContains('Article reference');
+    $this->assertSession()->pageTextContains((string) $article->id());
     $this->assertSession()->pageTextContains('Basic page');
     $this->assertSession()->pageTextContains('Published');
     $this->assertSession()->linkExists('View');
@@ -237,20 +232,16 @@ class TermReferenceFormTest extends BrowserTestBase {
     $node_storage->resetCache([$page->id()]);
     $page = $node_storage->load($page->id());
     $this->assertTrue($page->get('field_tags')->isEmpty());
-
-    $this->submitForm([
-      'entity' => 'Article reference (' . $article->id() . ')',
-    ], 'Add');
-
-    // Check that another eligible bundle can be added from the same task.
     $node_storage->resetCache([$article->id()]);
     $article = $node_storage->load($article->id());
+
+    // Check that removing one selected reference leaves other references intact.
     $this->assertSame((string) $term->id(), $article->get('field_tags')->target_id);
 
     $this->drupalGet('/taxonomy/term/' . $term->id() . '/references/media.field_tags');
     $this->assertSession()->titleEquals('Blue | Drupal');
     $this->submitForm([
-      'entity' => 'Image reference (' . $media->id() . ')',
+      'entities' => 'Image reference (' . $media->id() . ')',
     ], 'Add');
 
     // Check that media references are managed separately.

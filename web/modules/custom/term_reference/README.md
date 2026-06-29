@@ -12,10 +12,10 @@ fields on content entities.
 - **Cross-bundle management** for the same entity type and field name. For
   example, `node.field_tags` can manage Basic page and Article nodes from one
   `Tags (Content)` task.
-- **Bundle-aware autocomplete help** that shows which bundles can be added from
-  the current field.
+- **Bundle-aware entity autocomplete** for adding one or more existing entities
+  from the current field.
 - **Generic entity table** with Label, ID, Published, and Operations columns.
-- **Access-aware autocomplete and mutations** using entity update access and
+- **Access-aware additions and removals** using entity update access and
   field edit access.
 
 ## Requirements
@@ -46,8 +46,8 @@ drush en term_reference
 
 Term Reference does not provide a module-specific permission. Access is granted
 only when the current account can update the taxonomy term and edit at least one
-eligible target field. Add, remove, and autocomplete operations also check target
-entity update access and field edit access before exposing or changing entities.
+eligible target field. Add and remove operations also check target entity update
+access and field edit access before changing entities.
 
 ## Documentation
 

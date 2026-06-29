@@ -24,15 +24,3 @@ term_reference.reference:
     parameters:
       taxonomy_term:
         type: entity:taxonomy_term
-
-term_reference.autocomplete:
-  path: '/taxonomy/term/{taxonomy_term}/references/{field}/autocomplete'
-  defaults:
-    _controller: '\Drupal\term_reference\Controller\TermReferenceAutocompleteController::autocomplete'
-  requirements:
-    _custom_access: 'Drupal\term_reference\Access\TermReferenceAccessCheck::access'
-    field: '[a-z0-9_]+\.[a-z0-9_]+'
-  options:
-    parameters:
-      taxonomy_term:
-        type: entity:taxonomy_term

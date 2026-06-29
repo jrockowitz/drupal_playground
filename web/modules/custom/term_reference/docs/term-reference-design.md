@@ -65,7 +65,6 @@ Route names are static and parameterized:
 ```text
 term_reference.references
 term_reference.reference
-term_reference.autocomplete
 ```
 
 The route arguments identify the taxonomy term, content entity type, and field
@@ -96,11 +95,11 @@ Discovery returns:
 
 The management form is shown for one taxonomy term, entity type, and field name.
 
-The add section provides an entity autocomplete field restricted to eligible
-bundles for the chosen entity type and field. The autocomplete description lists
-the eligible bundles, and the autocomplete accepts a label search or exact entity
-ID. Submitting `Add` appends the taxonomy term to the configured field when the
-entity does not already reference it.
+The add section provides a multi-value entity autocomplete field restricted to
+eligible bundles for the chosen entity type and field. The autocomplete
+description lists the eligible bundles. Submitting `Add` appends the taxonomy
+term to the configured field on each selected entity when the entity does not
+already reference it.
 
 The existing references fieldset includes a table with:
 
@@ -129,8 +128,7 @@ The route is available only when:
 
 `fieldAccess()` does not grant entity access by itself. The form must also check
 target entity update access and field edit access before adding or removing the
-term. The autocomplete must avoid suggesting entities the current user cannot
-manage.
+term.
 
 ## Test Coverage
 

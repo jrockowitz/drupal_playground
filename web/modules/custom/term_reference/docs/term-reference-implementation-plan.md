@@ -25,7 +25,7 @@ for the current term vocabulary.
 ## Files
 
 - `term_reference.info.yml`: module metadata.
-- `term_reference.routing.yml`: primary, manage, and autocomplete routes.
+- `term_reference.routing.yml`: primary and manage routes.
 - `term_reference.links.task.yml`: primary task and secondary task deriver.
 - `term_reference.services.yml`: autowired service definitions.
 - `src/TermReferenceDiscoveryInterface.php`: discovery contract.
@@ -34,7 +34,6 @@ for the current term vocabulary.
 - `src/TermReferenceManager.php`: generic content entity reference operations.
 - `src/Access/TermReferenceAccessCheck.php`: term and field access checks.
 - `src/Controller/TermReferenceOverviewController.php`: primary tab redirect.
-- `src/Controller/TermReferenceAutocompleteController.php`: eligible entity autocomplete.
 - `src/Form/TermReferenceForm.php`: add/remove form and table.
 - `src/Hook/TermReferenceHooks.php`: local task cache invalidation after field config changes.
 - `src/Plugin/Derivative/TermReferenceLocalTasks.php`: secondary local task generation.
@@ -52,7 +51,7 @@ Route access requires:
 - Field edit access for at least one eligible field instance, checked through
   the target entity type access handler with `fieldAccess('edit', ...)`.
 
-Autocomplete, add, and remove operations also require:
+Add and remove operations also require:
 
 - Target entity update access.
 - The configured field to exist on the target entity.
