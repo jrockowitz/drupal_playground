@@ -1,0 +1,14 @@
+{
+    "name": "drupal/term_reference",
+    "description": "Manage taxonomy term entity references from taxonomy term pages.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.drupal.org/project/term_reference",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/term_reference",
+        "source": "https://git.drupalcode.org/project/term_reference"
+    },
+    "require": {
+        "drupal/core": "^10 || ^11"
+    }
+}

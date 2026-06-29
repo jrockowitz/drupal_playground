@@ -1,0 +1,8 @@
+name: 'Term Reference'
+type: module
+description: 'Manage taxonomy term entity references from taxonomy term pages.'
+package: Taxonomy
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:field
+  - drupal:taxonomy

@@ -57,18 +57,21 @@ term's vocabulary, such as Basic page and Article.
 Routes use this pattern:
 
 ```text
-/taxonomy/term/{taxonomy_term}/references/{entity_type_id}/{field_name}
+/taxonomy/term/{taxonomy_term}/references/{entity_type_id}.{field_name}
 ```
 
-Route names use this pattern:
+Route names are static and parameterized:
 
 ```text
-term_reference.references.{entity_type_id}.{field_name}
+term_reference.references
+term_reference.reference
+term_reference.autocomplete
 ```
 
 The route arguments identify the taxonomy term, content entity type, and field
 name. The form discovers eligible bundles for the current term's vocabulary at
-runtime.
+runtime. Static routes avoid route rebuilds for every reference field while the local
+task deriver still creates one secondary tab per `{entity_type_id}.{field_name}`.
 
 ## Discovery
 
@@ -87,28 +90,23 @@ Discovery returns:
 - Field name and display label.
 - Target vocabulary ID.
 - Eligible bundle IDs and labels.
-- The grouped field config definitions needed for validation and access checks.
+- The field config definitions needed for validation and access checks.
 
 ## Form
 
 The management form is shown for one taxonomy term, entity type, and field name.
 
-The form includes a summary details element with:
-
-- Entity type.
-- Field label and machine name.
-- Target vocabulary.
-- Eligible bundles.
-
 The add section provides an entity autocomplete field restricted to eligible
-bundles for the chosen entity type and field. Submitting `Add` appends the
-taxonomy term to the configured field when the entity does not already reference
-it.
+bundles for the chosen entity type and field. The autocomplete description lists
+the eligible bundles, and the autocomplete accepts a label search or exact entity
+ID. Submitting `Add` appends the taxonomy term to the configured field when the
+entity does not already reference it.
 
-The existing references table includes:
+The existing references fieldset includes a table with:
 
 - Label.
 - ID.
+- Bundle.
 - Published.
 - Operations.
 
@@ -134,9 +132,9 @@ target entity update access and field edit access before adding or removing the
 term. The autocomplete must avoid suggesting entities the current user cannot
 manage.
 
-## Test Module And Coverage
+## Test Coverage
 
-A test module should create a `tags` vocabulary and add `field_tags` to:
+Functional test coverage creates a `tags` vocabulary and adds `field_tags` to:
 
 - `node.page`.
 - `node.article`.

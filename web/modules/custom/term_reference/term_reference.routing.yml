@@ -1,0 +1,38 @@
+term_reference.references:
+  path: '/taxonomy/term/{taxonomy_term}/references'
+  defaults:
+    _controller: '\Drupal\term_reference\Controller\TermReferenceOverviewController::overview'
+    _title: 'References'
+  requirements:
+    _custom_access: 'term_reference.access_check::overviewAccess'
+  options:
+    _admin_route: TRUE
+    parameters:
+      taxonomy_term:
+        type: entity:taxonomy_term
+
+term_reference.reference:
+  path: '/taxonomy/term/{taxonomy_term}/references/{reference_field}'
+  defaults:
+    _form: '\Drupal\term_reference\Form\TermReferenceForm'
+    _title_callback: '\Drupal\term_reference\Controller\TermReferenceOverviewController::title'
+  requirements:
+    _custom_access: 'term_reference.access_check::access'
+    reference_field: '[a-z0-9_]+\.[a-z0-9_]+'
+  options:
+    _admin_route: TRUE
+    parameters:
+      taxonomy_term:
+        type: entity:taxonomy_term
+
+term_reference.autocomplete:
+  path: '/taxonomy/term/{taxonomy_term}/references/{reference_field}/autocomplete'
+  defaults:
+    _controller: '\Drupal\term_reference\Controller\TermReferenceAutocompleteController::autocomplete'
+  requirements:
+    _custom_access: 'term_reference.access_check::access'
+    reference_field: '[a-z0-9_]+\.[a-z0-9_]+'
+  options:
+    parameters:
+      taxonomy_term:
+        type: entity:taxonomy_term
