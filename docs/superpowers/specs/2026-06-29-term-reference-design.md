@@ -20,6 +20,21 @@ workflow.
 The proposed module is a new workflow: from a taxonomy term page, add or remove
 the term on eligible entity reference fields across content entities.
 
+## Drupal.org Project Files
+
+The module should be ready for contribution on Drupal.org. Include the standard
+project files at the module root:
+
+- `.gitlab-ci.yml`.
+- `composer.json`.
+- `phpcs.xml.dist`.
+- `phpstan.neon`.
+- `README.md`.
+
+After implementation, keep this design document and the implementation plan in a
+`docs/` directory inside the module so future contributors can understand the
+feature goals and build sequence.
+
 ## Navigation Model
 
 The module adds a primary local task named `References` to taxonomy term pages.
@@ -136,18 +151,16 @@ Functional tests should verify:
 - Users without sufficient update or field access cannot add or remove
   references.
 
-## Removed MSK-Specific Behavior
+## Generic Contrib Scope
 
-The contrib module should not preserve MSK-specific behavior from
-`MskTaxonomyNodeManageForm`.
-
-Remove these assumptions:
+The module should remain generic and should not preserve site-specific behavior
+from any originating implementation. Avoid these assumptions:
 
 - Node-only discovery and mutations.
 - First-name, last-name, computed-name, and parent-title sorting/display.
 - `administer nodes` checks.
 - NodeOrder integration.
-- MSK helper classes and procedural query helpers.
+- Custom helper classes and procedural query helpers from a source site.
 
 Use generic content entity APIs, `$entity->label()`, entity operations links,
 and entity/field access checks instead.

@@ -17,6 +17,11 @@
 - Create `web/modules/custom/term_reference/term_reference.links.task.yml`: primary local task plus deriver registration for secondary local tasks.
 - Create `web/modules/custom/term_reference/term_reference.services.yml`: autowired services.
 - Create `web/modules/custom/term_reference/term_reference.permissions.yml`: one narrow administrative fallback permission.
+- Create `web/modules/custom/term_reference/.gitlab-ci.yml`: Drupal.org GitLab CI template include.
+- Create `web/modules/custom/term_reference/composer.json`: Drupal.org Composer package metadata.
+- Create `web/modules/custom/term_reference/phpcs.xml.dist`: Drupal coding standards configuration.
+- Create `web/modules/custom/term_reference/phpstan.neon`: PHPStan configuration.
+- Create `web/modules/custom/term_reference/README.md`: concise project documentation and contrib positioning.
 - Create `web/modules/custom/term_reference/src/TermReferenceDiscoveryInterface.php`: discovery contract.
 - Create `web/modules/custom/term_reference/src/TermReferenceDiscovery.php`: discovers eligible `{entity_type_id}.{field_name}` groups.
 - Create `web/modules/custom/term_reference/src/TermReferenceManagerInterface.php`: mutation/query contract.
@@ -30,7 +35,8 @@
 - Create `web/modules/custom/term_reference/tests/modules/term_reference_test/term_reference_test.info.yml`: test helper module.
 - Create `web/modules/custom/term_reference/tests/modules/term_reference_test/config/install/*.yml`: test vocabulary, bundles, media type, and fields.
 - Create `web/modules/custom/term_reference/tests/src/Functional/TermReferenceManageFormTest.php`: browser coverage.
-- Create `web/modules/custom/term_reference/README.md`: concise project documentation and contrib positioning.
+- Move `docs/superpowers/specs/2026-06-29-term-reference-design.md` to `web/modules/custom/term_reference/docs/term-reference-design.md` after the module is built.
+- Move `docs/superpowers/plans/2026-06-29-term-reference.md` to `web/modules/custom/term_reference/docs/term-reference-implementation-plan.md` after the module is built.
 
 ## Task 1: Module Skeleton And Test Fixture Module
 
@@ -1526,13 +1532,150 @@ git add web/modules/custom/term_reference
 git commit -m "test: cover term reference access and media" -m "AI-assisted by Codex"
 ```
 
-## Task 7: Documentation, Linting, And Final Verification
+## Task 7: Drupal.org Project Files, Documentation, Linting, And Final Verification
 
 **Files:**
+- Create: `web/modules/custom/term_reference/.gitlab-ci.yml`
+- Create: `web/modules/custom/term_reference/composer.json`
+- Create: `web/modules/custom/term_reference/phpcs.xml.dist`
+- Create: `web/modules/custom/term_reference/phpstan.neon`
 - Create: `web/modules/custom/term_reference/README.md`
+- Create: `web/modules/custom/term_reference/docs/`
+- Move: `docs/superpowers/specs/2026-06-29-term-reference-design.md` to `web/modules/custom/term_reference/docs/term-reference-design.md`
+- Move: `docs/superpowers/plans/2026-06-29-term-reference.md` to `web/modules/custom/term_reference/docs/term-reference-implementation-plan.md`
 - Modify: files found by linting.
 
-- [ ] **Step 1: Add README**
+- [ ] **Step 1: Add Drupal.org GitLab CI**
+
+Create `web/modules/custom/term_reference/.gitlab-ci.yml` based on the Drupal.org template used by `web/modules/sandbox/entity_labels/.gitlab-ci.yml`:
+
+```yaml
+################
+# GitLabCI template for Drupal projects.
+#
+# This template is designed to give any Contrib maintainer everything they need to test, without requiring modification.
+# It is also designed to keep up to date with Core Development automatically through the use of include files that can be centrally maintained.
+# As long as you include the project, ref and three files below, any future updates added by the Drupal Association will be used in your
+# pipelines automatically. However, you can modify this template if you have additional needs for your project.
+# The full documentation is on https://project.pages.drupalcode.org/gitlab_templates/
+################
+
+# For information on alternative values for 'ref' see https://project.pages.drupalcode.org/gitlab_templates/info/templates-version/
+# To test a Drupal 7 project, change the first include filename from .main.yml to .main-d7.yml
+include:
+  - project: $_GITLAB_TEMPLATES_REPO
+    ref: $_GITLAB_TEMPLATES_REF
+    file:
+      - "/includes/include.drupalci.main.yml"
+      - "/includes/include.drupalci.variables.yml"
+      - "/includes/include.drupalci.workflows.yml"
+
+################
+# Pipeline configuration variables are defined with default values and descriptions in the file
+# https://git.drupalcode.org/project/gitlab_templates/-/blob/main/includes/include.drupalci.variables.yml
+# Uncomment the lines below if you want to override any of the variables. The following is just an example.
+################
+# variables:
+#   SKIP_ESLINT: '1'
+#   OPT_IN_TEST_NEXT_MAJOR: '1'
+#   _CURL_TEMPLATES_REF: 'main'
+```
+
+- [ ] **Step 2: Add Composer metadata**
+
+Create `web/modules/custom/term_reference/composer.json`:
+
+```json
+{
+    "name": "drupal/term_reference",
+    "description": "Manage taxonomy term entity references from taxonomy term pages.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://drupal.org/project/term_reference",
+    "support": {
+        "issues": "https://drupal.org/project/issues/term_reference",
+        "source": "https://git.drupalcode.org/project/term_reference"
+    },
+    "require": {
+        "drupal/core": "^10 || ^11"
+    }
+}
+```
+
+- [ ] **Step 3: Add PHPCS configuration**
+
+Create `web/modules/custom/term_reference/phpcs.xml.dist` based on `web/modules/sandbox/entity_labels/phpcs.xml.dist`:
+
+```xml
+<ruleset name="term_reference">
+
+  <description>Term Reference coding styles</description>
+
+  <arg name="extensions" value="php,module,inc,install,test,profile,theme"/>
+
+  <rule ref="Drupal"/>
+  <rule ref="DrupalPractice"/>
+  <rule ref="SlevomatCodingStandard.TypeHints"/>
+
+  <rule ref="Drupal.Files.LineLength">
+    <properties>
+      <property name="lineLimit" value="120"/>
+      <property name="absoluteLineLimit" value="0"/>
+    </properties>
+  </rule>
+
+  <rule ref="Drupal">
+    <exclude name="Drupal.Arrays.Array.LongLineDeclaration"/>
+    <exclude name="Drupal.Arrays.Array.ArrayIndentation"/>
+    <exclude name="Drupal.Commenting.DocComment.ShortNotCapital"/>
+    <exclude name="Drupal.Commenting.FunctionComment.TypeHintMissing"/>
+    <exclude name="Drupal.Commenting.InlineComment.NotCapital"/>
+    <exclude name="Drupal.Files.LineLength.TooLong"/>
+    <exclude name="Drupal.NamingConventions.ValidVariableName.LowerCamelName"/>
+    <exclude name="Drupal.Semantics.FunctionT.NotLiteralString"/>
+    <exclude name="Drupal.Semantics.FunctionT.ConcatString"/>
+    <exclude name="Drupal.Strings.UnnecessaryStringConcat.Found"/>
+  </rule>
+
+  <rule ref="DrupalPractice">
+    <exclude name="DrupalPractice.General.ExceptionT.ExceptionT"/>
+  </rule>
+
+  <rule ref="Generic.CodeAnalysis.UselessOverridingMethod">
+    <exclude name="Generic.CodeAnalysis.UselessOverridingMethod.Found"/>
+  </rule>
+
+  <rule ref="SlevomatCodingStandard.Namespaces.AlphabeticallySortedUses"/>
+  <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison"/>
+  <rule ref="SlevomatCodingStandard.TypeHints.DNFTypeHintFormat"/>
+
+  <rule ref="SlevomatCodingStandard.TypeHints">
+    <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.UselessAnnotation"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingTraversableTypeHintSpecification"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.DisallowArrayTypeHintSyntax.DisallowedArrayTypeHintSyntax"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.ClassConstantTypeHint.MissingNativeTypeHint"/>
+    <exclude name="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat"/>
+  </rule>
+
+</ruleset>
+```
+
+- [ ] **Step 4: Add PHPStan configuration**
+
+Create `web/modules/custom/term_reference/phpstan.neon`:
+
+```neon
+parameters:
+  level: 6
+  ignoreErrors:
+    - identifier: missingType.iterableValue
+```
+
+- [ ] **Step 5: Add README**
 
 Create `web/modules/custom/term_reference/README.md`:
 
@@ -1550,9 +1693,57 @@ example, a `field_tags` field on nodes and media appears as `Tags (Content)` and
 The module uses Drupal entity and field access checks before mutating
 references. It does not create bundle-specific tabs; each task manages all
 eligible bundles for the selected entity type and field name.
+
+## Features
+
+- Adds a **References** local task to taxonomy term pages.
+- Generates secondary tasks per `{entity_type_id}.{field_name}` pair, such as
+  `Tags (Content)` and `Tags (Media)`.
+- Lists existing references with label, ID, published state, and operations.
+- Adds existing entities to the current term through an autocomplete field.
+- Removes only the current term from selected entity references.
+- Supports fieldable content entity types with configurable taxonomy term
+  reference fields.
+
+## Requirements
+
+- Drupal core Field module.
+- Drupal core Taxonomy module.
+
+## Permissions
+
+- **administer term references** - Access term reference management routes.
+
+Entity update access and field edit access are checked before references are
+changed.
+
+## Usage
+
+1. Add an entity reference field that targets taxonomy terms to a fieldable
+   content entity type.
+2. Configure at least one field instance to reference a vocabulary.
+3. Navigate to a term in that vocabulary.
+4. Open the **References** tab.
+5. Use the secondary task for the entity type and field name you want to manage.
+
+---
+
+This module was created using AI and understood by humans. See [Never submit code you do not understand](https://dri.es/never-submit-code-you-do-not-understand).
 ```
 
-- [ ] **Step 2: Run automated tests**
+- [ ] **Step 6: Move design and plan documents into the module**
+
+After the module exists and the implementation is complete, move the planning documents into the module's `docs/` directory:
+
+```bash
+mkdir -p web/modules/custom/term_reference/docs
+git mv docs/superpowers/specs/2026-06-29-term-reference-design.md web/modules/custom/term_reference/docs/term-reference-design.md
+git mv docs/superpowers/plans/2026-06-29-term-reference.md web/modules/custom/term_reference/docs/term-reference-implementation-plan.md
+```
+
+Expected: `web/modules/custom/term_reference/docs/term-reference-design.md` and `web/modules/custom/term_reference/docs/term-reference-implementation-plan.md` exist, and the original files under `docs/superpowers/` are removed by `git mv`.
+
+- [ ] **Step 7: Run automated tests**
 
 Run:
 
@@ -1562,7 +1753,7 @@ ddev phpunit web/modules/custom/term_reference/tests/src/Functional/TermReferenc
 
 Expected: PASS.
 
-- [ ] **Step 3: Run lint and static review**
+- [ ] **Step 8: Run lint and static review**
 
 Run:
 
@@ -1572,7 +1763,7 @@ ddev code-review web/modules/custom/term_reference
 
 Expected: PASS.
 
-- [ ] **Step 4: Fix automated review findings**
+- [ ] **Step 9: Fix automated review findings**
 
 Run:
 
@@ -1583,15 +1774,15 @@ ddev code-review web/modules/custom/term_reference
 
 Expected: PASS after fixes.
 
-- [ ] **Step 5: Commit documentation and verification fixes**
+- [ ] **Step 10: Commit Drupal.org files, moved docs, and verification fixes**
 
 ```bash
-git add web/modules/custom/term_reference
-git commit -m "docs: document Term Reference module" -m "AI-assisted by Codex"
+git add web/modules/custom/term_reference docs/superpowers
+git commit -m "docs: add Term Reference project files" -m "AI-assisted by Codex"
 ```
 
 ## Self-Review
 
-- Spec coverage: The plan covers module metadata, discovery, route generation, local task derivation, generic entity management, summary details, table columns, access checks, test fixtures, media and node coverage, and documentation.
+- Spec coverage: The plan covers module metadata, discovery, route generation, local task derivation, generic entity management, summary details, table columns, access checks, test fixtures, media and node coverage, Drupal.org project files, moved module docs, and documentation.
 - Placeholder scan: The plan avoids placeholder markers and names concrete files, classes, commands, and expected outcomes.
 - Type consistency: The service names, class names, route parameters, and group array keys are consistent across tasks.
