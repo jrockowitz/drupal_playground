@@ -56,6 +56,7 @@ A field instance is eligible for a taxonomy term when its reference handler
 configuration allows the term's vocabulary. Discovery returns:
 
 - Field ID, entity type ID, and entity type label.
+- Bundle entity type label, such as `Content types` or `Media types`.
 - Field name and display label.
 - Target vocabulary ID.
 - Eligible bundle IDs and labels.
@@ -95,6 +96,10 @@ for the selected field:
 - `#selection_handler` is `default`.
 - `#selection_settings['target_bundles']` is the eligible bundle list.
 - `#validate_reference` is `TRUE`.
+
+The autocomplete and chooser descriptions use the discovered bundle entity type
+label so the UI says `Content types` or `Media types` instead of the generic
+`Eligible bundles`.
 
 The existing references fieldset includes a table with Label, ID, Bundle,
 Published, and Operations columns. Rows can be selected and removed. Removing

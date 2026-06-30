@@ -69,6 +69,7 @@ Discovery returns arrays keyed by `{entity_type_id}.{field_name}` with:
 - `id`.
 - `entity_type_id`.
 - `entity_type_label`.
+- `bundle_entity_type_label`.
 - `field_name`.
 - `field_label`.
 - `vocabulary_id`.
@@ -104,6 +105,10 @@ The add fieldset uses Drupal core's `entity_autocomplete` element:
 - `#selection_handler`: `default`.
 - `#selection_settings['target_bundles']`: discovered eligible bundles.
 - `#validate_reference`: `TRUE`.
+
+Form descriptions use `bundle_entity_type_label` from discovery so target
+bundles are introduced with entity-specific labels such as `Content types` and
+`Media types`.
 
 The module does not provide a custom autocomplete route or raw ID-only input.
 Drupal validates autocomplete selections first, then

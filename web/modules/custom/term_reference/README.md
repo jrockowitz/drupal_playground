@@ -84,8 +84,7 @@ chooser link points back to the same route with the selected
 Important services:
 
 - `term_reference.discovery` discovers eligible taxonomy term reference fields
-  and caches results in `cache.discovery`. `getFieldsForVocabulary()` can also
-  filter fields to those editable by an account.
+  and caches results in `cache.discovery`.
 - `term_reference.manager` loads, adds, and removes term references on content
   entities. It also exposes the shared reference access checks used by the form.
 
