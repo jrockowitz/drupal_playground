@@ -1,6 +1,0 @@
-term_reference.references:
-  route_name: term_reference.references
-  base_route: entity.taxonomy_term.canonical
-  title: 'References'
-  route_parameters:
-    field: ''
