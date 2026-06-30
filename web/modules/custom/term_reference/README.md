@@ -4,6 +4,13 @@ Term Reference adds a **References** tab to taxonomy term pages. The tab lets
 editors add or remove the current term from eligible taxonomy term entity
 fields on content entities.
 
+## Use case
+
+Term Reference is useful when a site builder or editor is given a list of
+content items to add to a taxonomy term. Instead of opening and editing each
+content item individually, they can open the taxonomy term, use the
+**References** tab, and add all matching content items from one place.
+
 ## Features
 
 - **References primary tab** on taxonomy term pages.
