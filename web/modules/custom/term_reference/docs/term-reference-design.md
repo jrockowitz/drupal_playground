@@ -43,8 +43,8 @@ fields to those the current account can manage for the term:
 - Multiple accessible fields: the page renders an `admin_block_content` chooser
   with links back to the same route and the selected field parameter.
 
-This keeps the common single-field workflow direct while avoiding generated
-secondary local tasks for the less common multi-field case.
+This keeps the common single-field workflow direct. The multi-field case is
+handled inside the References page.
 
 ## Discovery
 
@@ -98,8 +98,7 @@ for the selected field:
 - `#validate_reference` is `TRUE`.
 
 The autocomplete and chooser descriptions use the discovered bundle entity type
-label so the UI says `Content types` or `Media types` instead of the generic
-`Eligible bundles`.
+label, such as `Content types` or `Media types`.
 
 The existing references fieldset includes a table with Label, ID, Bundle,
 Published, and Operations columns. Rows can be selected and removed. Removing
@@ -113,8 +112,7 @@ autocomplete field or existing references fieldset.
 
 ## Access
 
-Access relies on Drupal entity and field access instead of a module-specific
-permission.
+Access relies on Drupal entity and field access.
 
 The route is available only when at least one field can be managed for the
 current term. For a selected field, access requires:

@@ -60,67 +60,6 @@ only when the current account can update the taxonomy term and edit at least one
 eligible target field. Add and remove operations also check target entity update
 access and field edit access before changing entities.
 
-## Developer notes
-
-Term Reference uses one route with an optional field parameter:
-
-```text
-/taxonomy/term/{taxonomy_term}/references/{field}
-```
-
-The `field` parameter is optional, so both URLs are valid:
-
-```text
-/taxonomy/term/1/references
-/taxonomy/term/1/references/node.field_tags
-```
-
-When no field parameter is present, `TermReferenceForm` filters discovered
-fields by access. One accessible field opens the management form directly.
-Multiple accessible fields render an `admin_block_content` chooser. Each
-chooser link points back to the same route with the selected
-`{entity_type_id}.{field_name}` value.
-
-Important services:
-
-- `term_reference.discovery` discovers eligible taxonomy term reference fields
-  and caches results in `cache.discovery`.
-- `term_reference.manager` loads, adds, and removes term references on content
-  entities. It also exposes the shared reference access checks used by the form.
-
-The form owns the single UI route and delegates reusable access decisions to
-discovery and manager services. The module does not provide a custom permission.
-
-The add form uses Drupal core's `entity_autocomplete` element with
-`#tags => TRUE`, `#validate_reference => TRUE`, and bundle-restricted selection
-settings. Raw ID-only input and custom autocomplete routes are intentionally not
-supported.
-
-Add and remove submit buttons support Drupal AJAX and normal non-JavaScript form
-submissions. AJAX responses replace the `term-reference-form-wrapper`, refresh
-status messages, announce state changes, and move focus to the rebuilt
-autocomplete field or existing references fieldset.
-
-Useful verification commands:
-
-```bash
-ddev phpunit web/modules/custom/term_reference/tests
-ddev phpcs web/modules/custom/term_reference
-ddev phpstan web/modules/custom/term_reference
-ddev drush cr
-```
-
-After rebuilding caches, smoke test a route such as:
-
-```text
-/taxonomy/term/1/references
-/taxonomy/term/1/references/node.field_tags
-```
-
-For deeper architecture notes, see the `docs/` directory. Avoid running
-`ddev code-review` only against `docs/`; PHPStan expects PHP files and stylelint
-will try to parse Markdown as CSS.
-
 ## Documentation
 
 Design notes and the implementation plan are available in the `docs/` directory.

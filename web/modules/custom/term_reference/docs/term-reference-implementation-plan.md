@@ -110,10 +110,9 @@ Form descriptions use `bundle_entity_type_label` from discovery so target
 bundles are introduced with entity-specific labels such as `Content types` and
 `Media types`.
 
-The module does not provide a custom autocomplete route or raw ID-only input.
-Drupal validates autocomplete selections first, then
-`TermReferenceForm::validateAddReference()` checks that every selected entity can
-be managed.
+The add form uses Drupal core autocomplete validation. Drupal validates
+autocomplete selections first, then `TermReferenceForm::validateAddReference()`
+checks that every selected entity can be managed.
 
 The existing references fieldset contains a render-array table with Label, ID,
 Bundle, Published, and Operations columns. Remove checkboxes are only rendered
@@ -126,8 +125,7 @@ existing references fieldset.
 
 ## Access Model
 
-The module intentionally does not define a custom permission and no longer has a
-separate access service.
+The module uses Drupal entity and field access without a custom permission.
 
 `TermReferenceForm::access()` checks the route. With no field parameter, access
 is allowed when the current account can manage at least one discovered field for
