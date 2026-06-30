@@ -113,9 +113,8 @@ class TermReferenceFormTest extends BrowserTestBase {
       ],
     ])->save();
 
-    // Rebuild so the web server process sees field-derived local tasks.
+    // Rebuild so the web server process sees field configuration.
     $this->rebuildAll();
-    $this->container->get('plugin.manager.menu.local_task')->clearCachedDefinitions();
   }
 
   /**
@@ -139,6 +138,7 @@ class TermReferenceFormTest extends BrowserTestBase {
     $this->assertSame(['article', 'page'], array_keys($fields['node.field_tags']['bundles']));
     $this->assertSame('Tags', $fields['node.field_tags']['field_label']);
     $this->assertSame('Content', $fields['node.field_tags']['entity_type_label']);
+    $this->assertSame('Content types', $fields['node.field_tags']['bundle_entity_type_label']);
 
     $account = $this->drupalCreateUser([
       'access content',
@@ -177,11 +177,9 @@ class TermReferenceFormTest extends BrowserTestBase {
     ]);
     $media->save();
 
-    $access = $this->container->get('Drupal\term_reference\TermReferenceAccessInterface')
-      ->overviewAccess($account, $term);
-    $this->assertTrue($access->isAllowed());
     $local_tasks = $this->container->get('plugin.manager.menu.local_task')->getDefinitions();
-    $this->assertArrayHasKey('term_reference.reference_tasks:node.field_tags', $local_tasks);
+    $this->assertArrayHasKey('term_reference.references', $local_tasks);
+    $this->assertArrayNotHasKey('term_reference.reference_tasks:node.field_tags', $local_tasks);
     $this->assertStringNotContainsString(
       'weight:',
       file_get_contents(DRUPAL_ROOT . '/modules/custom/term_reference/term_reference.links.task.yml')
@@ -190,7 +188,7 @@ class TermReferenceFormTest extends BrowserTestBase {
     $this->drupalGet($term->toUrl());
     $this->assertSession()->statusCodeEquals(200);
 
-    // Check that the References task and generated secondary tasks are visible.
+    // Check that the References task opens a field chooser when multiple fields are available.
     $this->assertSession()->linkExists('References');
     $this->clickLink('References');
     $this->assertSession()->linkExists('Tags (Content)');
@@ -203,7 +201,7 @@ class TermReferenceFormTest extends BrowserTestBase {
     $this->assertSession()->pageTextNotContains('Field summary');
     $this->assertSession()->pageTextContains('Add Content references to Blue');
     $this->assertSession()->elementExists('css', 'fieldset legend:contains("Add Content references to Blue")');
-    $this->assertSession()->pageTextContains('Enter one or more existing Content entities. Eligible bundles: Article, Basic page.');
+    $this->assertSession()->pageTextContains('Enter one or more existing Content entities. Content types: Article, Basic page.');
 
     $this->submitForm([
       'entities' => 'Page reference (' . $page->id() . '), Article reference (' . $article->id() . ')',
@@ -240,6 +238,7 @@ class TermReferenceFormTest extends BrowserTestBase {
 
     $this->drupalGet('/taxonomy/term/' . $term->id() . '/references/media.field_tags');
     $this->assertSession()->titleEquals('Add references to Blue | Drupal');
+    $this->assertSession()->pageTextContains('Media types: Image.');
     $this->submitForm([
       'entities' => 'Image reference (' . $media->id() . ')',
     ], 'Add');
@@ -257,6 +256,50 @@ class TermReferenceFormTest extends BrowserTestBase {
 
     // Check that users without management access cannot use the route.
     $this->assertSession()->statusCodeEquals(403);
+
+    $this->drupalLogin($account);
+    Vocabulary::create([
+      'vid' => 'topics',
+      'name' => 'Topics',
+    ])->save();
+    FieldStorageConfig::create([
+      'field_name' => 'field_topics',
+      'entity_type' => 'node',
+      'type' => 'entity_reference',
+      'cardinality' => -1,
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_topics',
+      'entity_type' => 'node',
+      'bundle' => 'page',
+      'label' => 'Topics',
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => [
+            'topics' => 'topics',
+          ],
+        ],
+      ],
+    ])->save();
+    $topic = $this->container->get('entity_type.manager')
+      ->getStorage('taxonomy_term')
+      ->create([
+        'vid' => 'topics',
+        'name' => 'Red',
+      ]);
+    $topic->save();
+
+    $this->drupalGet('/taxonomy/term/' . $topic->id() . '/references');
+
+    // Check that the only available field is managed directly on the primary route.
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->addressEquals('/taxonomy/term/' . $topic->id() . '/references');
+    $this->assertSession()->pageTextContains('Add Content references to Red');
+    $this->assertSession()->linkNotExists('Topics (Content)');
   }
 
 }

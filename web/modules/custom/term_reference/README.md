@@ -14,11 +14,13 @@ content item individually, they can open the taxonomy term, use the
 ## Features
 
 - **References primary tab** on taxonomy term pages.
-- **Generated secondary tabs** per `{entity_type_id}.{field_name}` pair, such as
-  `Tags (Content)` and `Tags (Media)`.
+- **Single-field shortcut** that opens the add/remove form directly when only
+  one accessible field references the term vocabulary.
+- **Multi-field chooser** using Drupal admin block links when more than one
+  accessible field references the term vocabulary.
 - **Cross-bundle management** for the same entity type and field name. For
   example, `node.field_tags` can manage Basic page and Article nodes from one
-  `Tags (Content)` task.
+  Content field page.
 - **Bundle-aware entity autocomplete** for adding one or more existing entities
   from the current field.
 - **Generic entity table** with Label, ID, Published, and Operations columns.
@@ -46,8 +48,10 @@ drush en term_reference
 2. Configure the field instance to target one or more vocabularies.
 3. Visit a taxonomy term page from one of those vocabularies.
 4. Open the **References** tab.
-5. Choose the secondary tab for the field, add existing entities through
-   autocomplete, or remove existing references from the table.
+5. If one field is available, add existing entities through autocomplete or
+   remove existing references from the table.
+6. If multiple fields are available, choose the field link first, then add or
+   remove references.
 
 ## Access
 
@@ -58,30 +62,35 @@ access and field edit access before changing entities.
 
 ## Developer notes
 
-Routes are static and use a field parameter instead of generating one route per
-field:
+Term Reference uses one route with an optional field parameter:
 
 ```text
-/taxonomy/term/{taxonomy_term}/references
-/taxonomy/term/{taxonomy_term}/references/{entity_type_id}.{field_name}
+/taxonomy/term/{taxonomy_term}/references/{field}
 ```
 
-The primary `References` route redirects to the first accessible field-specific
-task. The field-specific page title is `Add references to %term`.
+The `field` parameter is optional, so both URLs are valid:
 
-Secondary local tasks are derived from discovered fields by
-`TermReferenceLocalTasks`. A task is keyed by `{entity_type_id}.{field_name}`;
-for example, `node.field_tags` can manage all eligible node bundles that have a
-`field_tags` field targeting the current term vocabulary.
+```text
+/taxonomy/term/1/references
+/taxonomy/term/1/references/node.field_tags
+```
+
+When no field parameter is present, `TermReferenceForm` filters discovered
+fields by access. One accessible field opens the management form directly.
+Multiple accessible fields render an `admin_block_content` chooser. Each
+chooser link points back to the same route with the selected
+`{entity_type_id}.{field_name}` value.
 
 Important services:
 
 - `term_reference.discovery` discovers eligible taxonomy term reference fields
-  and caches results in `cache.discovery`.
+  and caches results in `cache.discovery`. `getFieldsForVocabulary()` can also
+  filter fields to those editable by an account.
 - `term_reference.manager` loads, adds, and removes term references on content
-  entities.
-- `term_reference.access` handles route, field, and entity management access using term
-  update access and target field edit access.
+  entities. It also exposes the shared reference access checks used by the form.
+
+The form owns the single UI route and delegates reusable access decisions to
+discovery and manager services. The module does not provide a custom permission.
 
 The add form uses Drupal core's `entity_autocomplete` element with
 `#tags => TRUE`, `#validate_reference => TRUE`, and bundle-restricted selection
@@ -105,6 +114,7 @@ ddev drush cr
 After rebuilding caches, smoke test a route such as:
 
 ```text
+/taxonomy/term/1/references
 /taxonomy/term/1/references/node.field_tags
 ```
 

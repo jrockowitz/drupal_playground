@@ -1,21 +1,9 @@
 term_reference.references:
-  path: '/taxonomy/term/{taxonomy_term}/references'
-  defaults:
-    _controller: '\Drupal\term_reference\Controller\TermReferenceOverviewController::overview'
-    _title: 'References'
-  requirements:
-    _custom_access: '\Drupal\term_reference\Controller\TermReferenceOverviewController::access'
-  options:
-    _admin_route: TRUE
-    parameters:
-      taxonomy_term:
-        type: entity:taxonomy_term
-
-term_reference.reference:
   path: '/taxonomy/term/{taxonomy_term}/references/{field}'
   defaults:
     _form: '\Drupal\term_reference\Form\TermReferenceForm'
-    _title_callback: '\Drupal\term_reference\Controller\TermReferenceOverviewController::title'
+    _title_callback: '\Drupal\term_reference\Form\TermReferenceForm::title'
+    field: ''
   requirements:
     _custom_access: '\Drupal\term_reference\Form\TermReferenceForm::access'
     field: '[a-z0-9_]+\.[a-z0-9_]+'

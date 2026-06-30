@@ -2,6 +2,8 @@
 
 namespace Drupal\term_reference;
 
+use Drupal\Core\Session\AccountInterface;
+
 /**
  * Discovers entity fields that can reference taxonomy terms.
  */
@@ -20,11 +22,13 @@ interface TermReferenceDiscoveryInterface {
    *
    * @param string $vocabulary_id
    *   The taxonomy vocabulary ID.
+   * @param \Drupal\Core\Session\AccountInterface|null $account
+   *   The account to filter editable fields by, or NULL to return all fields.
    *
    * @return array
    *   Fields keyed by entity type ID and field name.
    */
-  public function getFieldsForVocabulary(string $vocabulary_id): array;
+  public function getFieldsForVocabulary(string $vocabulary_id, ?AccountInterface $account = NULL): array;
 
   /**
    * Gets one field for a vocabulary.

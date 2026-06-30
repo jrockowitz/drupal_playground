@@ -12,7 +12,7 @@ use Drupal\taxonomy\Entity\Vocabulary;
 /**
  * Provides shared setup and fixture helpers for Term Reference kernel tests.
  */
-abstract class TermReferenceManagerKernelBase extends KernelTestBase {
+abstract class TermReferenceKernelBase extends KernelTestBase {
 
   /**
    * {@inheritdoc}
@@ -35,6 +35,7 @@ abstract class TermReferenceManagerKernelBase extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('user');
+    $this->installSchema('node', ['node_access']);
     $this->installConfig(['node', 'system', 'taxonomy', 'user']);
   }
 

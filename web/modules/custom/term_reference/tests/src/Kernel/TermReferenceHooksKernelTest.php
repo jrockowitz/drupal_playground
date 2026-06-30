@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('term_reference')]
 #[RunTestsInSeparateProcesses]
-class TermReferenceHooksKernelTest extends TermReferenceManagerKernelBase {
+class TermReferenceHooksKernelTest extends TermReferenceKernelBase {
 
   /**
    * {@inheritdoc}
@@ -27,7 +27,7 @@ class TermReferenceHooksKernelTest extends TermReferenceManagerKernelBase {
   /**
    * Tests OOP and legacy field config hook paths.
    */
-  public function testFieldConfigHooksClearLocalTasks(): void {
+  public function testFieldConfigHooksClearDiscovery(): void {
     $discovery = $this->container->get('term_reference.discovery');
     $this->assertSame([], $discovery->getFieldsForVocabulary('tags'));
 
@@ -47,10 +47,8 @@ class TermReferenceHooksKernelTest extends TermReferenceManagerKernelBase {
     ]);
     $field_config->save();
 
-    // Check that the OOP hook clears stale discovery and marks routes for rebuild.
-    $this->assertTrue($this->routeBuilderNeedsRebuild());
+    // Check that the OOP hook clears stale discovery.
     $this->assertArrayHasKey('node.field_tags', $discovery->getFieldsForVocabulary('tags'));
-    $this->setRouteBuilderNeedsRebuild(FALSE);
 
     $field_config->setLabel('Topics');
     $field_config->setSettings([
@@ -69,43 +67,7 @@ class TermReferenceHooksKernelTest extends TermReferenceManagerKernelBase {
     term_reference_field_config_update($field_config);
 
     // Check that the legacy hook shim delegates to the same hook service.
-    $this->assertTrue($this->routeBuilderNeedsRebuild());
-  }
-
-  /**
-   * Gets whether the route builder needs rebuild.
-   *
-   * @return bool
-   *   TRUE if the route builder needs rebuild.
-   */
-  protected function routeBuilderNeedsRebuild(): bool {
-    $route_builder = $this->getProxiedRouteBuilder();
-    $property = new \ReflectionProperty($route_builder, 'rebuildNeeded');
-    return (bool) $property->getValue($route_builder);
-  }
-
-  /**
-   * Sets whether the route builder needs rebuild.
-   *
-   * @param bool $needs_rebuild
-   *   TRUE if the route builder needs rebuild.
-   */
-  protected function setRouteBuilderNeedsRebuild(bool $needs_rebuild): void {
-    $route_builder = $this->getProxiedRouteBuilder();
-    $property = new \ReflectionProperty($route_builder, 'rebuildNeeded');
-    $property->setValue($route_builder, $needs_rebuild);
-  }
-
-  /**
-   * Gets the proxied route builder service.
-   *
-   * @return object
-   *   The proxied route builder service.
-   */
-  protected function getProxiedRouteBuilder(): object {
-    $proxy = $this->container->get('router.builder');
-    $property = new \ReflectionProperty($proxy, 'service');
-    return $property->getValue($proxy);
+    $this->assertArrayNotHasKey('node.field_tags', $discovery->getFieldsForVocabulary('tags'));
   }
 
 }

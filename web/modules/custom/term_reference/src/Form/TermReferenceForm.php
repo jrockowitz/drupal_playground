@@ -2,6 +2,7 @@
 
 namespace Drupal\term_reference\Form;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\AnnounceCommand;
@@ -15,8 +16,8 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\taxonomy\TermInterface;
-use Drupal\term_reference\TermReferenceAccessInterface;
 use Drupal\term_reference\TermReferenceDiscoveryInterface;
 use Drupal\term_reference\TermReferenceManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -52,15 +53,12 @@ class TermReferenceForm extends FormBase {
    *   The term reference discovery service.
    * @param \Drupal\term_reference\TermReferenceManagerInterface $termReferenceManager
    *   The term reference manager.
-   * @param \Drupal\term_reference\TermReferenceAccessInterface $termReferenceAccess
-   *   The term reference access service.
    */
   public function __construct(
     protected EntityTypeManagerInterface $entityTypeManager,
     protected AccountInterface $currentUser,
     protected TermReferenceDiscoveryInterface $termReferenceDiscovery,
     protected TermReferenceManagerInterface $termReferenceManager,
-    protected TermReferenceAccessInterface $termReferenceAccess,
   ) {}
 
   /**
@@ -71,8 +69,7 @@ class TermReferenceForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('term_reference.discovery'),
-      $container->get('term_reference.manager'),
-      $container->get('term_reference.access')
+      $container->get('term_reference.manager')
     );
   }
 
@@ -84,20 +81,46 @@ class TermReferenceForm extends FormBase {
   }
 
   /**
-   * Checks access to a term reference route.
+   * Gets the term reference page title.
+   *
+   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
+   *   The taxonomy term.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The page title.
+   */
+  public function title(TermInterface $taxonomy_term): TranslatableMarkup {
+    return $this->t('Add references to %term', ['%term' => $taxonomy_term->label()]);
+  }
+
+  /**
+   * Checks access to the term reference route.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The current account.
    * @param \Drupal\taxonomy\TermInterface $taxonomy_term
    *   The taxonomy term.
    * @param string $field
-   *   The field ID.
+   *   The optional field ID.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function access(AccountInterface $account, TermInterface $taxonomy_term, string $field): AccessResultInterface {
-    return $this->termReferenceAccess->routeAccess($account, $taxonomy_term, $field);
+  public function access(AccountInterface $account, TermInterface $taxonomy_term, string $field = ''): AccessResultInterface {
+    if ($field !== '') {
+      [$entity_type_id, $field_name] = $this->splitField($field);
+      $reference_field = $this->termReferenceDiscovery->getField($taxonomy_term->bundle(), $entity_type_id, $field_name);
+      if (!$reference_field) {
+        return AccessResult::forbidden()->addCacheableDependency($taxonomy_term);
+      }
+      return $this->termReferenceManager->accessReference($account, $taxonomy_term, $reference_field);
+    }
+
+    $access = AccessResult::neutral()->addCacheableDependency($taxonomy_term);
+    foreach ($this->termReferenceDiscovery->getFieldsForVocabulary($taxonomy_term->bundle(), $account) as $reference_field) {
+      $access = $access->orIf($this->termReferenceManager->accessReference($account, $taxonomy_term, $reference_field));
+    }
+    return $access;
   }
 
   /**
@@ -105,10 +128,6 @@ class TermReferenceForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?TermInterface $taxonomy_term = NULL, string $field = ''): array {
     $this->term = $taxonomy_term;
-    [$entity_type_id, $field_name] = $this->splitField($field);
-    $field = $this->termReferenceDiscovery->getField($taxonomy_term->bundle(), $entity_type_id, $field_name);
-    $this->field = $field;
-    $bundle_labels = array_column($field['bundles'], 'label');
 
     $form['#prefix'] = '<div id="' . static::AJAX_WRAPPER_ID . '">';
     $form['#suffix'] = '</div>';
@@ -116,6 +135,48 @@ class TermReferenceForm extends FormBase {
       '#type' => 'status_messages',
       '#weight' => -100,
     ];
+
+    if ($field !== '') {
+      [$entity_type_id, $field_name] = $this->splitField($field);
+      $this->field = $this->termReferenceDiscovery->getField($taxonomy_term->bundle(), $entity_type_id, $field_name) ?? [];
+      return $this->buildReferenceForm($form, $form_state, $taxonomy_term, $this->field);
+    }
+
+    $fields = $this->termReferenceDiscovery->getFieldsForVocabulary($taxonomy_term->bundle(), $this->currentUser);
+    if (count($fields) === 1) {
+      $this->field = reset($fields);
+      return $this->buildReferenceForm($form, $form_state, $taxonomy_term, $this->field);
+    }
+    if (count($fields) > 1) {
+      return $this->buildFieldChooser($form, $taxonomy_term, $fields);
+    }
+
+    $form['empty'] = [
+      '#markup' => $this->t('No fields are available for this term.'),
+      '#prefix' => '<p>',
+      '#suffix' => '</p>',
+    ];
+
+    return $form;
+  }
+
+  /**
+   * Builds the add and remove reference form.
+   *
+   * @param array $form
+   *   The form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
+   *   The taxonomy term.
+   * @param array $field
+   *   The selected field.
+   *
+   * @return array
+   *   The form.
+   */
+  protected function buildReferenceForm(array $form, FormStateInterface $form_state, TermInterface $taxonomy_term, array $field): array {
+    $bundle_labels = array_column($field['bundles'], 'label');
 
     $form['add'] = [
       '#type' => 'fieldset',
@@ -127,8 +188,9 @@ class TermReferenceForm extends FormBase {
     $form['add']['entities'] = [
       '#type' => 'entity_autocomplete',
       '#title' => $this->t('@entity_type entities', ['@entity_type' => $field['entity_type_label']]),
-      '#description' => $this->t('Enter one or more existing @entity_type entities. Eligible bundles: @bundles.', [
+      '#description' => $this->t('Enter one or more existing @entity_type entities. @bundle_entity_type: @bundles.', [
         '@entity_type' => $field['entity_type_label'],
+        '@bundle_entity_type' => $field['bundle_entity_type_label'],
         '@bundles' => implode(', ', $bundle_labels),
       ]),
       '#target_type' => $field['entity_type_id'],
@@ -190,6 +252,47 @@ class TermReferenceForm extends FormBase {
         ],
       ];
     }
+
+    return $form;
+  }
+
+  /**
+   * Builds a chooser for multiple accessible fields.
+   *
+   * @param array $form
+   *   The form.
+   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
+   *   The taxonomy term.
+   * @param array $fields
+   *   The accessible fields.
+   *
+   * @return array
+   *   The form.
+   */
+  protected function buildFieldChooser(array $form, TermInterface $taxonomy_term, array $fields): array {
+    $content = [];
+    foreach ($fields as $field) {
+      $bundle_labels = array_column($field['bundles'], 'label');
+      $content[$field['id']] = [
+        'title' => $this->t('@field (@entity_type)', [
+          '@field' => $field['field_label'],
+          '@entity_type' => $field['entity_type_label'],
+        ]),
+        'description' => $this->t('@bundle_entity_type: @bundles.', [
+          '@bundle_entity_type' => $field['bundle_entity_type_label'],
+          '@bundles' => implode(', ', $bundle_labels),
+        ]),
+        'url' => Url::fromRoute('term_reference.references', [
+          'taxonomy_term' => $taxonomy_term->id(),
+          'field' => $field['id'],
+        ]),
+      ];
+    }
+
+    $form['fields'] = [
+      '#theme' => 'admin_block_content',
+      '#content' => $content,
+    ];
 
     return $form;
   }
@@ -258,7 +361,7 @@ class TermReferenceForm extends FormBase {
         '#type' => 'checkbox',
         '#title' => $this->t('Remove @label', ['@label' => $entity->label()]),
         '#title_display' => 'invisible',
-        '#access' => $this->termReferenceAccess->entityCanBeManaged($entity, $field, $this->currentUser),
+        '#access' => $this->termReferenceManager->entityCanBeManaged($entity, $field, $this->currentUser),
       ],
       'label' => [
         '#plain_text' => $entity->label(),
@@ -321,7 +424,7 @@ class TermReferenceForm extends FormBase {
         $form_state->setErrorByName('entities', $this->t('Select entities from the autocomplete suggestions.'));
         return;
       }
-      if (!$this->termReferenceAccess->entityCanBeManaged($entity, $this->field, $this->currentUser)) {
+      if (!$this->termReferenceManager->entityCanBeManaged($entity, $this->field, $this->currentUser)) {
         $form_state->setErrorByName('entities', $this->t('The selected entity cannot be managed.'));
         return;
       }
@@ -379,7 +482,7 @@ class TermReferenceForm extends FormBase {
     $storage = $this->entityTypeManager->getStorage($this->field['entity_type_id']);
     $removed_count = 0;
     foreach ($storage->loadMultiple($this->getSelectedReferenceIds($form_state)) as $entity) {
-      if ($entity instanceof ContentEntityInterface && $this->termReferenceAccess->entityCanBeManaged($entity, $this->field, $this->currentUser)) {
+      if ($entity instanceof ContentEntityInterface && $this->termReferenceManager->entityCanBeManaged($entity, $this->field, $this->currentUser)) {
         $this->termReferenceManager->removeReference($entity, $this->term, $this->field['field_name']);
         $removed_count++;
       }

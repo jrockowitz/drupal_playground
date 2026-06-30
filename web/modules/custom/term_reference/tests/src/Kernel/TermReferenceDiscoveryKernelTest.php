@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\term_reference\Kernel;
 
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\term_reference\TermReferenceDiscoveryInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -11,7 +12,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('term_reference')]
 #[RunTestsInSeparateProcesses]
-class TermReferenceDiscoveryKernelTest extends TermReferenceManagerKernelBase {
+class TermReferenceDiscoveryKernelTest extends TermReferenceKernelBase {
 
   /**
    * The discovery service under test.
@@ -37,6 +38,7 @@ class TermReferenceDiscoveryKernelTest extends TermReferenceManagerKernelBase {
     $this->assertArrayHasKey('node.field_tags', $all_fields);
     $this->assertSame('node.field_tags', $all_fields['node.field_tags']['id']);
     $this->assertSame('Content', $all_fields['node.field_tags']['entity_type_label']);
+    $this->assertSame('Content types', $all_fields['node.field_tags']['bundle_entity_type_label']);
 
     $tag_fields = $this->discovery->getFieldsForVocabulary('tags');
 
@@ -44,6 +46,17 @@ class TermReferenceDiscoveryKernelTest extends TermReferenceManagerKernelBase {
     $this->assertArrayHasKey('node.field_tags', $tag_fields);
     $this->assertSame(['article', 'page'], array_keys($tag_fields['node.field_tags']['bundles']));
     $this->assertSame('Tags', $tag_fields['node.field_tags']['field_label']);
+
+    $editor = $this->createUser([
+      'access content',
+      'edit any article content',
+      'edit any page content',
+    ]);
+    $viewer = new AnonymousUserSession();
+
+    // Check that getFieldsForVocabulary() can filter to fields editable by an account.
+    $this->assertArrayHasKey('node.field_tags', $this->discovery->getFieldsForVocabulary('tags', $editor));
+    $this->assertSame([], $this->discovery->getFieldsForVocabulary('tags', $viewer));
 
     $cache_backend = $this->container->get('cache.discovery');
 

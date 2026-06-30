@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\term_reference\Kernel;
 
+use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\term_reference\TermReferenceManagerInterface;
@@ -13,7 +14,7 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
  */
 #[Group('term_reference')]
 #[RunTestsInSeparateProcesses]
-class TermReferenceManagerKernelTest extends TermReferenceManagerKernelBase {
+class TermReferenceManagerKernelTest extends TermReferenceKernelBase {
 
   /**
    * The manager service under test.
@@ -25,7 +26,6 @@ class TermReferenceManagerKernelTest extends TermReferenceManagerKernelBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installSchema('node', ['node_access']);
     $this->createFixtureFields();
     $this->setCurrentUser($this->createUser(['access content']));
     $this->manager = $this->container->get('term_reference.manager');
@@ -56,9 +56,21 @@ class TermReferenceManagerKernelTest extends TermReferenceManagerKernelBase {
     $node->save();
     $field = $this->container->get('term_reference.discovery')
       ->getField('tags', 'node', 'field_tags');
+    $editor = $this->createUser([
+      'access content',
+      'edit any page content',
+      'edit terms in tags',
+    ]);
+    $viewer = new AnonymousUserSession();
+    $page_only_field = $field;
+    $page_only_field['bundles'] = [];
 
     // Check that loadReferencingEntities() starts empty for this term.
     $this->assertSame([], $this->manager->loadReferencingEntities($term, $field));
+
+    // Check that accessReference() requires term update and target field edit access.
+    $this->assertTrue($this->manager->accessReference($editor, $term, $field)->isAllowed());
+    $this->assertFalse($this->manager->accessReference($viewer, $term, $field)->isAllowed());
 
     $this->manager->addReference($node, $term, 'field_tags');
     $node = Node::load($node->id());
@@ -72,6 +84,10 @@ class TermReferenceManagerKernelTest extends TermReferenceManagerKernelBase {
     // Check that loadReferencingEntities() returns entities referencing the term.
     $this->assertArrayHasKey($node->id(), $referencing_entities);
     $this->assertSame('Page reference', $referencing_entities[$node->id()]->label());
+
+    // Check that entityCanBeManaged() enforces entity update, bundle, and field access.
+    $this->assertTrue($this->manager->entityCanBeManaged($node, $field, $editor));
+    $this->assertFalse($this->manager->entityCanBeManaged($node, $page_only_field, $editor));
 
     $this->manager->removeReference($node, $term, 'field_tags');
     $node = Node::load($node->id());

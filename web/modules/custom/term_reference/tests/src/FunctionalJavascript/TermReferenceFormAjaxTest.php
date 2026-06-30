@@ -78,9 +78,8 @@ class TermReferenceFormAjaxTest extends WebDriverTestBase {
       ])->save();
     }
 
-    // Rebuild so the web server process sees field-derived local tasks.
+    // Rebuild so the web server process sees field configuration.
     $this->rebuildAll();
-    $this->container->get('plugin.manager.menu.local_task')->clearCachedDefinitions();
   }
 
   /**

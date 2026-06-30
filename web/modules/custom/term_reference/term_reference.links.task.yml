@@ -2,6 +2,5 @@ term_reference.references:
   route_name: term_reference.references
   base_route: entity.taxonomy_term.canonical
   title: 'References'
-
-term_reference.reference_tasks:
-  deriver: '\Drupal\term_reference\Plugin\Derivative\TermReferenceLocalTasks'
+  route_parameters:
+    field: ''

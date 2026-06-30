@@ -2,12 +2,14 @@
 
 namespace Drupal\term_reference;
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\field\FieldConfigInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -54,8 +56,12 @@ class TermReferenceDiscovery implements TermReferenceDiscoveryInterface {
   /**
    * {@inheritdoc}
    */
-  public function getFieldsForVocabulary(string $vocabulary_id): array {
-    return $this->getFields($vocabulary_id);
+  public function getFieldsForVocabulary(string $vocabulary_id, ?AccountInterface $account = NULL): array {
+    $fields = $this->getFields($vocabulary_id);
+    if ($account === NULL) {
+      return $fields;
+    }
+    return $this->filterFieldsByAccount($fields, $account);
   }
 
   /**
@@ -109,6 +115,7 @@ class TermReferenceDiscovery implements TermReferenceDiscoveryInterface {
             'id' => $field_id,
             'entity_type_id' => $entity_type_id,
             'entity_type_label' => (string) $entity_type->getLabel(),
+            'bundle_entity_type_label' => $this->getBundleEntityTypeLabel($entity_type),
             'field_name' => $field_name,
             'field_label' => (string) $field_definition->label(),
             'vocabulary_id' => $vocabulary_id,
@@ -127,6 +134,90 @@ class TermReferenceDiscovery implements TermReferenceDiscoveryInterface {
     }
     $this->cacheBackend->set($cache_id, $fields, CacheBackendInterface::CACHE_PERMANENT, [static::CACHE_TAG]);
     return $fields;
+  }
+
+  /**
+   * Filters fields to those editable by an account.
+   *
+   * @param array $fields
+   *   The fields.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account.
+   *
+   * @return array
+   *   The editable fields.
+   */
+  protected function filterFieldsByAccount(array $fields, AccountInterface $account): array {
+    return array_filter($fields, fn (array $field): bool => $this->fieldEditableByAccount($field, $account));
+  }
+
+  /**
+   * Checks whether an account can edit at least one field instance.
+   *
+   * @param array $field
+   *   The field.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account.
+   *
+   * @return bool
+   *   TRUE when the account can edit at least one eligible field instance.
+   */
+  protected function fieldEditableByAccount(array $field, AccountInterface $account): bool {
+    $access_handler = $this->entityTypeManager->getAccessControlHandler($field['entity_type_id']);
+    foreach (array_keys($field['bundles']) as $bundle_id) {
+      if (!$this->bundleEditableByAccount($field['entity_type_id'], $bundle_id, $account)) {
+        continue;
+      }
+      $field_definitions = $this->entityFieldManager->getFieldDefinitions($field['entity_type_id'], $bundle_id);
+      if (!isset($field_definitions[$field['field_name']])) {
+        continue;
+      }
+      if ($access_handler->fieldAccess('edit', $field_definitions[$field['field_name']], $account)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * Checks whether an account can update an entity shell for a bundle.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param string $bundle_id
+   *   The bundle ID.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account.
+   *
+   * @return bool
+   *   TRUE when the account can update the bundle.
+   */
+  protected function bundleEditableByAccount(string $entity_type_id, string $bundle_id, AccountInterface $account): bool {
+    $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
+    $bundle_key = $entity_type->getKey('bundle');
+    $values = [];
+    if ($bundle_key) {
+      $values[$bundle_key] = $bundle_id;
+    }
+    $entity = $this->entityTypeManager->getStorage($entity_type_id)->create($values);
+    return $entity->access('update', $account);
+  }
+
+  /**
+   * Gets the bundle entity type label for a content entity type.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $entity_type
+   *   The content entity type.
+   *
+   * @return string
+   *   The bundle entity type label.
+   */
+  protected function getBundleEntityTypeLabel(ContentEntityTypeInterface $entity_type): string {
+    $bundle_entity_type_id = $entity_type->getBundleEntityType();
+    if ($bundle_entity_type_id && $this->entityTypeManager->hasDefinition($bundle_entity_type_id)) {
+      return Unicode::ucfirst((string) $this->entityTypeManager->getDefinition($bundle_entity_type_id)->getPluralLabel());
+    }
+    return Unicode::ucfirst((string) $entity_type->getBundleLabel());
   }
 
   /**

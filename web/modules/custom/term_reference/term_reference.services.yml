@@ -10,7 +10,3 @@ services:
   term_reference.manager:
     class: Drupal\term_reference\TermReferenceManager
   Drupal\term_reference\TermReferenceManagerInterface: '@term_reference.manager'
-
-  term_reference.access:
-    class: Drupal\term_reference\TermReferenceAccess
-  Drupal\term_reference\TermReferenceAccessInterface: '@term_reference.access'
