@@ -65,6 +65,7 @@ class TermReferenceForm extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
+    /** @phpstan-ignore new.static */
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
