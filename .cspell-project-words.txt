@@ -365,3 +365,5 @@ pageSize
 countTotal
 mises
 Uncacheable
+Panzoom
+panzoom

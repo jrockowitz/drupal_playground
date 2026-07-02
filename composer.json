@@ -31,16 +31,17 @@
             "composer/installers": true,
             "cweagans/composer-patches": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal/ai_best_practices": true,
             "drupal/core-composer-scaffold": true,
             "drupal/core-project-message": true,
             "drupal/core-recipe-unpack": true,
+            "mglaman/composer-drupal-lenient": true,
             "php-http/discovery": true,
             "php-tuf/composer-integration": true,
             "phpstan/extension-installer": true,
-            "mglaman/composer-drupal-lenient": true,
+            "symfony/runtime": true,
             "tbachert/spi": true,
-            "wikimedia/composer-merge-plugin": true,
-            "drupal/ai_best_practices": true
+            "wikimedia/composer-merge-plugin": true
         },
         "sort-packages": true
     },
