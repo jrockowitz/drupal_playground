@@ -6,4 +6,14 @@
 ## Example: "ddev recipe-apply core/recipes/editorial_workflow"
 ## Aliases: recipe:apply,ra,apply-recipe
 
-cd "$DDEV_DOCROOT" && php /var/www/html/vendor/bin/dr recipe "$@"
+cd "$DDEV_DOCROOT" || exit 1
+
+if [ -f core/scripts/drupal ]; then
+  php core/scripts/drupal recipe "$@"
+elif [ -f "${DDEV_APPROOT:-/var/www/html}/vendor/bin/dr" ]; then
+  php "${DDEV_APPROOT:-/var/www/html}/vendor/bin/dr" recipe "$@"
+else
+  echo "Unable to find a Drupal recipe command." >&2
+  echo "Expected core/scripts/drupal or ${DDEV_APPROOT:-/var/www/html}/vendor/bin/dr." >&2
+  exit 1
+fi
