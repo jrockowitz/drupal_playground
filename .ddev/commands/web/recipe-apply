@@ -6,4 +6,4 @@
 ## Example: "ddev recipe-apply core/recipes/editorial_workflow"
 ## Aliases: recipe:apply,ra,apply-recipe
 
-cd $DDEV_DOCROOT && php core/scripts/drupal recipe $1
+cd "$DDEV_DOCROOT" && php /var/www/html/vendor/bin/dr recipe "$@"

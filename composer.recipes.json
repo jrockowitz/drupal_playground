@@ -112,6 +112,19 @@
                     "reference": "1.0.x"
                 }
             }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "recipes/ckeditor_recipe",
+                "type": "drupal-recipe",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:sandbox/jrockowitz-3510477.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
         }
     ],
     "require": {
@@ -139,6 +152,7 @@
         "drupal/clinical_trials_gov_recipe_fields_elastic": "*",
         "drupal/clinical_trials_gov_recipe_fields_milvus": "*",
         "drupal/drupal_playground_translation": "*",
-        "recipes/schemadotorg_recipes": "*"
+        "recipes/schemadotorg_recipes": "*",
+        "recipes/ckeditor_recipe": "*"
     }
 }
