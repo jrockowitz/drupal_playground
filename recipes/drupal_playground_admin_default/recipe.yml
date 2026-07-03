@@ -1,0 +1,23 @@
+name: 'Drupal Playground Admin Default'
+type: 'Site'
+description: 'Sets up the core Default Admin theme for Drupal Playground.'
+recipes:
+  - drupal_playground_admin
+install:
+  - default_admin
+config:
+  strict: false
+  import:
+    default_admin:
+      - block.block.default_admin_breadcrumbs
+      - block.block.default_admin_content
+      - block.block.default_admin_help
+      - block.block.default_admin_local_actions
+      - block.block.default_admin_messages
+      - block.block.default_admin_page_title
+      - block.block.default_admin_primary_local_tasks
+      - block.block.default_admin_secondary_local_tasks
+  actions:
+    system.theme:
+      simpleConfigUpdate:
+        admin: default_admin
