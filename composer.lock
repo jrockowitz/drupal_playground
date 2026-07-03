@@ -2001,6 +2001,10 @@
                     "homepage": "https://www.drupal.org/user/3557964"
                 },
                 {
+                    "name": "ahmad khader",
+                    "homepage": "https://www.drupal.org/user/3727855"
+                },
+                {
                     "name": "andrewbelcher",
                     "homepage": "https://www.drupal.org/user/655282"
                 },
@@ -2067,10 +2071,6 @@
                 {
                     "name": "yautja_cetanu",
                     "homepage": "https://www.drupal.org/user/626050"
-                },
-                {
-                    "name": "ahmad khader",
-                    "homepage": "https://www.drupal.org/user/3727855"
                 }
             ],
             "homepage": "https://www.drupal.org/project/ai",
@@ -2195,6 +2195,10 @@
                     "homepage": "https://www.drupal.org/user/3557964"
                 },
                 {
+                    "name": "ahmad khader",
+                    "homepage": "https://www.drupal.org/user/3727855"
+                },
+                {
                     "name": "andrewbelcher",
                     "homepage": "https://www.drupal.org/user/655282"
                 },
@@ -2261,10 +2265,6 @@
                 {
                     "name": "yautja_cetanu",
                     "homepage": "https://www.drupal.org/user/626050"
-                },
-                {
-                    "name": "ahmad khader",
-                    "homepage": "https://www.drupal.org/user/3727855"
                 }
             ],
             "description": "Adds multiple developers explorers where you can test different settings.",
@@ -2305,6 +2305,10 @@
                     "homepage": "https://www.drupal.org/user/3557964"
                 },
                 {
+                    "name": "ahmad khader",
+                    "homepage": "https://www.drupal.org/user/3727855"
+                },
+                {
                     "name": "andrewbelcher",
                     "homepage": "https://www.drupal.org/user/655282"
                 },
@@ -2371,10 +2375,6 @@
                 {
                     "name": "yautja_cetanu",
                     "homepage": "https://www.drupal.org/user/626050"
-                },
-                {
-                    "name": "ahmad khader",
-                    "homepage": "https://www.drupal.org/user/3727855"
                 }
             ],
             "description": "Adds decoupled AI Assistants for any frontend to work with.",
@@ -2416,6 +2416,10 @@
                     "homepage": "https://www.drupal.org/user/3557964"
                 },
                 {
+                    "name": "ahmad khader",
+                    "homepage": "https://www.drupal.org/user/3727855"
+                },
+                {
                     "name": "andrewbelcher",
                     "homepage": "https://www.drupal.org/user/655282"
                 },
@@ -2482,10 +2486,6 @@
                 {
                     "name": "yautja_cetanu",
                     "homepage": "https://www.drupal.org/user/626050"
-                },
-                {
-                    "name": "ahmad khader",
-                    "homepage": "https://www.drupal.org/user/3727855"
                 }
             ],
             "description": "Allows AI and other tools and services to automatically generate field values on content creation.",
@@ -2576,6 +2576,10 @@
                     "homepage": "https://www.drupal.org/user/3557964"
                 },
                 {
+                    "name": "ahmad khader",
+                    "homepage": "https://www.drupal.org/user/3727855"
+                },
+                {
                     "name": "andrewbelcher",
                     "homepage": "https://www.drupal.org/user/655282"
                 },
@@ -2642,10 +2646,6 @@
                 {
                     "name": "yautja_cetanu",
                     "homepage": "https://www.drupal.org/user/626050"
-                },
-                {
-                    "name": "ahmad khader",
-                    "homepage": "https://www.drupal.org/user/3727855"
                 }
             ],
             "description": "Provides a chatbot frontend for the AI Assistant API.",
@@ -2686,6 +2686,10 @@
                     "homepage": "https://www.drupal.org/user/3557964"
                 },
                 {
+                    "name": "ahmad khader",
+                    "homepage": "https://www.drupal.org/user/3727855"
+                },
+                {
                     "name": "andrewbelcher",
                     "homepage": "https://www.drupal.org/user/655282"
                 },
@@ -2752,10 +2756,6 @@
                 {
                     "name": "yautja_cetanu",
                     "homepage": "https://www.drupal.org/user/626050"
-                },
-                {
-                    "name": "ahmad khader",
-                    "homepage": "https://www.drupal.org/user/3727855"
                 }
             ],
             "description": "Adds a plugin for CKEditor 5 to let editors prompt AI for text generation purposes.",
@@ -2917,6 +2917,10 @@
                     "homepage": "https://www.drupal.org/user/3557964"
                 },
                 {
+                    "name": "ahmad khader",
+                    "homepage": "https://www.drupal.org/user/3727855"
+                },
+                {
                     "name": "andrewbelcher",
                     "homepage": "https://www.drupal.org/user/655282"
                 },
@@ -2983,10 +2987,6 @@
                 {
                     "name": "yautja_cetanu",
                     "homepage": "https://www.drupal.org/user/626050"
-                },
-                {
-                    "name": "ahmad khader",
-                    "homepage": "https://www.drupal.org/user/3727855"
                 }
             ],
             "description": "This enables you to log any AI request and response as well as additional contextual information.",
@@ -3541,70 +3541,6 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/better_exposed_filters",
                 "issues": "https://www.drupal.org/project/issues/better_exposed_filters"
-            }
-        },
-        {
-            "name": "drupal/block_field",
-            "version": "1.0.0-rc5",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/block_field.git",
-                "reference": "8.x-1.0-rc5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/block_field-8.x-1.0-rc5.zip",
-                "reference": "8.x-1.0-rc5",
-                "shasum": "b87e43e9bbaaf6cff6d8946d5e45db492978cbb6"
-            },
-            "require": {
-                "drupal/core": "^9 || ^10 || ^11"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-1.0-rc5",
-                    "datestamp": "1723550576",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "RC releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "acbramley",
-                    "homepage": "https://www.drupal.org/user/1036766"
-                },
-                {
-                    "name": "berdir",
-                    "homepage": "https://www.drupal.org/user/214652"
-                },
-                {
-                    "name": "fenstrat",
-                    "homepage": "https://www.drupal.org/user/362649"
-                },
-                {
-                    "name": "jrockowitz",
-                    "homepage": "https://www.drupal.org/user/371407"
-                },
-                {
-                    "name": "michaellander",
-                    "homepage": "https://www.drupal.org/user/636494"
-                },
-                {
-                    "name": "paulocs",
-                    "homepage": "https://www.drupal.org/user/3640109"
-                }
-            ],
-            "description": "Provides a field that allows a content entity to create and configure custom block instances.",
-            "homepage": "https://www.drupal.org/project/block_field",
-            "support": {
-                "source": "https://git.drupalcode.org/project/block_field"
             }
         },
         {
@@ -6769,60 +6705,6 @@
             }
         },
         {
-            "name": "drupal/fontawesome",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/fontawesome.git",
-                "reference": "3.0.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/fontawesome-3.0.0.zip",
-                "reference": "3.0.0",
-                "shasum": "48102613a7cb6791db4d50c0ffe8604cdb29623f"
-            },
-            "require": {
-                "drupal/core": "^10.2 || ^11.0"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "3.0.0",
-                    "datestamp": "1737497622",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                },
-                "drush": {
-                    "services": {
-                        "drush.services.yml": "^12 || ^13"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "daniel.moberly",
-                    "homepage": "https://www.drupal.org/user/1160788"
-                },
-                {
-                    "name": "truls1502",
-                    "homepage": "https://www.drupal.org/user/325866"
-                }
-            ],
-            "description": "The web's most popular icon set and toolkit.",
-            "homepage": "https://www.drupal.org/project/fontawesome",
-            "support": {
-                "source": "https://git.drupalcode.org/project/fontawesome",
-                "issues": "https://drupal.org/project/issues/fontawesome"
-            }
-        },
-        {
             "name": "drupal/gemini_provider",
             "version": "1.0.1",
             "source": {
@@ -7657,61 +7539,6 @@
             }
         },
         {
-            "name": "drupal/linkit",
-            "version": "7.0.16",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/linkit.git",
-                "reference": "7.0.16"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/linkit-7.0.16.zip",
-                "reference": "7.0.16",
-                "shasum": "72e598acf5ba56db25989754393bbce6597a29af"
-            },
-            "require": {
-                "drupal/core": "^10.2 || ^11"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "7.0.16",
-                    "datestamp": "1781283687",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Emil Stjerneman",
-                    "homepage": "https://stjerneman.com",
-                    "email": "emil@stjerneman.com",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "johnwebdev",
-                    "homepage": "https://www.drupal.org/user/3331569"
-                },
-                {
-                    "name": "mark_fullmer",
-                    "homepage": "https://www.drupal.org/user/2612816"
-                }
-            ],
-            "description": "Linkit - Enriched linking experience",
-            "homepage": "http://drupal.org/project/linkit",
-            "support": {
-                "source": "http://cgit.drupalcode.org/linkit",
-                "issues": "http://drupal.org/project/linkit"
-            }
-        },
-        {
             "name": "drupal/local_tasks_more",
             "version": "1.0.x-dev",
             "source": {
@@ -7720,76 +7547,6 @@
                 "reference": "1.0.x"
             },
             "type": "drupal-module-sandbox"
-        },
-        {
-            "name": "drupal/media_library_media_modify",
-            "version": "2.0.0-beta1",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/media_library_media_modify.git",
-                "reference": "2.0.0-beta1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/media_library_media_modify-2.0.0-beta1.zip",
-                "reference": "2.0.0-beta1",
-                "shasum": "98960184fc0fe113441cd8af8b0e120fe59e33f9"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11"
-            },
-            "require-dev": {
-                "drupal/diff": "^1.0",
-                "drupal/inline_entity_form": "^1.0||^3.0",
-                "drush/drush": "^12.0 || ^13.0"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.0.0-beta1",
-                    "datestamp": "1725960750",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
-                    }
-                },
-                "patches": {
-                    "drupal/core": {
-                        "Issue #3263397-10: Simplify form logic in media library": "https://www.drupal.org/files/issues/2023-01-19/3263397-16.patch"
-                    },
-                    "drupal/inline_entity_form": {
-                        "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form": "https://www.drupal.org/files/issues/2022-09-22/47-8.diff"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Christian Fritsch",
-                    "homepage": "https://www.drupal.org/user/157725",
-                    "email": "christian.fritsch@burda.com"
-                },
-                {
-                    "name": "chr.fritsch",
-                    "homepage": "https://www.drupal.org/user/2103716"
-                },
-                {
-                    "name": "daniel.bosen",
-                    "homepage": "https://www.drupal.org/user/404865"
-                },
-                {
-                    "name": "volkerk",
-                    "homepage": "https://www.drupal.org/user/57527"
-                }
-            ],
-            "description": "Store context specific overrides for entity reference fields.",
-            "homepage": "https://www.drupal.org/project/media_library_media_modify",
-            "support": {
-                "source": "https://git.drupalcode.org/project/media_library_media_modify"
-            }
         },
         {
             "name": "drupal/menu_export_csv",
@@ -9960,6 +9717,16 @@
             "type": "drupal-module-sandbox"
         },
         {
+            "name": "drupal/term_reference",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "git@git.drupal.org:project/term_reference.git",
+                "reference": "1.0.x"
+            },
+            "type": "drupal-module-sandbox"
+        },
+        {
             "name": "drupal/token",
             "version": "1.17.0",
             "source": {
@@ -10469,72 +10236,6 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/views_filters_summary",
                 "issues": "https://www.drupal.org/project/issues/views_filters_summary"
-            }
-        },
-        {
-            "name": "drupal/viewsreference",
-            "version": "2.0.0-beta12",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/viewsreference.git",
-                "reference": "8.x-2.0-beta12"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/viewsreference-8.x-2.0-beta12.zip",
-                "reference": "8.x-2.0-beta12",
-                "shasum": "643eefb27c3f415a50eec75eccbbc287bcc7156a"
-            },
-            "require": {
-                "drupal/core": "^10 || ^11 || ^12"
-            },
-            "conflict": {
-                "drupal/viewsreferennce": "*"
-            },
-            "require-dev": {
-                "drupal/views_ajax_history": "1.x-dev"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-2.0-beta12",
-                    "datestamp": "1776760483",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "joekers",
-                    "homepage": "https://www.drupal.org/user/2229066"
-                },
-                {
-                    "name": "NewZeal",
-                    "homepage": "https://www.drupal.org/user/93571"
-                },
-                {
-                    "name": "scott_euser",
-                    "homepage": "https://www.drupal.org/user/3267594"
-                },
-                {
-                    "name": "seanb",
-                    "homepage": "https://www.drupal.org/user/545912"
-                }
-            ],
-            "description": "Views reference",
-            "homepage": "http://drupal.org/project/viewsreference",
-            "keywords": [
-                "Drupal"
-            ],
-            "support": {
-                "source": "https://git.drupalcode.org/project/viewsreference",
-                "issues": "https://www.drupal.org/project/issues/viewsreference"
             }
         },
         {

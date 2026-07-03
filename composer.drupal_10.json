@@ -271,7 +271,6 @@
         "web/modules/sandbox/schemadotorg_starterkit_events/composer.libraries.json",
         "web/modules/sandbox/schemadotorg_starterkit_hospital/composer.libraries.json",
         "web/modules/sandbox/schemadotorg_starterkit_hotel/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_starterkit_layout/composer.libraries.json",
         "web/modules/sandbox/schemadotorg_starterkit_medical/composer.libraries.json",
         "web/modules/sandbox/schemadotorg_starterkit_organization/composer.libraries.json",
         "web/modules/sandbox/schemadotorg_starterkit_podcast/composer.libraries.json",

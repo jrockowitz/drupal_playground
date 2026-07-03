@@ -389,6 +389,19 @@
                     "reference": "7.x-1.x"
                 }
             }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "drupal/term_reference",
+                "type": "drupal-module-sandbox",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/term_reference.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
         }
     ],
     "require": {
@@ -421,6 +434,7 @@
         "drupal/schemadotorg_starterkit_organization": "*",
         "drupal/schemadotorg_starterkit_podcast": "*",
         "drupal/schemadotorg_starterkit_recipes": "*",
-        "drupal/telephone_filter": "*"
+        "drupal/telephone_filter": "*",
+        "drupal/term_reference": "*"
     }
 }
