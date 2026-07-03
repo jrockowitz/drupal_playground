@@ -44,7 +44,7 @@
     {
       "name": "schemadotorg-words",
       "path": ".cspell-project-words.txt"
-    },
+    }
   ],
   "dictionaries": [
     "drupal",
