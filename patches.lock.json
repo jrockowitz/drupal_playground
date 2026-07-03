@@ -1,5 +1,5 @@
 {
-    "_hash": "c27381577119e906ef00acb6427d1ee11f3cd817478226402ab13d544f6cde71",
+    "_hash": "c62206fe2ee7cde599a146699951eb710e923115bbb09ca4677592f4033400c0",
     "patches": {
         "drupal/config_rewrite": [
             {
@@ -161,9 +161,9 @@
         "drupal/jsonapi_extras": [
             {
                 "package": "drupal/jsonapi_extras",
-                "description": "Issue #3524477: Breaking errors in D11.2 or D11.x",
-                "url": "https://www.drupal.org/files/issues/2020-02-08/3031524-8.patch",
-                "sha256": "44da45a29c0d022e6023eedc76173e10be90f817029c31fdae6fbdd25c448423",
+                "description": "Issue #3608182: Array to string conversion warning during route rebuild on Drupal 11.4",
+                "url": "https://www.drupal.org/files/issues/2026-07-03/array_to_string_conv-3608182-2.patch",
+                "sha256": "d6e084fd3331ac7af76ecc31c377e253e056c2d1021a4da0aa79252607e47c0a",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
