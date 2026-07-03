@@ -5,6 +5,7 @@
     "license": "GPL-2.0-or-later",
     "version": "1.0.0",
     "require": {
+        "drupal/asset_injector": "^2",
         "drupal/core": "^10 || ^11"
     }
 }
