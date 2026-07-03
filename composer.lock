@@ -5332,7 +5332,7 @@
         },
         {
             "name": "drupal/drupal_playground_eca",
-            "version": "dev-drupal_ai",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_eca",
