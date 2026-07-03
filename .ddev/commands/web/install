@@ -13,6 +13,8 @@ uli_path="/"
 LIMIT="10"
 QUERY=""
 QUERY_IS_SET="false"
+DRUPAL_VERSION=""
+DRUPAL_MAJOR_VERSION=""
 PRESETS=()
 
 search_api_index_trials_milvus() {
@@ -89,12 +91,17 @@ drush site:install standard \
 
 drush cr;
 
-# Uninstall the toolbar module, which can't be done via a recipe.
-drush pm:uninstall -y toolbar
+DRUPAL_VERSION="$(drush php:eval 'echo \Drupal::VERSION;')"
+DRUPAL_MAJOR_VERSION="${DRUPAL_VERSION%%.*}"
 
-# Uninstall core modules that are not used in any demos.
-drush php:eval '\Drupal\field\Entity\FieldConfig::loadByName("node", "article", "comment")->delete();'
-drush pmu -y comment
+if [ "$DRUPAL_MAJOR_VERSION" -le 10 ]; then
+  # Uninstall the toolbar module, which can't be done via a recipe.
+  drush pm:uninstall -y toolbar
+
+  # Uninstall core modules that are not used in any demos.
+  drush php:eval '\Drupal\field\Entity\FieldConfig::loadByName("node", "article", "comment")->delete();'
+  drush pmu -y comment
+fi
 
 # Set AI provider configuration before applying other presets.
 for PRESET in "${PRESETS[@]}"; do
