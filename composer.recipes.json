@@ -18,6 +18,14 @@
         },
         {
             "type": "path",
+            "url": "recipes/drupal_playground_admin_gin"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_admin_default"
+        },
+        {
+            "type": "path",
             "url": "recipes/drupal_playground_ai"
         },
         {
@@ -129,6 +137,8 @@
     ],
     "require": {
         "drupal/drupal_playground_admin": "*",
+        "drupal/drupal_playground_admin_default": "*",
+        "drupal/drupal_playground_admin_gin": "*",
         "drupal/drupal_playground_ai_provider_anthropic": "*",
         "drupal/drupal_playground_ai_provider_gemini": "*",
         "drupal/drupal_playground_ai_provider_openai": "*",
