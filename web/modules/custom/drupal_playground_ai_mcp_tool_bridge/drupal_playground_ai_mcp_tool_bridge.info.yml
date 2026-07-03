@@ -1,0 +1,13 @@
+name: 'Drupal Playground AI MCP Tool Bridge'
+type: module
+description: 'Exposes Tool Belt tools as MCP tools for local Codex proof of concept work.'
+package: 'Drupal Playground'
+core_version_requirement: ^11
+dependencies:
+  - mcp_server:mcp_server
+  - tool:tool
+  - tool_belt:tool_belt_content
+  - tool_belt:tool_belt_content_translation
+  - tool_belt:tool_belt_entity
+  - tool_belt:tool_belt_system
+  - tool_belt:tool_belt_user

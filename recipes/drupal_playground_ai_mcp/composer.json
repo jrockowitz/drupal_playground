@@ -1,0 +1,13 @@
+{
+    "name": "drupal/drupal_playground_ai_mcp",
+    "description": "Installs and configures Drupal MCP Server for Drupal Playground AI.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/core": "^11",
+        "drupal/mcp_server": "2.x-dev",
+        "drupal/tool": "^1.0@beta",
+        "drupal/tool_belt": "^1.0@alpha"
+    }
+}
