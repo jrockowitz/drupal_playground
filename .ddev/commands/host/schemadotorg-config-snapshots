@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+## Description: Update Schema.org config snapshots.
+## Usage: schemadotorg:config-snapshots
+## Example: ddev schemadotorg:config-snapshots
+## Aliases: schemadotorg:config-snapshots
+
+set -eu -o pipefail
+
+# Configure Drupal and sandbox paths on the host checkout.
+drupal_root="${DDEV_APPROOT}/${DDEV_DOCROOT:-web}"
+sandbox_directory="${drupal_root}/modules/sandbox"
+
+# Delete all existing config snapshot directories before regenerating them.
+find "${sandbox_directory}" -type d -path "*/config/snapshot" -exec rm -rf {} +
+
+# Run every config snapshot PHPUnit test under the sandbox directory.
+while IFS= read -r -d '' config_snapshot_test; do
+  relative_config_snapshot_test="${config_snapshot_test#${DDEV_APPROOT}/}"
+  echo "Running ${relative_config_snapshot_test}"
+  ddev phpunit "${relative_config_snapshot_test}" < /dev/null || true
+done < <(find "${sandbox_directory}" -type f -name "*ConfigSnapshot*Test.php" -print0 | sort -z)
