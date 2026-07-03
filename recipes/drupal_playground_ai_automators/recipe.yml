@@ -4,6 +4,7 @@ description: >
 type: 'Site'
 recipes:
   - drupal_playground_ai
+  - core/recipes/article_tags
 install:
   - ai_automators
   - field_widget_actions
@@ -45,4 +46,3 @@ config:
               weight: 0
               settings:
                 automator_id: node.article.body.default
-
