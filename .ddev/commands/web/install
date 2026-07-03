@@ -89,6 +89,13 @@ drush site:install standard \
 
 drush cr;
 
+# Uninstall the toolbar module, which can't be done via a recipe.
+drush pm:uninstall -y toolbar
+
+# Uninstall core modules that are not used in any demos.
+drush php:eval '\Drupal\field\Entity\FieldConfig::loadByName("node", "article", "comment")->delete();'
+drush pmu -y comment
+
 # Set AI provider configuration before applying other presets.
 for PRESET in "${PRESETS[@]}"; do
   if [ "$PRESET" = "openai" ] || [ "$PRESET" = "anthropic" ] || [ "$PRESET" = "gemini" ]; then
@@ -114,6 +121,7 @@ for PRESET in "${PRESETS[@]}"; do
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_devel
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_automators
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_ckeditor_explain
+    /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_mcp
 
     echo "Applying AI Schema.org JSON-LD recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_schemadotorg_jsonld
