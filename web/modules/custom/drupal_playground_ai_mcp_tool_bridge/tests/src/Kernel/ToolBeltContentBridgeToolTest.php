@@ -77,10 +77,10 @@ class ToolBeltContentBridgeToolTest extends KernelTestBase {
     $definitions = $mcp_tool_manager->getDefinitions();
     $this->assertArrayHasKey('tool_belt_content_field_definitions', $definitions);
     $this->assertArrayHasKey('tool_belt_content_create_entity', $definitions);
-    $this->assertArrayHasKey('tool_belt_dynamic.tool_belt__entity_list', $definitions);
-    $this->assertArrayHasKey('tool_belt_dynamic.tool_belt__entity_load_by_id', $definitions);
-    $this->assertArrayHasKey('tool_belt_dynamic.tool_belt__entity_delete', $definitions);
-    $this->assertArrayHasKey('tool_belt_dynamic.tool_belt__system_status', $definitions);
+    $this->assertArrayHasKey('tool_belt_dynamic__tool_belt__entity_list', $definitions);
+    $this->assertArrayHasKey('tool_belt_dynamic__tool_belt__entity_load_by_id', $definitions);
+    $this->assertArrayHasKey('tool_belt_dynamic__tool_belt__entity_delete', $definitions);
+    $this->assertArrayHasKey('tool_belt_dynamic__tool_belt__system_status', $definitions);
     $this->assertSame([
       'entity_type_id',
       'bundle',
@@ -129,7 +129,7 @@ class ToolBeltContentBridgeToolTest extends KernelTestBase {
     $this->assertTrue($node->isPublished());
 
     // Check that a dynamically exposed read tool can run through MCP.
-    $list_tool = $mcp_tool_manager->createInstance('tool_belt_dynamic.tool_belt__entity_list');
+    $list_tool = $mcp_tool_manager->createInstance('tool_belt_dynamic__tool_belt__entity_list');
     $list_result = $list_tool->execute([
       'entity_type_id' => 'node',
       'bundle' => 'article',
@@ -142,7 +142,7 @@ class ToolBeltContentBridgeToolTest extends KernelTestBase {
     $this->assertArrayHasKey('results', $list_result['outputs']);
 
     // Check that dynamic tools adapt saved entity references.
-    $field_values_tool = $mcp_tool_manager->createInstance('tool_belt_dynamic.tool_belt__entity_field_values');
+    $field_values_tool = $mcp_tool_manager->createInstance('tool_belt_dynamic__tool_belt__entity_field_values');
     $field_values_result = $field_values_tool->execute([
       'entity' => [
         'entity_type_id' => 'node',
