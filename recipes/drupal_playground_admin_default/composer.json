@@ -1,12 +1,10 @@
 {
-    "name": "drupal/drupal_playground_base",
+    "name": "drupal/drupal_playground_admin_default",
     "type": "drupal-recipe",
     "license": "GPL-2.0-or-later",
     "version": "1.0.0",
     "require": {
         "drupal/core": "^10 || ^11",
-        "drupal/key": "^1",
-        "drupal/token": "^1",
-        "drupal/trash": "^3.0"
+        "drupal/drupal_playground_admin": "*"
     }
 }

@@ -1,0 +1,34 @@
+name: 'Drupal Playground Admin Gin'
+type: 'Site'
+description: 'Sets up the Gin admin theme for Drupal Playground.'
+recipes:
+  - drupal_playground_admin
+install:
+  - gin
+  - gin_toolbar
+  - gin_type_tray
+config:
+  strict: false
+  import:
+    gin:
+      - block.block.gin_breadcrumbs
+      - block.block.gin_content
+      - block.block.gin_help
+      - block.block.gin_local_actions
+      - block.block.gin_messages
+      - block.block.gin_page_title
+      - block.block.gin_primary_local_tasks
+      - block.block.gin_secondary_local_tasks
+    claro:
+      - block.block.claro_breadcrumbs
+      - block.block.claro_content
+      - block.block.claro_help
+      - block.block.claro_local_actions
+      - block.block.claro_messages
+      - block.block.claro_page_title
+      - block.block.claro_primary_local_tasks
+      - block.block.claro_secondary_local_tasks
+  actions:
+    system.theme:
+      simpleConfigUpdate:
+        admin: gin

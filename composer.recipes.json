@@ -18,6 +18,14 @@
         },
         {
             "type": "path",
+            "url": "recipes/drupal_playground_admin_gin"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_admin_default"
+        },
+        {
+            "type": "path",
             "url": "recipes/drupal_playground_ai"
         },
         {
@@ -59,10 +67,6 @@
         {
             "type": "path",
             "url": "recipes/drupal_playground_ai_automators"
-        },
-        {
-            "type": "path",
-            "url": "recipes/drupal_playground_ai_mcp"
         },
         {
             "type": "path",
@@ -133,6 +137,8 @@
     ],
     "require": {
         "drupal/drupal_playground_admin": "*",
+        "drupal/drupal_playground_admin_default": "*",
+        "drupal/drupal_playground_admin_gin": "*",
         "drupal/drupal_playground_ai_provider_anthropic": "*",
         "drupal/drupal_playground_ai_provider_gemini": "*",
         "drupal/drupal_playground_ai_provider_openai": "*",
@@ -143,7 +149,6 @@
         "drupal/drupal_playground_ai_content_suggestions": "*",
         "drupal/drupal_playground_ai_devel": "*",
         "drupal/drupal_playground_ai_automators": "*",
-        "drupal/drupal_playground_ai_mcp": "*",
         "drupal/drupal_playground_base": "*",
         "drupal/drupal_playground_devel": "*",
         "drupal/drupal_playground_elasticsearch": "*",

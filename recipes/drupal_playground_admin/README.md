@@ -1,6 +1,16 @@
 # Drupal Playground Admin
 
-Sets up Gin admin theme with Navigation, Dashboard, and Coffee.
+Sets up shared admin modules and configuration for Drupal Playground.
+
+This base recipe installs admin tooling that is shared across supported Drupal
+versions: Coffee, Dashboard, Help, Navigation, Navigation Extra Tools, Type Tray,
+and Queue UI.
+
+Admin theme setup lives in dedicated recipes:
+
+- `drupal_playground_admin_gin` sets up Gin for Drupal 10 installs.
+- `drupal_playground_admin_default` sets up Drupal core's `default_admin` theme
+  for Drupal 11 installs.
 
 ## Applied Patches
 

@@ -12,6 +12,5 @@ install:
   - inline_form_errors
   - key
   - token
-  - asset_injector
 config:
   strict: false

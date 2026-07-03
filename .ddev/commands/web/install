@@ -83,25 +83,38 @@ drush site:install standard \
   --account-mail=admin@example.com \
   --yes
 
-/mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_base
-/mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_admin
-/mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_devel
-/mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai
-/mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_devel
-
-drush cr;
-
 DRUPAL_VERSION="$(drush php:eval 'echo \Drupal::VERSION;')"
 DRUPAL_MAJOR_VERSION="${DRUPAL_VERSION%%.*}"
 
+/mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_base
+
+drush cr;
+
+/mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_admin
+
 if [ "$DRUPAL_MAJOR_VERSION" -le 10 ]; then
+  # Apply Gin as the admin theme for Drupal 10 installs.
+  /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_admin_gin
+
   # Uninstall the toolbar module, which can't be done via a recipe.
   drush pm:uninstall -y toolbar
 
   # Uninstall core modules that are not used in any demos.
   drush php:eval '\Drupal\field\Entity\FieldConfig::loadByName("node", "article", "comment")->delete();'
   drush pmu -y comment
+else
+  # Apply Default Admin as the admin theme for Drupal 11 installs.
+  /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_admin_default
+
+  # Uninstall Claro after Default Admin is installed and selected.
+  drush theme:uninstall -y claro
 fi
+
+/mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_devel
+drush cr;
+/mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai
+drush cr;
+/mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_devel
 
 # Set AI provider configuration before applying other presets.
 for PRESET in "${PRESETS[@]}"; do
