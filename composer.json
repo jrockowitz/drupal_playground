@@ -31,15 +31,17 @@
             "composer/installers": true,
             "cweagans/composer-patches": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal/ai_best_practices": true,
             "drupal/core-composer-scaffold": true,
             "drupal/core-project-message": true,
             "drupal/core-recipe-unpack": true,
+            "mglaman/composer-drupal-lenient": true,
             "php-http/discovery": true,
             "php-tuf/composer-integration": true,
             "phpstan/extension-installer": true,
+            "symfony/runtime": true,
             "tbachert/spi": true,
-            "wikimedia/composer-merge-plugin": true,
-            "drupal/ai_best_practices": true
+            "wikimedia/composer-merge-plugin": true
         },
         "sort-packages": true
     },
@@ -135,11 +137,13 @@
         "merge-plugin": {
             "include": [
                 "composer.drupal_11.json",
+                "composer.lenient.json",
                 "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
                 "web/modules/sandbox/webform/composer.json",
-                "web/modules/sandbox/webform/composer.libraries.json"
+                "web/modules/sandbox/webform/composer.libraries.json",
+                "web/modules/sandbox/schemadotorg/composer.libraries.json"
             ],
             "merge-extra": true,
             "merge-extra-deep": true,
