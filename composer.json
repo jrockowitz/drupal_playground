@@ -145,11 +145,12 @@
                 "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
+                "web/modules/sandbox/webform/composer.json",
                 "web/modules/sandbox/webform/composer.libraries.json"
             ],
             "merge-extra": true,
             "merge-extra-deep": true,
-            "merge-dev": false
+            "merge-dev": true
         }
     },
     "require-dev": {
