@@ -31,7 +31,7 @@ The bridge translates Tool Belt plugins into Codex-callable MCP tools.
 
 - Discovers enabled Tool Belt tools from Drupal's Tool API manager.
 - Creates MCP tool definitions with names such as
-  `tool_belt_dynamic.tool_belt__entity_list`.
+  `tool_belt_dynamic__tool_belt__entity_list`.
 - Converts Tool API input definitions into MCP JSON schemas.
 - Adapts MCP entity references into Drupal entity objects.
 - Normalizes Drupal and Tool API outputs into JSON-safe MCP structured content.
