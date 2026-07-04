@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - ai_automators.automator_chain_type.explain
-    - field.field.automator_chain.explain.ai_automator_status
     - field.field.automator_chain.explain.field_explain_input
     - field.field.automator_chain.explain.field_explain_output
   module:
@@ -27,5 +26,4 @@ content:
     third_party_settings: {  }
     weight: 1
     region: content
-hidden:
-  ai_automator_status: true
+hidden: {  }

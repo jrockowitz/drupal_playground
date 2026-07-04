@@ -1,5 +1,5 @@
 {
-    "_hash": "c62206fe2ee7cde599a146699951eb710e923115bbb09ca4677592f4033400c0",
+    "_hash": "c0f2614e55aa72bb5bdf85c0fbbe71eaa435c85c7e034cc97e3b476be5f8d626",
     "patches": {
         "drupal/config_rewrite": [
             {
@@ -188,6 +188,16 @@
                 "description": "Fix AI API Explorer skill name validation",
                 "url": "patches/drupal/ai-api-explorer-skill-name.patch",
                 "sha256": "59bf2c12fb32cbf6622ef618ade348b2dde4fe4891db732479a737812fe052f0",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/ai",
+                "description": "Fix AI CKEditor dialog editor ID handling",
+                "url": "https://git.drupalcode.org/project/ai/-/merge_requests/1683.diff",
+                "sha256": "428c04bf902402d1ca948b7d4cb2f1d624da0cc1bede63febef6477af83e4efd",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
