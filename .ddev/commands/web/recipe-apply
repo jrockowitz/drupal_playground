@@ -9,9 +9,9 @@
 cd "$DDEV_DOCROOT" || exit 1
 
 if [ -f "${DDEV_APPROOT:-/var/www/html}/vendor/bin/dr" ]; then
-  php "${DDEV_APPROOT:-/var/www/html}/vendor/bin/dr" recipe "$@"
+  php "${DDEV_APPROOT:-/var/www/html}/vendor/bin/dr" recipe "$@" && drush cr
 elif [ -f core/scripts/drupal ]; then
-  php core/scripts/drupal recipe "$@"
+  php core/scripts/drupal recipe "$@" && drush cr
 else
   echo "Unable to find a Drupal recipe command." >&2
   echo "Expected core/scripts/drupal or ${DDEV_APPROOT:-/var/www/html}/vendor/bin/dr." >&2

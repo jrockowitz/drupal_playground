@@ -45,4 +45,3 @@ config:
               weight: 0
               settings:
                 automator_id: node.article.body.default
-

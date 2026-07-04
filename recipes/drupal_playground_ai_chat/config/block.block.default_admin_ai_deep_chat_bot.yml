@@ -4,9 +4,9 @@ dependencies:
   module:
     - ai_chatbot
   theme:
-    - gin
-id: gin_ai_deep_chat_bot
-theme: gin
+    - default_admin
+id: default_admin_ai_deep_chat_bot
+theme: default_admin
 region: content
 weight: 0
 provider: null
