@@ -7,6 +7,21 @@
     "content-hash": "ae5693fbd2c6e9d858769e755c085c73",
     "packages": [
         {
+            "name": "algolia/places",
+            "version": "1.19.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/places.js/-/places.js-1.19.0.tgz"
+            },
+            "type": "drupal-library",
+            "extra": {
+                "installer-name": "algolia.places"
+            },
+            "license": [
+                "MIT"
+            ]
+        },
+        {
             "name": "asm89/stack-cors",
             "version": "v2.4.0",
             "source": {
@@ -5375,7 +5390,7 @@
         },
         {
             "name": "drupal/drupal_playground_eca",
-            "version": "dev-main",
+            "version": "dev-drupal_10",
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_eca",
@@ -11998,6 +12013,21 @@
             ]
         },
         {
+            "name": "jquery/geocomplete",
+            "version": "1.7.0",
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/ubilabs/geocomplete/archive/refs/tags/1.7.0.zip"
+            },
+            "type": "drupal-library",
+            "extra": {
+                "installer-name": "jquery.geocomplete"
+            },
+            "license": [
+                "MIT"
+            ]
+        },
+        {
             "name": "jquery/hotkeys",
             "version": "0.2.0",
             "dist": {
@@ -12007,6 +12037,21 @@
             "type": "drupal-library",
             "extra": {
                 "installer-name": "jquery.hotkeys"
+            },
+            "license": [
+                "MIT"
+            ]
+        },
+        {
+            "name": "jquery/icheck",
+            "version": "1.0.2 ",
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/drgullin/icheck/zipball/8a6eb37bd7dab1e843c1b630c91c6398ff409d05"
+            },
+            "type": "drupal-library",
+            "extra": {
+                "installer-name": "jquery.icheck"
             },
             "license": [
                 "MIT"
@@ -12112,6 +12157,21 @@
             "type": "drupal-library",
             "extra": {
                 "installer-name": "jquery.timepicker"
+            },
+            "license": [
+                "MIT"
+            ]
+        },
+        {
+            "name": "jquery/toggles",
+            "version": "4.0.0",
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/simontabor/jquery-toggles/archive/refs/tags/v4.0.0.zip"
+            },
+            "type": "drupal-library",
+            "extra": {
+                "installer-name": "jquery.toggles"
             },
             "license": [
                 "MIT"
