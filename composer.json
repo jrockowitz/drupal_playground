@@ -122,6 +122,10 @@
                 {
                     "description": "Fix AI API Explorer skill name validation",
                     "url": "patches/drupal/ai-api-explorer-skill-name.patch"
+                },
+                {
+                    "description": "Fix AI CKEditor dialog editor ID handling",
+                    "url": "https://git.drupalcode.org/project/ai/-/merge_requests/1683.diff"
                 }
             ],
             "_drupal/ai_rag_search_chat": [
@@ -141,11 +145,12 @@
                 "composer.libraries.json",
                 "composer.recipes.json",
                 "composer.sandbox.json",
+                "web/modules/sandbox/webform/composer.json",
                 "web/modules/sandbox/webform/composer.libraries.json"
             ],
             "merge-extra": true,
             "merge-extra-deep": true,
-            "merge-dev": false
+            "merge-dev": true
         }
     },
     "require-dev": {
