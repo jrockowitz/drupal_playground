@@ -4,9 +4,6 @@ description: >
   provider, plus site building agents and dashboard configuration.
   Prerequisites: keys/openai.key must exist before applying.
 type: 'Site'
-recipes:
-  - drupal_playground_base
-
 install:
   - ai
   - ai_provider_openai
