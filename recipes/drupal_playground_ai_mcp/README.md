@@ -139,7 +139,7 @@ configuration in `.codex/config.toml`:
 translation tools. The local `drupal_playground_ai_mcp_tool_bridge` module
 dynamically exposes enabled `tool_belt:*` Tool API plugins to Codex through MCP
 using MCP-safe names such as
-`tool_belt_dynamic.tool_belt__entity_list`.
+`tool_belt_dynamic__tool_belt__entity_list`.
 
 `tool_explorer` is enabled so administrators can browse and manually execute
 Tool API tools at `/admin/config/tool/explorer`. This is useful for reviewing
@@ -185,10 +185,10 @@ tools such as:
 
 - `tool_belt_content_field_definitions`
 - `tool_belt_content_create_entity`
-- `tool_belt_dynamic.tool_belt__entity_list`
-- `tool_belt_dynamic.tool_belt__entity_load_by_id`
-- `tool_belt_dynamic.tool_belt__entity_delete`
-- `tool_belt_dynamic.tool_belt__system_status`
+- `tool_belt_dynamic__tool_belt__entity_list`
+- `tool_belt_dynamic__tool_belt__entity_load_by_id`
+- `tool_belt_dynamic__tool_belt__entity_delete`
+- `tool_belt_dynamic__tool_belt__system_status`
 
 Codex can first inspect a bundle's field value schema, then call
 `tool_belt_content_create_entity` with `entity_type_id`, `bundle`,
@@ -246,7 +246,7 @@ The Inspector should open a local browser UI. Use it to verify:
 - Capability negotiation completes.
 - The prompts tab lists the recipe-provided orientation prompt.
 - The tools tab lists the static helper tools and dynamic
-  `tool_belt_dynamic.tool_belt__*` tools.
+  `tool_belt_dynamic__tool_belt__*` tools.
 - Drupal logs do not show MCP server errors.
 
 View MCP-related Drupal logs with:
@@ -276,7 +276,7 @@ concept after the recipe is implemented and applied.
 9. Ask Codex to list available MCP prompts and tools from the Drupal Playground
    server.
 10. Confirm Codex sees the orientation prompt, `tool_belt_content_create_entity`,
-    and dynamic `tool_belt_dynamic.tool_belt__*` tools.
+    and dynamic `tool_belt_dynamic__tool_belt__*` tools.
 11. Confirm Drupal administrators can open Tool Explorer at
     `/admin/config/tool/explorer`.
 12. Confirm Tool Explorer lists Tool Belt content tools such as entity stub and
