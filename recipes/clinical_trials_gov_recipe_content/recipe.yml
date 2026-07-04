@@ -3,3 +3,8 @@ description: 'Installs shared ClinicalTrials.gov shortcut and supporting content
 type: 'Site'
 install:
   - shortcut
+config:
+  strict: false
+  import:
+    shortcut:
+      - shortcut.set.default
