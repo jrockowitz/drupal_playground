@@ -66,10 +66,6 @@
         },
         {
             "type": "path",
-            "url": "recipes/drupal_playground_ai_mcp"
-        },
-        {
-            "type": "path",
             "url": "recipes/drupal_playground_ai_automators"
         },
         {
@@ -152,7 +148,6 @@
         "drupal/drupal_playground_ai_ckeditor_explain": "*",
         "drupal/drupal_playground_ai_content_suggestions": "*",
         "drupal/drupal_playground_ai_devel": "*",
-        "drupal/drupal_playground_ai_mcp": "*",
         "drupal/drupal_playground_ai_automators": "*",
         "drupal/drupal_playground_base": "*",
         "drupal/drupal_playground_devel": "*",
