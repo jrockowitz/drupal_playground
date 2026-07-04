@@ -1,8 +1,6 @@
 name: 'Drupal Playground Webform Setup'
 description: 'Installs Webform, supporting integrations, and Webform example modules.'
 type: 'Site'
-recipes:
-  - drupal_playground_base
 install:
   - address
   - captcha
