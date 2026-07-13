@@ -11,10 +11,23 @@ Use this skill to help maintain the Drupal Webform module issue queue with
 `drupalorg-cli`, local Webform tests, and maintainer-safe guardrails. Agents
 reduce queue friction; they do not replace maintainer judgment.
 
-Primary reference: `/Users/rockowij/Sites/drupal_webform/docs/WEBFORM-AGENTS.md`.
+Webform workspace and installation requirements are documented in
+`openspec/specs/ecosystem-webform/spec.md`. This skill is the self-contained
+operational source for public issue maintenance.
 
 Committed public tracker:
 `/Users/rockowij/Sites/drupal_webform/.agents/webform-issue-maintenance`.
+
+## Operating Principles
+
+- Agents support maintainers; they do not act as maintainers.
+- Evidence matters more than confidence.
+- Work from issue details and comments, not titles alone.
+- Prefer regression tests, narrow changes, and established Webform patterns.
+- Record what was inspected, what passed, what failed, and what remains
+  uncertain.
+- Describe work as an RTBC candidate when justified; do not make the maintainer
+  decision that an issue is RTBC.
 
 ## Required First Steps
 
@@ -172,6 +185,41 @@ Avoid or defer issues that depend on private sites, external services, broad
 architecture, unclear product behavior, permission-policy decisions, public API
 changes, or large stale patches without tests.
 
+Evaluate candidates across these dimensions. Scores are guidance, not a
+substitute for maintainer judgment.
+
+- **Impact:** Prefer data integrity, access, supported Drupal versions, release
+  blockers, submissions, and test-suite failures over niche polish or support
+  questions.
+- **Reproducibility:** Prefer deterministic steps and small fixtures over
+  private-site dependencies, intermittent reports, or large contrib stacks.
+- **Local testability:** Prefer behavior that Kernel, Functional, Browser, or
+  Functional JavaScript coverage can exercise without unstable external
+  services or subjective visual judgment.
+- **Scope and risk:** Prefer one focused class, plugin, route, config area, or
+  test surface with a nearby pattern. Pause for architecture, backward
+  compatibility, public API, permission, or product-policy decisions.
+- **Existing contribution quality:** Prefer small current patches or merge
+  requests with tests. Treat stale, large, testless, or internally inconsistent
+  contributions as review or reproduction work before considering a fix.
+
+## Work Lanes
+
+Classify selected work into one primary lane and produce the corresponding
+evidence.
+
+- **Queue intelligence:** A dated digest of high-impact, stale-review,
+  test-missing, duplicate, obsolete, and clearly actionable issues, ending with
+  the best three to five candidates.
+- **Patch or merge request review:** Changed files, issue-summary alignment,
+  test coverage, local behavior, CI state, edge cases, and concrete findings.
+- **Regression test:** The smallest behavioral contract, a failing test before
+  the fix when practical, and the passing result after the fix.
+- **Scoped fix:** The smallest code or configuration change that satisfies the
+  issue and regression coverage, without unrelated cleanup.
+- **Comment draft:** Environment, reproduction, commands, results, uncertainty,
+  and a suggested next status for the maintainer to decide.
+
 ## Per-Issue Workflow
 
 1. Load issue details and comments:
@@ -277,6 +325,20 @@ Review findings:
 - suggested comment draft, but do not post it
 - tracker note path when the issue is selected for local work
 - review-gate status before commit or push
+
+Completion evidence for code work:
+
+- changed files
+- behavior before and after the change
+- targeted PHPUnit command and result
+- targeted `ddev code-review` command and result
+- known gaps or unresolved questions
+
+Completion evidence for queue scouting:
+
+- commands and scan date
+- top candidates and selection rationale
+- candidates intentionally deferred and why
 
 Maintainer comment draft:
 

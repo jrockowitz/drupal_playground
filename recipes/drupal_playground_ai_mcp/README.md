@@ -310,8 +310,8 @@ in a separate recipe or custom module:
 2. Add `recipe.yml` with `mcp_server` installation and conservative config.
 3. Add minimal MCP settings config.
 4. Add a single orientation prompt config entity for discoverability testing.
-5. Update `docs/CLAUDE-CODE-MCP.md` with the Drupal Playground-specific Codex
-   setup and the current `drupal/mcp_server` limitations.
+5. Capture durable MCP behavior in the applicable OpenSpec capability and keep
+   client-specific execution guidance in Agent Skills or project instructions.
 6. Apply the recipe locally.
 7. Verify Drush, route, config, and MCP Inspector behavior.
 8. Keep any future tool/resource exposure out of this recipe unless explicitly

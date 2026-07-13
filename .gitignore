@@ -122,6 +122,10 @@ yarn-error.log
 !.agents/skills/webform-security-gitlab/
 !.agents/skills/webform-security-gitlab/**
 .agents/private/
+/.codex/skills/openspec-*/
+/.opencode/skills/openspec-*/
+/.superpowers/
+/docs/superpowers/
 
 # =============================================================================
 # Configuration

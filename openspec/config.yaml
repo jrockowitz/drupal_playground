@@ -40,8 +40,35 @@ context: |
   Documentation rules:
   - Describe behavior verified in the current repository, not an aspirational
     implementation.
+  - `.agents/skills` is the canonical shared storage for Agent Skills.
+    Project-owned skills are committed, while generated and vendor skills are
+    ignored.
+  - Application-specific OpenSpec command wrappers may be committed for the
+    tools that use them.
+  - OpenSpec skill output generated per tool is compatibility material, not
+    durable documentation, and is ignored by Git.
+  - Capture proposed behavior in an active OpenSpec change until the behavior is
+    implemented, verified, and ready to sync into the main specifications.
   - Use kebab-case OpenSpec identifiers and preserve official names such as
     Webform, Schema.org, and ClinicalTrials.gov in prose.
   - Ecosystem specs reference foundation behavior instead of repeating it.
   - ECA and translation are install presets, not standalone ecosystems, unless
     dedicated worktrees are introduced in the future.
+  - Independent nested repositories own and validate their own `openspec/`
+    roots. The nearest OpenSpec root controls a command; this configuration does
+    not aggregate or route commands to nested roots.
+  - Registered OpenSpec stores are machine-local alternatives for standalone
+    specification repositories and are not required for nested repositories.
+  - OpenSpec is the durable documentation and planning layer. Main specs record
+    current requirements, while active changes record proposed behavior, design
+    decisions, and implementation tasks.
+  - Agent Skills and Superpowers are the execution layer for exploration,
+    implementation, testing, review, and verification. They may reference
+    OpenSpec requirements but must not duplicate durable proposals, designs, or
+    task lists.
+  - Accepted exploration decisions are captured in OpenSpec before execution.
+    After implementation and verification, the applicable change is synchronized
+    or archived.
+  - Superpowers output under `.superpowers/` and `docs/superpowers/` is transient
+    execution material and is ignored by Git. Use the applicable OpenSpec change
+    for durable proposals, designs, requirements, and implementation tasks.
