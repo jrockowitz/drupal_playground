@@ -1,20 +1,47 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Drupal Playground is one Composer-managed Drupal codebase used to work on
+  multiple Drupal versions, contributed projects, and ecosystems in parallel.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Architecture:
+  - Composer Merge Plugin assembles focused manifests for Drupal core versions,
+    local Recipes, sandbox projects, external libraries, and nested project
+    dependencies into one lockfile.
+  - Git worktrees isolate branches and working files. DDEV derives the project
+    name from each worktree directory, giving each worktree an independent URL,
+    database, and container set while retaining shared commands and conventions.
+  - The DDEV `install` command rebuilds Drupal from the standard profile, applies
+    shared foundation Recipes, then applies optional ecosystem presets and their
+    operational steps.
+
+  Current worktree registry:
+  - `main`: shared integration baseline and general contributed-module work,
+    including ad hoc `drush en {module}` workflows.
+  - `drupal_10`: Drupal 10 compatibility lane.
+  - `drupal_ai`: Drupal AI ecosystem.
+  - `drupal_webform`: Webform ecosystem.
+  - `drupal_schemadotorg`: Schema.org ecosystem.
+  - `drupal_clinical_trials_gov`: ClinicalTrials.gov ecosystem.
+
+  Foundation specifications:
+  - `foundation-composer`
+  - `foundation-ddev`
+  - `foundation-git-worktree`
+  - `foundation-drupal-recipe`
+  - `foundation-drupal-core`
+
+  Ecosystem specifications:
+  - `ecosystem-ai`
+  - `ecosystem-webform`
+  - `ecosystem-schemadotorg`
+  - `ecosystem-clinical-trials-gov`
+
+  Documentation rules:
+  - Describe behavior verified in the current repository, not an aspirational
+    implementation.
+  - Use kebab-case OpenSpec identifiers and preserve official names such as
+    Webform, Schema.org, and ClinicalTrials.gov in prose.
+  - Ecosystem specs reference foundation behavior instead of repeating it.
+  - ECA and translation are install presets, not standalone ecosystems, unless
+    dedicated worktrees are introduced in the future.
