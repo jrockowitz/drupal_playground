@@ -17,7 +17,7 @@
     "require": {
         "composer/installers": "^2.3",
         "cweagans/composer-patches": "^2",
-        "drupal/ai_best_practices": "1.0.x-dev",
+        "drupal/ai_best_practices": "^1.0@dev",
         "drupal/core-composer-scaffold": "^10 || ^11",
         "drupal/core-project-message": "^10 || ^11",
         "drupal/core-recommended": "^10 || ^11",
@@ -118,17 +118,7 @@
         },
         "composer-exit-on-patch-failure": false,
         "patches": {
-            "drupal/ai": [
-                {
-                    "description": "Fix AI API Explorer skill name validation",
-                    "url": "patches/drupal/ai-api-explorer-skill-name.patch"
-                },
-                {
-                    "description": "Fix AI CKEditor dialog editor ID handling",
-                    "url": "https://git.drupalcode.org/project/ai/-/merge_requests/1683.diff"
-                }
-            ],
-            "_drupal/ai_rag_search_chat": [
+            "drupal/ai_rag_search_chat": [
                 {
                     "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",
                     "url": "patches/drupal/ai_rag_search_chat-multi-value-excerpts.patch"
