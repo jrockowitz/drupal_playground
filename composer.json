@@ -117,7 +117,18 @@
             ]
         },
         "composer-exit-on-patch-failure": false,
+        "composer-patches": {
+            "ignore-dependency-patches": [
+                "drupal/media_library_media_modify"
+            ]
+        },
         "patches": {
+            "drupal/inline_entity_form": [
+                {
+                    "description": "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form",
+                    "url": "patches/drupal/inline_entity_form-3271293-3.0.0-reroll.patch"
+                }
+            ],
             "drupal/ai_rag_search_chat": [
                 {
                     "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",

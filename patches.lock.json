@@ -1,5 +1,5 @@
 {
-    "_hash": "c0f2614e55aa72bb5bdf85c0fbbe71eaa435c85c7e034cc97e3b476be5f8d626",
+    "_hash": "f5cfee3e633cdbde1a973a8b7a97d79322225e4e6979a56ae465b0318a20dd26",
     "patches": {
         "drupal/config_rewrite": [
             {
@@ -17,8 +17,8 @@
             {
                 "package": "drupal/core",
                 "description": "Issue #2780839: Optimize migration of specific source IDs for SQL sources",
-                "url": "https://www.drupal.org/files/issues/2022-04-25/2780839-9.4.x-optimize-migrate-source-filter-53.patch",
-                "sha256": "54458452f06e6cbd3a61a5c4b944d4634c499b091cfad2b47ce27bc9cf4d6bd8",
+                "url": "https://www.drupal.org/files/issues/2026-07-02/2780839-10-6.patch",
+                "sha256": "1d6f60bc4696707eb24331262baaabfdb0a939824dd30b040fd8266b1ad0cacb",
                 "depth": 2,
                 "extra": {
                     "provenance": "root"
@@ -42,16 +42,6 @@
                 "depth": 2,
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776",
-                    "provenance": "dependency:drupal/core"
-                }
-            },
-            {
-                "package": "drupal/core",
-                "description": "Issue #3263397-10: Simplify form logic in media library",
-                "url": "https://www.drupal.org/files/issues/2023-01-19/3263397-16.patch",
-                "sha256": "c391fd1c1fc51229dcb95d2bb2628d9dc5c1d65a0a3a30147d60ad70be88996c",
-                "depth": 2,
-                "extra": {
                     "provenance": "dependency:drupal/core"
                 }
             }
@@ -116,8 +106,8 @@
             {
                 "package": "drupal/cer",
                 "description": "Issue #2998138: Could support Remove field name prefix module?",
-                "url": "https://www.drupal.org/files/issues/2018-09-17/support_fields_without_prefix-2998138-4-D8.patch",
-                "sha256": "92899716c7e8dbe1bbc5a427948fa75a3583a5594c92f05a970b1b2f0a69580c",
+                "url": "https://git.drupalcode.org/project/cer/-/merge_requests/28.diff",
+                "sha256": "51a76ffa3508f7bf23d8403aacbe4c56d5f3463cc3ea8c098f9d91e23a88829a",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
@@ -140,8 +130,8 @@
             {
                 "package": "drupal/entity_browser",
                 "description": "Issue #3012432: Broken views exposed form in modals",
-                "url": "https://www.drupal.org/files/issues/2020-04-29/3012432-4_remove_enctype_on_views_widget.patch",
-                "sha256": "bd58afd3ebb77aa5d95ba05ed60210ff4d3e12c2d4b46f1b5ce82e625ef287b4",
+                "url": "https://git.drupalcode.org/project/entity_browser/-/merge_requests/116.diff",
+                "sha256": "5ca7c4e4c8df48c0dae938623ea8620e5142832427c3dd406dbab7fd44b58acb",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
@@ -150,8 +140,8 @@
             {
                 "package": "drupal/entity_browser",
                 "description": "Issue #2946829: Make submit button on modal always visible",
-                "url": "https://www.drupal.org/files/issues/2020-10-19/2946829-submit-button-always-visible-on-modals-4.patch",
-                "sha256": "3ae831be410d4319b553211b6d98f7e9ec77336d73b3c344e798c4a1d5dc4067",
+                "url": "https://git.drupalcode.org/project/entity_browser/-/merge_requests/99.diff",
+                "sha256": "9b9c7fb620043c1706958fce13ab89fe2f624ac2f774606a20cdc8f47e8d06a2",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
@@ -182,34 +172,24 @@
                 }
             }
         ],
-        "drupal/ai": [
+        "drupal/inline_entity_form": [
             {
-                "package": "drupal/ai",
-                "description": "Fix AI API Explorer skill name validation",
-                "url": "patches/drupal/ai-api-explorer-skill-name.patch",
-                "sha256": "59bf2c12fb32cbf6622ef618ade348b2dde4fe4891db732479a737812fe052f0",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/ai",
-                "description": "Fix AI CKEditor dialog editor ID handling",
-                "url": "https://git.drupalcode.org/project/ai/-/merge_requests/1683.diff",
-                "sha256": "428c04bf902402d1ca948b7d4cb2f1d624da0cc1bede63febef6477af83e4efd",
+                "package": "drupal/inline_entity_form",
+                "description": "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form",
+                "url": "patches/drupal/inline_entity_form-3271293-3.0.0-reroll.patch",
+                "sha256": "0395a3488071793907c07c19ce46072f6154a0c309140a2bc377c44b71691c20",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
                 }
             }
         ],
-        "_drupal/ai_rag_search_chat": [
+        "drupal/ai_rag_search_chat": [
             {
-                "package": "_drupal/ai_rag_search_chat",
+                "package": "drupal/ai_rag_search_chat",
                 "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",
                 "url": "patches/drupal/ai_rag_search_chat-multi-value-excerpts.patch",
-                "sha256": "bc952a047e429af9ef164e36fa83b93ed2110a66fd2312ed11ffb2f3999e446a",
+                "sha256": "a2e5866f2af4c1722833911103365443350cf27329d170d8a06e876853358d58",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
@@ -226,18 +206,6 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874",
                     "provenance": "dependency:drupal/coffee"
-                }
-            }
-        ],
-        "drupal/inline_entity_form": [
-            {
-                "package": "drupal/inline_entity_form",
-                "description": "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form",
-                "url": "https://www.drupal.org/files/issues/2022-09-22/47-8.diff",
-                "sha256": "2fadb9b665b10c6fc449d2faf83072630c9b1579cd7a433f6c0e5d4a5227434b",
-                "depth": 1,
-                "extra": {
-                    "provenance": "dependency:drupal/inline_entity_form"
                 }
             }
         ]
