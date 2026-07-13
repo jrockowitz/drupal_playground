@@ -140,7 +140,7 @@
         },
         "merge-plugin": {
             "include": [
-                "composer.drupal_11.json",
+                "composer.drupal_10.json",
                 "composer.lenient.json",
                 "composer.libraries.json",
                 "composer.recipes.json",
