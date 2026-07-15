@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b480627fc412f5071d88121939f1c99",
+    "content-hash": "75f6df397ba22716df77fa9d7eb513b3",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -21139,6 +21139,53 @@
                 "source": "https://github.com/drupal/core-dev/tree/11.4.3"
             },
             "time": "2026-07-14T09:31:32+00:00"
+        },
+        {
+            "name": "drupal/embedded_content",
+            "version": "2.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/embedded_content.git",
+                "reference": "2.0.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/embedded_content-2.0.4.zip",
+                "reference": "2.0.4",
+                "shasum": "14f401f0e74773abaa02a041ce282ff7f71f9eef"
+            },
+            "require": {
+                "drupal/core": "^9 || ^10 || ^11",
+                "ext-libxml": "*",
+                "symfony/css-selector": "^6 || ^7",
+                "symfony/dom-crawler": "^6 || ^7"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.4",
+                    "datestamp": "1770987506",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "nuez",
+                    "homepage": "https://www.drupal.org/user/758020"
+                }
+            ],
+            "description": "Provides a way to embed rich content into ckeditor without having to grant html editing rights.",
+            "homepage": "http://drupal.org/project/embedded_content",
+            "support": {
+                "source": "https://git.drupalcode.org/project/embedded_content"
+            }
         },
         {
             "name": "drupal/entity",
