@@ -60,6 +60,13 @@ When drafting issue comments or HTML for a human to post, begin with
 Never click final submit, save, preview, publish, or comment buttons. Draft or
 place text only when asked, then stop for human action.
 
+Never merge a branch or merge request automatically, including through GitLab
+quick actions, push options, API calls, or command-line flags. A human must
+review and merge every branch and merge request at
+https://git.drupalcode.org/security. Do not enable auto-merge or otherwise
+take any action that would cause a branch or merge request to merge without
+that human review.
+
 Do not copy exploit prose, secrets, tokens, private data, proof-of-concept
 payloads, or unnecessary vulnerability detail into notes, comments, advisory
 drafts, or summaries. Prefer concise paraphrase and private links.
