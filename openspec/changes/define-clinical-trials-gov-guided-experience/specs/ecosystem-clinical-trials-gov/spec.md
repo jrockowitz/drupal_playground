@@ -137,3 +137,34 @@ explicit operator control for destructive operations.
 - **WHEN** an operator explicitly starts rollback for the generated migration
 - **THEN** the workflow removes records tracked by that migration
 - **AND** it reports the rollback outcome before affected search indexes are rebuilt
+
+### Requirement: Documented proof-of-concept inventory
+
+The ClinicalTrials.gov proof of concept SHALL keep its module, Recipe, data
+approach, and demo-path documentation available in OpenSpec or the closest
+module or Recipe documentation.
+
+#### Scenario: Review proof-of-concept scope
+
+- **WHEN** a developer reviews the ClinicalTrials.gov OpenSpec change
+- **THEN** it identifies the data-model and AI Automator approaches
+- **AND** it identifies the ClinicalTrials.gov Recipes and modules included in the proof of concept
+- **AND** it distinguishes durable OpenSpec behavior from module-level README or AGENTS guidance
+
+#### Scenario: Run the demo path
+
+- **WHEN** a developer needs to reproduce the ClinicalTrials.gov demo
+- **THEN** the documented path includes the data and fields install presets
+- **AND** it includes the high-limit Memorial Sloan Kettering recruiting-trials import example
+- **AND** it identifies the API explorer, report, importer, Elasticsearch, Milvus, and AI chat review surfaces
+
+### Requirement: Tracked research and maintenance backlog
+
+ClinicalTrials.gov follow-up work SHALL be tracked as implementation backlog
+until it becomes verified current behavior or an accepted design decision.
+
+#### Scenario: Capture deferred work
+
+- **WHEN** source notes identify deferred work such as AI Assistant API migration, provider trials, caching review, security hardening, chat performance, RAG search improvement, Views bulk operations AI integration, or cross-worktree synchronization
+- **THEN** the work is captured in the active OpenSpec change tasks or a follow-up OpenSpec change
+- **AND** it is not described as current behavior until implemented and verified

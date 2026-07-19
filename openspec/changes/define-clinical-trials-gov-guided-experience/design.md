@@ -7,6 +7,31 @@ sensitive situations without presenting the AI as a clinician or enrollment
 authority. It also needs a clearer import lifecycle so search results can be
 traced to an understood dataset state.
 
+The source planning document frames the work as a documented end-to-end proof
+of concept. The proof of concept includes two data approaches: pulling
+ClinicalTrials.gov data into the reusable data model and using AI Automators to
+generate field data from ClinicalTrials.gov studies. Both approaches can be
+combined with Elasticsearch listing and Milvus RAG discovery variants.
+
+The documentation inventory for the proof of concept includes these Recipes:
+`clinical_trials_gov_recipe_assets`, `clinical_trials_gov_recipe_content`,
+`clinical_trials_gov_recipe_data_elastic`,
+`clinical_trials_gov_recipe_data_milvus`,
+`clinical_trials_gov_recipe_data_setup`,
+`clinical_trials_gov_recipe_fields_elastic`,
+`clinical_trials_gov_recipe_fields_milvus`, and
+`clinical_trials_gov_recipe_fields_setup`. It includes these modules:
+`clinical_trials_gov`, `clinical_trials_gov_ai_rag_search_chat`,
+`clinical_trials_gov_data`, `clinical_trials_gov_fields`, and
+`clinical_trials_gov_report`.
+
+The demo path should remain reproducible from OpenSpec-facing documentation:
+install the data and fields flows with `ddev install trials-data` and
+`ddev install trials-fields`, test larger imports with a Memorial Sloan
+Kettering recruiting-trials query, review the ClinicalTrials.gov API explorer,
+review the ClinicalTrials.gov report and importer, and compare the
+Elasticsearch and Milvus trial discovery surfaces.
+
 ## Goals / Non-Goals
 
 **Goals:**
@@ -72,6 +97,14 @@ update records, while removal of out-of-scope records requires an explicit
 operator action. Rollback uses the migration's tracked identifiers and reports
 its outcome before indexes are rebuilt.
 
+### Keep reference material as supporting context
+
+ClinicalTrials.gov API documentation, WHO trial search, CTKB material,
+institutional clinical-trial search examples, NIH trial-matching articles, and
+TrialX chatbot examples are reference inputs for research and comparison. They
+will inform implementation decisions, but OpenSpec will record only the
+requirements and decisions adopted by this repository.
+
 ## Risks / Trade-offs
 
 - **Risk: Compassionate language is mistaken for medical authority.** → Keep
@@ -96,7 +129,10 @@ its outcome before indexes are rebuilt.
 4. Add no-match, frustration, and medical-advice handoff paths.
 5. Add explicit summary save, share, print, and resume behavior.
 6. Add import lifecycle preview, re-import, removal, and rollback controls.
-7. Verify accessibility, privacy boundaries, import behavior, and index rebuilds
+7. Document module and Recipe ownership, demo review steps, external references,
+   and deferred backlog items in OpenSpec or the closest module/Recipe README as
+   appropriate.
+8. Verify accessibility, privacy boundaries, import behavior, and index rebuilds
    before enabling the experience by default.
 
 Rollback disables the guided experience and returns to the current trial-focused
