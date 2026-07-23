@@ -122,6 +122,16 @@ Start from the security fork base branch when it exists, otherwise
 creating MRs with `git push -o merge_request.*`, keep each push option value on
 one line; use a short description and edit longer Markdown later.
 
+Use this exact title format for every private Webform security merge request:
+
+```text
+fix: #{issue} - webform {version}: {issue title}
+```
+
+Use the GitLab work-item number for `{issue}`, the MR target branch for
+`{version}`, and the work-item title without its leading `webform:` prefix for
+`{issue title}`.
+
 ## New Issue Reproduction
 
 When no Codex branch, MR, or other code work is visible, create a reproduction
