@@ -1,7 +1,8 @@
 diff --git a/src/Service/DirectRagRetriever.php b/src/Service/DirectRagRetriever.php
+index 9ad09a1..1cf2d48 100644
 --- a/src/Service/DirectRagRetriever.php
 +++ b/src/Service/DirectRagRetriever.php
-@@ -1454,23 +1454,25 @@
+@@ -1528,24 +1528,26 @@
          try {
            $field = $item->getField($field_id);
            if ($field && !empty($field->getValues())) {
@@ -18,9 +19,10 @@ diff --git a/src/Service/DirectRagRetriever.php b/src/Service/DirectRagRetriever
                $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                $text = preg_replace('/\s+/', ' ', $text);
                $text = trim($text);
+               $text = $this->sanitizeUtf8($text);
 -              if (!empty($text)) {
--                if (strlen($text) > 300) {
--                  return substr($text, 0, 300) . '...';
+-                if (mb_strlen($text) > 300) {
+-                  return mb_substr($text, 0, 300) . '...';
 -                }
 -                return $text;
 +              if ($text !== '') {
@@ -30,8 +32,8 @@ diff --git a/src/Service/DirectRagRetriever.php b/src/Service/DirectRagRetriever
 +
 +            if (!empty($text_parts)) {
 +              $excerpt = implode('; ', array_unique($text_parts));
-+              if (strlen($excerpt) > 300) {
-+                return substr($excerpt, 0, 300) . '...';
++              if (mb_strlen($excerpt) > 300) {
++                return mb_substr($excerpt, 0, 300) . '...';
 +              }
 +              return $excerpt;
 +            }

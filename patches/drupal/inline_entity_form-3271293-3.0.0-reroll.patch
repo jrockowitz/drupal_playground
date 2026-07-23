@@ -1,0 +1,262 @@
+diff --git a/src/Form/EntityInlineForm.php b/src/Form/EntityInlineForm.php
+index c8e658e..45a2b94 100644
+--- a/src/Form/EntityInlineForm.php
++++ b/src/Form/EntityInlineForm.php
+@@ -308,16 +308,9 @@ class EntityInlineForm implements InlineFormInterface {
+   }
+ 
+   /**
+-   * Builds an updated entity object based upon the submitted form values.
+-   *
+-   * @param array $entity_form
+-   *   The entity form.
+-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+-   *   The entity.
+-   * @param \Drupal\Core\Form\FormStateInterface $form_state
+-   *   The current state of the form.
++   * {@inheritdoc}
+    */
+-  protected function buildEntity(array $entity_form, ContentEntityInterface $entity, FormStateInterface $form_state) {
++  public function buildEntity(array $entity_form, ContentEntityInterface $entity, FormStateInterface $form_state) {
+     $form_display = $this->getFormDisplay($entity, $entity_form['#form_mode']);
+     $form_display->extractFormValues($entity, $entity_form, $form_state);
+     // Invoke all specified builders for copying form values to entity fields.
+diff --git a/src/InlineFormInterface.php b/src/InlineFormInterface.php
+index d68ef29..2777220 100644
+--- a/src/InlineFormInterface.php
++++ b/src/InlineFormInterface.php
+@@ -2,6 +2,7 @@
+ 
+ namespace Drupal\inline_entity_form;
+ 
++use Drupal\Core\Entity\ContentEntityInterface;
+ use Drupal\Core\Entity\EntityHandlerInterface;
+ use Drupal\Core\Entity\EntityInterface;
+ use Drupal\Core\Form\FormStateInterface;
+@@ -84,6 +85,18 @@ interface InlineFormInterface extends EntityHandlerInterface {
+    */
+   public function isTableDragEnabled(array $element);
+ 
++  /**
++   * Builds an updated entity object based upon the submitted form values.
++   *
++   * @param array $entity_form
++   *   The entity form.
++   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
++   *   The entity.
++   * @param \Drupal\Core\Form\FormStateInterface $form_state
++   *   The current state of the form.
++   */
++  public function buildEntity(array $entity_form, ContentEntityInterface $entity, FormStateInterface $form_state);
++
+   /**
+    * Builds the entity form.
+    *
+diff --git a/src/Plugin/Field/FieldWidget/InlineEntityFormComplex.php b/src/Plugin/Field/FieldWidget/InlineEntityFormComplex.php
+index 823f80e..2301726 100644
+--- a/src/Plugin/Field/FieldWidget/InlineEntityFormComplex.php
++++ b/src/Plugin/Field/FieldWidget/InlineEntityFormComplex.php
+@@ -275,6 +275,12 @@ class InlineEntityFormComplex extends InlineEntityFormBase implements ContainerF
+     // a consistent and relatively short length while maintaining uniqueness.
+     $this->setIefId($this->makeIefId($parents));
+ 
++    // Get state from storage.
++    $widget_state = $form_state->get(['inline_entity_form', $this->getIefId()]);
++    if (!$widget_state) {
++      $form_state->set(['inline_entity_form', $this->getIefId()], []);
++    }
++
+     // Get the langcode of the parent entity.
+     $parent_langcode = $items->getEntity()->language()->getId();
+ 
+@@ -301,10 +307,15 @@ class InlineEntityFormComplex extends InlineEntityFormBase implements ContainerF
+     }
+ 
+     $this->prepareFormState($form_state, $items, $element['#translating']);
+-    $entities = $form_state->get([
+-      'inline_entity_form', $this->getIefId(),
+-      'entities',
+-    ]);
++    if (isset($widget_state['entities'])) {
++      $entities = $widget_state['entities'];
++    }
++    else {
++      $entities = $form_state->get([
++        'inline_entity_form', $this->getIefId(),
++        'entities',
++      ]);
++    }
+     $entities_count = count($entities);
+ 
+     // Determine if there are multiple existing entities that could be
+@@ -708,11 +719,6 @@ class InlineEntityFormComplex extends InlineEntityFormBase implements ContainerF
+       $items->filterEmptyItems();
+       return;
+     }
+-    $triggering_element = $form_state->getTriggeringElement();
+-    if (empty($triggering_element['#ief_submit_trigger'])) {
+-      return;
+-    }
+-
+     $field_name = $this->fieldDefinition->getName();
+     $parents = array_merge($form['#parents'], [$field_name, 'form']);
+     $ief_id = $this->makeIefId($parents);
+diff --git a/src/Plugin/Field/FieldWidget/InlineEntityFormSimple.php b/src/Plugin/Field/FieldWidget/InlineEntityFormSimple.php
+index ee146dd..920ea67 100644
+--- a/src/Plugin/Field/FieldWidget/InlineEntityFormSimple.php
++++ b/src/Plugin/Field/FieldWidget/InlineEntityFormSimple.php
+@@ -10,6 +10,7 @@ use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
+ use Drupal\Core\Field\WidgetBase;
+ use Drupal\Core\Form\FormStateInterface;
+ use Drupal\Core\Render\Element;
++use Drupal\inline_entity_form\Element\InlineEntityForm;
+ use Drupal\inline_entity_form\TranslationHelper;
+ use Drupal\rat\v1\RenderArray;
+ 
+@@ -32,11 +33,17 @@ class InlineEntityFormSimple extends InlineEntityFormBase {
+    * {@inheritdoc}
+    */
+   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+-    // Trick inline_entity_form_form_alter() into attaching the handlers,
+-    // WidgetSubmit will be needed once extractFormValues fills the $form_state.
++    // Build a parents array for this element's values in the form.
+     $parents = array_merge($element['#field_parents'], [$items->getName()]);
+-    $ief_id = $this->makeIefId($parents);
+-    $form_state->set(['inline_entity_form', $ief_id], []);
++    // Assign a unique identifier to each IEF widget. Since $parents can get
++    // quite long, hashing ensures every ID has a consistent, short length.
++    $this->setIefId($this->makeIefId($parents));
++
++    // Get state from storage.
++    $widget_state = $form_state->get(['inline_entity_form', $this->getIefId()]);
++    if (!$widget_state) {
++      $form_state->set(['inline_entity_form', $this->getIefId()], []);
++    }
+ 
+     $element = [
+       '#type' => $this->getSetting('collapsible') ? 'details' : 'fieldset',
+@@ -56,7 +63,13 @@ class InlineEntityFormSimple extends InlineEntityFormBase {
+       $element['warning']['#markup'] = $this->t('Unable to load the referenced entity.');
+       return $element;
+     }
+-    $entity = $item->entity;
++    /** @var \Drupal\Core\Entity\EntityInterface $entity */
++    if (isset($widget_state['entities'][$delta]['entity'])) {
++      $entity = $widget_state['entities'][$delta]['entity'];
++    }
++    else {
++      $entity = $item->entity;
++    }
+     $op = $entity ? 'edit' : 'add';
+     $langcode = $items->getEntity()->language()->getId();
+     $parents = array_merge($element['#field_parents'], [
+@@ -142,8 +155,10 @@ class InlineEntityFormSimple extends InlineEntityFormBase {
+         $form,
+         [$field_name, 'widget', $delta]
+       )) {
++        $inline_form_handler = InlineEntityForm::getInlineFormHandler($element['inline_entity_form']['#entity_type']);
+         /** @var \Drupal\Core\Entity\EntityInterface $entity */
+         $entity = $element['inline_entity_form']['#entity'];
++        $inline_form_handler->buildEntity($element['inline_entity_form'], $entity, $form_state);
+         $weight = $submitted_values[$delta]['_weight'] ?? 0;
+         $values[$weight] = ['entity' => $entity];
+       }
+@@ -163,6 +178,7 @@ class InlineEntityFormSimple extends InlineEntityFormBase {
+     // Populate the IEF form state with $items so that WidgetSubmit can
+     // perform the necessary saves.
+     $ief_id = $this->makeIefId($parents);
++    $this->setIefId($ief_id);
+     $widget_state = [
+       'instance' => $this->fieldDefinition,
+       'delete' => [],
+diff --git a/tests/modules/inline_entity_form_test/inline_entity_form_test.module b/tests/modules/inline_entity_form_test/inline_entity_form_test.module
+new file mode 100644
+index 0000000..ab4ea93
+--- /dev/null
++++ b/tests/modules/inline_entity_form_test/inline_entity_form_test.module
+@@ -0,0 +1,49 @@
++<?php
++
++/**
++ * @file
++ * Helper module for the Inline Entity Form module tests.
++ */
++
++use Drupal\Component\Utility\NestedArray;
++use Drupal\Core\Ajax\AjaxResponse;
++use Drupal\Core\Ajax\InvokeCommand;
++use Drupal\Core\Form\FormStateInterface;
++
++/**
++ * Implements hook_field_widget_complete_form_alter().
++ */
++function inline_entity_form_test_field_widget_complete_form_alter(array &$element, FormStateInterface $form_state, array $context): void {
++  /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
++  $field_definition = $context['items']->getFieldDefinition();
++
++  if ($field_definition->getName() === 'positive_int') {
++    /** @var \Drupal\Core\Field\FieldItemListInterface $items */
++    $items = $context['items'];
++    $element['button'] = [
++      '#type' => 'button',
++      '#value' => 'Call ajax',
++      '#item_values' => $items->getValue(),
++      '#limit_validation_errors' => [],
++      '#ajax' => [
++        'callback' => 'inline_entity_form_test_ajax_handler',
++      ],
++    ];
++    $element['value'] = [
++      '#type' => 'textfield',
++    ];
++  }
++}
++
++/**
++ * Ajax handler for the field widget test button.
++ */
++function inline_entity_form_test_ajax_handler(array $form, FormStateInterface $form_state): AjaxResponse {
++  $button = $form_state->getTriggeringElement();
++  $element = NestedArray::getValue($form, array_slice($button['#array_parents'], 0, -1));
++  $value_field = $element['value'];
++
++  $response = new AjaxResponse();
++  $response->addCommand(new InvokeCommand("[name='{$value_field['#name']}']", 'val', [$button['#item_values'][0]['value']]));
++  return $response;
++}
+diff --git a/tests/src/FunctionalJavascript/SimpleWidgetTest.php b/tests/src/FunctionalJavascript/SimpleWidgetTest.php
+index 4b60710..d9f34fb 100644
+--- a/tests/src/FunctionalJavascript/SimpleWidgetTest.php
++++ b/tests/src/FunctionalJavascript/SimpleWidgetTest.php
+@@ -29,8 +29,10 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
+     parent::setUp();
+ 
+     $this->user = $this->createUser([
++      'create ief_complex_simple content',
+       'create ief_simple_single content',
+       'create ief_test_custom content',
++      'edit any ief_complex_simple content',
+       'edit any ief_simple_single content',
+       'edit own ief_test_custom content',
+       'view own unpublished content',
+@@ -222,6 +224,20 @@ class SimpleWidgetTest extends InlineEntityFormTestBase {
+     $assert_session->elementExists('xpath', $nested_title_field_xpath);
+   }
+ 
++  /**
++   * Tests that the form is rebuilt properly on an ajax request.
++   */
++  public function testFormRebuildOnAjaxRequest() {
++    $this->drupalLogin($this->user);
++    $this->drupalGet('node/add/ief_simple_single');
++
++    $this->getSession()->getPage()->fillField('single[0][inline_entity_form][positive_int][0][value]', 1);
++    $this->getSession()->getPage()->pressButton('Call ajax');
++    $this->assertSession()->assertWaitOnAjaxRequest();
++
++    $this->assertSession()->fieldValueEquals('single[0][inline_entity_form][positive_int_wrapper][value]', 1);
++  }
++
+   /**
+    * Ensures that an entity without bundles can be used with the simple widget.
+    */
