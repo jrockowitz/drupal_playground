@@ -1719,17 +1719,17 @@
         },
         {
             "name": "drupal/ai",
-            "version": "1.4.4",
+            "version": "1.4.5",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ai.git",
-                "reference": "1.4.4"
+                "reference": "1.4.5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ai-1.4.4.zip",
-                "reference": "1.4.4",
-                "shasum": "cb2188358266caa6365258cf61f316b019bb4c6a"
+                "url": "https://ftp.drupal.org/files/projects/ai-1.4.5.zip",
+                "reference": "1.4.5",
+                "shasum": "010157539fa0e91ad69a2fb05bf454d75336e950"
             },
             "require": {
                 "drupal/core": "^10.5 || ^11.2",
@@ -1759,8 +1759,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.4.4",
-                    "datestamp": "1783520097",
+                    "version": "1.4.5",
+                    "datestamp": "1784730304",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -1861,7 +1861,7 @@
         },
         {
             "name": "drupal/ai-ai_search",
-            "version": "1.4.4",
+            "version": "1.4.5",
             "require": {
                 "drupal/ai": "^1",
                 "drupal/core": "^10.4 || ^11"
@@ -1873,8 +1873,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.4",
-                    "datestamp": "1783520097",
+                    "version": "1.4.5",
+                    "datestamp": "1784730304",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2059,7 +2059,7 @@
         },
         {
             "name": "drupal/ai_api_explorer",
-            "version": "1.4.4",
+            "version": "1.4.5",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2067,8 +2067,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.4",
-                    "datestamp": "1783520097",
+                    "version": "1.4.5",
+                    "datestamp": "1784730304",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2169,7 +2169,7 @@
         },
         {
             "name": "drupal/ai_assistant_api",
-            "version": "1.4.4",
+            "version": "1.4.5",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2177,8 +2177,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.4",
-                    "datestamp": "1783520097",
+                    "version": "1.4.5",
+                    "datestamp": "1784730304",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2279,7 +2279,7 @@
         },
         {
             "name": "drupal/ai_automators",
-            "version": "1.4.4",
+            "version": "1.4.5",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11",
@@ -2288,8 +2288,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.4",
-                    "datestamp": "1783520097",
+                    "version": "1.4.5",
+                    "datestamp": "1784730304",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2439,7 +2439,7 @@
         },
         {
             "name": "drupal/ai_chatbot",
-            "version": "1.4.4",
+            "version": "1.4.5",
             "require": {
                 "drupal/ai": "^1",
                 "drupal/ai_assistant_api": "*",
@@ -2448,8 +2448,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.4",
-                    "datestamp": "1783520097",
+                    "version": "1.4.5",
+                    "datestamp": "1784730304",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2550,16 +2550,27 @@
         },
         {
             "name": "drupal/ai_ckeditor",
-            "version": "1.4.4",
+            "version": "1.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ai_ckeditor.git",
+                "reference": "1.4.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ai_ckeditor-1.4.2.zip",
+                "reference": "1.4.2",
+                "shasum": "948caeccf84c5fc054faf0f5d9cf3d1f329754b8"
+            },
             "require": {
-                "drupal/ai": "*",
+                "drupal/ai": "^1.4",
                 "drupal/core": "^10.4 || ^11"
             },
-            "type": "metapackage",
+            "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.4.4",
-                    "datestamp": "1783520097",
+                    "version": "1.4.2",
+                    "datestamp": "1784708314",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2576,86 +2587,23 @@
                     "homepage": "https://www.drupal.org/user/3235287"
                 },
                 {
-                    "name": "abhisekmazumdar",
-                    "homepage": "https://www.drupal.org/user/3557964"
-                },
-                {
-                    "name": "ahmad khader",
-                    "homepage": "https://www.drupal.org/user/3727855"
-                },
-                {
-                    "name": "andrewbelcher",
-                    "homepage": "https://www.drupal.org/user/655282"
-                },
-                {
-                    "name": "anjaliprasannan",
-                    "homepage": "https://www.drupal.org/user/3637917"
-                },
-                {
-                    "name": "b_sharpe",
-                    "homepage": "https://www.drupal.org/user/2512258"
-                },
-                {
-                    "name": "fago",
-                    "homepage": "https://www.drupal.org/user/16747"
-                },
-                {
-                    "name": "gxleano",
-                    "homepage": "https://www.drupal.org/user/3591999"
-                },
-                {
                     "name": "kevinquillen",
                     "homepage": "https://www.drupal.org/user/317279"
-                },
-                {
-                    "name": "kristen pol",
-                    "homepage": "https://www.drupal.org/user/8389"
                 },
                 {
                     "name": "marcus_johansson",
                     "homepage": "https://www.drupal.org/user/385947"
                 },
                 {
-                    "name": "michaellander",
-                    "homepage": "https://www.drupal.org/user/636494"
-                },
-                {
-                    "name": "murz",
-                    "homepage": "https://www.drupal.org/user/157092"
-                },
-                {
-                    "name": "mxr576",
-                    "homepage": "https://www.drupal.org/user/315522"
-                },
-                {
-                    "name": "robloach",
-                    "homepage": "https://www.drupal.org/user/61114"
-                },
-                {
-                    "name": "scott_euser",
-                    "homepage": "https://www.drupal.org/user/3267594"
-                },
-                {
-                    "name": "seogow",
-                    "homepage": "https://www.drupal.org/user/3065779"
-                },
-                {
-                    "name": "valthebald",
-                    "homepage": "https://www.drupal.org/user/239562"
-                },
-                {
                     "name": "wouters_f",
                     "homepage": "https://www.drupal.org/user/721548"
-                },
-                {
-                    "name": "yautja_cetanu",
-                    "homepage": "https://www.drupal.org/user/626050"
                 }
             ],
             "description": "Adds a plugin for CKEditor 5 to let editors prompt AI for text generation purposes.",
-            "homepage": "https://www.drupal.org/project/ai",
+            "homepage": "https://www.drupal.org/project/ai_ckeditor",
             "support": {
-                "source": "https://git.drupalcode.org/project/ai"
+                "source": "https://git.drupalcode.org/project/ai_ckeditor",
+                "issues": "https://www.drupal.org/project/issues/ai_ckeditor"
             }
         },
         {
@@ -4747,10 +4695,6 @@
             ],
             "authors": [
                 {
-                    "name": "andreasderijcke",
-                    "homepage": "https://www.drupal.org/user/3260992"
-                },
-                {
                     "name": "apmsooner",
                     "homepage": "https://www.drupal.org/user/593202"
                 },
@@ -5006,12 +4950,13 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_admin",
-                "reference": "dab8a64f3b44ba167c0943c9995e57e56a2ffcee"
+                "reference": "8cc9a1e7ca7f164e5fc8cfa45ad9368cb6175113"
             },
             "require": {
                 "drupal/coffee": "^2",
                 "drupal/core": "^10 || ^11",
                 "drupal/dashboard": "^2",
+                "drupal/masquerade": "^2",
                 "drupal/navigation_extra_tools": "^1",
                 "drupal/queue_ui": "^3",
                 "drupal/type_tray": "^1"
@@ -6221,17 +6166,17 @@
         },
         {
             "name": "drupal/entity_usage",
-            "version": "2.1.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/entity_usage.git",
-                "reference": "8.x-2.1"
+                "reference": "8.x-2.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/entity_usage-8.x-2.1.zip",
-                "reference": "8.x-2.1",
-                "shasum": "6e581d6f8444584e810219918b811c543dae6d03"
+                "url": "https://ftp.drupal.org/files/projects/entity_usage-8.x-2.2.zip",
+                "reference": "8.x-2.2",
+                "shasum": "1086b8893ed36602e7877f4fcf45232bf1504600"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11"
@@ -6253,8 +6198,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-2.1",
-                    "datestamp": "1782902223",
+                    "version": "8.x-2.2",
+                    "datestamp": "1784797651",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -6706,17 +6651,17 @@
         },
         {
             "name": "drupal/field_widget_actions",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/field_widget_actions.git",
-                "reference": "1.4.0"
+                "reference": "1.4.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/field_widget_actions-1.4.0.zip",
-                "reference": "1.4.0",
-                "shasum": "8d653c26c2ca9d5ba0bbe860808047a3e332fbc7"
+                "url": "https://ftp.drupal.org/files/projects/field_widget_actions-1.4.1.zip",
+                "reference": "1.4.1",
+                "shasum": "a6a4dfb6356ce84c62bf03e32d4fce15da1fd2c7"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11.1 || ^12"
@@ -6729,8 +6674,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.4.0",
-                    "datestamp": "1784104016",
+                    "version": "1.4.1",
+                    "datestamp": "1784640643",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -7835,12 +7780,83 @@
             "type": "drupal-module-sandbox"
         },
         {
+            "name": "drupal/masquerade",
+            "version": "2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/masquerade.git",
+                "reference": "8.x-2.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/masquerade-8.x-2.2.zip",
+                "reference": "8.x-2.2",
+                "shasum": "173b08ef4bcef647423252f7c0706045f44be650"
+            },
+            "require": {
+                "drupal/core": "^10.3 || ^11.0 || ^12.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-2.2",
+                    "datestamp": "1777304860",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Andrey Postnikov (andypost)",
+                    "homepage": "https://www.drupal.org/u/andypost",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "David Norman (deekayen)",
+                    "homepage": "https://www.drupal.org/u/deekayen",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Mark Shropshire (shrop)",
+                    "homepage": "https://www.drupal.org/u/shrop",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Daniel Kudwien (sun)",
+                    "homepage": "https://www.drupal.org/u/sun",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Andrew Berry (deviantintegral)",
+                    "homepage": "https://www.drupal.org/u/deviantintegral",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "sun",
+                    "homepage": "https://www.drupal.org/user/54136"
+                }
+            ],
+            "description": "Allows privileged users to masquerade as another user.",
+            "homepage": "https://www.drupal.org/project/masquerade",
+            "support": {
+                "source": "https://git.drupal.org/project/masquerade.git",
+                "issues": "https://www.drupal.org/project/issues/masquerade",
+                "irc": "irc://irc.freenode.org/drupal-contribute"
+            }
+        },
+        {
             "name": "drupal/mcp_server",
             "version": "dev-2.x",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/mcp_server.git",
-                "reference": "f49b12691196a1bad6bbb6aa80f8d8d348d9ac9e"
+                "reference": "a091bea3a99b5c219a8793c14fe1d8dfb0c5b654"
             },
             "require": {
                 "drupal/core": "^10 || ^11",
@@ -7862,8 +7878,8 @@
                     "dev-2.x": "2.x-dev"
                 },
                 "drupal": {
-                    "version": "2.0.0-alpha1+21-dev",
-                    "datestamp": "1784453286",
+                    "version": "2.0.0-alpha1+23-dev",
+                    "datestamp": "1784540313",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Dev releases are not covered by Drupal security advisories."
@@ -9828,17 +9844,17 @@
         },
         {
             "name": "drupal/search_api_autocomplete",
-            "version": "1.11.0",
+            "version": "1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/search_api_autocomplete.git",
-                "reference": "8.x-1.11"
+                "reference": "8.x-1.12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/search_api_autocomplete-8.x-1.11.zip",
-                "reference": "8.x-1.11",
-                "shasum": "9c1d287cde328511f4e84dfd49bea401f5eddc6a"
+                "url": "https://ftp.drupal.org/files/projects/search_api_autocomplete-8.x-1.12.zip",
+                "reference": "8.x-1.12",
+                "shasum": "c1685cd0f2266abf3172dcaf242626917b79238a"
             },
             "require": {
                 "drupal/core": "^10.2 || ^11",
@@ -9850,8 +9866,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.11",
-                    "datestamp": "1762031747",
+                    "version": "8.x-1.12",
+                    "datestamp": "1784742829",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -10384,6 +10400,14 @@
             ],
             "authors": [
                 {
+                    "name": "ajits",
+                    "homepage": "https://www.drupal.org/user/981944"
+                },
+                {
+                    "name": "b_sharpe",
+                    "homepage": "https://www.drupal.org/user/2512258"
+                },
+                {
                     "name": "jurgenhaas",
                     "homepage": "https://www.drupal.org/user/168924"
                 },
@@ -10444,6 +10468,10 @@
                 {
                     "name": "ajits",
                     "homepage": "https://www.drupal.org/user/981944"
+                },
+                {
+                    "name": "b_sharpe",
+                    "homepage": "https://www.drupal.org/user/2512258"
                 },
                 {
                     "name": "michaellander",
@@ -12916,16 +12944,16 @@
         },
         {
             "name": "mck89/peast",
-            "version": "v1.17.6",
+            "version": "v1.17.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mck89/peast.git",
-                "reference": "b8b4184b1e6912669f9af155caef9050509d9f18"
+                "reference": "89ee39f81e82cb7ed36cc5abaf2edd43cef71770"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mck89/peast/zipball/b8b4184b1e6912669f9af155caef9050509d9f18",
-                "reference": "b8b4184b1e6912669f9af155caef9050509d9f18",
+                "url": "https://api.github.com/repos/mck89/peast/zipball/89ee39f81e82cb7ed36cc5abaf2edd43cef71770",
+                "reference": "89ee39f81e82cb7ed36cc5abaf2edd43cef71770",
                 "shasum": ""
             },
             "require": {
@@ -12938,7 +12966,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.17.6-dev"
+                    "dev-master": "1.17.7-dev"
                 }
             },
             "autoload": {
@@ -12959,9 +12987,9 @@
             "description": "Peast is PHP library that generates AST for JavaScript code",
             "support": {
                 "issues": "https://github.com/mck89/peast/issues",
-                "source": "https://github.com/mck89/peast/tree/v1.17.6"
+                "source": "https://github.com/mck89/peast/tree/v1.17.7"
             },
-            "time": "2026-04-24T08:04:05+00:00"
+            "time": "2026-07-21T11:56:06+00:00"
         },
         {
             "name": "mcp/sdk",
@@ -13533,16 +13561,16 @@
         },
         {
             "name": "openai-php/client",
-            "version": "v0.20.0",
+            "version": "v0.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/openai-php/client.git",
-                "reference": "b5c0e1e0f210e6b9aca5ee048157fcf3039ca91f"
+                "reference": "de32ca459d5810d3c80989bc16fb0412f5095ae4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/openai-php/client/zipball/b5c0e1e0f210e6b9aca5ee048157fcf3039ca91f",
-                "reference": "b5c0e1e0f210e6b9aca5ee048157fcf3039ca91f",
+                "url": "https://api.github.com/repos/openai-php/client/zipball/de32ca459d5810d3c80989bc16fb0412f5095ae4",
+                "reference": "de32ca459d5810d3c80989bc16fb0412f5095ae4",
                 "shasum": ""
             },
             "require": {
@@ -13604,7 +13632,7 @@
             ],
             "support": {
                 "issues": "https://github.com/openai-php/client/issues",
-                "source": "https://github.com/openai-php/client/tree/v0.20.0"
+                "source": "https://github.com/openai-php/client/tree/v0.20.1"
             },
             "funding": [
                 {
@@ -13620,7 +13648,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-13T12:14:23+00:00"
+            "time": "2026-07-20T11:03:21+00:00"
         },
         {
             "name": "opis/json-schema",
@@ -20675,16 +20703,16 @@
         },
         {
             "name": "dompdf/dompdf",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dompdf/dompdf.git",
-                "reference": "f11ead23a8a76d0ff9bbc6c7c8fd7e05ca328496"
+                "reference": "6d4b4eb8500f7a786da8868ba463a71b725a4005"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/f11ead23a8a76d0ff9bbc6c7c8fd7e05ca328496",
-                "reference": "f11ead23a8a76d0ff9bbc6c7c8fd7e05ca328496",
+                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/6d4b4eb8500f7a786da8868ba463a71b725a4005",
+                "reference": "6d4b4eb8500f7a786da8868ba463a71b725a4005",
                 "shasum": ""
             },
             "require": {
@@ -20733,9 +20761,9 @@
             "homepage": "https://github.com/dompdf/dompdf",
             "support": {
                 "issues": "https://github.com/dompdf/dompdf/issues",
-                "source": "https://github.com/dompdf/dompdf/tree/v3.1.5"
+                "source": "https://github.com/dompdf/dompdf/tree/v3.1.6"
             },
-            "time": "2026-03-03T13:54:37+00:00"
+            "time": "2026-07-20T12:29:38+00:00"
         },
         {
             "name": "dompdf/php-font-lib",

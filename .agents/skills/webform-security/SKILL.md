@@ -71,6 +71,13 @@ Do not copy exploit prose, secrets, tokens, private data, proof-of-concept
 payloads, or unnecessary vulnerability detail into notes, comments, advisory
 drafts, or summaries. Prefer concise paraphrase and private links.
 
+## Work-Item Descriptions
+
+Always begin a GitLab work-item description with this exact sentence, before
+any other description content:
+
+> The Webform module enables site builders to create forms and collect submissions.
+
 ## Private Notes
 
 Private notes are ignored by Git:
@@ -205,7 +212,7 @@ Do not run `git add`, `git commit`, or `git push` until the human approves
 after review. If commit approval is given, inspect recent Webform commit style
 and end AI-assisted commit messages with:
 
-```text
+```text``
 AI-assisted by [AI NAME]
 ```
 

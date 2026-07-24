@@ -9,6 +9,7 @@ install:
   - navigation_extra_tools
   - type_tray
   - queue_ui
+  - masquerade
 config:
   strict: false
   import:
