@@ -142,11 +142,10 @@
         "merge-plugin": {
             "include": [
                 "composer.drupal_11.json",
+                "composer.drupal_11.sandbox.json",
                 "composer.lenient.json",
                 "composer.libraries.json",
-                "composer.recipes.json",
-                "composer.sandbox.json",
-                "web/modules/sandbox/webform/composer.libraries.json"
+                "composer.recipes.json"
             ],
             "merge-extra": true,
             "merge-extra-deep": true,
