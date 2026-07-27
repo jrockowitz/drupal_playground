@@ -115,6 +115,7 @@ yarn-error.log
 !.agents/skills/drupalorg-projects-clone
 !.agents/skills/drupalorg-issue-maintenance
 !.agents/skills/install
+!.agents/skills/schemadotorg-issue-maintenance
 !.agents/skills/webform-issue-maintenance
 !.agents/skills/webform-security/
 !.agents/skills/webform-security/**
