@@ -1,0 +1,4 @@
+interface:
+  display_name: "Schema.org Issue Maintenance"
+  short_description: "Triage Schema.org Blueprints issues"
+  default_prompt: "Use $schemadotorg-issue-maintenance to scout Schema.org Blueprints issues and recommend maintainer-ready next actions."
