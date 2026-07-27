@@ -113,6 +113,7 @@ yarn-error.log
 !.agents/skills/drupalorg-project-logo-prompt
 !.agents/skills/drupalorg-project-page
 !.agents/skills/drupalorg-projects-clone
+!.agents/skills/drupalorg-issue-maintenance
 !.agents/skills/install
 !.agents/skills/webform-issue-maintenance
 !.agents/skills/webform-security/
