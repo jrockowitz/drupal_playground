@@ -1,5 +1,5 @@
 {
-    "_hash": "f5cfee3e633cdbde1a973a8b7a97d79322225e4e6979a56ae465b0318a20dd26",
+    "_hash": "b02229e3616dac7723a1882541f5b879a18553a067b35b4ad8afde014dc1f1c7",
     "patches": {
         "drupal/config_rewrite": [
             {
@@ -7,165 +7,6 @@
                 "description": "Issue #3528767: Tried to rewrite config by module without initial config",
                 "url": "https://www.drupal.org/files/issues/2025-06-24/config_rewrite-issue-3528767-comment-2.patch",
                 "sha256": "cff05269fd67c99674ff4100aa100f95c5553dc9be0126e39b1da275c357fb70",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/core": [
-            {
-                "package": "drupal/core",
-                "description": "Issue #2780839: Optimize migration of specific source IDs for SQL sources",
-                "url": "https://www.drupal.org/files/issues/2026-07-02/2780839-10-6.patch",
-                "sha256": "1d6f60bc4696707eb24331262baaabfdb0a939824dd30b040fd8266b1ad0cacb",
-                "depth": 2,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/core",
-                "description": "Issue #3345064: Media library field_widget_id is not unique enough",
-                "url": "https://www.drupal.org/files/issues/2023-02-28/3345064.patch",
-                "sha256": "9b2749b9478d994cda95e3095e7ad86ea5469be8e28be4e6ae06050d7c04dd87",
-                "depth": 2,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/core",
-                "description": "Page scrolls away on modifying fields in text formats and editor form.",
-                "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/11425.diff",
-                "sha256": "a24b4c0d7ae7f53906e2555474c57b81bf44dd9843b3a873d86fea89356314d7",
-                "depth": 2,
-                "extra": {
-                    "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776",
-                    "provenance": "dependency:drupal/core"
-                }
-            }
-        ],
-        "drupal/migrate_tools": [
-            {
-                "package": "drupal/migrate_tools",
-                "description": "Issue #3470892: drush migrate:reset additional options like --all",
-                "url": "https://www.drupal.org/files/issues/2025-03-10/migrate_tools-issue-3470892-mr-72.patch",
-                "sha256": "d9e99346a0cc1ac88d7d630d2fcd616147a6ff8a92d41a344adeb8afabb4f352",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/migrate_tools",
-                "description": "Issue #3439811: Migration process UI assumes default_value is text",
-                "url": "https://www.drupal.org/files/issues/2025-01-29/migrate_tools-issue-3439811-mr-63.patch",
-                "sha256": "9fa48728bd65c9957b81152275af9e171a5796b8fbce4773b44537e38e6fb494",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/migrate_tools",
-                "description": "Issue #3104268: Sync is too strict during id comparison and can roll back everything",
-                "url": "https://www.drupal.org/files/issues/2025-03-10/migrate_tools-issue-3104268-mr-77.patch",
-                "sha256": "08945723a32f6cba9803eec30e9d40ba06acf86bf9141e62cdf76d5942beba0d",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/migrate_drupal_d8": [
-            {
-                "package": "drupal/migrate_drupal_d8",
-                "description": "Issue #3126365: Support translated content",
-                "url": "https://www.drupal.org/files/issues/2024-08-20/3126365-support-translated-content-23.patch",
-                "sha256": "98a69d6cf605b3517346f8fac30f8ae4d8902ba164b07edc5cd8846509d69771",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/address": [
-            {
-                "package": "drupal/address",
-                "description": "Issue #2819251: generateSampleValue",
-                "url": "https://www.drupal.org/files/issues/2024-09-10/address-issue-2819251-comment-9.patch",
-                "sha256": "9b00869bf124d5177fa07213751c08c2683eccc7dc1400618c951549ae111736",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/cer": [
-            {
-                "package": "drupal/cer",
-                "description": "Issue #2998138: Could support Remove field name prefix module?",
-                "url": "https://git.drupalcode.org/project/cer/-/merge_requests/28.diff",
-                "sha256": "51a76ffa3508f7bf23d8403aacbe4c56d5f3463cc3ea8c098f9d91e23a88829a",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/entity_reference_revisions": [
-            {
-                "package": "drupal/entity_reference_revisions",
-                "description": "Issue #3265084: EntityReferenceRevisionsItem:generateSampleValue can break when all bundle types are allowed",
-                "url": "https://www.drupal.org/files/issues/2022-02-18/treat-no-selection-as-all-3265084-2.patch",
-                "sha256": "4260fcb209e9cb45816005f9662ed37773e75c09160c4e6ee475abe2c6d99955",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/entity_browser": [
-            {
-                "package": "drupal/entity_browser",
-                "description": "Issue #3012432: Broken views exposed form in modals",
-                "url": "https://git.drupalcode.org/project/entity_browser/-/merge_requests/116.diff",
-                "sha256": "5ca7c4e4c8df48c0dae938623ea8620e5142832427c3dd406dbab7fd44b58acb",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/entity_browser",
-                "description": "Issue #2946829: Make submit button on modal always visible",
-                "url": "https://git.drupalcode.org/project/entity_browser/-/merge_requests/99.diff",
-                "sha256": "9b9c7fb620043c1706958fce13ab89fe2f624ac2f774606a20cdc8f47e8d06a2",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/jsonapi_extras": [
-            {
-                "package": "drupal/jsonapi_extras",
-                "description": "Issue #3608182: Array to string conversion warning during route rebuild on Drupal 11.4",
-                "url": "https://www.drupal.org/files/issues/2026-07-03/array_to_string_conv-3608182-2.patch",
-                "sha256": "d6e084fd3331ac7af76ecc31c377e253e056c2d1021a4da0aa79252607e47c0a",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/type_tray": [
-            {
-                "package": "drupal/type_tray",
-                "description": "Issue #3417679: Add type tray icon to node edit and related tasks",
-                "url": "https://www.drupal.org/files/issues/2024-01-28/issue-3417679-mr-22.patch",
-                "sha256": "0c67cc70ee72dbb72eace828d547335922877fc9be324f0cb8739261b966d40b",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
@@ -193,6 +34,19 @@
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
+                }
+            }
+        ],
+        "drupal/core": [
+            {
+                "package": "drupal/core",
+                "description": "Page scrolls away on modifying fields in text formats and editor form.",
+                "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/11425.diff",
+                "sha256": "a24b4c0d7ae7f53906e2555474c57b81bf44dd9843b3a873d86fea89356314d7",
+                "depth": 2,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776",
+                    "provenance": "dependency:drupal/core"
                 }
             }
         ],

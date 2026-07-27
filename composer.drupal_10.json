@@ -264,17 +264,17 @@
   "extra": {
     "merge-plugin": {
       "include": [
-        "web/modules/sandbox/schemadotorg/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_cms_migrate/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_deprecated/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_migrate/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_starterkit_events/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_starterkit_hospital/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_starterkit_hotel/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_starterkit_medical/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_starterkit_organization/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_starterkit_podcast/composer.libraries.json",
-        "web/modules/sandbox/schemadotorg_starterkit_recipes/composer.libraries.json"
+        "web/modules/sandbox/schemadotorg/composer.json",
+        "web/modules/sandbox/schemadotorg_cms_migrate/composer.json",
+        "web/modules/sandbox/schemadotorg_deprecated/composer.json",
+        "web/modules/sandbox/schemadotorg_migrate/composer.json",
+        "web/modules/sandbox/schemadotorg_starterkit_events/composer.json",
+        "web/modules/sandbox/schemadotorg_starterkit_hospital/composer.json",
+        "web/modules/sandbox/schemadotorg_starterkit_hotel/composer.json",
+        "web/modules/sandbox/schemadotorg_starterkit_medical/composer.json",
+        "web/modules/sandbox/schemadotorg_starterkit_organization/composer.json",
+        "web/modules/sandbox/schemadotorg_starterkit_podcast/composer.json",
+        "web/modules/sandbox/schemadotorg_starterkit_recipes/composer.json"
       ]
     }
   }
