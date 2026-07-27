@@ -25,8 +25,8 @@ it. Create it only for selected public, non-security issues.
 update order.
 
 `index.md` is the current dashboard. For each selected issue, include its ID,
-short title, Drupal.org URL, current status, work lane, tracker-note link, and
-next action. Add a dated queue-scout summary only when it helps explain why the
+title, Drupal.org URL, current status, work lane, tracker-note link, and next
+action. Add a dated queue-scout summary only when it helps explain why the
 current set was selected.
 
 Each issue note includes:
@@ -56,9 +56,9 @@ then the index.
 ```markdown
 # Selected issues
 
-| Issue | Status | Lane | Next action |
-|---|---|---|---|
-| [#<id>](<public-url>) | <status> | <lane> | <next-action> |
+| Issue | Title | Status | Lane | Next action |
+|---|---|---|---|---|
+| [#<id>](<public-url>) | <title> | <status> | <lane> | <next-action> |
 ```
 
 ```markdown
@@ -77,4 +77,3 @@ then the index.
 ## Next action
 <action and required approval gate>
 ```
-

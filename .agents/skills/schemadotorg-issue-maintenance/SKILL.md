@@ -24,6 +24,9 @@ testing, merge-request review, comment drafts, and backport work. Report any
 mismatch between that branch and the issue or merge-request target before
 editing or posting a draft.
 
+Tracker dashboards must include each Schema.org Blueprint issue's title, as
+required by the parent issue-maintenance skill.
+
 ## Route the task
 
 Load the corresponding parent reference before proceeding:
