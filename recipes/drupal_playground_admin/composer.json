@@ -9,7 +9,8 @@
         "drupal/dashboard": "^2",
         "drupal/navigation_extra_tools": "^1",
         "drupal/type_tray": "^1",
-        "drupal/queue_ui": "^3"
+        "drupal/queue_ui": "^3",
+        "drupal/masquerade": "^2"
     },
     "extra": {
         "patches": {
