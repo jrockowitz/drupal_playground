@@ -153,7 +153,6 @@
         }
     },
     "require-dev": {
-        "drupal/core-dev": "^10 || ^11",
-        "drupal/embedded_content": "^2.0"
+        "drupal/core-dev": "^10 || ^11"
     }
 }

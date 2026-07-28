@@ -36,6 +36,8 @@ clients.
 
 ## DDEV and worktrees
 
+- Never create a new DDEV project or instance. Always use the DDEV environment
+  for the current worktree.
 - Custom DDEV service and command logic must use `$DDEV_SITENAME`; do not hard-code project or container names.
 
 # Commands
