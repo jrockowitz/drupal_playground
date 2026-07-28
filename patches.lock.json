@@ -1,5 +1,5 @@
 {
-    "_hash": "f5cfee3e633cdbde1a973a8b7a97d79322225e4e6979a56ae465b0318a20dd26",
+    "_hash": "8d0aaa91d18d0afa05bb12519284974d8a7bda58cbbd4b38dbdef70244cf14fa",
     "patches": {
         "drupal/config_rewrite": [
             {
@@ -106,7 +106,7 @@
             {
                 "package": "drupal/cer",
                 "description": "Issue #2998138: Could support Remove field name prefix module?",
-                "url": "https://git.drupalcode.org/project/cer/-/merge_requests/28.diff",
+                "url": "https://www.drupal.org/files/issues/2026-07-13/cer-issue-2998138-comment-20.patch",
                 "sha256": "51a76ffa3508f7bf23d8403aacbe4c56d5f3463cc3ea8c098f9d91e23a88829a",
                 "depth": 1,
                 "extra": {
@@ -130,7 +130,7 @@
             {
                 "package": "drupal/entity_browser",
                 "description": "Issue #3012432: Broken views exposed form in modals",
-                "url": "https://git.drupalcode.org/project/entity_browser/-/merge_requests/116.diff",
+                "url": "https://www.drupal.org/files/issues/2026-07-13/entity_browser-3012432-mr116.patch",
                 "sha256": "5ca7c4e4c8df48c0dae938623ea8620e5142832427c3dd406dbab7fd44b58acb",
                 "depth": 1,
                 "extra": {
@@ -140,7 +140,7 @@
             {
                 "package": "drupal/entity_browser",
                 "description": "Issue #2946829: Make submit button on modal always visible",
-                "url": "https://git.drupalcode.org/project/entity_browser/-/merge_requests/99.diff",
+                "url": "https://www.drupal.org/files/issues/2026-07-13/entity_browser-2946829-mr99.patch",
                 "sha256": "9b9c7fb620043c1706958fce13ab89fe2f624ac2f774606a20cdc8f47e8d06a2",
                 "depth": 1,
                 "extra": {
