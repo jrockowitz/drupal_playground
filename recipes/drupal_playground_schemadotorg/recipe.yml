@@ -5,7 +5,6 @@ description: >
   Built on top of drupal_playground_base and the editorial workflow recipe.
 type: 'Site'
 recipes:
-  - drupal_playground_base
   - core/recipes/editorial_workflow
 install:
   # Core Drupal modules
