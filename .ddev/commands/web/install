@@ -5,7 +5,7 @@ set -euo pipefail
 
 ## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install openai\nddev install anthropic\nddev install gemini\nddev install anthropic ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install webform-setup\nddev install webform-test\nddev install trials\nddev install trials-fields\nddev install trials-fields-setup\nddev install trials-fields-setup --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-data-setup trials-data-elastic --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-fields-elastic\nddev install trials-fields-milvus\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
+## Example: ddev install\nddev install ai\nddev install ckeditor\nddev install openai\nddev install anthropic\nddev install gemini\nddev install anthropic ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install webform-setup\nddev install webform-test\nddev install trials\nddev install trials-fields\nddev install trials-fields-setup\nddev install trials-fields-setup --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-data-setup trials-data-elastic --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-fields-elastic\nddev install trials-fields-milvus\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
 ## Milvus indexing throttles provider requests by running 5 passes of 200 items with 30 second pauses.
 ## ProjectTypes: drupal,drupal11
 
@@ -142,6 +142,12 @@ for PRESET in "${PRESETS[@]}"; do
     echo "Applying AI Schema.org JSON-LD recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_schemadotorg_jsonld
     uli_path="/admin/config/ai"
+
+  elif [ "$PRESET" = "ckeditor" ]; then
+
+    echo "Applying Drupal Playground CKEditor recipe..."
+    /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ckeditor
+    uli_path="/node/1"
 
   elif [ "$PRESET" = "schemadotorg" ]; then
 

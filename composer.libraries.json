@@ -38,5 +38,13 @@
     "require": {
         "josdejong/jsoneditor": "*",
         "yesmeck/jquery-jsonview": "*"
+    },
+    "extra": {
+        "merge-plugin": {
+            "include": [
+                "web/modules/contrib/anchor_link/composer.libraries.json",
+                "web/modules/contrib/ckeditor_codemirror/composer.libraries.json"
+            ]
+        }
     }
 }
