@@ -14,9 +14,8 @@ and 6 Needs Review. Closed tracker entries were removed.
 | [#3529701](https://www.drupal.org/node/3529701) ([note](issues/3529701.md)) | Geofield integration | Active | Ecosystem review | Decide whether Geofield support remains external. |
 | [#3602690](https://www.drupal.org/node/3602690) ([note](issues/3602690.md)) | Automated Drupal 12 compatibility fixes | Needs Review | Review | Review and test the bot-managed Drupal 12 MR. |
 | [#3279761](https://www.drupal.org/node/3279761) ([note](issues/3279761.md)) | Plan for Schema.org Blueprints 1.0.0 | Active | Roadmap | Refresh stable-release blockers and ownership. |
-| [#3549135](https://www.drupal.org/node/3549135) ([note](issues/3549135.md)) | What to program to adapt a customized schema.org Type? | Needs Review | Documentation | Confirm the supported extension path. |
-| [#3452343](https://www.drupal.org/node/3452343) ([note](issues/3452343.md)) | Support the mapping `additionalProperty` with properties_field | Needs Review | Feature discovery | Decide whether properties_field belongs in scope. |
-| [#3468432](https://www.drupal.org/node/3468432) ([note](issues/3468432.md)) | If I want to add `additionalProperty` under the Thing type, what should I do? | Active | Documentation | Explain supported additionalProperty extension points. |
+| [#3549135](https://www.drupal.org/node/3549135) ([note](issues/3549135.md)) | What to program to adapt a customized schema.org Type? | Needs Review | Documentation | Review the focused alter-hook test changes. |
+| [#3468432](https://www.drupal.org/node/3468432) ([note](issues/3468432.md)) | If I want to add `additionalProperty` under the Thing type, what should I do? | Active | Resolved support follow-up | Review and post the prepared reply, then mark Fixed. |
 | [#3552404](https://www.drupal.org/node/3552404) ([note](issues/3552404.md)) | Schema UI with Navigation and Gin lacks Save action | Active | UI reproduction | Reproduce Navigation + Gin form-action behavior. |
 
 All notes use the `1.0.x` target branch for any future local work. Local test
