@@ -1,15 +1,14 @@
 # Drupal Playground AI Webform Generator
 
-Installs the [AI Webform Generator](https://www.drupal.org/project/ai_webform_generator)
-with a contact Webform that is ready for a live AI-assisted update.
+Installs and configures the
+[AI Webform Generator](https://www.drupal.org/project/ai_webform_generator).
 
 ## What it provides
 
 AI Webform Generator lets a site builder describe a form in plain English and
 uses the site's configured AI provider to create a Webform or update an
-existing Webform. This recipe configures the generator and supplies **AI
-Webform Generator Contact** as a safe form to review. The review updates that
-form in place, so its Webform ID and URL remain unchanged.
+existing Webform. This recipe configures the generator but does not create or
+modify a Webform.
 
 ## Prerequisite
 
@@ -33,23 +32,22 @@ installs `ai_webform_generator`. Its settings use `openai__gpt-5-nano` with a
 temperature of `0.2`, a maximum of `4000` output tokens, and a per-user flood
 limit of `20` requests per `3600` seconds.
 
-The included **AI Webform Generator Contact** Webform has required Name,
-Email, Subject, and Message fields, followed by Webform submit actions.
-
 ## Browser review
 
-1. Open `/admin/structure/webform/ai-generator` as the administrator.
-2. Select **AI Webform Generator Contact**.
-3. Enter the following prompt exactly: `Add a required telephone field, preserving all existing fields.`
+1. Create a disposable contact Webform at `/admin/structure/webform/add` with
+   required Name, Email, Subject, and Message fields.
+2. Open `/admin/structure/webform/ai-generator` as the administrator and
+   select that Webform.
+3. Enter the following prompt exactly: `Add a required telephone field,
+   preserving all existing fields.`
 4. Select **Generate Webform**.
 
-The AI reports a successful update and redirects to
-`/admin/structure/webform/manage/ai_webform_generator_contact`. Confirm that
-the original Name, Email, Subject, and Message fields and the submit actions
-remain, and that an additional required telephone-number field exists. The
-provider may choose a different field key or label, such as **Phone** or
-**Phone number**, so review the field type and required setting instead of
-matching a literal label.
+The AI reports a successful update and redirects to the selected Webform.
+Confirm that the original Name, Email, Subject, and Message fields and the
+submit actions remain, and that an additional required telephone-number field
+exists. The provider may choose a different field key or label, such as
+**Phone** or **Phone number**, so review the field type and required setting
+instead of matching a literal label.
 
 ## Module of the week
 
@@ -60,9 +58,8 @@ matching a literal label.
 AI Webform Generator enables site builders to create a Drupal Webform, or
 update an existing one, from plain-English instructions. It sends the request
 through the site's configured Drupal AI provider, validates the returned
-Webform definition, and saves the resulting form. This recipe demonstrates the
-update workflow with a contact form, keeping the generated change visible for
-human review before it is used.
+Webform definition, and saves the resulting form. Review the generated change
+before using the form.
 
 **Module name / project name**
 
@@ -126,11 +123,9 @@ for current information.
   service, validation, and persistence responsibilities. It includes unit,
   kernel, and functional coverage for core behavior. This assessment is a
   code review of the released module, not a security audit.
-- **Implementation:** This recipe successfully tested the configured generator
-  by adding a required Telephone field to the seeded contact Webform while
-  preserving the original fields. The module creates new Webforms and updates
-  supported fields of existing Webforms in place, but saves the generated
-  definition immediately without a preview, diff, or approval screen.
+- **Implementation:** The module creates new Webforms and updates supported
+  fields of existing Webforms in place, but saves the generated definition
+  immediately without a preview, diff, or approval screen.
 - **Usefulness:** The module is useful for quickly drafting straightforward
   Webforms and iterating on common field changes when a site builder reviews
   the result. Complex, highly customized, or regulated forms need especially
@@ -138,8 +133,8 @@ for current information.
 - **How to use it:** Configure a chat-capable provider, select an existing
   Webform or choose to create one, describe the fields and validation in plain
   English, submit the request, and then review the saved Webform. For example,
-  this recipe selects **AI Webform Generator Contact** and asks the generator
-  to add a required telephone field while preserving the existing fields.
+  create a disposable contact Webform and ask the generator to add a required
+  telephone field while preserving the existing fields.
 - **AI-generated source code:** The module's runtime use of AI and its code
   style cannot establish whether its source was AI-generated or AI-assisted.
   Its public project metadata does not make an authorship claim, so this is

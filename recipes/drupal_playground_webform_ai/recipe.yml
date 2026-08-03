@@ -1,5 +1,5 @@
 name: 'Drupal Playground AI Webform Generator'
-description: 'Installs AI Webform Generator with a contact Webform to update.'
+description: 'Installs and configures AI Webform Generator.'
 type: 'Site'
 recipes:
   - drupal_playground_ai
@@ -8,9 +8,6 @@ install:
   - ai_webform_generator
 config:
   strict: false
-  import:
-    webform:
-      - webform.webform.ai_webform_generator_contact
   actions:
     ai_webform_generator.settings:
       simpleConfigUpdate:

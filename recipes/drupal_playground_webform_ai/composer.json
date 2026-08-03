@@ -1,6 +1,6 @@
 {
     "name": "drupal/drupal_playground_webform_ai",
-    "description": "Installs AI Webform Generator and a contact Webform for Drupal Playground.",
+    "description": "Installs and configures AI Webform Generator for Drupal Playground.",
     "type": "drupal-recipe",
     "license": "GPL-2.0-or-later",
     "version": "1.0.0",
