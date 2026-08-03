@@ -5,7 +5,7 @@ set -euo pipefail
 
 ## Description: Install Drupal, optionally with one or more presets.
 ## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install ckeditor\nddev install openai\nddev install anthropic\nddev install gemini\nddev install anthropic ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install webform-setup\nddev install webform-test\nddev install trials\nddev install trials-fields\nddev install trials-fields-setup\nddev install trials-fields-setup --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-data-setup trials-data-elastic --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-fields-elastic\nddev install trials-fields-milvus\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
+## Example: ddev install\nddev install ai\nddev install ckeditor\nddev install openai\nddev install anthropic\nddev install gemini\nddev install anthropic ai\nddev install eca\nddev install elastic\nddev install schemadotorg\nddev install translation\nddev install webform-setup\nddev install webform-ai\nddev install webform-test\nddev install trials\nddev install trials-fields\nddev install trials-fields-setup\nddev install trials-fields-setup --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-data-setup trials-data-elastic --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-fields-elastic\nddev install trials-fields-milvus\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
 ## Milvus indexing throttles provider requests by running 5 passes of 200 items with 30 second pauses.
 ## ProjectTypes: drupal,drupal11
 
@@ -60,16 +60,25 @@ for argument in "$@"; do
   esac
 done
 
-# Expand trials convenience presets into their corresponding flows.
+# Expand convenience presets into their corresponding flows.
 expanded_presets=()
 for PRESET in "${PRESETS[@]}"; do
   if [ "$PRESET" = "trials-data" ]; then
     expanded_presets+=("trials-data-setup" "trials-data-elastic" "trials-data-milvus")
-  elif [ "$PRESET" = "trials-fields" ]; then
-    expanded_presets+=("trials-fields-setup" "trials-fields-elastic" "trials-fields-milvus")
-  else
-    expanded_presets+=("$PRESET")
+    continue
   fi
+
+  if [ "$PRESET" = "trials-fields" ]; then
+    expanded_presets+=("trials-fields-setup" "trials-fields-elastic" "trials-fields-milvus")
+    continue
+  fi
+
+  if [ "$PRESET" = "webform-ai" ]; then
+    expanded_presets+=("ai" "webform" "webform-ai")
+    continue
+  fi
+
+  expanded_presets+=("$PRESET")
 done
 PRESETS=("${expanded_presets[@]}")
 
@@ -118,9 +127,11 @@ for PRESET in "${PRESETS[@]}"; do
     echo "Applying ${PRESET} provider recipe..."
     if [ "$PRESET" = "openai" ]; then
       /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_provider_openai
-    elif [ "$PRESET" = "anthropic" ]; then
+    fi
+    if [ "$PRESET" = "anthropic" ]; then
       /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_provider_anthropic
-    elif [ "$PRESET" = "gemini" ]; then
+    fi
+    if [ "$PRESET" = "gemini" ]; then
       /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_provider_gemini
     fi
   fi
@@ -143,25 +154,33 @@ for PRESET in "${PRESETS[@]}"; do
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_schemadotorg_jsonld
     uli_path="/admin/config/ai"
 
-  elif [ "$PRESET" = "ckeditor" ]; then
+  fi
+
+  if [ "$PRESET" = "ckeditor" ]; then
 
     echo "Applying Drupal Playground CKEditor recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ckeditor
     uli_path="/node/1"
 
-  elif [ "$PRESET" = "schemadotorg" ]; then
+  fi
+
+  if [ "$PRESET" = "schemadotorg" ]; then
 
     echo "Applying Schema.org Blueprints recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_schemadotorg
     uli_path="/admin/config/schemadotorg"
 
-  elif [ "$PRESET" = "eca" ]; then
+  fi
+
+  if [ "$PRESET" = "eca" ]; then
 
     echo "Applying ECA Starterkit recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_eca
     uli_path="/admin/config/workflow/eca"
 
-  elif [ "$PRESET" = "elastic" ]; then
+  fi
+
+  if [ "$PRESET" = "elastic" ]; then
 
     echo "Resetting ClinicalTrials.gov studies in Elasticsearch..."
     curl -fsS -X DELETE "http://elasticsearch:9200/drupal_playground_elasticsearch" >/dev/null 2>&1 || true
@@ -169,20 +188,34 @@ for PRESET in "${PRESETS[@]}"; do
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_elasticsearch
     uli_path="/elasticsearch"
 
-  elif [ "$PRESET" = "translation" ]; then
+  fi
+
+  if [ "$PRESET" = "translation" ]; then
 
     echo "Applying translation recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_translation
     drush locale-check
     drush locale-update
 
-  elif [ "$PRESET" = "webform-setup" ] || [ "$PRESET" = "webform" ]; then
+  fi
+
+  if [ "$PRESET" = "webform-setup" ] || [ "$PRESET" = "webform" ]; then
 
     echo "Applying Webform setup recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_webform_setup
     uli_path="/admin/structure/webform"
 
-  elif [ "$PRESET" = "webform-test" ]; then
+  fi
+
+  if [ "$PRESET" = "webform-ai" ]; then
+
+    echo "Applying AI Webform Generator recipe..."
+    /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_webform_ai
+    uli_path="/admin/structure/webform/ai-generator"
+
+  fi
+
+  if [ "$PRESET" = "webform-test" ]; then
 
     echo "Applying Webform setup recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_webform_setup
@@ -192,17 +225,23 @@ for PRESET in "${PRESETS[@]}"; do
     drush en -y webform_node_test_multiple webform_test_submissions
     uli_path="/admin/structure/webform"
 
-  elif [ "$PRESET" = "modules" ]; then
+  fi
+
+  if [ "$PRESET" = "modules" ]; then
 
     drush en -y telephone_filter entity_labels
 
-  elif [ "$PRESET" = "trials" ]; then
+  fi
+
+  if [ "$PRESET" = "trials" ]; then
 
     echo "Installing ClinicalTrials.gov module..."
     drush en -y readonly_field_widget clinical_trials_gov clinical_trials_gov_report
     uli_path="/admin/config/services/clinical-trials-gov"
 
-  elif [ "$PRESET" = "trials-fields-setup" ]; then
+  fi
+
+  if [ "$PRESET" = "trials-fields-setup" ]; then
 
     echo "Applying ClinicalTrials.gov fields setup recipe..."
     recipe_arguments=(../recipes/clinical_trials_gov_recipe_fields_setup)
@@ -216,21 +255,27 @@ for PRESET in "${PRESETS[@]}"; do
     drush queue:run ai_automator_field_modifier
     uli_path="/admin/config/services/clinical-trials-gov"
 
-  elif [ "$PRESET" = "trials-fields-elastic" ]; then
+  fi
+
+  if [ "$PRESET" = "trials-fields-elastic" ]; then
 
     echo "Applying ClinicalTrials.gov fields Elasticsearch recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/clinical_trials_gov_recipe_fields_elastic
     search_api_index_trials_elasticsearch
     uli_path="/trials"
 
-  elif [ "$PRESET" = "trials-fields-milvus" ]; then
+  fi
+
+  if [ "$PRESET" = "trials-fields-milvus" ]; then
 
     echo "Applying ClinicalTrials.gov fields Milvus recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/clinical_trials_gov_recipe_fields_milvus
     search_api_index_trials_milvus
     uli_path="/trials"
 
-  elif [ "$PRESET" = "trials-data-setup" ]; then
+  fi
+
+  if [ "$PRESET" = "trials-data-setup" ]; then
 
     echo "Applying ClinicalTrials.gov data setup recipe..."
     recipe_arguments=(../recipes/clinical_trials_gov_recipe_data_setup)
@@ -242,7 +287,9 @@ for PRESET in "${PRESETS[@]}"; do
     drush migrate:import clinical_trials_gov --limit="$LIMIT"
     uli_path="/admin/config/services/clinical-trials-gov"
 
-  elif [ "$PRESET" = "trials-data-elastic" ]; then
+  fi
+
+  if [ "$PRESET" = "trials-data-elastic" ]; then
 
     echo "Applying ClinicalTrials.gov data Elasticsearch recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/clinical_trials_gov_recipe_data_elastic
@@ -251,7 +298,9 @@ for PRESET in "${PRESETS[@]}"; do
     search_api_index_trials_elasticsearch
     uli_path="/trials"
 
-  elif [ "$PRESET" = "trials-data-milvus" ]; then
+  fi
+
+  if [ "$PRESET" = "trials-data-milvus" ]; then
 
     echo "Applying ClinicalTrials.gov data Milvus recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/clinical_trials_gov_recipe_data_milvus

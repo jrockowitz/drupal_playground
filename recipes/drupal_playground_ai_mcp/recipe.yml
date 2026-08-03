@@ -3,8 +3,6 @@ description: >
   Installs and configures Drupal MCP Server as a local proof of concept for
   Codex and other MCP clients.
 type: 'Site'
-recipes:
-  - drupal_playground_base
 install:
   - mcp_server
   - tool

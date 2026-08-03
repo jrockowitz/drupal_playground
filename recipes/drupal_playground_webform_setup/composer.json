@@ -5,6 +5,9 @@
     "license": "GPL-2.0-or-later",
     "version": "1.0.0",
     "require": {
+        "drupal/clientside_validation": "^4.1",
+        "drupal/clientside_validation_jquery": "^4.1",
+        "drupal/entity_print": "^2.18",
         "drupal/webform": "*",
         "drupal/imce": "^3",
         "drupal/honeypot": "^2",
