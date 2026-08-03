@@ -73,11 +73,6 @@ for PRESET in "${PRESETS[@]}"; do
     continue
   fi
 
-  if [ "$PRESET" = "webform-ai" ]; then
-    expanded_presets+=("ai" "webform" "webform-ai")
-    continue
-  fi
-
   expanded_presets+=("$PRESET")
 done
 PRESETS=("${expanded_presets[@]}")
@@ -122,20 +117,17 @@ fi
 /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_devel
 
 # Set AI provider configuration before applying other presets.
+provider_installed="false"
 for PRESET in "${PRESETS[@]}"; do
   if [ "$PRESET" = "openai" ] || [ "$PRESET" = "anthropic" ] || [ "$PRESET" = "gemini" ]; then
-    echo "Applying ${PRESET} provider recipe..."
-    if [ "$PRESET" = "openai" ]; then
-      /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_provider_openai
-    fi
-    if [ "$PRESET" = "anthropic" ]; then
-      /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_provider_anthropic
-    fi
-    if [ "$PRESET" = "gemini" ]; then
-      /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_provider_gemini
-    fi
+    /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_provider_${PRESET}
+    provider_installed="true"
   fi
 done
+# Apply the OpenAI provider recipe when no provider was requested.
+if [ "$provider_installed" = "false" ]; then
+  /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_provider_openai
+fi
 
 # Apply presets.
 for PRESET in "${PRESETS[@]}"; do
@@ -199,10 +191,22 @@ for PRESET in "${PRESETS[@]}"; do
 
   fi
 
-  if [ "$PRESET" = "webform-setup" ] || [ "$PRESET" = "webform" ]; then
+  # Webform
+
+  if [ "$PRESET" = "webform" ] || [ "$PRESET" = "webform-setup" ] || [ "$PRESET" = "webform-ai" ]; then
 
     echo "Applying Webform setup recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_webform_setup
+    uli_path="/admin/structure/webform"
+
+  fi
+
+  if [ "$PRESET" = "webform-test" ]; then
+
+    echo "Applying Webform test recipe..."
+    /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_webform_test
+    echo "Enabling Webform node multiple and submissions test modules..."
+    drush en -y webform_node_test_multiple webform_test_submissions
     uli_path="/admin/structure/webform"
 
   fi
@@ -215,23 +219,15 @@ for PRESET in "${PRESETS[@]}"; do
 
   fi
 
-  if [ "$PRESET" = "webform-test" ]; then
-
-    echo "Applying Webform setup recipe..."
-    /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_webform_setup
-    echo "Applying Webform test recipe..."
-    /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_webform_test
-    echo "Enabling Webform node multiple and submissions test modules..."
-    drush en -y webform_node_test_multiple webform_test_submissions
-    uli_path="/admin/structure/webform"
-
-  fi
+  # Contrib
 
   if [ "$PRESET" = "modules" ]; then
 
     drush en -y telephone_filter entity_labels
 
   fi
+
+  # Trials
 
   if [ "$PRESET" = "trials" ]; then
 
@@ -240,6 +236,8 @@ for PRESET in "${PRESETS[@]}"; do
     uli_path="/admin/config/services/clinical-trials-gov"
 
   fi
+
+  # Trials: Fields
 
   if [ "$PRESET" = "trials-fields-setup" ]; then
 
@@ -274,6 +272,8 @@ for PRESET in "${PRESETS[@]}"; do
     uli_path="/trials"
 
   fi
+
+  # Trials: Data
 
   if [ "$PRESET" = "trials-data-setup" ]; then
 
