@@ -1,0 +1,19 @@
+{
+    "name": "drupal/drupal_playground_schemadotorg_api",
+    "description": "Adds JSON:API, OpenAPI, and JSON Schema integrations to the Drupal Playground Schema.org Blueprints recipe.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/core": "^10 || ^11",
+        "drupal/drupal_playground_schemadotorg": "*",
+        "drupal/openapi": "^2.3",
+        "drupal/openapi_jsonapi": "^3.0",
+        "drupal/openapi_ui": "^1.0@RC",
+        "drupal/openapi_ui_redoc": "^1.0@RC",
+        "drupal/openapi_ui_swagger": "^1.2",
+        "drupal/schemadotorg": "^1@alpha",
+        "drupal/schemadotorg_experimental": "^1@alpha",
+        "drupal/schemata": "^1.0"
+    }
+}

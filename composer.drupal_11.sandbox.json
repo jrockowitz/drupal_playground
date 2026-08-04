@@ -211,32 +211,6 @@
         {
             "type": "package",
             "package": {
-                "name": "drupal/schemadotorg_demo",
-                "type": "drupal-module-sandbox",
-                "version": "1.0.x-dev",
-                "source": {
-                    "url": "git@git.drupal.org:project/schemadotorg_demo.git",
-                    "type": "git",
-                    "reference": "1.0.x"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "drupal/schemadotorg_demo_profile",
-                "type": "drupal-profile",
-                "version": "1.0.x-dev",
-                "source": {
-                    "url": "git@git.drupal.org:project/schemadotorg_demo_profile.git",
-                    "type": "git",
-                    "reference": "1.0.x"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
                 "name": "drupal/schemadotorg_deprecated",
                 "type": "drupal-module-sandbox",
                 "version": "1.0.x-dev",
@@ -291,8 +265,6 @@
         "drupal/webform_views": "*",
         "drupal/config_action_report": "*",
         "drupal/mercury_editor_task": "*",
-        "drupal/schemadotorg_demo": "*",
-        "drupal/schemadotorg_demo_profile": "*",
         "drupal/schemadotorg_deprecated": "*",
         "drupal/telephone_filter": "*",
         "drupal/term_reference": "*"

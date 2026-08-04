@@ -16,6 +16,32 @@
         {
             "type": "package",
             "package": {
+                "name": "drupal/schemadotorg_demo",
+                "type": "drupal-module-sandbox",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/schemadotorg_demo.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "drupal/schemadotorg_demo_profile",
+                "type": "drupal-profile",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/schemadotorg_demo_profile.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
                 "name": "drupal/schemadotorg_migrate",
                 "type": "drupal-module-sandbox",
                 "version": "1.0.x-dev",
@@ -133,6 +159,8 @@
     ],
     "require": {
         "drupal/schemadotorg_cms_migrate": "*",
+        "drupal/schemadotorg_demo": "*",
+        "drupal/schemadotorg_demo_profile": "*",
         "drupal/schemadotorg_migrate": "*",
         "drupal/schemadotorg_starterkit_events": "*",
         "drupal/schemadotorg_starterkit_hospital": "*",

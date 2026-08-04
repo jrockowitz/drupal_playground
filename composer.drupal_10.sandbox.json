@@ -55,32 +55,6 @@
     {
       "type": "package",
       "package": {
-        "name": "drupal/schemadotorg_demo",
-        "type": "drupal-module-sandbox",
-        "version": "1.0.x-dev",
-        "source": {
-          "url": "git@git.drupal.org:project/schemadotorg_demo.git",
-          "type": "git",
-          "reference": "1.0.x"
-        }
-      }
-    },
-    {
-      "type": "package",
-      "package": {
-        "name": "drupal/schemadotorg_demo_profile",
-        "type": "drupal-profile",
-        "version": "1.0.x-dev",
-        "source": {
-          "url": "git@git.drupal.org:project/schemadotorg_demo_profile.git",
-          "type": "git",
-          "reference": "1.0.x"
-        }
-      }
-    },
-    {
-      "type": "package",
-      "package": {
         "name": "drupal/schemadotorg_deprecated",
         "type": "drupal-module-sandbox",
         "version": "1.0.x-dev",
@@ -212,8 +186,6 @@
   "require": {
     "drupal/schemadotorg": "1.0.x-dev",
     "drupal/schemadotorg_cms_migrate": "1.0.x-dev",
-    "drupal/schemadotorg_demo": "1.0.x-dev",
-    "drupal/schemadotorg_demo_profile": "1.0.x-dev",
     "drupal/schemadotorg_deprecated": "1.0.x-dev",
     "drupal/schemadotorg_experimental": "1.0.x-dev",
     "drupal/schemadotorg_migrate": "1.0.x-dev",

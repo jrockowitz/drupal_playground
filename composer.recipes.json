@@ -74,6 +74,10 @@
         },
         {
             "type": "path",
+            "url": "recipes/drupal_playground_schemadotorg_api"
+        },
+        {
+            "type": "path",
             "url": "recipes/drupal_playground_elasticsearch"
         },
         {
@@ -153,6 +157,7 @@
         "drupal/drupal_playground_devel": "*",
         "drupal/drupal_playground_elasticsearch": "*",
         "drupal/drupal_playground_schemadotorg": "*",
+        "drupal/drupal_playground_schemadotorg_api": "*",
         "drupal/drupal_playground_webform_setup": "*",
         "drupal/drupal_playground_webform_test": "*",
         "drupal/clinical_trials_gov_recipe_data_setup": "*",

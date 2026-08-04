@@ -1,0 +1,17 @@
+name: 'Drupal Playground Schema.org Blueprints API'
+description: >
+  Adds JSON:API, OpenAPI documentation, and JSON Schema support to the Drupal
+  Playground Schema.org Blueprints recipe.
+type: 'Site'
+recipes:
+  - drupal_playground_schemadotorg
+install:
+  - openapi
+  - openapi_jsonapi
+  - openapi_ui
+  - openapi_ui_redoc
+  - openapi_ui_swagger
+  - schemata
+  - schemata_json_schema
+  - schemadotorg_jsonapi
+  - schemadotorg_jsonapi_preview

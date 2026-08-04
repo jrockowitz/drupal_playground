@@ -72,9 +72,6 @@ install:
   - schemadotorg_simple_sitemap
   - schemadotorg_smart_date
   - schemadotorg_type_tray
-  # Schema.org Blueprints JSON-API submodules
-  - schemadotorg_jsonapi
-  - schemadotorg_jsonapi_preview
   # Schema.org Blueprints JSON-LD submodules
   - schemadotorg_jsonld
   - schemadotorg_jsonld_breadcrumb
@@ -98,4 +95,5 @@ config:
     smart_date: '*'
   actions:
     core.extension:
-      executeInstallHook: schemadotorg_smart_date
+      executeInstallHook:
+        - schemadotorg_smart_date
