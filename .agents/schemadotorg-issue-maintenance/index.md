@@ -1,6 +1,6 @@
 # Schema.org Blueprints issue dashboard
 
-Queue snapshot: 2026-07-28. The public queue contains 13 open issues: 7 Active
+Queue snapshot: 2026-08-04. The public queue contains 14 open issues: 8 Active
 and 6 Needs Review. Closed tracker entries were removed.
 
 | Issue | Title | Status | Lane | Next action |
@@ -17,6 +17,7 @@ and 6 Needs Review. Closed tracker entries were removed.
 | [#3549135](https://www.drupal.org/node/3549135) ([note](issues/3549135.md)) | What to program to adapt a customized schema.org Type? | Needs Review | Documentation | Review the focused alter-hook test changes. |
 | [#3468432](https://www.drupal.org/node/3468432) ([note](issues/3468432.md)) | If I want to add `additionalProperty` under the Thing type, what should I do? | Active | Resolved support follow-up | Review and post the prepared reply, then mark Fixed. |
 | [#3552404](https://www.drupal.org/node/3552404) ([note](issues/3552404.md)) | Schema UI with Navigation and Gin lacks Save action | Active | UI reproduction | Reproduce Navigation + Gin form-action behavior. |
+| [#3614855](https://www.drupal.org/node/3614855) ([note](issues/3614855.md)) | Restore Telephone module dependencies for 1.0.x tests | Active | Scoped test fix | Review the local fork branch and test evidence before any push. |
 
 All notes use the `1.0.x` target branch for any future local work. Local test
 evidence and code changes are recorded in the applicable issue note.

@@ -1,5 +1,5 @@
 {
-    "_hash": "8d0aaa91d18d0afa05bb12519284974d8a7bda58cbbd4b38dbdef70244cf14fa",
+    "_hash": "f05d4c7941814cfe61a27f7c10640cc8d2ee5e3d0d4e5d0992eb7674a6c83c4d",
     "patches": {
         "drupal/config_rewrite": [
             {
@@ -14,16 +14,6 @@
             }
         ],
         "drupal/core": [
-            {
-                "package": "drupal/core",
-                "description": "Issue #2780839: Optimize migration of specific source IDs for SQL sources",
-                "url": "https://www.drupal.org/files/issues/2026-07-02/2780839-10-6.patch",
-                "sha256": "1d6f60bc4696707eb24331262baaabfdb0a939824dd30b040fd8266b1ad0cacb",
-                "depth": 2,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
             {
                 "package": "drupal/core",
                 "description": "Issue #3345064: Media library field_widget_id is not unique enough",
@@ -43,50 +33,6 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776",
                     "provenance": "dependency:drupal/core"
-                }
-            }
-        ],
-        "drupal/migrate_tools": [
-            {
-                "package": "drupal/migrate_tools",
-                "description": "Issue #3470892: drush migrate:reset additional options like --all",
-                "url": "https://www.drupal.org/files/issues/2025-03-10/migrate_tools-issue-3470892-mr-72.patch",
-                "sha256": "d9e99346a0cc1ac88d7d630d2fcd616147a6ff8a92d41a344adeb8afabb4f352",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/migrate_tools",
-                "description": "Issue #3439811: Migration process UI assumes default_value is text",
-                "url": "https://www.drupal.org/files/issues/2025-01-29/migrate_tools-issue-3439811-mr-63.patch",
-                "sha256": "9fa48728bd65c9957b81152275af9e171a5796b8fbce4773b44537e38e6fb494",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/migrate_tools",
-                "description": "Issue #3104268: Sync is too strict during id comparison and can roll back everything",
-                "url": "https://www.drupal.org/files/issues/2025-03-10/migrate_tools-issue-3104268-mr-77.patch",
-                "sha256": "08945723a32f6cba9803eec30e9d40ba06acf86bf9141e62cdf76d5942beba0d",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/migrate_drupal_d8": [
-            {
-                "package": "drupal/migrate_drupal_d8",
-                "description": "Issue #3126365: Support translated content",
-                "url": "https://www.drupal.org/files/issues/2024-08-20/3126365-support-translated-content-23.patch",
-                "sha256": "98a69d6cf605b3517346f8fac30f8ae4d8902ba164b07edc5cd8846509d69771",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
                 }
             }
         ],
