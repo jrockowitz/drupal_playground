@@ -4,6 +4,10 @@ People exploring clinical trials need guidance that is compassionate, clear,
 safe, and actionable rather than a generic search or chat experience. The
 existing ClinicalTrials.gov import and discovery foundation makes it possible to
 define that future experience without describing it as current behavior.
+The source planning notes also identify this work as an end-to-end proof of
+concept for documenting the ClinicalTrials.gov modules, Recipes, search
+variants, and AI discovery path in OpenSpec while using Agent Skills and
+Superpowers for implementation.
 
 ## What Changes
 
@@ -16,6 +20,8 @@ define that future experience without describing it as current behavior.
 - Add a shareable session summary and appropriate use of closed-trial context.
 - Add richer import readiness, completion, re-import, and rollback information
   to support the guided discovery experience.
+- Capture the module, Recipe, demo, research-reference, and backlog information
+  needed to keep the proof of concept understandable as it evolves.
 
 ## Capabilities
 
@@ -33,5 +39,7 @@ None.
 Future implementation will affect the ClinicalTrials.gov RAG chat integration,
 conversation/session storage, trial recommendation presentation, accessibility
 and language handling, human-support configuration, and the import-management
-interface. It may require privacy review before browsing or session context is
-used for personalization.
+interface. It will also affect module-level documentation, Recipe review
+material, demo scripts, and follow-up work for AI provider compatibility,
+security hardening, caching, and RAG performance. It may require privacy review
+before browsing or session context is used for personalization.

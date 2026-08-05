@@ -4,6 +4,38 @@
 
 This README is the human-facing companion to [AGENTS.md](/modules/custom/clinical_trials_gov/AGENTS.md). `AGENTS.md` is the implementation guide for coding agents and developers. This file focuses on the product concepts, workflow, and the URLs you are most likely to need.
 
+## Proof of Concept Scope
+
+This module is part of an end-to-end ClinicalTrials.gov proof of concept for documenting the module family, Drupal Recipes, search variants, and AI-assisted discovery workflow.
+
+The proof of concept has two primary data-model approaches:
+
+- pull ClinicalTrials.gov data into a reusable Drupal data model
+- use AI Automators to generate field-based trial content from ClinicalTrials.gov data
+
+Both approaches can be combined with Elasticsearch search and Milvus-backed RAG discovery.
+
+Related Recipes:
+
+- `clinical_trials_gov_recipe_assets`
+- `clinical_trials_gov_recipe_content`
+- `clinical_trials_gov_recipe_data_elastic`
+- `clinical_trials_gov_recipe_data_milvus`
+- `clinical_trials_gov_recipe_data_setup`
+- `clinical_trials_gov_recipe_fields_elastic`
+- `clinical_trials_gov_recipe_fields_milvus`
+- `clinical_trials_gov_recipe_fields_setup`
+
+Related modules:
+
+- `clinical_trials_gov`
+- `clinical_trials_gov_ai_rag_search_chat`
+- `clinical_trials_gov_data`
+- `clinical_trials_gov_fields`
+- `clinical_trials_gov_report`
+
+OpenSpec is the durable home for specifications and proposed behavior. This README is the practical module guide for humans working with the current proof of concept.
+
 ## Drush Setup
 
 The module now includes a Drush setup command:
@@ -32,13 +64,26 @@ If you want the install script to do both steps for you, use:
 ddev install trials-data-setup
 ```
 
+For the broader proof-of-concept flows, use:
+
+```bash
+# Install the complete data-model flow.
+ddev install trials-data
+
+# Install the complete field-based flow.
+ddev install trials-fields
+
+# Install a larger field-based Memorial Sloan Kettering recruiting-trials demo.
+ddev install trials-fields --limit=1000 --query='query.term=Memorial%20Sloan%20Kettering&filter.overallStatus=RECRUITING'
+```
+
 ## Key Concepts
 
 ### The module is a guided wizard
 
 The main workflow lives at:
 
-- [ClinicalTrials.gov wizard](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov)
+- [ClinicalTrials.gov wizard](https://drupal-clinical-trials-gov.ddev.site/admin/config/services/clinical-trials-gov)
 
 The wizard is designed to move in this order:
 
@@ -127,28 +172,47 @@ The migration source:
 
 ### Wizard
 
-- [Overview](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov)
-- [1. Find](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/find)
-- [2. Review / Studies](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/review)
-- [2. Review / Metadata](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/review/metadata)
-- [3. Configure](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/configure)
-- [4. Import](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/import)
-- [5. Manage](https://drupal-playground.ddev.site/admin/config/services/clinical-trials-gov/manage)
+- [Overview](https://drupal-clinical-trials-gov.ddev.site/admin/config/services/clinical-trials-gov)
+- [1. Find](https://drupal-clinical-trials-gov.ddev.site/admin/config/services/clinical-trials-gov/find)
+- [2. Review / Studies](https://drupal-clinical-trials-gov.ddev.site/admin/config/services/clinical-trials-gov/review)
+- [2. Review / Metadata](https://drupal-clinical-trials-gov.ddev.site/admin/config/services/clinical-trials-gov/review/metadata)
+- [3. Configure](https://drupal-clinical-trials-gov.ddev.site/admin/config/services/clinical-trials-gov/configure)
+- [4. Import](https://drupal-clinical-trials-gov.ddev.site/admin/config/services/clinical-trials-gov/import)
+- [5. Manage](https://drupal-clinical-trials-gov.ddev.site/admin/config/services/clinical-trials-gov/manage)
 
 ### Supporting admin pages
 
-- [Migration overview](https://drupal-playground.ddev.site/admin/structure/migrate/manage/default/migrations/clinical_trials_gov)
-- [Imported content](https://drupal-playground.ddev.site/admin/content)
+- [Migration overview](https://drupal-clinical-trials-gov.ddev.site/admin/structure/migrate/manage/default/migrations/clinical_trials_gov)
+- [Imported content](https://drupal-clinical-trials-gov.ddev.site/admin/content)
 
 ### Test and exploration tools
 
-- [Standalone explorer](https://drupal-playground.ddev.site/modules/custom/clinical_trials_gov/test/clinical_trials_gov.php)
-- [Drupal status report entry for the report submodule](https://drupal-playground.ddev.site/admin/reports/status/clinical-trials-gov)
+- [Standalone explorer](https://drupal-clinical-trials-gov.ddev.site/modules/custom/clinical_trials_gov/test/clinical_trials_gov.php)
+- [Drupal status report entry for the report submodule](https://drupal-clinical-trials-gov.ddev.site/admin/reports/status/clinical-trials-gov)
+
+### Discovery demos
+
+- [Articles Elasticsearch demo](https://drupal-clinical-trials-gov.ddev.site/elasticsearch)
+- [Trials Elasticsearch and Milvus demo](https://drupal-clinical-trials-gov.ddev.site/trials)
+- [AI search overview](https://drupal-clinical-trials-gov.ddev.site/ai-search)
+- [AI search chat](https://drupal-clinical-trials-gov.ddev.site/ai-search/chat)
 
 ### External references
 
 - [ClinicalTrials.gov API v2 docs](https://clinicaltrials.gov/data-api/api)
 - [ClinicalTrials.gov protocol definitions](https://clinicaltrials.gov/policy/protocol-definitions)
+- [ClinicalTrials.gov search](https://clinicaltrials.gov/)
+- [WHO trial search](https://trialsearch.who.int/Default.aspx)
+- [Clinical Trial Knowledge Base](https://ctkb.io/)
+- [Clinical Trial Knowledge Base source repository](https://github.com/ninglab/ctkg)
+- [Clinical Trial Knowledge Base symposium showcase](https://www.ohdsi.org/2020-global-symposium-showcase-70/)
+- [Clinical Trial Knowledge Base PubMed article](https://pubmed.ncbi.nlm.nih.gov/33813032/)
+- [Clinical Trial Knowledge Base Journal of Biomedical Informatics article](https://dl.acm.org/doi/10.1016/j.jbi.2021.103771)
+- [St. Jude clinical trials search](https://www.stjude.org/care-treatment/clinical-trials.html)
+- [Memorial Sloan Kettering clinical trials search](https://www.mskcc.org/cancer-care/clinical-trials/search)
+- [Mayo Clinic clinical trials search](https://www.mayo.edu/research/clinical-trials/search-results)
+- [NIH AI trial-matching article](https://www.nih.gov/news-events/news-releases/nih-developed-ai-algorithm-matches-potential-volunteers-clinical-trials)
+- [TrialX](https://www.trialx.com/)
 
 ## Wizard Steps
 
@@ -343,7 +407,7 @@ Recommended categories:
 - [Module services](/modules/custom/clinical_trials_gov/clinical_trials_gov.services.yml)
 - [Routing](/modules/custom/clinical_trials_gov/clinical_trials_gov.routing.yml)
 - [Install config](/modules/custom/clinical_trials_gov/config/install/clinical_trials_gov.settings.yml)
-- [Standalone explorer script](https://drupal-playground.ddev.site/modules/custom/clinical_trials_gov/test/clinical_trials_gov.php)
+- [Standalone explorer script](https://drupal-clinical-trials-gov.ddev.site/modules/custom/clinical_trials_gov/test/clinical_trials_gov.php)
 
 ## Test Support
 
@@ -382,6 +446,25 @@ ddev code-review web/modules/custom/clinical_trials_gov
 ddev drush cr
 ddev drush migrate:status clinical_trials_gov
 ```
+
+## Follow-Up Backlog
+
+OpenSpec tracks proposed product behavior and implementation tasks. The module-level backlog includes:
+
+- compare imported data to generated migration output
+- review README and AGENTS coverage for the ClinicalTrials.gov submodules
+- improve readability of `ClinicalTrialsGovCustomFieldManager`
+- improve readability of `ClinicalTrialsGovFlattenedCustomFieldValues`
+- add Recipe test coverage
+- consider defaulting imported trials to unpublished
+- explore an ECA-based approval workflow
+- improve location contact handling for YAML-backed nested data
+- review nested YAML, CSS, and JavaScript cleanup opportunities
+- migrate the configured AI Assistant API settings before the old API is removed
+- improve chat performance and RAG search quality
+- evaluate Gemini and Anthropic provider behavior
+- review security hardening
+- review AI integration for Views bulk operations
 
 ## Troubleshooting
 
