@@ -11,13 +11,13 @@ visible in the Schema.org Blueprints queue.
 
 ## Schema.org Blueprints project profile
 
-| Input | Default |
-|---|---|
-| Drupal.org machine name | `schemadotorg` |
-| Workspace | `/Users/rockowij/Sites/drupal_playground` |
-| Module path | `web/modules/contrib/schemadotorg` |
+| Input | Default                                             |
+|---|-----------------------------------------------------|
+| Drupal.org machine name | `schemadotorg`                                      |
+| Workspace | `~/Sites/<project>`              |
+| Module path | `web/modules/sandbox/schemadotorg`                  |
 | Target branch | `1.0.x`, unless the human specifies another version |
-| Tracker path | `.agents/schemadotorg-issue-maintenance/` |
+| Tracker path | `.agents/schemadotorg-issue-maintenance/`           |
 
 When a target version is named, use its branch for local checkout, patch
 testing, merge-request review, comment drafts, and backport work. Report any
@@ -36,27 +36,6 @@ Load the corresponding parent reference before proceeding:
 | Scout or traverse the Schema.org Blueprints queue | `drupalorg-issue-maintenance/references/queue-traversal.md` |
 | Review, reproduce, test, fix, or draft a comment | `drupalorg-issue-maintenance/references/issue-workflow.md` |
 | Create or update Schema.org Blueprints issue notes | `drupalorg-issue-maintenance/references/local-tracker.md` |
-
-Before Drupal.org work, confirm the CLI and local checkout state:
-
-```bash
-drupalorg --version
-drupalorg skill:get drupalorg-cli
-git status --short
-if [ -d web/modules/contrib/schemadotorg/.git ]; then
-  git -C web/modules/contrib/schemadotorg status --short
-  git -C web/modules/contrib/schemadotorg branch --show-current
-  git -C web/modules/contrib/schemadotorg remote -v
-else
-  printf '%s\n' 'Schema.org Blueprints is not installed at web/modules/contrib/schemadotorg.'
-fi
-```
-
-Run these commands from `/Users/rockowij/Sites/drupal_playground`. When the
-module is absent, report that local patch work cannot proceed until the recipe
-installs it; continue with read-only queue research if requested. When the
-module has uncommitted changes, determine whether they belong to the selected
-public issue before continuing.
 
 ## Ecosystem context
 

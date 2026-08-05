@@ -10,13 +10,13 @@ This profile supplies the Webform project defaults and public-issue boundary.
 
 ## Webform project profile
 
-| Input | Default |
-|---|---|
-| Drupal.org machine name | `webform` |
-| Workspace | `/Users/rockowij/Sites/drupal_webform` |
-| Module path | `web/modules/sandbox/webform` |
+| Input | Default                                             |
+|---|-----------------------------------------------------|
+| Drupal.org machine name | `webform`                                           |
+| Workspace | `~/Sites/<project>`              |
+| Module path | `web/modules/sandbox/webform`                       |
 | Target branch | `6.3.x`, unless the human specifies another version |
-| Tracker path | `.agents/webform-issue-maintenance/` |
+| Tracker path | `.agents/webform-issue-maintenance/`                |
 
 When a target version is named, use its branch for local checkout, patch
 testing, merge-request review, comment drafts, and backport work. Report any
@@ -33,18 +33,7 @@ Load the corresponding parent reference before proceeding:
 | Review, reproduce, test, fix, or draft a comment | `drupalorg-issue-maintenance/references/issue-workflow.md` |
 | Create or update Webform issue notes | `drupalorg-issue-maintenance/references/local-tracker.md` |
 
-Before Drupal.org work, confirm the local Webform checkout is understood:
-
-```bash
-drupalorg --version
-drupalorg skill:get drupalorg-cli
-git status --short
-git -C web/modules/sandbox/webform status --short
-git -C web/modules/sandbox/webform branch --show-current
-git -C web/modules/sandbox/webform remote -v
-```
-
-Run these commands from `/Users/rockowij/Sites/drupal_webform`. If the module
+Run these commands from `~/Sites/<project>`. If the module
 has uncommitted changes, decide whether they belong to the selected public issue
 before continuing.
 

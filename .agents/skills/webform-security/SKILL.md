@@ -7,20 +7,6 @@ description: Use when working on private Webform security issues in Drupal GitLa
 
 Use for private Webform security issue work in Drupal GitLab.
 
-## First Checks
-
-Run from `/Users/rockowij/Sites/drupal_webform`:
-
-```bash
-git status --short
-git -C web/modules/sandbox/webform status --short
-git -C web/modules/sandbox/webform branch --show-current
-git -C web/modules/sandbox/webform remote -v
-```
-
-If Webform has uncommitted changes, decide whether they belong to the current
-security issue before continuing.
-
 ## Target Webform Version
 
 Default Webform security code work to `6.3.x` unless the human specifies
@@ -218,7 +204,7 @@ AI-assisted by [AI NAME]
 
 ## Verification
 
-Use targeted commands from `/Users/rockowij/Sites/drupal_webform`:
+Use targeted commands from `~/Sites/<project>`:
 
 ```bash
 ddev phpunit <file-or-directory>

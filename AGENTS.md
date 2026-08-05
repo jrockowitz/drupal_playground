@@ -5,7 +5,10 @@
 
 # Agents
 
-- All commits and comments made by an AI agent should end with a note that says: `AI-assisted by {code agent name}`.
+- All commits made by an AI agent should end with a note that says: `AI-assisted by {code agent name}`.
+- All tickets and comments made by an AI agent should start with a note that says: `AI-assisted by {code agent name}`.
+- Allow human to review all changes before committing and pushing code.
+- When creating tickets or comments on Drupal.org, allow the human to review the ticket or comment and click submit.
 
 # Commands
 
@@ -27,3 +30,11 @@ ddev install [preset...]
 # Apply a Recipe from a path relative to the Drupal docroot
 ddev recipe-apply ../recipes/<recipe>
 ```
+
+
+# Architecture
+
+## Directories
+
+- `web/modules/custom` modules that are under development via the main repo.
+- `web/modules/sandbox` modules checkout of `https://git.drupalcode.org/`

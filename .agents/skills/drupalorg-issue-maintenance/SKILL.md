@@ -9,6 +9,18 @@ Use this skill to turn a public Drupal.org issue queue into a small, evidence-le
 local tracker and to work on selected issues safely. It supports maintainers; it
 does not replace their judgment.
 
+Before Drupal.org work, confirm the root and local <project> checkout is understood:
+
+```bash
+git status --short
+git -C web/modules/sandbox/<project> status --short
+git -C web/modules/sandbox/<project> branch --show-current
+git -C web/modules/sandbox/<project> remote -v
+```
+
+If <project> has uncommitted changes, decide whether they belong to the current
+security issue before continuing.
+
 ## Start with a project profile
 
 Before scanning or working on an issue, identify these values. Ask only for
@@ -38,8 +50,7 @@ The default tracker layout is:
 | Public issue queue, local tracker, issue review, or scoped contribution work | This skill and the matching reference below |
 | Drupal.org CLI syntax or live issue/MR data | `drupalorg-cli`; load its current CLI-provided guidance before running commands |
 | GitLab authentication, issue-fork mechanics, CI, commits, or merge requests | `drupal-gitlab` and its matching reference |
-| Webform issue work with Webform defaults | `webform-issue-maintenance`, then this skill |
-| Private, security-sensitive, exploit, or confidential Webform information | `webform-security`; do not create public tracker notes |
+
 
 ## Select the workflow
 
