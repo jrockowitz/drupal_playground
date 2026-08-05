@@ -17,7 +17,6 @@
     "require": {
         "composer/installers": "^2.3",
         "cweagans/composer-patches": "^2",
-        "drupal/ai_best_practices": "^1.0@dev",
         "drupal/core-composer-scaffold": "^10 || ^11",
         "drupal/core-project-message": "^10 || ^11",
         "drupal/core-recommended": "^10 || ^11",
@@ -31,7 +30,6 @@
             "composer/installers": true,
             "cweagans/composer-patches": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "drupal/ai_best_practices": true,
             "drupal/core-composer-scaffold": true,
             "drupal/core-project-message": true,
             "drupal/core-recipe-unpack": true,
@@ -51,8 +49,7 @@
         ],
         "post-update-cmd": [
             "cd web/core; corepack enable; yarn install"
-        ],
-        "drupal-ai": "Drupal\\AiBestPractices\\Console\\AiBestPracticesApplication::runFromComposer"
+        ]
     },
     "extra": {
         "drupal-scaffold": {
