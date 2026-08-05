@@ -1587,6 +1587,161 @@
             "time": "2026-04-26T12:12:52+00:00"
         },
         {
+            "name": "dompdf/dompdf",
+            "version": "v3.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dompdf/dompdf.git",
+                "reference": "6d4b4eb8500f7a786da8868ba463a71b725a4005"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/6d4b4eb8500f7a786da8868ba463a71b725a4005",
+                "reference": "6d4b4eb8500f7a786da8868ba463a71b725a4005",
+                "shasum": ""
+            },
+            "require": {
+                "dompdf/php-font-lib": "^1.0.0",
+                "dompdf/php-svg-lib": "^1.0.0",
+                "ext-dom": "*",
+                "ext-mbstring": "*",
+                "masterminds/html5": "^2.0",
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "ext-gd": "*",
+                "ext-json": "*",
+                "ext-zip": "*",
+                "mockery/mockery": "^1.3",
+                "phpunit/phpunit": "^7.5 || ^8 || ^9 || ^10 || ^11",
+                "squizlabs/php_codesniffer": "^3.5",
+                "symfony/process": "^4.4 || ^5.4 || ^6.2 || ^7.0"
+            },
+            "suggest": {
+                "ext-gd": "Needed to process images",
+                "ext-gmagick": "Improves image processing performance",
+                "ext-imagick": "Improves image processing performance",
+                "ext-zlib": "Needed for pdf stream compression"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dompdf\\": "src/"
+                },
+                "classmap": [
+                    "lib/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1"
+            ],
+            "authors": [
+                {
+                    "name": "The Dompdf Community",
+                    "homepage": "https://github.com/dompdf/dompdf/blob/master/AUTHORS.md"
+                }
+            ],
+            "description": "DOMPDF is a CSS 2.1 compliant HTML to PDF converter",
+            "homepage": "https://github.com/dompdf/dompdf",
+            "support": {
+                "issues": "https://github.com/dompdf/dompdf/issues",
+                "source": "https://github.com/dompdf/dompdf/tree/v3.1.6"
+            },
+            "time": "2026-07-20T12:29:38+00:00"
+        },
+        {
+            "name": "dompdf/php-font-lib",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dompdf/php-font-lib.git",
+                "reference": "a6e9a688a2a80016ac080b97be73d3e10c444c9a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dompdf/php-font-lib/zipball/a6e9a688a2a80016ac080b97be73d3e10c444c9a",
+                "reference": "a6e9a688a2a80016ac080b97be73d3e10c444c9a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.5 || ^8 || ^9 || ^10 || ^11 || ^12"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FontLib\\": "src/FontLib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "The FontLib Community",
+                    "homepage": "https://github.com/dompdf/php-font-lib/blob/master/AUTHORS.md"
+                }
+            ],
+            "description": "A library to read, parse, export and make subsets of different types of font files.",
+            "homepage": "https://github.com/dompdf/php-font-lib",
+            "support": {
+                "issues": "https://github.com/dompdf/php-font-lib/issues",
+                "source": "https://github.com/dompdf/php-font-lib/tree/1.0.2"
+            },
+            "time": "2026-01-20T14:10:26+00:00"
+        },
+        {
+            "name": "dompdf/php-svg-lib",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dompdf/php-svg-lib.git",
+                "reference": "8259ffb930817e72b1ff1caef5d226501f3dfeb1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dompdf/php-svg-lib/zipball/8259ffb930817e72b1ff1caef5d226501f3dfeb1",
+                "reference": "8259ffb930817e72b1ff1caef5d226501f3dfeb1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.1 || ^8.0",
+                "sabberworm/php-css-parser": "^8.4 || ^9.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.5 || ^8 || ^9 || ^10 || ^11"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Svg\\": "src/Svg"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "The SvgLib Community",
+                    "homepage": "https://github.com/dompdf/php-svg-lib/blob/master/AUTHORS.md"
+                }
+            ],
+            "description": "A library to read, parse and export to PDF SVG files.",
+            "homepage": "https://github.com/dompdf/php-svg-lib",
+            "support": {
+                "issues": "https://github.com/dompdf/php-svg-lib/issues",
+                "source": "https://github.com/dompdf/php-svg-lib/tree/1.0.2"
+            },
+            "time": "2026-01-02T16:01:13+00:00"
+        },
+        {
             "name": "dragonmantank/cron-expression",
             "version": "v3.6.0",
             "source": {
@@ -3118,6 +3273,64 @@
             }
         },
         {
+            "name": "drupal/ai_webform_generator",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ai_webform_generator.git",
+                "reference": "1.0.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ai_webform_generator-1.0.2.zip",
+                "reference": "1.0.2",
+                "shasum": "e317d58b6cab4a411f7ee5c7208c752a152de789"
+            },
+            "require": {
+                "drupal/ai": "^1.3",
+                "drupal/core": "^10 || ^11",
+                "drupal/webform": "^6.2"
+            },
+            "require-dev": {
+                "drupal/captcha": "^2.0"
+            },
+            "suggest": {
+                "drupal/captcha": "Enables the optional 'captcha' field type in generated Webforms."
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.0.2",
+                    "datestamp": "1783107093",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Chaitanya R Dessai",
+                    "homepage": "https://www.drupal.org/u/chaitanyadessai",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "zeeshan_khan",
+                    "homepage": "https://www.drupal.org/user/1805074"
+                }
+            ],
+            "description": "Generate Drupal Webforms from a plain-English description using the site's configured AI Core provider.",
+            "homepage": "https://www.drupal.org/project/ai_webform_generator",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ai_webform_generator",
+                "issues": "https://www.drupal.org/project/issues/ai_webform_generator"
+            }
+        },
+        {
             "name": "drupal/allowed_formats",
             "version": "3.0.1",
             "source": {
@@ -3179,6 +3392,62 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/allowed_formats",
                 "issues": "https://www.drupal.org/project/issues/allowed_formats"
+            }
+        },
+        {
+            "name": "drupal/anchor_link",
+            "version": "3.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/anchor_link.git",
+                "reference": "3.0.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/anchor_link-3.0.4.zip",
+                "reference": "3.0.4",
+                "shasum": "e46e48235915d46c0428e8dbee4b7a3eba21cd44"
+            },
+            "require": {
+                "drupal/core": "^9 || ^10 || ^11",
+                "vardot/ckeditor5-anchor-drupal": "^1.0.3 || ^2.0.4"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "3.0.4",
+                    "datestamp": "1770468477",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Vardot",
+                    "homepage": "https://www.drupal.org/vardot",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Northern Commerce",
+                    "homepage": "https://www.drupal.org/northern-commerce",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "rajab natshah",
+                    "homepage": "https://www.drupal.org/user/1414312"
+                }
+            ],
+            "description": "This plugin module adds the better link dialog and anchor related features to CKEditor in Drupal.",
+            "homepage": "https://www.drupal.org/project/anchor_link",
+            "support": {
+                "source": "http://cgit.drupalcode.org/anchor_link",
+                "issues": "https://www.drupal.org/project/issues/anchor_link"
             }
         },
         {
@@ -3535,6 +3804,487 @@
             "homepage": "https://www.drupal.org/project/cer",
             "support": {
                 "source": "https://git.drupalcode.org/project/cer"
+            }
+        },
+        {
+            "name": "drupal/ckeditor5_paste_filter",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ckeditor5_paste_filter.git",
+                "reference": "1.1.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ckeditor5_paste_filter-1.1.1.zip",
+                "reference": "1.1.1",
+                "shasum": "a028a8a744c64a0dcc5168e00deec7d38119c1ce"
+            },
+            "require": {
+                "drupal/core": "^9.3 || ^10 || ^11"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.1.1",
+                    "datestamp": "1765403902",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "star-szr",
+                    "homepage": "https://www.drupal.org/user/1167326"
+                }
+            ],
+            "description": "Filter content pasted into CKEditor 5",
+            "homepage": "https://www.drupal.org/project/ckeditor5_paste_filter",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ckeditor5_paste_filter"
+            }
+        },
+        {
+            "name": "drupal/ckeditor5_plugin_pack",
+            "version": "1.5.4",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ckeditor5_plugin_pack.git",
+                "reference": "1.5.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ckeditor5_plugin_pack-1.5.4.zip",
+                "reference": "1.5.4",
+                "shasum": "8e3957b6475cd5cb72154a7bdb88904500854ba3"
+            },
+            "require": {
+                "drupal/ckeditor5_premium_features": "^1.6.4 || ^1.7",
+                "drupal/core": "^10.3 || ^11.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "drupal/ckeditor5_premium_features_wproofreader": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.5.4",
+                    "datestamp": "1785320332",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Wojciech Kukowski (salmonek)",
+                    "homepage": "https://www.drupal.org/u/salmonek",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Dawid Olszewski (dolszewski)",
+                    "homepage": "https://www.drupal.org/u/dolszewski",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "The plugin pack for the CKEditor 5 WYSIWYG editor.",
+            "homepage": "https://www.drupal.org/project/ckeditor5_plugin_pack",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ckeditor5_plugin_pack",
+                "issues": "https://www.drupal.org/project/issues/ckeditor5_plugin_pack"
+            }
+        },
+        {
+            "name": "drupal/ckeditor5_premium_features",
+            "version": "1.8.3",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ckeditor5_premium_features.git",
+                "reference": "1.8.3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ckeditor5_premium_features-1.8.3.zip",
+                "reference": "1.8.3",
+                "shasum": "1f18f33af2143cda203e4657891bb7739a93bbc6"
+            },
+            "require": {
+                "drupal/core": "^10.3 || ^11.0",
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "drupal/ckeditor5-ckeditor5": "*",
+                "drupal/ckeditor5_premium_features_cloud_services": "*",
+                "drupal/ckeditor5_premium_features_mentions": "*"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Required for AWS Bedrock provider for the AI Assistant.",
+                "caxy/php-htmldiff": "Required for asynchronous collaboration and notifications.",
+                "firebase/php-jwt": "Required for Real-time collaboration and document converters.",
+                "openai-php/client": "Required for OpenAI an AzureAI providers for the AI Assistant."
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.8.3",
+                    "datestamp": "1785318955",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Wojciech Kukowski (salmonek)",
+                    "homepage": "https://www.drupal.org/u/salmonek",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Dawid Olszewski (dolszewski)",
+                    "homepage": "https://www.drupal.org/u/dolszewski",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "wwalc",
+                    "homepage": "https://www.drupal.org/user/184556"
+                }
+            ],
+            "description": "The premium features for the CKEditor 5 WYSIWYG editor.",
+            "homepage": "https://www.drupal.org/project/ckeditor5_premium_features",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ckeditor5_premium_features",
+                "issues": "https://www.drupal.org/project/issues/ckeditor5_premium_features"
+            }
+        },
+        {
+            "name": "drupal/ckeditor_codemirror",
+            "version": "3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ckeditor_codemirror.git",
+                "reference": "3.1.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ckeditor_codemirror-3.1.1.zip",
+                "reference": "3.1.1",
+                "shasum": "ec722c797e0be80d5f57b63976578b4ca725f353"
+            },
+            "require": {
+                "drupal/core": "^9.4 || ^10 || ^11",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "drupal/coder": "^8.3",
+                "phpcompatibility/php-compatibility": "^9.3"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "3.1.1",
+                    "datestamp": "1770592042",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Christopher C. Wells (wells)",
+                    "homepage": "https://www.drupal.org/u/wells",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "wells",
+                    "homepage": "https://www.drupal.org/user/2452278"
+                }
+            ],
+            "description": "CodeMirror source syntax highlighting for CKEditor 5.",
+            "homepage": "https://drupal.org/project/ckeditor_codemirror",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "https://git.drupalcode.org/project/ckeditor_codemirror",
+                "issues": "https://www.drupal.org/project/issues/ckeditor_codemirror"
+            }
+        },
+        {
+            "name": "drupal/ckeditor_details",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ckeditor_details.git",
+                "reference": "2.1.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ckeditor_details-2.1.1.zip",
+                "reference": "2.1.1",
+                "shasum": "817dd489be296cb8cca6d8c4c59eda6532ee6496"
+            },
+            "require": {
+                "drupal/core": "^9.3 || ^10 || ^11"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.1.1",
+                    "datestamp": "1784897858",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "liam morland",
+                    "homepage": "https://www.drupal.org/user/493050"
+                },
+                {
+                    "name": "mandclu",
+                    "homepage": "https://www.drupal.org/user/52136"
+                }
+            ],
+            "description": "Adds an accordion toolbar button - using the detail plugin.",
+            "homepage": "https://www.drupal.org/project/ckeditor_details",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ckeditor_details"
+            }
+        },
+        {
+            "name": "drupal/ckeditor_emoji",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ckeditor_emoji.git",
+                "reference": "2.0.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ckeditor_emoji-2.0.2.zip",
+                "reference": "2.0.2",
+                "shasum": "517135e16bfdea4c39412ce9df4d395f495c8f7e"
+            },
+            "require": {
+                "drupal/core": "^10.3 || ^11"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.2",
+                    "datestamp": "1773675350",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Project has not opted into security advisory coverage!"
+                    }
+                },
+                "branch-alias": {
+                    "dev-2.0.x": "2.0.x-dev"
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "ashrafomar",
+                    "homepage": "https://www.drupal.org/user/3520049"
+                }
+            ],
+            "description": "CKEditor Emoji Plugin is designed to enhance the content editing experience in Drupal by enabling the insertion of emojis directly into your text.",
+            "homepage": "https://www.drupal.org/project/ckeditor_emoji",
+            "support": {
+                "source": "https://git.drupalcode.org/project/ckeditor_emoji"
+            }
+        },
+        {
+            "name": "drupal/ckeditor_link_styles",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/ckeditor_link_styles.git",
+                "reference": "1.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/ckeditor_link_styles-1.1.0.zip",
+                "reference": "1.1.0",
+                "shasum": "4860ca9ad09dd6e255d245da5438891a8b7a58d2"
+            },
+            "require": {
+                "drupal/core": "^9.4 || ^10 || ^11",
+                "php": ">=8.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.1.0",
+                    "datestamp": "1732071661",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Snyder",
+                    "homepage": "https://www.drupal.org/user/1988434",
+                    "email": "chris@chrissnyder.org",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Provides the ability to select styles (css classes) for links within CKEditor5.",
+            "homepage": "https://www.drupal.org/project/ckeditor_link_styles",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "https://cgit.drupalcode.org/ckeditor_link_styles",
+                "issues": "https://www.drupal.org/project/issues/ckeditor_link_styles"
+            }
+        },
+        {
+            "name": "drupal/clientside_validation",
+            "version": "4.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/clientside_validation.git",
+                "reference": "4.1.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/clientside_validation-4.1.2.zip",
+                "reference": "4.1.2",
+                "shasum": "d0fde67b600f4c14bb669d2e997f91415379838a"
+            },
+            "require": {
+                "drupal/core": "^9.4 || ^10.0 || ^11.0",
+                "php": ">=7.4.0"
+            },
+            "require-dev": {
+                "drupal/clientside_validation_demo": "*",
+                "drupal/clientside_validation_jquery": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "4.1.2",
+                    "datestamp": "1739335910",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "attiks",
+                    "homepage": "https://www.drupal.org/user/105002"
+                },
+                {
+                    "name": "jelle_s",
+                    "homepage": "https://www.drupal.org/user/829198"
+                },
+                {
+                    "name": "joseph.olstad",
+                    "homepage": "https://www.drupal.org/user/1321830"
+                },
+                {
+                    "name": "nikunjkotecha",
+                    "homepage": "https://www.drupal.org/user/694082"
+                }
+            ],
+            "description": "This module adds clientside validation",
+            "homepage": "https://www.drupal.org/project/clientside_validation",
+            "support": {
+                "source": "https://git.drupalcode.org/project/clientside_validation",
+                "issues": "https://drupal.org/project/issues/clientside_validation"
+            }
+        },
+        {
+            "name": "drupal/clientside_validation_jquery",
+            "version": "4.1.2",
+            "require": {
+                "drupal/clientside_validation": "*",
+                "drupal/core": "^9.4 || ^10 || ^11"
+            },
+            "type": "metapackage",
+            "extra": {
+                "drupal": {
+                    "version": "4.1.2",
+                    "datestamp": "1739335910",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "attiks",
+                    "homepage": "https://www.drupal.org/user/105002"
+                },
+                {
+                    "name": "jelle_s",
+                    "homepage": "https://www.drupal.org/user/829198"
+                },
+                {
+                    "name": "joseph.olstad",
+                    "homepage": "https://www.drupal.org/user/1321830"
+                },
+                {
+                    "name": "nikunjkotecha",
+                    "homepage": "https://www.drupal.org/user/694082"
+                }
+            ],
+            "description": "Uses the jQuery Validate plugin as the clientside validation library.",
+            "homepage": "https://www.drupal.org/project/clientside_validation",
+            "support": {
+                "source": "https://git.drupalcode.org/project/clientside_validation"
             }
         },
         {
@@ -5158,6 +5908,52 @@
             }
         },
         {
+            "name": "drupal/drupal_playground_ckeditor",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_ckeditor",
+                "reference": "d3857ced65d794ff0c404c58f2af60b67d8363a2"
+            },
+            "require": {
+                "drupal/anchor_link": "^3.0",
+                "drupal/asset_injector": "^2.0",
+                "drupal/ckeditor5_paste_filter": "^1.0",
+                "drupal/ckeditor5_plugin_pack": "^1.0",
+                "drupal/ckeditor_codemirror": "^3.0",
+                "drupal/ckeditor_details": "^2.0",
+                "drupal/ckeditor_emoji": "^2.0",
+                "drupal/ckeditor_link_styles": "^1.0",
+                "drupal/core": "^10.3 || ^11",
+                "drupal/embed": "1.x-dev",
+                "drupal/embedded_content": "^2.0",
+                "drupal/embedded_content_examples-embedded_content_examples": "^2.0",
+                "drupal/entity_browser": "^2.0",
+                "drupal/entity_browser_enhanced": "^2.0",
+                "drupal/entity_embed": "^1.0",
+                "drupal/link_attributes": "^2.0",
+                "drupal/linkit": "^7.0",
+                "drupal/token": "^1.0",
+                "drupal/token_filter": "^2.0"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Makes CKEditor great in Drupal Playground.",
+            "homepage": "https://www.drupal.org/sandbox/jrockowitz/3510477",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "issues": "https://www.drupal.org/sandbox/jrockowitz/3510477",
+                "source": "https://www.drupal.org/sandbox/jrockowitz/3510477"
+            },
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "drupal/drupal_playground_devel",
             "version": "1.0.0",
             "dist": {
@@ -5179,7 +5975,7 @@
         },
         {
             "name": "drupal/drupal_playground_eca",
-            "version": "dev-drupal_schemadotorg",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_eca",
@@ -5300,14 +6096,38 @@
             }
         },
         {
+            "name": "drupal/drupal_playground_webform_ai",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "recipes/drupal_playground_webform_ai",
+                "reference": "ef5db27ece17ebaec49705932d16f87e23966231"
+            },
+            "require": {
+                "drupal/ai_webform_generator": "^1.0.2",
+                "drupal/core": "^10 || ^11"
+            },
+            "type": "drupal-recipe",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Installs and configures AI Webform Generator for Drupal Playground.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "drupal/drupal_playground_webform_setup",
             "version": "1.0.0",
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_webform_setup",
-                "reference": "7b02ecc8a8d8adeb76db3429780ac042cb0340e5"
+                "reference": "24a52a58bd8b76ee6474c75b177610d700bcb3cb"
             },
             "require": {
+                "drupal/clientside_validation": "^4.1",
+                "drupal/clientside_validation_jquery": "^4.1",
+                "drupal/entity_print": "^2.18",
                 "drupal/honeypot": "^2",
                 "drupal/imce": "^3",
                 "drupal/recaptcha": "^3",
@@ -5624,17 +6444,11 @@
         },
         {
             "name": "drupal/embed",
-            "version": "1.10.0",
+            "version": "dev-1.x",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/embed.git",
-                "reference": "8.x-1.10"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/embed-8.x-1.10.zip",
-                "reference": "8.x-1.10",
-                "shasum": "4ac5be0c3a421851c9c60ed82e3bc497be88e61c"
+                "reference": "011d5a41d576144a0976495a58dbb41d5803d586"
             },
             "require": {
                 "drupal/core": "^10.2 || ^11"
@@ -5644,12 +6458,15 @@
             },
             "type": "drupal-module",
             "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
                 "drupal": {
-                    "version": "8.x-1.10",
-                    "datestamp": "1737663032",
+                    "version": "8.x-1.10+1-dev",
+                    "datestamp": "1753838084",
                     "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -5734,6 +6551,51 @@
             "homepage": "http://drupal.org/project/embedded_content",
             "support": {
                 "source": "https://git.drupalcode.org/project/embedded_content"
+            }
+        },
+        {
+            "name": "drupal/embedded_content_examples-embedded_content_examples",
+            "version": "2.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/embedded_content_examples.git",
+                "reference": "2.0.3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/embedded_content_examples-2.0.3.zip",
+                "reference": "2.0.3",
+                "shasum": "0aef3541881ff90bcece1d4fdaf1cda5070da17f"
+            },
+            "require": {
+                "drupal/core": "^9 || ^10 || ^11",
+                "drupal/embedded_content": "^2"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.3",
+                    "datestamp": "1737566979",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Project has not opted into security advisory coverage!"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "nuez",
+                    "homepage": "https://www.drupal.org/user/758020"
+                }
+            ],
+            "description": "Examples for Embedded Content.",
+            "homepage": "http://drupal.org/project/embedded_content_examples",
+            "support": {
+                "source": "https://git.drupalcode.org/project/embedded_content_examples"
             }
         },
         {
@@ -5839,6 +6701,57 @@
             }
         },
         {
+            "name": "drupal/entity_browser_enhanced",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/entity_browser_enhanced.git",
+                "reference": "2.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/entity_browser_enhanced-2.0.1.zip",
+                "reference": "2.0.1",
+                "shasum": "e8640ac806a4302684d5ada8e04d9b92183ebdb8"
+            },
+            "require": {
+                "drupal/core": "^10 || ^11",
+                "drupal/entity_browser": "~2.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.1",
+                    "datestamp": "1719827338",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Vardot",
+                    "homepage": "https://www.drupal.org/vardot",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "rajab natshah",
+                    "homepage": "https://www.drupal.org/user/1414312"
+                }
+            ],
+            "description": "Provides some behavior and style enhancements to Entity Browsers, specifically for multiselect and image/media browsers.",
+            "homepage": "https://www.drupal.org/project/entity_browser_enhanced",
+            "support": {
+                "source": "http://cgit.drupalcode.org/entity_browser_enhanced",
+                "issues": "https://www.drupal.org/project/issues/entity_browser_enhanced"
+            }
+        },
+        {
             "name": "drupal/entity_embed",
             "version": "1.7.0",
             "source": {
@@ -5923,6 +6836,92 @@
                 "reference": "1.0.x"
             },
             "type": "drupal-module-sandbox"
+        },
+        {
+            "name": "drupal/entity_print",
+            "version": "2.18.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/entity_print.git",
+                "reference": "8.x-2.18"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/entity_print-8.x-2.18.zip",
+                "reference": "8.x-2.18",
+                "shasum": "4f64e1893269f3fef1ad18d52f1d5681fba4a9a2"
+            },
+            "require": {
+                "dompdf/dompdf": ">=2.0.7",
+                "drupal/core": "^9.4 || ^10.0 || ^11"
+            },
+            "require-dev": {
+                "mikehaertl/phpwkhtmltopdf": "~2.1",
+                "tecnickcom/tcpdf": "~6"
+            },
+            "suggest": {
+                "mikehaertl/phpwkhtmltopdf": "PhpWkhtmlToPdf provides the PHP library to use Wkhtmltopdf"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-2.18",
+                    "datestamp": "1752758007",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Ben Dougherty",
+                    "homepage": "https://www.drupal.org/u/benjy"
+                },
+                {
+                    "name": "benjy",
+                    "homepage": "https://www.drupal.org/user/1852732"
+                },
+                {
+                    "name": "jannakha",
+                    "homepage": "https://www.drupal.org/user/3085703"
+                },
+                {
+                    "name": "jsacksick",
+                    "homepage": "https://www.drupal.org/user/972218"
+                },
+                {
+                    "name": "larowlan",
+                    "homepage": "https://www.drupal.org/user/395439"
+                },
+                {
+                    "name": "pameeela",
+                    "homepage": "https://www.drupal.org/user/1431110"
+                },
+                {
+                    "name": "sam152",
+                    "homepage": "https://www.drupal.org/user/1485048"
+                },
+                {
+                    "name": "vladimiraus",
+                    "homepage": "https://www.drupal.org/user/673120"
+                }
+            ],
+            "description": "PDF print solution for any Drupal entity.",
+            "homepage": "http://drupal.org/project/entity_print",
+            "keywords": [
+                "PDF",
+                "drupal",
+                "print",
+                "web"
+            ],
+            "support": {
+                "source": "https://git.drupalcode.org/project/entity_print"
+            }
         },
         {
             "name": "drupal/entity_reference_override",
@@ -7529,6 +8528,69 @@
             }
         },
         {
+            "name": "drupal/linkit",
+            "version": "7.0.16",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/linkit.git",
+                "reference": "7.0.16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/linkit-7.0.16.zip",
+                "reference": "7.0.16",
+                "shasum": "72e598acf5ba56db25989754393bbce6597a29af"
+            },
+            "require": {
+                "drupal/core": "^10.2 || ^11"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "7.0.16",
+                    "datestamp": "1781283687",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Emil Stjerneman",
+                    "homepage": "https://stjerneman.com",
+                    "email": "emil@stjerneman.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "idebr",
+                    "homepage": "https://www.drupal.org/user/1879760"
+                },
+                {
+                    "name": "johnwebdev",
+                    "homepage": "https://www.drupal.org/user/3331569"
+                },
+                {
+                    "name": "mark_fullmer",
+                    "homepage": "https://www.drupal.org/user/2612816"
+                },
+                {
+                    "name": "utexas",
+                    "homepage": "https://www.drupal.org/user/3716409"
+                }
+            ],
+            "description": "Linkit - Enriched linking experience",
+            "homepage": "http://drupal.org/project/linkit",
+            "support": {
+                "source": "http://cgit.drupalcode.org/linkit",
+                "issues": "http://drupal.org/project/linkit"
+            }
+        },
+        {
             "name": "drupal/local_tasks_more",
             "version": "1.0.x-dev",
             "source": {
@@ -8655,17 +9717,17 @@
         },
         {
             "name": "drupal/paragraphs",
-            "version": "1.22.0",
+            "version": "1.23.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/paragraphs.git",
-                "reference": "8.x-1.22"
+                "reference": "8.x-1.23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/paragraphs-8.x-1.22.zip",
-                "reference": "8.x-1.22",
-                "shasum": "b4a0f02ddffc28380dbc8723551229142549cd97"
+                "url": "https://ftp.drupal.org/files/projects/paragraphs-8.x-1.23.zip",
+                "reference": "8.x-1.23",
+                "shasum": "999a66b51360006f9ead6e01b0ad8c087ca828f9"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11",
@@ -8690,8 +9752,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.22",
-                    "datestamp": "1785669504",
+                    "version": "8.x-1.23",
+                    "datestamp": "1785907921",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -9880,6 +10942,10 @@
             ],
             "authors": [
                 {
+                    "name": "droath",
+                    "homepage": "https://www.drupal.org/user/718562"
+                },
+                {
                     "name": "justin2pin",
                     "homepage": "https://www.drupal.org/user/278450"
                 },
@@ -10054,6 +11120,76 @@
             "homepage": "https://www.drupal.org/project/token",
             "support": {
                 "source": "https://git.drupalcode.org/project/token"
+            }
+        },
+        {
+            "name": "drupal/token_filter",
+            "version": "2.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/token_filter.git",
+                "reference": "2.2.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/token_filter-2.2.1.zip",
+                "reference": "2.2.1",
+                "shasum": "1950ce8c0235418175e11c0d9ed15afbe1421dd7"
+            },
+            "require": {
+                "drupal/core": "^10 || ^11",
+                "drupal/token": "^1",
+                "php": ">=8.1"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.2.1",
+                    "datestamp": "1719183798",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "ademarco",
+                    "homepage": "https://www.drupal.org/user/186696"
+                },
+                {
+                    "name": "asciikewl",
+                    "homepage": "https://www.drupal.org/user/147292"
+                },
+                {
+                    "name": "darvanen",
+                    "homepage": "https://www.drupal.org/user/1068770"
+                },
+                {
+                    "name": "dave reid",
+                    "homepage": "https://www.drupal.org/user/53892"
+                },
+                {
+                    "name": "deciphered",
+                    "homepage": "https://www.drupal.org/user/103796"
+                },
+                {
+                    "name": "pescetti",
+                    "homepage": "https://www.drupal.org/user/436244"
+                },
+                {
+                    "name": "pvhee",
+                    "homepage": "https://www.drupal.org/user/108811"
+                }
+            ],
+            "description": "This is a very simple module to make global token values available as an input filter.",
+            "homepage": "https://www.drupal.org/project/token_filter",
+            "support": {
+                "source": "https://git.drupalcode.org/project/token_filter"
             }
         },
         {
@@ -11801,16 +12937,16 @@
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.3.21",
+            "version": "v0.3.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "7753c65c281c2550c7c183f14e18062073b7d821"
+                "reference": "02b89b39e8972a998db4d5d4ad4719239dd4aee4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/7753c65c281c2550c7c183f14e18062073b7d821",
-                "reference": "7753c65c281c2550c7c183f14e18062073b7d821",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/02b89b39e8972a998db4d5d4ad4719239dd4aee4",
+                "reference": "02b89b39e8972a998db4d5d4ad4719239dd4aee4",
                 "shasum": ""
             },
             "require": {
@@ -11854,9 +12990,9 @@
             "description": "Add beautiful and user-friendly forms to your command-line applications.",
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.3.21"
+                "source": "https://github.com/laravel/prompts/tree/v0.3.22"
             },
-            "time": "2026-06-26T00:11:25+00:00"
+            "time": "2026-08-04T14:50:50+00:00"
         },
         {
             "name": "league/commonmark",
@@ -15069,16 +16205,6 @@
             "time": "2019-03-08T08:55:37+00:00"
         },
         {
-            "name": "recipes/ckeditor_recipe",
-            "version": "1.0.x-dev",
-            "source": {
-                "type": "git",
-                "url": "git@git.drupal.org:sandbox/jrockowitz-3510477.git",
-                "reference": "1.0.x"
-            },
-            "type": "drupal-recipe"
-        },
-        {
             "name": "recipes/schemadotorg_recipes",
             "version": "1.0.x-dev",
             "source": {
@@ -15159,6 +16285,86 @@
                 "source": "https://github.com/revoltphp/event-loop/tree/v1.0.9"
             },
             "time": "2026-05-16T17:55:38+00:00"
+        },
+        {
+            "name": "sabberworm/php-css-parser",
+            "version": "v9.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MyIntervals/PHP-CSS-Parser.git",
+                "reference": "fd3bf9fb173e0df649bc4e3e0d088a1b2417c08f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MyIntervals/PHP-CSS-Parser/zipball/fd3bf9fb173e0df649bc4e3e0d088a1b2417c08f",
+                "reference": "fd3bf9fb173e0df649bc4e3e0d088a1b2417c08f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-iconv": "*",
+                "php": "^7.2.0 || ~8.0.0 || ~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+                "thecodingmachine/safe": "^1.3 || ^2.5 || ^3.4"
+            },
+            "require-dev": {
+                "php-parallel-lint/php-parallel-lint": "1.4.0",
+                "phpstan/extension-installer": "1.4.3",
+                "phpstan/phpstan": "1.12.33 || 2.2.2",
+                "phpstan/phpstan-phpunit": "1.4.2 || 2.0.16",
+                "phpstan/phpstan-strict-rules": "1.6.2 || 2.0.11",
+                "phpunit/phpunit": "8.5.52",
+                "rawr/phpunit-data-provider": "3.3.1",
+                "rector/rector": "1.2.10 || 2.4.6",
+                "rector/type-perfect": "1.0.0 || 2.1.3",
+                "squizlabs/php_codesniffer": "4.0.1",
+                "thecodingmachine/phpstan-safe-rule": "1.2.0 || 1.4.3"
+            },
+            "suggest": {
+                "ext-mbstring": "for parsing UTF-8 CSS"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "9.5.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Rule/Rule.php",
+                    "src/RuleSet/RuleContainer.php"
+                ],
+                "psr-4": {
+                    "Sabberworm\\CSS\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Raphael Schweikert"
+                },
+                {
+                    "name": "Oliver Klee",
+                    "email": "github@oliverklee.de"
+                },
+                {
+                    "name": "Jake Hotson",
+                    "email": "jake.github@qzdesign.co.uk"
+                }
+            ],
+            "description": "Parser for CSS Files written in PHP",
+            "homepage": "https://www.sabberworm.com/blog/2010/6/10/php-css-parser",
+            "keywords": [
+                "css",
+                "parser",
+                "stylesheet"
+            ],
+            "support": {
+                "issues": "https://github.com/MyIntervals/PHP-CSS-Parser/issues",
+                "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v9.4.0"
+            },
+            "time": "2026-06-18T15:10:53+00:00"
         },
         {
             "name": "sebastian/diff",
@@ -19151,6 +20357,149 @@
             ]
         },
         {
+            "name": "thecodingmachine/safe",
+            "version": "v3.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thecodingmachine/safe.git",
+                "reference": "705683a25bacf0d4860c7dea4d7947bfd09eea19"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thecodingmachine/safe/zipball/705683a25bacf0d4860c7dea4d7947bfd09eea19",
+                "reference": "705683a25bacf0d4860c7dea4d7947bfd09eea19",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "php-parallel-lint/php-parallel-lint": "^1.4",
+                "phpstan/phpstan": "^2",
+                "phpunit/phpunit": "^10",
+                "squizlabs/php_codesniffer": "^3.2"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/special_cases.php",
+                    "generated/apache.php",
+                    "generated/apcu.php",
+                    "generated/array.php",
+                    "generated/bzip2.php",
+                    "generated/calendar.php",
+                    "generated/classobj.php",
+                    "generated/com.php",
+                    "generated/cubrid.php",
+                    "generated/curl.php",
+                    "generated/datetime.php",
+                    "generated/dir.php",
+                    "generated/eio.php",
+                    "generated/errorfunc.php",
+                    "generated/exec.php",
+                    "generated/fileinfo.php",
+                    "generated/filesystem.php",
+                    "generated/filter.php",
+                    "generated/fpm.php",
+                    "generated/ftp.php",
+                    "generated/funchand.php",
+                    "generated/gettext.php",
+                    "generated/gmp.php",
+                    "generated/gnupg.php",
+                    "generated/hash.php",
+                    "generated/ibase.php",
+                    "generated/ibmDb2.php",
+                    "generated/iconv.php",
+                    "generated/image.php",
+                    "generated/imap.php",
+                    "generated/info.php",
+                    "generated/inotify.php",
+                    "generated/json.php",
+                    "generated/ldap.php",
+                    "generated/libxml.php",
+                    "generated/lzf.php",
+                    "generated/mailparse.php",
+                    "generated/mbstring.php",
+                    "generated/misc.php",
+                    "generated/mysql.php",
+                    "generated/mysqli.php",
+                    "generated/network.php",
+                    "generated/oci8.php",
+                    "generated/opcache.php",
+                    "generated/openssl.php",
+                    "generated/outcontrol.php",
+                    "generated/pcntl.php",
+                    "generated/pcre.php",
+                    "generated/pgsql.php",
+                    "generated/posix.php",
+                    "generated/ps.php",
+                    "generated/pspell.php",
+                    "generated/readline.php",
+                    "generated/rnp.php",
+                    "generated/rpminfo.php",
+                    "generated/rrd.php",
+                    "generated/sem.php",
+                    "generated/session.php",
+                    "generated/shmop.php",
+                    "generated/sockets.php",
+                    "generated/sodium.php",
+                    "generated/solr.php",
+                    "generated/spl.php",
+                    "generated/sqlsrv.php",
+                    "generated/ssdeep.php",
+                    "generated/ssh2.php",
+                    "generated/stream.php",
+                    "generated/strings.php",
+                    "generated/swoole.php",
+                    "generated/uodbc.php",
+                    "generated/uopz.php",
+                    "generated/url.php",
+                    "generated/var.php",
+                    "generated/xdiff.php",
+                    "generated/xml.php",
+                    "generated/xmlrpc.php",
+                    "generated/yaml.php",
+                    "generated/yaz.php",
+                    "generated/zip.php",
+                    "generated/zlib.php"
+                ],
+                "classmap": [
+                    "lib/DateTime.php",
+                    "lib/DateTimeImmutable.php",
+                    "lib/Exceptions/",
+                    "generated/Exceptions/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP core functions that throw exceptions instead of returning FALSE on error",
+            "support": {
+                "issues": "https://github.com/thecodingmachine/safe/issues",
+                "source": "https://github.com/thecodingmachine/safe/tree/v3.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/OskarStark",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/shish",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/silasjoisten",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/staabm",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-02-04T18:08:13+00:00"
+        },
+        {
             "name": "tippyjs/tippyjs",
             "version": "6.3.7",
             "dist": {
@@ -19312,6 +20661,48 @@
                 }
             ],
             "time": "2026-07-03T20:44:34+00:00"
+        },
+        {
+            "name": "vardot/ckeditor5-anchor-drupal",
+            "version": "2.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Vardot/ckeditor5-anchor-drupal.git",
+                "reference": "00fbfd8d63ca29c1efd9b327ea973f99f78e9f16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Vardot/ckeditor5-anchor-drupal/zipball/00fbfd8d63ca29c1efd9b327ea973f99f78e9f16",
+                "reference": "00fbfd8d63ca29c1efd9b327ea973f99f78e9f16",
+                "shasum": ""
+            },
+            "require": {
+                "drupal/core": ">=10.5 || >=11.2"
+            },
+            "type": "drupal-library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vardot",
+                    "homepage": "https://github.com/vardot",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Anchor feature for CKEditor 5, adapted for Drupal",
+            "homepage": "https://github.com/vardot/ckeditor5-anchor-drupal",
+            "keywords": [
+                "ckeditor5",
+                "drupal",
+                "plugin"
+            ],
+            "support": {
+                "issues": "http://drupal.org/project/issues/anchor_link",
+                "source": "http://cgit.drupalcode.org/anchor_link"
+            },
+            "time": "2025-12-09T10:59:53+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -21720,11 +23111,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.2.7",
+            "version": "2.2.8",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/692db47b9dddb0487934e5236e77d48594aef921",
-                "reference": "692db47b9dddb0487934e5236e77d48594aef921",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e285254e60f33c21902efef4a926ca0987c06804",
+                "reference": "e285254e60f33c21902efef4a926ca0987c06804",
                 "shasum": ""
             },
             "require": {
@@ -21780,7 +23171,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-07-29T17:39:32+00:00"
+            "time": "2026-08-04T22:21:45+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",

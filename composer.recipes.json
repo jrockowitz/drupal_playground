@@ -50,6 +50,10 @@
         },
         {
             "type": "path",
+            "url": "recipes/drupal_playground_ckeditor"
+        },
+        {
+            "type": "path",
             "url": "recipes/drupal_playground_ai_ckeditor_explain"
         },
         {
@@ -83,6 +87,10 @@
         {
             "type": "path",
             "url": "recipes/drupal_playground_webform_setup"
+        },
+        {
+            "type": "path",
+            "url": "recipes/drupal_playground_webform_ai"
         },
         {
             "type": "path",
@@ -124,19 +132,6 @@
                     "reference": "1.0.x"
                 }
             }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "recipes/ckeditor_recipe",
-                "type": "drupal-recipe",
-                "version": "1.0.x-dev",
-                "source": {
-                    "url": "git@git.drupal.org:sandbox/jrockowitz-3510477.git",
-                    "type": "git",
-                    "reference": "1.0.x"
-                }
-            }
         }
     ],
     "require": {
@@ -149,6 +144,7 @@
         "drupal/drupal_playground_ai": "*",
         "drupal/drupal_playground_ai_chat": "*",
         "drupal/drupal_playground_ai_ckeditor": "*",
+        "drupal/drupal_playground_ckeditor": "*",
         "drupal/drupal_playground_ai_ckeditor_explain": "*",
         "drupal/drupal_playground_ai_content_suggestions": "*",
         "drupal/drupal_playground_ai_devel": "*",
@@ -158,6 +154,7 @@
         "drupal/drupal_playground_elasticsearch": "*",
         "drupal/drupal_playground_schemadotorg": "*",
         "drupal/drupal_playground_schemadotorg_api": "*",
+        "drupal/drupal_playground_webform_ai": "*",
         "drupal/drupal_playground_webform_setup": "*",
         "drupal/drupal_playground_webform_test": "*",
         "drupal/clinical_trials_gov_recipe_data_setup": "*",
@@ -167,7 +164,6 @@
         "drupal/clinical_trials_gov_recipe_fields_elastic": "*",
         "drupal/clinical_trials_gov_recipe_fields_milvus": "*",
         "drupal/drupal_playground_translation": "*",
-        "recipes/schemadotorg_recipes": "*",
-        "recipes/ckeditor_recipe": "*"
+        "recipes/schemadotorg_recipes": "*"
     }
 }

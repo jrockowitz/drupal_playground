@@ -1,0 +1,18 @@
+name: 'Drupal Playground AI Webform Generator'
+description: 'Installs and configures AI Webform Generator.'
+type: 'Site'
+recipes:
+  - drupal_playground_ai
+  - drupal_playground_webform_setup
+install:
+  - ai_webform_generator
+config:
+  strict: false
+  actions:
+    ai_webform_generator.settings:
+      simpleConfigUpdate:
+        provider_model: openai__gpt-5-nano
+        temperature: 0.2
+        max_output_tokens: 4000
+        flood_limit: 20
+        flood_window: 3600

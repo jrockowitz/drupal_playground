@@ -1,0 +1,11 @@
+{
+    "name": "drupal/drupal_playground_webform_ai",
+    "description": "Installs and configures AI Webform Generator for Drupal Playground.",
+    "type": "drupal-recipe",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "require": {
+        "drupal/core": "^10 || ^11",
+        "drupal/ai_webform_generator": "^1.0.2"
+    }
+}
