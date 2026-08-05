@@ -33,10 +33,12 @@ suggest unrelated cleanup.
 
 ## Comment drafts
 
-Draft comments only when requested. Begin every draft as follows and do not post
-it:
+Draft comments only when requested. Replace `[AI-agent]` with the current agent
+name, begin every draft as follows, and do not post it:
 
 ```markdown
+AI-assisted by [AI-agent]
+
 From [AI-agent]
 
 I reviewed this locally against <target-branch>.
@@ -56,4 +58,3 @@ Remaining question:
 
 Describe a contribution as an RTBC candidate when evidence supports it; leave
 the final status decision to the maintainer.
-
