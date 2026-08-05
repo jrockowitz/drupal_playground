@@ -140,7 +140,6 @@ for PRESET in "${PRESETS[@]}"; do
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_devel
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_automators
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_ckeditor_explain
-    /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_mcp
 
     echo "Applying AI Schema.org JSON-LD recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_ai_schemadotorg_jsonld

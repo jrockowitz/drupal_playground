@@ -5,10 +5,6 @@
             "url": "recipes/drupal_playground_eca"
         },
         {
-          "type": "path",
-          "url": "recipes/drupal_playground_ai_mcp"
-        },
-        {
               "type": "package",
               "package": {
                   "name": "drupal/webform",
@@ -31,7 +27,6 @@
     },
     "require": {
         "drupal/core-recipe-unpack": "^11",
-        "drupal/drupal_playground_ai_mcp": "*",
         "drupal/drupal_playground_eca": "*",
         "drupal/webform": "6.3.x-dev"
     },

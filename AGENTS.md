@@ -1,21 +1,6 @@
-# Agent Workflow
-
-- `.agents/skills/` is the canonical shared storage for Agent Skills.
-- Commit project-owned skills; ignore generated or vendor-managed skills.
-- OpenSpec main specs record verified current behavior. Active changes record proposed behavior, design, and tasks.
-- Agent Skills and Superpowers guide exploration, implementation, testing, review, and verification. Transient Superpowers output is ignored; durable accepted decisions belong in OpenSpec.
-- For nested modules or repositories, follow the closest applicable `AGENTS.md`.
-
 # Environment
 
-- PHP: 8.3
-- DDEV derives its project name and URL from the current worktree. Run `ddev describe` to find the current name and URL.
-- Docroot: `web/`
-
-## DDEV and worktrees
-
-- Never create a new DDEV project or instance. Always use the DDEV environment
-  for the current worktree.
+- Run `ddev describe` to find the current name, URL, docroot, PHP version, and more...
 - Custom DDEV service and command logic must use `$DDEV_SITENAME`; do not hard-code project or container names.
 
 # Commands
@@ -37,9 +22,6 @@ ddev install [preset...]
 
 # Apply a Recipe from a path relative to the Drupal docroot
 ddev recipe-apply ../recipes/<recipe>
-
-# Create a Git worktree with its own DDEV identity
-ddev worktree <path>
 ```
 
 ## Config
@@ -49,16 +31,6 @@ ddev worktree <path>
 ddev drush config:import -y --partial --source=<directory>
 ```
 
-## Validation
-
-```bash
-# Validate all OpenSpec artifacts
-openspec validate --all --strict --no-interactive
-
-# Check the Git diff for whitespace errors
-git diff --check
-```
-
 # Architecture
 
 ## Directories
@@ -66,7 +38,6 @@ git diff --check
 - `recipes/` — Custom Drupal Recipes (each has `recipe.yml` + `composer.json`)
 - `web/` — Drupal docroot (managed by Composer scaffolding)
 - `.ddev/` — DDEV configuration, custom commands, PHP/Nginx overrides
-- `openspec/` — Current specifications and active change artifacts
 - `.agents/skills/` — Canonical shared Agent Skills
 
 Recipe-specific guidance belongs beside the Recipe that owns it.
