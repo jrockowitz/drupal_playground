@@ -9,6 +9,7 @@
 - All tickets and comments made by an AI agent should start with a note that says: `AI-assisted by {code agent name}`.
 - Allow human to review all changes before committing and pushing code.
 - When creating tickets or comments on Drupal.org, allow the human to review the ticket or comment and click submit.
+- When an in-app browser is available, use it instead of Playwright.
 
 # Commands
 
