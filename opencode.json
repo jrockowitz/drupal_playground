@@ -1,0 +1,99 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "plan",
+  "agent": {
+    "plan": {
+      "model": "github-copilot/gpt-5.6-luna",
+      "variant": "max"
+    }
+  },
+  "autoupdate": "notify",
+  "permission": {
+    "read": "allow",
+    "edit": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "task": "allow",
+    "todowrite": "allow",
+    "question": "allow",
+    "websearch": "allow",
+    "webfetch": "allow",
+    "lsp": "allow",
+    "skill": "allow",
+    "bash": {
+      "*": "ask",
+      "git *": "ask",
+      "ddev *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "cat *": "allow",
+      "echo *": "allow",
+      "composer *": "allow",
+      "mv *": "allow",
+      "ls *": "allow",
+      "curl *": "allow",
+      "php *": "allow",            
+      "python3 *": "allow",            
+      "rg *": "allow",            
+      "grep *": "allow",
+      "find *": "allow",
+      "git status": "allow",
+      "git status *": "allow",
+      "git diff": "allow",
+      "git diff *": "allow",
+      "git log": "allow",
+      "git log *": "allow",
+      "git show *": "allow",
+      "git grep *": "allow",
+      "git ls-files *": "allow",
+      "ddev status": "allow",
+      "ddev checks *": "allow",
+      "ddev checks-fixes *": "allow",
+      "ddev parallel-lint *": "allow",
+      "ddev phpcs *": "allow",
+      "ddev phpcbf *": "allow",
+      "ddev phpstan *": "allow",
+      "ddev phpmd *": "allow",
+      "ddev rector *": "allow",
+      "ddev phpunit *": "allow",
+      "ddev eslint *": "allow",
+      "ddev stylelint *": "allow",
+      "ddev cspell *": "allow",
+      "ddev hook *": "allow",
+      "yarn *": "allow",
+      "npm *": "allow",
+      "composer validate": "allow",
+      "composer validate *": "allow",
+      "composer show": "allow",
+      "composer show *": "allow",
+      "vendor/bin/phpunit *": "allow",
+      "vendor/bin/phpcs *": "allow",
+      "vendor/bin/phpstan *": "allow",
+      "vendor/bin/phpmd *": "allow",
+      "vendor/bin/rector *": "allow"
+    }
+  },
+  "lsp": {
+    "php": {
+      "command": ["npx", "-y", "--package", "intelephense", "intelephense", "--stdio"],
+      "extensions": [".php", ".module", ".install", ".inc", ".theme", ".profile", ".engine"]
+    },
+    "yaml-ls": {
+      "command": ["npx", "-y", "--package", "yaml-language-server", "yaml-language-server", "--stdio"]
+    },
+    "bash": {
+      "command": ["npx", "-y", "--package", "bash-language-server", "bash-language-server", "start"]
+    },
+    "eslint": {
+      "command": ["npx", "-y", "--package", "vscode-langservers-extracted", "vscode-eslint-language-server", "--stdio"]
+    }
+  },
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "enabled": true,
+      "command": ["npx", "-y", "@playwright/mcp"]
+    }
+  }
+}

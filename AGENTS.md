@@ -5,11 +5,13 @@
 
 # Agents
 
-- All commits made by an AI agent should end with a note that says: `AI-assisted by {code agent name}`.
-- All tickets and comments made by an AI agent should start with a note that says: `AI-assisted by {code agent name}`.
-- Allow human to review all changes before committing and pushing code.
-- When creating tickets or comments on Drupal.org, allow the human to review the ticket or comment and click submit.
-- When an in-app browser is available, use it instead of Playwright.
+- All commits made by an AI agent should end with a note that reads: `AI-assisted by {code agent name}`.
+- Require me to review all changes before committing and pushing code.
+
+- All tickets and comments made by an AI agent should start with a note that reads: `AI-assisted by {code agent name}`.
+- Require me to review all tickets or comments and allow me to click save/submit.
+
+- When an in-app /browser is available, use it instead of Playwright.
 
 # Commands
 
@@ -32,10 +34,9 @@ ddev install [preset...]
 ddev recipe-apply ../recipes/<recipe>
 ```
 
-
 # Architecture
 
 ## Directories
 
 - `web/modules/custom` modules that are under development via the main repo.
-- `web/modules/sandbox` modules checkout of `https://git.drupalcode.org/`
+- `web/modules/sandbox` modules checked out from https://git.drupalcode.org/
