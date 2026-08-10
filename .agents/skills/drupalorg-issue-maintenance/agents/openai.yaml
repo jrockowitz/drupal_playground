@@ -1,0 +1,4 @@
+interface:
+  display_name: "Drupal.org Issue Maintenance"
+  short_description: "Triage public Drupal.org issues"
+  default_prompt: "Use $drupalorg-issue-maintenance to inspect a public Drupal.org issue and recommend a maintainer-ready next action."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Webform Security"
+  short_description: "Handle private Webform security work"
+  default_prompt: "Use $webform-security to review a private Webform security issue and draft safe next steps for maintainer approval."
