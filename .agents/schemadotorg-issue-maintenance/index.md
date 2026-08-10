@@ -18,6 +18,7 @@ and 6 Needs Review. Closed tracker entries were removed.
 | [#3468432](https://www.drupal.org/node/3468432) ([note](issues/3468432.md)) | If I want to add `additionalProperty` under the Thing type, what should I do? | Active | Resolved support follow-up | Review and post the prepared reply, then mark Fixed. |
 | [#3552404](https://www.drupal.org/node/3552404) ([note](issues/3552404.md)) | Schema UI with Navigation and Gin lacks Save action | Active | UI reproduction | Reproduce Navigation + Gin form-action behavior. |
 | [#3614855](https://www.drupal.org/node/3614855) ([note](issues/3614855.md)) | Restore Telephone module dependencies for 1.0.x tests | Active | Scoped test fix | Review the local fork branch and test evidence before any push. |
+| [#3615659](https://www.drupal.org/node/3615659) ([note](issues/3615659.md)) | Improve Mermaid diagrams with accessible pan and zoom controls | Active | Scoped user-interface improvement | Review and submit the prepared issue comment, then confirm the MR pipeline. |
 
 All notes use the `1.0.x` target branch for any future local work. Local test
 evidence and code changes are recorded in the applicable issue note.
