@@ -82,16 +82,6 @@
                 "extra": {
                     "provenance": "root"
                 }
-            },
-            {
-                "package": "drupal/entity_browser",
-                "description": "Issue #2946829: Make submit button on modal always visible",
-                "url": "https://www.drupal.org/files/issues/2026-07-13/entity_browser-2946829-mr99.patch",
-                "sha256": "9b9c7fb620043c1706958fce13ab89fe2f624ac2f774606a20cdc8f47e8d06a2",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
             }
         ],
         "drupal/jsonapi_extras": [
