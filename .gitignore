@@ -110,6 +110,7 @@ yarn-error.log
 # =============================================================================
 .agents/skills/*
 !.agents/skills/drupalorg-issue-maintenance
+!.agents/skills/schemadotorg-module-audit
 !.agents/skills/schemadotorg-issue-maintenance
 !.agents/skills/webform-issue-maintenance
 !.agents/skills/webform-security

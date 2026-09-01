@@ -255,6 +255,7 @@
         "drupal/field_data": "*",
         "drupal/local_tasks_more": "*",
         "drupal/menu_export_csv": "*",
+        "drupal/plugin_report": "*",
         "drupal/schemadotorg": "*",
         "drupal/schemadotorg_experimental": "*",
         "drupal/webform": "*",

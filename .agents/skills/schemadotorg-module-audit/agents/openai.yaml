@@ -1,0 +1,4 @@
+interface:
+  display_name: "Schema.org Module Audit"
+  short_description: "Audit one submodule and prepare a Drupal.org fix"
+  default_prompt: "Use $schemadotorg-module-audit to audit one Schema.org Blueprints submodule and prepare one evidence-backed issue and merge request."
