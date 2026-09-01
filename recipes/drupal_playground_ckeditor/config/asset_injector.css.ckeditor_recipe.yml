@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies: {  }
+id: ckeditor_recipe
+label: 'CKEditor recipe'
+code: |
+  p.border,
+  p.highlight,
+  p.shadow {
+    padding: 1em;
+  }
+
+  p.border {
+    border: 3px solid #000;
+  }
+
+  p.highlight {
+    background-color: #ffe;
+  }
+
+  p.shadow {
+    box-shadow: 5px 10px 8px #888;
+  }
+media: all
+preprocess: true
+conditions: {  }
+contexts: {  }
+conditions_require_all: true
