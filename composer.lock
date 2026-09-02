@@ -1889,17 +1889,17 @@
         },
         {
             "name": "drupal/ai",
-            "version": "1.4.7",
+            "version": "1.4.8",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ai.git",
-                "reference": "1.4.7"
+                "reference": "1.4.8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ai-1.4.7.zip",
-                "reference": "1.4.7",
-                "shasum": "a067620e19f0f5948efafcb51124717127cb8bb8"
+                "url": "https://ftp.drupal.org/files/projects/ai-1.4.8.zip",
+                "reference": "1.4.8",
+                "shasum": "398b0b806427e6a6d64af02233981c921ebadfbd"
             },
             "require": {
                 "drupal/core": "^10.5 || ^11.2",
@@ -1929,8 +1929,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.4.7",
-                    "datestamp": "1787148538",
+                    "version": "1.4.8",
+                    "datestamp": "1788366381",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2031,7 +2031,7 @@
         },
         {
             "name": "drupal/ai-ai_search",
-            "version": "1.4.7",
+            "version": "1.4.8",
             "require": {
                 "drupal/ai": "^1",
                 "drupal/core": "^10.4 || ^11"
@@ -2043,8 +2043,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.7",
-                    "datestamp": "1787148538",
+                    "version": "1.4.8",
+                    "datestamp": "1788366381",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2144,17 +2144,17 @@
         },
         {
             "name": "drupal/ai_agents",
-            "version": "1.3.4",
+            "version": "1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ai_agents.git",
-                "reference": "1.3.4"
+                "reference": "1.3.5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ai_agents-1.3.4.zip",
-                "reference": "1.3.4",
-                "shasum": "3fa700424357b28ec7099dd0d55c4281bbba5771"
+                "url": "https://ftp.drupal.org/files/projects/ai_agents-1.3.5.zip",
+                "reference": "1.3.5",
+                "shasum": "8f7a4107ff446190c594b1a70e2fed9575825324"
             },
             "require": {
                 "drupal/ai": "^1.4.0",
@@ -2172,8 +2172,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "1.3.4",
-                    "datestamp": "1786606299",
+                    "version": "1.3.5",
+                    "datestamp": "1788346873",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2229,7 +2229,7 @@
         },
         {
             "name": "drupal/ai_api_explorer",
-            "version": "1.4.7",
+            "version": "1.4.8",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2237,8 +2237,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.7",
-                    "datestamp": "1787148538",
+                    "version": "1.4.8",
+                    "datestamp": "1788366381",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2339,7 +2339,7 @@
         },
         {
             "name": "drupal/ai_assistant_api",
-            "version": "1.4.7",
+            "version": "1.4.8",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11"
@@ -2347,8 +2347,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.7",
-                    "datestamp": "1787148538",
+                    "version": "1.4.8",
+                    "datestamp": "1788366381",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2449,7 +2449,7 @@
         },
         {
             "name": "drupal/ai_automators",
-            "version": "1.4.7",
+            "version": "1.4.8",
             "require": {
                 "drupal/ai": "*",
                 "drupal/core": "^10.4 || ^11",
@@ -2458,8 +2458,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.7",
-                    "datestamp": "1787148538",
+                    "version": "1.4.8",
+                    "datestamp": "1788366381",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2560,7 +2560,7 @@
         },
         {
             "name": "drupal/ai_chatbot",
-            "version": "1.4.7",
+            "version": "1.4.8",
             "require": {
                 "drupal/ai": "^1",
                 "drupal/ai_assistant_api": "*",
@@ -2569,8 +2569,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "1.4.7",
-                    "datestamp": "1787148538",
+                    "version": "1.4.8",
+                    "datestamp": "1788366381",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -3506,6 +3506,62 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/auto_entitylabel",
                 "issues": "https://www.drupal.org/project/issues/auto_entitylabel"
+            }
+        },
+        {
+            "name": "drupal/bartik",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/bartik.git",
+                "reference": "1.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/bartik-1.1.0.zip",
+                "reference": "1.1.0",
+                "shasum": "6ff676ec392389e3d0096acb37694a2eafdd7336"
+            },
+            "require": {
+                "drupal/core": "^10.3 || ^11.0"
+            },
+            "type": "drupal-theme",
+            "extra": {
+                "drupal": {
+                    "version": "1.1.0",
+                    "datestamp": "1762529671",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "bnjmnm",
+                    "homepage": "https://www.drupal.org/user/2369194"
+                },
+                {
+                    "name": "jensimmons",
+                    "homepage": "https://www.drupal.org/user/140882"
+                },
+                {
+                    "name": "lauriii",
+                    "homepage": "https://www.drupal.org/user/1078742"
+                },
+                {
+                    "name": "liam morland",
+                    "homepage": "https://www.drupal.org/user/493050"
+                }
+            ],
+            "description": "The Bartik theme from Drupal 8/9 moved to contrib.",
+            "homepage": "https://www.drupal.org/project/bartik",
+            "support": {
+                "source": "https://git.drupalcode.org/project/bartik"
             }
         },
         {
@@ -5818,11 +5874,11 @@
         },
         {
             "name": "drupal/drupal_playground_ckeditor",
-            "version": "1.0.x-dev",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_ckeditor",
-                "reference": "9fd64cfa77a3c9c32faf4e3d3f192eeabfde0e68"
+                "reference": "d3857ced65d794ff0c404c58f2af60b67d8363a2"
             },
             "require": {
                 "drupal/anchor_link": "^3.0",
@@ -6057,9 +6113,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_webform_test",
-                "reference": "bb0dc3f67e7d38cc3e825146dcc4bdc3f953e202"
+                "reference": "8eed017850e4905bfc4d711be384a411bff27083"
             },
             "require": {
+                "drupal/bartik": "*",
                 "drupal/webform": "*"
             },
             "type": "drupal-recipe",
@@ -6179,20 +6236,20 @@
         },
         {
             "name": "drupal/eca_tamper",
-            "version": "2.0.10",
+            "version": "2.0.11",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/eca_tamper.git",
-                "reference": "2.0.10"
+                "reference": "2.0.11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/eca_tamper-2.0.10.zip",
-                "reference": "2.0.10",
-                "shasum": "ebc825bf80472bc85685e40e8971776709afb062"
+                "url": "https://ftp.drupal.org/files/projects/eca_tamper-2.0.11.zip",
+                "reference": "2.0.11",
+                "shasum": "e71106d50826f6886851dded4d71bd8274be84f5"
             },
             "require": {
-                "drupal/core": "^10.4 || ^11",
+                "drupal/core": "^10.4 || ^11 || ^12",
                 "drupal/eca": "^2.1||^3.0",
                 "drupal/tamper": "^1.0",
                 "php": ">=8.1"
@@ -6200,8 +6257,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.10",
-                    "datestamp": "1775052233",
+                    "version": "2.0.11",
+                    "datestamp": "1788337435",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -7263,6 +7320,10 @@
                 {
                     "name": "drunken monkey",
                     "homepage": "https://www.drupal.org/user/205582"
+                },
+                {
+                    "name": "joelpittet",
+                    "homepage": "https://www.drupal.org/user/160302"
                 },
                 {
                     "name": "mkalkbrenner",

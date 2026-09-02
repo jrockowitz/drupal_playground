@@ -4,6 +4,8 @@ type: 'Site'
 recipes:
   - drupal_playground_webform_setup
 install:
+  # @todo Switch from bartik to olivero.
+  - bartik
   # webform_node_test_multiple and webform_test_submissions cannot be installed
   # via a recipe because their install hooks expect entities that are not ready
   # during recipe application.
@@ -46,3 +48,4 @@ config:
     webform_test_options: '*'
     webform_test_views: '*'
     webform_test_block_submission_limit: '*'
+    bartik:
