@@ -18,6 +18,18 @@ keeps ecosystem work visible in the Schema.org Blueprints queue.
 | Target branch | `1.0.x`, unless the human specifies another version |
 | Tracker path | `.agents/schemadotorg-issue-maintenance/` |
 
+## Experimental companion project
+
+Manage the [Schema.org Blueprints Experimental project](https://git.drupalcode.org/project/schemadotorg_experimental)
+alongside the main `schemadotorg` project whenever an issue produces a code
+improvement that belongs in the experimental module. Inspect the experimental
+project's relevant branch and issue-fork or merge-request state, and update its
+code and tests as part of the same scoped work when applicable. Keep the main
+Schema.org Blueprints queue as the canonical issue queue and
+`.agents/schemadotorg-issue-maintenance/` as the sole local tracker; record the
+experimental project, branch, and related merge request in the selected issue
+note when they are involved.
+
 ## Ecosystem context
 
 Use the [Schema.org Blueprints ecosystem page](https://www.drupal.org/project/schemadotorg/ecosystem)
