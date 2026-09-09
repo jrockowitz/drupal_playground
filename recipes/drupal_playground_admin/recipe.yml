@@ -4,6 +4,7 @@ description: 'Sets up shared admin modules and configuration.'
 install:
   - coffee
   - dashboard
+  - environment_indicator
   - help
   - navigation
   - navigation_extra_tools

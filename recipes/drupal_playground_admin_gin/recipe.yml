@@ -10,6 +10,7 @@ install:
 config:
   strict: false
   import:
+    coffee: '*'
     gin:
       - block.block.gin_breadcrumbs
       - block.block.gin_content

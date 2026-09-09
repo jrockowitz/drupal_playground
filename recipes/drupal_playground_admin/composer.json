@@ -7,6 +7,7 @@
         "drupal/coffee": "^2",
         "drupal/core": "^10 || ^11",
         "drupal/dashboard": "^2",
+        "drupal/environment_indicator": "^5",
         "drupal/navigation_extra_tools": "^1",
         "drupal/type_tray": "^1",
         "drupal/queue_ui": "^3",
@@ -20,6 +21,15 @@
                     "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/11425.diff",
                     "extra": {
                         "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776"
+                    }
+                }
+            ],
+            "drupal/environment_indicator": [
+                {
+                    "description": "Support for core navigation module",
+                    "url": "https://git.drupalcode.org/project/environment_indicator/-/merge_requests/148.diff",
+                    "extra": {
+                        "issue-tracker-url": "https://www.drupal.org/project/environment_indicator/issues/3457688"
                     }
                 }
             ]

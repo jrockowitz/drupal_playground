@@ -15,7 +15,7 @@
             "drupal/coffee": [
                 {
                     "description": "Add Navigation TopBar integration for Gin toolbar",
-                    "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch",
+                    "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/27.diff",
                     "extra": {
                         "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874"
                     }
