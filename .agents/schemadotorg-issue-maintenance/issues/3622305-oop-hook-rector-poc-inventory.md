@@ -1,34 +1,20 @@
-# #3622305: Convert runtime hooks to OOP hook classes and clarify service responsibilities
+AI-assisted by Codex
 
-## Conversion todo
+# Schema.org Blueprints OOP hook Rector POC and conversion inventory
 
-Work on exactly one production module at a time. Review its complete diff and
-targeted test results before beginning the next module. Completed modules may be
-grouped into coherent merge requests, but each module remains a separate
-reviewed commit.
+This public research appendix records a disposable Drupal Rector proof of
+concept for [issue #3622305](https://www.drupal.org/project/schemadotorg/issues/3622305).
+It documents what automation produced, where it failed, and the module-by-module
+process proposed for the production conversion.
 
-### Project workflow
+> Caller counts below are lexical search results. They identify review leads;
+> they do not prove that a service or interface is private or safe to remove.
 
-- [x] Review the raw Rector POC and explicitly approve discarding its generated
-  module changes.
-- [x] Restore a clean `1.0.x` module baseline while retaining the POC evidence
-  in this note and the POC plan.
-- [ ] Create the issue branch after maintainer approval.
-- [ ] Lock the project conventions for hook-class organization, dependency
-  injection, translation, service boundaries, hook ordering, and procedural
-  scanning.
-- [ ] Convert `schemadotorg_allowed_formats` as the pilot and run its targeted
-  checks.
-- [ ] Review and approve the complete pilot diff before starting another
-  module.
-- [ ] Complete subsequent modules individually through the shared definition
-  of done, updating the ledger after each module.
-- [ ] Convert the base `schemadotorg` module last, in dedicated work that covers
-  focal-point and all other ordering behavior.
-- [ ] Convert Schema.org Blueprints Experimental through separate linked
-  merge-request work after the main-project convention is approved.
-- [ ] Run final full-suite verification, document the resulting architecture,
-  and obtain final maintainer review before publication.
+## Recommended conversion process
+
+Convert exactly one production module at a time. Review its complete diff and
+targeted tests before beginning the next module. Completed modules may later be
+grouped into coherent merge requests, with one reviewed commit per module.
 
 ### Per-module definition of done
 
@@ -46,6 +32,7 @@ reviewed commit.
   review, and `git diff --check`.
 - [ ] Update this ledger and the detailed hook inventory before requesting
   commit approval.
+
 
 ### Main-project module ledger
 
@@ -125,45 +112,6 @@ linked merge-request work.
 | `schemadotorg_identifier` | Wave 5 — Experimental | Deferred | Await main-project convention approval. |
 | `schemadotorg_sidebar` | Wave 5 — Experimental | Deferred | Await main-project convention approval. |
 
-## Context
-
-- URL: https://www.drupal.org/node/3622305
-- Status: Active; Normal-priority plan in `1.0.x-dev`.
-- Lane: Architecture planning and staged modernization.
-- Target branch: `1.0.x`.
-- Issue fork: https://git.drupalcode.org/issue/schemadotorg-3622305
-- Issue-fork branch: None created.
-- Merge request: None.
-- Research comment: https://www.drupal.org/project/schemadotorg/issues/3622305#comment-16766652
-- Public inventory: https://www.drupal.org/files/issues/2026-09-10/3622305-oop-hook-rector-poc-inventory.md
-- Companion project: Schema.org Blueprints Experimental is in scope for a
-  separate, linked merge request when implementation begins.
-
-## Evidence
-
-- The plan converts supported runtime hooks in Schema.org Blueprints and
-  Schema.org Blueprints Experimental to Drupal's OOP hook system without legacy
-  shims because the supported baseline is Drupal 11.2+.
-- Required procedural install and update entry points remain explicitly out of
-  scope for conversion. The plan retains `*.api.php` hook definitions as API
-  documentation.
-- The proposed architecture keeps hook-specific adaptation and orchestration in
-  hook classes while retaining reusable, independently testable manager,
-  builder, and public service APIs.
-- Migration is staged by module: inventory both projects, run a focused Rector
-  dry run, establish a small reference implementation, then convert reviewable
-  module-sized batches before the base module.
-- The plan requires regression coverage for hook ordering, constructor
-  injection instead of static service lookup, and the
-  `MODULE.skip_procedural_hook_scan` optimization only after a module is fully
-  eligible.
-- Inspected the published issue and its initial public activity on 2026-09-10
-  with `drupalorg issue:show 3622305 --with-comments --format=llm --no-cache`.
-- Inspected the fork on 2026-09-10 with
-  `drupalorg issue:get-fork 3622305 --format=llm --no-cache`; the fork exists but
-  contains no branches.
-- Confirmed the main and experimental module checkouts were clean on `1.0.x`
-  immediately before the proof-of-concept conversion.
 
 ## Proof-of-concept execution
 
@@ -247,89 +195,6 @@ documentation example. Those changes were not applied.
   translation-trait placement, formatting, static service location, and hook
   signatures all require architectural review before production conversion.
 
-## Approval gate
-
-The raw local POC was approved, executed, documented, and discarded. The
-maintainer reviewed and published the public research update and inventory on
-2026-09-10. The maintainer has not approved an issue branch, implementation
-changes, commits, pushes, an issue fork, or a merge request.
-
-## Uncertainty
-
-- `schemadotorg_allowed_formats` is selected as the reference pilot, but its
-  final class, translation, service-boundary, and scan-eligibility decisions
-  still require review before implementation.
-- Lexical other-caller counts in the inventory are candidate evidence, not a
-  final public-API determination; generic method names require manual review.
-- The focal-point failure confirms that the final conversion needs explicit
-  hook-order coverage before legacy wrappers can be removed.
-
-## Next action
-
-Review and lock the project conventions, prepare a module-level plan for the
-Allowed Formats pilot, and obtain separate maintainer approval before creating
-the issue branch or changing module code.
-
-## Public research attachment
-
-The community-facing POC report and complete inventory are maintained in
-[`3622305-oop-hook-rector-poc-inventory.md`](3622305-oop-hook-rector-poc-inventory.md).
-It omits local paths and approval bookkeeping while retaining the complete
-evidence, module ledgers, hook/service inventory, and skipped-function
-inventory.
-
-- Published with [comment #2](https://www.drupal.org/project/schemadotorg/issues/3622305#comment-16766652).
-- Public file: [3622305-oop-hook-rector-poc-inventory.md](https://www.drupal.org/files/issues/2026-09-10/3622305-oop-hook-rector-poc-inventory.md).
-- Drupal.org serves the Markdown file without a UTF-8 charset, so typographic
-  punctuation is displayed as mojibake in some browsers. Before replacing or
-  re-uploading it, create an ASCII-only copy and obtain separate approval for
-  the public update.
-
-### Published public comment
-
-```markdown
-AI-assisted by Codex
-
-From Codex
-
-I reviewed this locally against `1.0.x` using Drupal Rector's standalone OOP
-hook conversion as a disposable proof of concept.
-
-What I checked:
-- Captured the full PHPUnit and code-review baseline.
-- Ran the isolated `rector-hook-convert.php` configuration across the main
-  project.
-- Inventoried every converted hook, delegated service, static dependency,
-  likely caller, skipped callback/helper, and required procedural function.
-- Rebuilt Drupal's container and compared focused and full-suite behavior.
-
-Result:
-- Rector reported 61 changed input files and 58 rule applications without a
-  Rector error, producing 236 OOP hook methods and matching legacy wrappers.
-- The generated classes retained 189 static `\Drupal` lookups and required
-  substantial architectural and coding-standards cleanup.
-- Container rebuilding succeeded, but the full suite exposed a deterministic
-  focal-point hook-order regression. The two Allowed Formats tests continued to
-  pass.
-- Rector left 112 install/update functions and 24 runtime hooks, callbacks, and
-  helpers procedural; several require manual classification rather than blind
-  conversion.
-
-The raw generated output was intentionally discarded after recording the
-evidence. Production work will restart from clean `1.0.x`, use
-`schemadotorg_allowed_formats` as the pilot, and proceed one module at a time
-with dependency injection, targeted behavior/order tests, and a complete diff
-review before each module is committed. The base module will be converted last,
-and Experimental will remain separate linked work.
-
-The attached `3622305-oop-hook-rector-poc-inventory.md` contains the complete
-236-row hook/service inventory, skipped-function inventory, module ledgers,
-results, and shared definition of done. Lexical caller counts are review leads,
-not proof that an API can be removed.
-
-Feedback is especially welcome on the proposed service boundaries and the best
-way to express and test the existing focal-point and node hook ordering.
-```
 
 ## Hook and service inventory
 

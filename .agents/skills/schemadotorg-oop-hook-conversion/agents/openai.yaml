@@ -1,0 +1,4 @@
+interface:
+  display_name: "Schema.org OOP Hook Conversion"
+  short_description: "Convert one Schema.org module to OOP hooks"
+  default_prompt: "Use $schemadotorg-oop-hook-conversion to convert one Schema.org Blueprints module to object-oriented hooks for issue #3622305."
