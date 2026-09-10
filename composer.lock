@@ -6105,7 +6105,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_webform_setup",
-                "reference": "24a52a58bd8b76ee6474c75b177610d700bcb3cb"
+                "reference": "f172292c8ca7398cb270e975df0061ec03d9e6fb"
             },
             "require": {
                 "drupal/clientside_validation": "^4.1",
@@ -6114,7 +6114,8 @@
                 "drupal/honeypot": "^2",
                 "drupal/imce": "^3",
                 "drupal/recaptcha": "^3",
-                "drupal/webform": "*"
+                "drupal/webform": "*",
+                "drupal/webform_javascript_setting": "*"
             },
             "type": "drupal-recipe",
             "license": [

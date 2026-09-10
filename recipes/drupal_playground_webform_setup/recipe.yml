@@ -35,6 +35,7 @@ install:
   - webform_example_handler
   - webform_example_custom_form
   - webform_example_variant
+  - webform_javascript_setting
 config:
   strict: false
   import:
@@ -71,6 +72,7 @@ config:
     webform_example_handler: '*'
     webform_example_custom_form: '*'
     webform_example_variant: '*'
+    webform_javascript_setting: '*'
   actions:
     node.type.article:
       simpleConfigUpdate:

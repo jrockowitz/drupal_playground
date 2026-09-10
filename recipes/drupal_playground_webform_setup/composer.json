@@ -9,6 +9,7 @@
         "drupal/clientside_validation_jquery": "^4.1",
         "drupal/entity_print": "^2.18",
         "drupal/webform": "*",
+        "drupal/webform_javascript_setting": "*",
         "drupal/imce": "^3",
         "drupal/honeypot": "^2",
         "drupal/recaptcha": "^3"
