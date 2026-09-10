@@ -7528,32 +7528,32 @@
         },
         {
             "name": "drupal/field_validation",
-            "version": "3.0.0-beta7",
+            "version": "3.0.0-rc1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/field_validation.git",
-                "reference": "3.0.0-beta7"
+                "reference": "3.0.0-rc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/field_validation-3.0.0-beta7.zip",
-                "reference": "3.0.0-beta7",
-                "shasum": "fea180c3e8225cdfb94b7892875457653a14e629"
+                "url": "https://ftp.drupal.org/files/projects/field_validation-3.0.0-rc1.zip",
+                "reference": "3.0.0-rc1",
+                "shasum": "44c6d790f9fe58bec291029f41acf5385f0816f4"
             },
             "require": {
                 "drupal/core": "^10.2 || ^11",
                 "php": "^8.0",
-                "symfony/expression-language": "^6.3",
+                "symfony/expression-language": "^6.3 || ^7",
                 "symfony/intl": "^6.3"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "3.0.0-beta7",
-                    "datestamp": "1781256027",
+                    "version": "3.0.0-rc1",
+                    "datestamp": "1788966219",
                     "security-coverage": {
                         "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
+                        "message": "RC releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -8711,7 +8711,7 @@
                     "homepage": "https://www.drupal.org/user/202205"
                 },
                 {
-                    "name": "Deciphered",
+                    "name": "deciphered",
                     "homepage": "https://www.drupal.org/user/103796"
                 },
                 {
@@ -11713,16 +11713,16 @@
         },
         {
             "name": "drush/drush",
-            "version": "13.7.7",
+            "version": "13.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "1166ab05f297d73e24741f8f5fdcc421e77365b8"
+                "reference": "a5529118232c722c052ad6ae3be587df43c7d6fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drush-ops/drush/zipball/1166ab05f297d73e24741f8f5fdcc421e77365b8",
-                "reference": "1166ab05f297d73e24741f8f5fdcc421e77365b8",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/a5529118232c722c052ad6ae3be587df43c7d6fa",
+                "reference": "a5529118232c722c052ad6ae3be587df43c7d6fa",
                 "shasum": ""
             },
             "require": {
@@ -11850,7 +11850,7 @@
                 "issues": "https://github.com/drush-ops/drush/issues",
                 "security": "https://github.com/drush-ops/drush/security/advisories",
                 "slack": "https://drupal.slack.com/messages/C62H9CWQM",
-                "source": "https://github.com/drush-ops/drush/tree/13.7.7"
+                "source": "https://github.com/drush-ops/drush/tree/13.8.0"
             },
             "funding": [
                 {
@@ -11858,7 +11858,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-04T03:42:35+00:00"
+            "time": "2026-09-08T18:24:55+00:00"
         },
         {
             "name": "e0ipso/shaper",
@@ -16649,21 +16649,21 @@
         },
         {
             "name": "symfony/expression-language",
-            "version": "v6.4.45",
+            "version": "v7.4.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/expression-language.git",
-                "reference": "91edabba1aff9da3326eee2a6e7666d1c1270751"
+                "reference": "b73866506ff02800836a40fa1f95614a71064f35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/expression-language/zipball/91edabba1aff9da3326eee2a6e7666d1c1270751",
-                "reference": "91edabba1aff9da3326eee2a6e7666d1c1270751",
+                "url": "https://api.github.com/repos/symfony/expression-language/zipball/b73866506ff02800836a40fa1f95614a71064f35",
+                "reference": "b73866506ff02800836a40fa1f95614a71064f35",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1",
-                "symfony/cache": "^5.4|^6.0|^7.0",
+                "php": ">=8.2",
+                "symfony/cache": "^6.4|^7.0|^8.0",
                 "symfony/deprecation-contracts": "^2.5|^3",
                 "symfony/service-contracts": "^2.5|^3"
             },
@@ -16693,7 +16693,7 @@
             "description": "Provides an engine that can compile and evaluate expressions",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/expression-language/tree/v6.4.45"
+                "source": "https://github.com/symfony/expression-language/tree/v7.4.18"
             },
             "funding": [
                 {
@@ -16713,7 +16713,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-30T00:27:22+00:00"
+            "time": "2026-08-30T00:47:26+00:00"
         },
         {
             "name": "symfony/filesystem",
@@ -21158,16 +21158,16 @@
         },
         {
             "name": "mglaman/phpstan-drupal",
-            "version": "2.1.2",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mglaman/phpstan-drupal.git",
-                "reference": "6b4fd0485597d34903efd6a66a6516b659461d2c"
+                "reference": "d5b72bea7b8c8b2c21599b890af030f335a97395"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mglaman/phpstan-drupal/zipball/6b4fd0485597d34903efd6a66a6516b659461d2c",
-                "reference": "6b4fd0485597d34903efd6a66a6516b659461d2c",
+                "url": "https://api.github.com/repos/mglaman/phpstan-drupal/zipball/d5b72bea7b8c8b2c21599b890af030f335a97395",
+                "reference": "d5b72bea7b8c8b2c21599b890af030f335a97395",
                 "shasum": ""
             },
             "require": {
@@ -21239,7 +21239,7 @@
             "description": "Drupal extension and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/mglaman/phpstan-drupal/issues",
-                "source": "https://github.com/mglaman/phpstan-drupal/tree/2.1.2"
+                "source": "https://github.com/mglaman/phpstan-drupal/tree/2.2.0"
             },
             "funding": [
                 {
@@ -21255,7 +21255,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-13T15:38:26+00:00"
+            "time": "2026-09-09T14:50:40+00:00"
         },
         {
             "name": "micheh/phpcs-gitlab",
@@ -21717,16 +21717,16 @@
         },
         {
             "name": "open-telemetry/sem-conv",
-            "version": "1.38.0",
+            "version": "1.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opentelemetry-php/sem-conv.git",
-                "reference": "e613bc640a407def4991b8a936a9b27edd9a3240"
+                "reference": "c94bc7ebacef039cda4f4c9270807dcc58b4e3af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opentelemetry-php/sem-conv/zipball/e613bc640a407def4991b8a936a9b27edd9a3240",
-                "reference": "e613bc640a407def4991b8a936a9b27edd9a3240",
+                "url": "https://api.github.com/repos/opentelemetry-php/sem-conv/zipball/c94bc7ebacef039cda4f4c9270807dcc58b4e3af",
+                "reference": "c94bc7ebacef039cda4f4c9270807dcc58b4e3af",
                 "shasum": ""
             },
             "require": {
@@ -21770,7 +21770,7 @@
                 "issues": "https://github.com/open-telemetry/opentelemetry-php/issues",
                 "source": "https://github.com/open-telemetry/opentelemetry-php"
             },
-            "time": "2026-01-21T04:14:03+00:00"
+            "time": "2026-09-09T22:06:17+00:00"
         },
         {
             "name": "phar-io/manifest",
