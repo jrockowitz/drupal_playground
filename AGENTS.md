@@ -5,6 +5,7 @@
 
 # Agents
 
+- Do not create Git worktrees. Work directly in the current repository or worktree.
 - All commits made by an AI agent should end with a note that reads: `AI-assisted by {code agent name}`.
 - Require me to review all changes before committing and pushing code.
 
