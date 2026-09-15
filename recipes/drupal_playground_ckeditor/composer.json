@@ -1,0 +1,36 @@
+{
+    "name": "drupal/drupal_playground_ckeditor",
+    "type": "drupal-recipe",
+    "description": "Makes CKEditor great in Drupal Playground.",
+    "keywords": [
+        "Drupal"
+    ],
+    "license": "GPL-2.0+",
+    "homepage": "https://www.drupal.org/sandbox/jrockowitz/3510477",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/sandbox/jrockowitz/3510477",
+        "source": "https://www.drupal.org/sandbox/jrockowitz/3510477"
+    },
+    "require": {
+        "drupal/core": "^10.3 || ^11",
+        "drupal/anchor_link": "^3.0",
+        "drupal/asset_injector": "^2.0",
+        "drupal/ckeditor5_paste_filter": "^1.0",
+        "drupal/ckeditor_codemirror": "^3.0",
+        "drupal/ckeditor_emoji": "^2.0",
+        "drupal/ckeditor_details": "^2.0",
+        "drupal/ckeditor_link_styles": "^1.0",
+        "drupal/ckeditor5_plugin_pack": "^1.0",
+        "drupal/embed": "1.x-dev",
+        "drupal/entity_browser": "^2.0",
+        "drupal/embedded_content": "^2.0",
+        "drupal/embedded_content_examples-embedded_content_examples": "^2.0",
+        "drupal/entity_embed": "^1.0",
+        "drupal/entity_browser_enhanced": "^2.0",
+        "drupal/link_attributes": "^2.0",
+        "drupal/linkit": "^7.0",
+        "drupal/token": "^1.0",
+        "drupal/token_filter": "^2.0"
+    }
+}

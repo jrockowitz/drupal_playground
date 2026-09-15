@@ -1,0 +1,40 @@
+langcode: und
+status: true
+dependencies:
+  config:
+    - views.view.node_browser
+  module:
+    - views
+name: node_browser
+label: 'Browse for Content'
+display: modal
+display_configuration:
+  width: '1100'
+  height: '650'
+  link_text: 'Select content'
+  auto_open: false
+selection_display: no_display
+selection_display_configuration: {  }
+widget_selector: tabs
+widget_selector_configuration: {  }
+widgets:
+  8dcc81c7-e24c-4d0b-85a1-bbd03a56dbe3:
+    id: view
+    uuid: 8dcc81c7-e24c-4d0b-85a1-bbd03a56dbe3
+    label: Table
+    weight: 0
+    settings:
+      submit_text: 'Select content'
+      auto_select: false
+      view: node_browser
+      view_display: entity_browser_table
+  95bf8be1-ff55-477d-99d3-0b48c6416020:
+    id: view
+    uuid: 95bf8be1-ff55-477d-99d3-0b48c6416020
+    label: Thumbnails
+    weight: 2
+    settings:
+      submit_text: 'Select content'
+      auto_select: false
+      view: node_browser
+      view_display: entity_browser_thumbnails

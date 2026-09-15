@@ -19,11 +19,11 @@
           }
     ],
     "conflict": {
-        "drupal/core": "<11 || >=12",
-        "drupal/core-composer-scaffold": "<11 || >=12",
-        "drupal/core-dev": "<11 || >=12",
-        "drupal/core-project-message": "<11 || >=12",
-        "drupal/core-recommended": "<11 || >=12"
+        "drupal/core": "11.4.4",
+        "drupal/core-composer-scaffold": "11.4.4",
+        "drupal/core-dev": "11.4.4",
+        "drupal/core-project-message": "11.4.4",
+        "drupal/core-recommended": "11.4.4"
     },
     "require": {
         "drupal/core-recipe-unpack": "^11",

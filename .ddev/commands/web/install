@@ -311,6 +311,10 @@ for PRESET in "${PRESETS[@]}"; do
   fi
 done
 
+# Temp: Fix coffee navigation placement.
+# @see https://www.drupal.org/project/coffee/issues/3535874#comment-16763706
+drush eval "\Drupal::classResolver(\Drupal\coffee\CoffeeNavigationPlacement::class)->sync()"
+
 drush cr;
 
 echo ""

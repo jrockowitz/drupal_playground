@@ -1,5 +1,5 @@
 {
-    "_hash": "f05d4c7941814cfe61a27f7c10640cc8d2ee5e3d0d4e5d0992eb7674a6c83c4d",
+    "_hash": "f2381bd9a62d2ed5ee3e9e8e557669b053d1d4959b10d8a98287cab1dff7dc87",
     "patches": {
         "drupal/config_rewrite": [
             {
@@ -72,18 +72,6 @@
                 }
             }
         ],
-        "drupal/entity_browser": [
-            {
-                "package": "drupal/entity_browser",
-                "description": "Issue #3012432: Broken views exposed form in modals",
-                "url": "https://www.drupal.org/files/issues/2026-07-13/entity_browser-3012432-mr116.patch",
-                "sha256": "5ca7c4e4c8df48c0dae938623ea8620e5142832427c3dd406dbab7fd44b58acb",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
         "drupal/jsonapi_extras": [
             {
                 "package": "drupal/jsonapi_extras",
@@ -132,12 +120,25 @@
                 }
             }
         ],
+        "drupal/environment_indicator": [
+            {
+                "package": "drupal/environment_indicator",
+                "description": "Support for core navigation module",
+                "url": "https://git.drupalcode.org/project/environment_indicator/-/merge_requests/148.diff",
+                "sha256": "8c63a21a1be6849a0af75ef071df3ef79f51a1867459f04934f6d6c2bd1bdab5",
+                "depth": 1,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/environment_indicator/issues/3457688",
+                    "provenance": "dependency:drupal/environment_indicator"
+                }
+            }
+        ],
         "drupal/coffee": [
             {
                 "package": "drupal/coffee",
                 "description": "Add Navigation TopBar integration for Gin toolbar",
-                "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch",
-                "sha256": "5f76e3b397171206f59f0497d12e300bae892607b9e8b7b36bca9385469b5744",
+                "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/27.diff",
+                "sha256": "e6f9cdc4938ba4c5a830d51a02070b9a50b7fe635434d7b85c28b2cdb64ddbb0",
                 "depth": 1,
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874",

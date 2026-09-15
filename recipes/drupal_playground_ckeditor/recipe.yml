@@ -1,0 +1,495 @@
+name: 'Drupal Playground CKEditor'
+description: 'Makes CKEditor great in Drupal Playground.'
+type: 'Drupal Playground'
+recipes:
+  - core/recipes/audio_media_type
+  - core/recipes/document_media_type
+  - core/recipes/image_media_type
+  - core/recipes/local_video_media_type
+  - core/recipes/remote_video_media_type
+install:
+  - asset_injector
+  - ckeditor5
+  - ckeditor5_paste_filter
+  - ckeditor5_plugin_pack
+  - ckeditor5_plugin_pack_auto_image
+  - ckeditor5_plugin_pack_bookmark
+  - ckeditor5_plugin_pack_find_and_replace
+  - ckeditor5_plugin_pack_font
+  - ckeditor5_plugin_pack_free_wproofreader
+  - ckeditor5_plugin_pack_highlight
+  - ckeditor5_plugin_pack_indent_block
+#  - ckeditor5_plugin_pack_link_attributes
+  - ckeditor5_plugin_pack_page_break
+  - ckeditor5_plugin_pack_select_all
+  - ckeditor5_plugin_pack_templates
+  - ckeditor5_plugin_pack_text_transformation
+  - ckeditor5_plugin_pack_todo_document_list
+  - ckeditor5_plugin_pack_word_count
+  - ckeditor5_premium_features_fullscreen
+  - ckeditor_codemirror
+  - ckeditor_details
+  - ckeditor_emoji
+  - ckeditor_link_styles
+  - embed
+  - embedded_content
+  - embedded_content_examples
+  - entity_browser
+  - entity_browser_enhanced
+  - entity_embed
+  - link_attributes
+  - linkit
+  - media_library
+  - token
+  - token_filter
+config:
+  strict: false
+  import:
+    embedded_content: "*"
+    embedded_content_examples: "*"
+    entity_embed: "*"
+    linkit: "*"
+    media_library: "*"
+  actions:
+    embed.button.node:
+      simpleConfigUpdate:
+        dependencies:
+          config:
+            - core.entity_view_mode.node.full
+            - core.entity_view_mode.node.teaser
+            - entity_browser.browser.node_browser
+          module:
+            - entity_embed
+            - node
+        type_settings:
+          entity_type: node
+          bundles: { }
+          display_plugins:
+            - 'view_mode:node.full'
+            - 'view_mode:node.teaser'
+            - 'entity_reference:entity_reference_label'
+          entity_browser: node_browser_iframe
+          entity_browser_settings:
+            display_review: false
+        icon:
+          uri: 'public://embed_buttons/node.svg'
+          data: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj48IS0tISBGb250IEF3ZXNvbWUgUHJvIDYuNC4yIGJ5IEBmb250YXdlc29tZSAtIGh0dHBzOi8vZm9udGF3ZXNvbWUuY29tIExpY2Vuc2UgLSBodHRwczovL2ZvbnRhd2Vzb21lLmNvbS9saWNlbnNlIChDb21tZXJjaWFsIExpY2Vuc2UpIENvcHlyaWdodCAyMDIzIEZvbnRpY29ucywgSW5jLiAtLT48cGF0aCBkPSJNNjQgODBjLTguOCAwLTE2IDcuMi0xNiAxNlY0MTZjMCA4LjggNy4yIDE2IDE2IDE2SDI4OFYzNTJjMC0xNy43IDE0LjMtMzIgMzItMzJoODBWOTZjMC04LjgtNy4yLTE2LTE2LTE2SDY0ek0yODggNDgwSDY0Yy0zNS4zIDAtNjQtMjguNy02NC02NFY5NkMwIDYwLjcgMjguNyAzMiA2NCAzMkgzODRjMzUuMyAwIDY0IDI4LjcgNjQgNjRWMzIwdjUuNWMwIDE3LTYuNyAzMy4zLTE4LjcgNDUuM2wtOTAuNSA5MC41Yy0xMiAxMi0yOC4zIDE4LjctNDUuMyAxOC43SDI4OHoiLz48L3N2Zz4=
+        icon_uuid: null
+
+    field.field.node.article.body:
+      simpleConfigUpdate:
+        settings.allowed_formats:
+          - full_html
+
+    field.field.node.page.body:
+      simpleConfigUpdate:
+        settings.allowed_formats:
+          - full_html
+
+    filter.format.full_html:
+      simpleConfigUpdate:
+        dependencies:
+          module:
+            - editor
+            - embedded_content
+            - entity_embed
+            - linkit
+            - media
+            - token_filter
+        filters:
+          ckeditor5_plugin_pack_todo_list_filter:
+            id: ckeditor5_plugin_pack_todo_list_filter
+            provider: ckeditor5_plugin_pack_todo_document_list
+            status: false
+            weight: -39
+            settings: { }
+          ckeditor5_premium_features_collaboration_filter:
+            id: ckeditor5_premium_features_collaboration_filter
+            provider: ckeditor5_premium_features
+            status: false
+            weight: -38
+            settings: { }
+          editor_file_reference:
+            id: editor_file_reference
+            provider: editor
+            status: true
+            weight: -45
+            settings: { }
+          embedded_content:
+            id: embedded_content
+            provider: embedded_content
+            status: true
+            weight: -41
+            settings: { }
+          entity_embed:
+            id: entity_embed
+            provider: entity_embed
+            status: true
+            weight: -42
+            settings: { }
+          filter_align:
+            id: filter_align
+            provider: filter
+            status: true
+            weight: -48
+            settings: { }
+          filter_autop:
+            id: filter_autop
+            provider: filter
+            status: false
+            weight: -36
+            settings: { }
+          filter_caption:
+            id: filter_caption
+            provider: filter
+            status: true
+            weight: -47
+            settings: { }
+          filter_html:
+            id: filter_html
+            provider: filter
+            status: true
+            weight: -43
+            settings:
+              allowed_html: '<br> <p class> <h2 class> <h3 class> <h4 class> <h5 class> <h6 class> <strong> <em> <code class="language-*"> <pre> <s> <sub> <sup> <blockquote> <a href id class data-entity-type data-entity-uuid data-entity-substitution> <ul class> <ol reversed start> <li> <hr> <table> <tr> <td rowspan colspan> <th rowspan colspan> <thead> <tbody> <tfoot> <caption> <drupal-media data-entity-type data-entity-uuid alt data-caption data-align> <span class contenteditable> <mark class> <h1 class> <div class> <label class> <input type tabindex disabled> <details> <summary> <embedded-content data-plugin-config data-plugin-id data-button-id> <embedded-content-inline data-plugin-config data-plugin-id data-button-id> <drupal-entity alt title data-align data-caption data-entity-embed-display data-entity-embed-display-settings data-view-mode data-entity-uuid data-langcode data-embed-button="node" data-entity-type="node">'
+              filter_html_help: true
+              filter_html_nofollow: false
+          filter_html_escape:
+            id: filter_html_escape
+            provider: filter
+            status: false
+            weight: -37
+            settings: { }
+          filter_html_image_secure:
+            id: filter_html_image_secure
+            provider: filter
+            status: false
+            weight: -34
+            settings: { }
+          filter_htmlcorrector:
+            id: filter_htmlcorrector
+            provider: filter
+            status: true
+            weight: -46
+            settings: { }
+          filter_image_lazy_load:
+            id: filter_image_lazy_load
+            provider: filter
+            status: true
+            weight: -44
+            settings: { }
+          filter_url:
+            id: filter_url
+            provider: filter
+            status: false
+            weight: -35
+            settings:
+              filter_url_length: 72
+          linkit:
+            id: linkit
+            provider: linkit
+            status: true
+            weight: -50
+            settings:
+              title: true
+          media_embed:
+            id: media_embed
+            provider: media
+            status: true
+            weight: -40
+            settings:
+              default_view_mode: default
+              allowed_view_modes: { }
+              allowed_media_types: { }
+          token_filter:
+            id: token_filter
+            provider: token_filter
+            status: true
+            weight: -49
+            settings:
+              replace_empty: true
+
+    editor.editor.full_html:
+      simpleConfigUpdate:
+        settings.toolbar.items:
+          - undo
+          - redo
+          - selectAll
+          - '|'
+          - heading
+          - style
+          - fontFamily
+          - fontSize
+          - bold
+          - italic
+          - strikethrough
+          - superscript
+          - subscript
+          - fontColor
+          - fontBackgroundColor
+          - highlight
+          - removeFormat
+          - '|'
+          - link
+          - bookmark
+          - pageBreak
+          - '|'
+          - bulletedList
+          - numberedList
+          - todoList
+          - indent
+          - outdent
+          - '|'
+          - specialCharacters
+          - Emoji
+          - blockQuote
+          - horizontalLine
+          - '|'
+          - drupalMedia
+          - node
+          - embeddedContent__examples
+          - detail
+          - insertTable
+          - insertTemplate
+          - tokenBrowser
+          - '|'
+          - findAndReplace
+          - wproofreader
+          - '|'
+          - codeBlock
+          - code
+          - showBlocks
+          - sourceEditing
+          - '|'
+          - fullScreen
+          - '-'
+        settings.plugins:
+          ckeditor5_codeBlock:
+            languages:
+              - label: 'Plain text'
+                language: plaintext
+              - label: C
+                language: c
+              - label: 'C#'
+                language: cs
+              - label: C++
+                language: cpp
+              - label: CSS
+                language: css
+              - label: Diff
+                language: diff
+              - label: HTML
+                language: html
+              - label: Java
+                language: java
+              - label: JavaScript
+                language: javascript
+              - label: PHP
+                language: php
+              - label: Python
+                language: python
+              - label: Ruby
+                language: ruby
+              - label: TypeScript
+                language: typescript
+              - label: XML
+                language: xml
+          ckeditor5_heading:
+            enabled_headings:
+              - heading2
+              - heading3
+              - heading4
+              - heading5
+              - heading6
+          ckeditor5_list:
+            properties:
+              reversed: true
+              startIndex: true
+              styles: true
+            multiBlock: true
+          ckeditor5_paste_filter_pasteFilter:
+            enabled: true
+            filters:
+              - enabled: true
+                weight: -10
+                search: '<o:p><\/o:p>'
+                replace: ''
+              - enabled: true
+                weight: -9
+                search: '(<[^>]*) (style="[^"]*")'
+                replace: $1
+              - enabled: true
+                weight: -8
+                search: '(<[^>]*) (face="[^"]*")'
+                replace: $1
+              - enabled: true
+                weight: -7
+                search: '(<[^>]*) (class="[^"]*")'
+                replace: $1
+              - enabled: true
+                weight: -6
+                search: '(<[^>]*) (valign="[^"]*")'
+                replace: $1
+              - enabled: true
+                weight: -5
+                search: '<font[^>]*>'
+                replace: ''
+              - enabled: true
+                weight: -4
+                search: '<\/font>'
+                replace: ''
+              - enabled: true
+                weight: -3
+                search: '<span[^>]*>'
+                replace: ''
+              - enabled: true
+                weight: -2
+                search: '<\/span>'
+                replace: ''
+              - enabled: true
+                weight: -1
+                search: '<p>&nbsp;<\/p>'
+                replace: ''
+              - enabled: true
+                weight: 0
+                search: '<p><\/p>'
+                replace: ''
+              - enabled: true
+                weight: 1
+                search: '<b><\/b>'
+                replace: ''
+              - enabled: true
+                weight: 2
+                search: '<i><\/i>'
+                replace: ''
+              - enabled: true
+                weight: 3
+                search: '<a name="OLE_LINK[^"]*">(.*?)<\/a>'
+                replace: $1
+          ckeditor5_plugin_pack_find_and_replace__find_and_replace:
+            ui_type: dialog
+          ckeditor5_plugin_pack_font__font_color:
+            colors: { }
+            use_default_colors: true
+            use_colorpicker: true
+            font_color_columns: 5
+            font_color_document_colors: 10
+            bg_color_columns: 5
+            bg_color_document_colors: 10
+          ckeditor5_plugin_pack_font__font_family:
+            options: ''
+          ckeditor5_plugin_pack_font__font_size:
+            options: ''
+          ckeditor5_plugin_pack_highlight__highlight:
+            options: { }
+            use_default_markers: true
+          ckeditor5_plugin_pack_indent_block__indent_block:
+            enabled: true
+          ckeditor5_plugin_pack_text_transformation__text_transformation:
+            enabled: true
+            extra_transformations: ''
+            extra_regex_transformations: { }
+            groups:
+              typography:
+                transformations:
+                  ellipsis:
+                    enabled: 1
+                  enDash:
+                    enabled: 1
+                  emDash:
+                    enabled: 1
+                enabled: 1
+              quotes:
+                transformations:
+                  quotesPrimary:
+                    enabled: 1
+                  quotesSecondary:
+                    enabled: 1
+                enabled: 1
+              symbols:
+                transformations:
+                  trademark:
+                    enabled: 1
+                  registeredTrademark:
+                    enabled: 1
+                  copyright:
+                    enabled: 1
+                enabled: 1
+              mathematical:
+                transformations:
+                  oneHalf:
+                    enabled: 1
+                  oneThird:
+                    enabled: 1
+                  twoThirds:
+                    enabled: 1
+                  oneFourth:
+                    enabled: 1
+                  threeQuarters:
+                    enabled: 1
+                  lessThanOrEqual:
+                    enabled: 1
+                  greaterThanOrEqual:
+                    enabled: 1
+                  notEqual:
+                    enabled: 1
+                  arrowLeft:
+                    enabled: 1
+                  arrowRight:
+                    enabled: 1
+                enabled: 1
+              misc:
+                transformations:
+                  quotesPrimaryEnGb:
+                    enabled: 0
+                  quotesSecondaryEnGb:
+                    enabled: 0
+                  quotesPrimaryPl:
+                    enabled: 0
+                  quotesSecondaryPl:
+                    enabled: 0
+                enabled: 0
+          ckeditor5_plugin_pack_todo_document_list__todo_document_list:
+            attach_default_styles: false
+          ckeditor5_plugin_pack_word_count__word_count:
+            word_count_enabled: true
+            word_count_mode: words_chars
+          ckeditor5_sourceEditing:
+            allowed_tags: { }
+          ckeditor5_style:
+            styles:
+              - label: 'Paragraph: Border'
+                element: '<p class="border">'
+              - label: 'Paragraph: Highlight'
+                element: '<p class="highlight">'
+              - label: 'Paragraph: Shadow'
+                element: '<p class="shadow">'
+          ckeditor_codemirror_source_editing:
+            enable: true
+            mode: htmlmixed
+            options:
+              autoCloseBrackets: true
+              autoCloseTags: true
+              folding: true
+              lineNumbers: true
+              lineWrapping: true
+              matchBrackets: true
+              matchTags: true
+              searchBottom: true
+              styleActiveLine: true
+          ckeditor_link_styles_linkStyles:
+            styles:
+              - label: Button
+                element: '<a class="button">'
+              - label: 'Button: small'
+                element: '<a class="button button--small">'
+              - label: 'Button: primary'
+                element: '<a class="button button--primary">'
+          linkit_extension:
+            linkit_enabled: true
+            linkit_profile: default
+          media_media:
+            allow_view_mode_override: false
+          token_filter_token_browser:
+            token_types:
+              current-page: current-page

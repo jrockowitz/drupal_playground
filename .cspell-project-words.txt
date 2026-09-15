@@ -44,6 +44,7 @@ Inputmask
 Markdowm
 meddocs
 Metatag
+Milvus
 marinese
 Marinese
 Lullabot
@@ -61,6 +62,7 @@ michelf
 Microdata
 mmsg
 minmax
+milvus
 Linkit
 lingotek
 isic

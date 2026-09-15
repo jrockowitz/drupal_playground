@@ -3517,6 +3517,62 @@
             }
         },
         {
+            "name": "drupal/bartik",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/bartik.git",
+                "reference": "1.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/bartik-1.1.0.zip",
+                "reference": "1.1.0",
+                "shasum": "6ff676ec392389e3d0096acb37694a2eafdd7336"
+            },
+            "require": {
+                "drupal/core": "^10.3 || ^11.0"
+            },
+            "type": "drupal-theme",
+            "extra": {
+                "drupal": {
+                    "version": "1.1.0",
+                    "datestamp": "1762529671",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "bnjmnm",
+                    "homepage": "https://www.drupal.org/user/2369194"
+                },
+                {
+                    "name": "jensimmons",
+                    "homepage": "https://www.drupal.org/user/140882"
+                },
+                {
+                    "name": "lauriii",
+                    "homepage": "https://www.drupal.org/user/1078742"
+                },
+                {
+                    "name": "liam morland",
+                    "homepage": "https://www.drupal.org/user/493050"
+                }
+            ],
+            "description": "The Bartik theme from Drupal 8/9 moved to contrib.",
+            "homepage": "https://www.drupal.org/project/bartik",
+            "support": {
+                "source": "https://git.drupalcode.org/project/bartik"
+            }
+        },
+        {
             "name": "drupal/better_exposed_filters",
             "version": "7.1.3",
             "source": {
@@ -5499,12 +5555,13 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_admin",
-                "reference": "8cc9a1e7ca7f164e5fc8cfa45ad9368cb6175113"
+                "reference": "0689ed146328f8982d69107b483170a5d95f4f61"
             },
             "require": {
                 "drupal/coffee": "^2",
                 "drupal/core": "^10 || ^11",
                 "drupal/dashboard": "^2",
+                "drupal/environment_indicator": "^5",
                 "drupal/masquerade": "^2",
                 "drupal/navigation_extra_tools": "^1",
                 "drupal/queue_ui": "^3",
@@ -5519,6 +5576,15 @@
                             "url": "https://git.drupalcode.org/project/drupal/-/merge_requests/11425.diff",
                             "extra": {
                                 "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776"
+                            }
+                        }
+                    ],
+                    "drupal/environment_indicator": [
+                        {
+                            "description": "Support for core navigation module",
+                            "url": "https://git.drupalcode.org/project/environment_indicator/-/merge_requests/148.diff",
+                            "extra": {
+                                "issue-tracker-url": "https://www.drupal.org/project/environment_indicator/issues/3457688"
                             }
                         }
                     ]
@@ -5557,7 +5623,7 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_admin_gin",
-                "reference": "af63c088bc680517532446c4193017a3ca09b3d1"
+                "reference": "0dfbad099a8d268860f331edb5571a47a5bab815"
             },
             "require": {
                 "drupal/core": "^10 || ^11",
@@ -5572,7 +5638,7 @@
                     "drupal/coffee": [
                         {
                             "description": "Add Navigation TopBar integration for Gin toolbar",
-                            "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/19.patch",
+                            "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/27.diff",
                             "extra": {
                                 "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874"
                             }
@@ -6065,9 +6131,10 @@
             "dist": {
                 "type": "path",
                 "url": "recipes/drupal_playground_webform_test",
-                "reference": "bb0dc3f67e7d38cc3e825146dcc4bdc3f953e202"
+                "reference": "2bb3109ab5021964435fbee9ac7ac3cbc24b7af8"
             },
             "require": {
+                "drupal/bartik": "*",
                 "drupal/webform": "*"
             },
             "type": "drupal-recipe",
@@ -7094,6 +7161,81 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/entity_usage",
                 "issues": "http://drupal.org/project/issues/entity_usage"
+            }
+        },
+        {
+            "name": "drupal/environment_indicator",
+            "version": "dev-5.0.x",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/environment_indicator.git",
+                "reference": "f171253460d403f08bd71e3b780d280680765554"
+            },
+            "require": {
+                "drupal/core": "^10.5 || >=11.1.2"
+            },
+            "require-dev": {
+                "drupal/admin_toolbar": "*",
+                "drupal/gin": "*",
+                "drupal/gin_toolbar": "*",
+                "drush/drush": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-5.0.x": "5.0.x-dev"
+                },
+                "drupal": {
+                    "version": "5.0.x-dev",
+                    "datestamp": "1782528282",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Tom Kirkpatrick (mrfelton)",
+                    "homepage": "https://www.drupal.org/u/mrfelton",
+                    "role": "Original author"
+                },
+                {
+                    "name": "Mateu Aguiló Bosch (e0ipso)",
+                    "homepage": "https://www.drupal.org/u/e0ipso",
+                    "email": "mateu@mateuaguilo.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Ignacio Sánchez (isholgueras)",
+                    "homepage": "https://www.drupal.org/u/isholgueras",
+                    "email": "nacho@isholgueras.com",
+                    "role": "Co-maintainer"
+                },
+                {
+                    "name": "Chris Green (trackleft2)",
+                    "homepage": "https://www.drupal.org/u/trackleft2",
+                    "role": "Co-maintainer"
+                },
+                {
+                    "name": "Ariel Barreiro (hanoii)",
+                    "homepage": "https://www.drupal.org/u/hanoii",
+                    "role": "Co-maintainer"
+                },
+                {
+                    "name": "trackleft2",
+                    "homepage": "https://www.drupal.org/user/2860655"
+                }
+            ],
+            "description": "Environment Indicator adds some visual cues to indicate which copy of the site are you interacting with",
+            "homepage": "https://www.drupal.org/project/environment_indicator",
+            "support": {
+                "source": "https://git.drupal.org/project/environment_indicator.git",
+                "issues": "https://www.drupal.org/project/issues/environment_indicator"
             }
         },
         {
@@ -8569,7 +8711,7 @@
                     "homepage": "https://www.drupal.org/user/202205"
                 },
                 {
-                    "name": "Deciphered",
+                    "name": "deciphered",
                     "homepage": "https://www.drupal.org/user/103796"
                 },
                 {
@@ -8664,76 +8806,6 @@
                 "source": "https://git.drupal.org/project/masquerade.git",
                 "issues": "https://www.drupal.org/project/issues/masquerade",
                 "irc": "irc://irc.freenode.org/drupal-contribute"
-            }
-        },
-        {
-            "name": "drupal/media_library_media_modify",
-            "version": "2.0.0-beta2",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/media_library_media_modify.git",
-                "reference": "2.0.0-beta2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/media_library_media_modify-2.0.0-beta2.zip",
-                "reference": "2.0.0-beta2",
-                "shasum": "4143559d70345ccd483862c4c0f2e1a49da04a01"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11"
-            },
-            "require-dev": {
-                "drupal/diff": "^1.0",
-                "drupal/inline_entity_form": "^1.0||^3.0",
-                "drush/drush": "^12.0 || ^13.0"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.0.0-beta2",
-                    "datestamp": "1786610915",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
-                    }
-                },
-                "patches": {
-                    "drupal/core": {
-                        "Issue #3263397: Simplify form logic in media library": "https://www.drupal.org/files/issues/2023-01-19/3263397-16.patch"
-                    },
-                    "drupal/inline_entity_form": {
-                        "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form": "https://www.drupal.org/files/issues/2022-09-22/47-8.diff"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Christian Fritsch",
-                    "homepage": "https://www.drupal.org/user/157725",
-                    "email": "christian.fritsch@burda.com"
-                },
-                {
-                    "name": "chr.fritsch",
-                    "homepage": "https://www.drupal.org/user/2103716"
-                },
-                {
-                    "name": "daniel.bosen",
-                    "homepage": "https://www.drupal.org/user/404865"
-                },
-                {
-                    "name": "volkerk",
-                    "homepage": "https://www.drupal.org/user/57527"
-                }
-            ],
-            "description": "Store context specific overrides for entity reference fields.",
-            "homepage": "https://www.drupal.org/project/media_library_media_modify",
-            "support": {
-                "source": "https://git.drupalcode.org/project/media_library_media_modify"
             }
         },
         {
@@ -21645,16 +21717,16 @@
         },
         {
             "name": "open-telemetry/sem-conv",
-            "version": "1.38.0",
+            "version": "1.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/opentelemetry-php/sem-conv.git",
-                "reference": "e613bc640a407def4991b8a936a9b27edd9a3240"
+                "reference": "c94bc7ebacef039cda4f4c9270807dcc58b4e3af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/opentelemetry-php/sem-conv/zipball/e613bc640a407def4991b8a936a9b27edd9a3240",
-                "reference": "e613bc640a407def4991b8a936a9b27edd9a3240",
+                "url": "https://api.github.com/repos/opentelemetry-php/sem-conv/zipball/c94bc7ebacef039cda4f4c9270807dcc58b4e3af",
+                "reference": "c94bc7ebacef039cda4f4c9270807dcc58b4e3af",
                 "shasum": ""
             },
             "require": {
@@ -21698,7 +21770,7 @@
                 "issues": "https://github.com/open-telemetry/opentelemetry-php/issues",
                 "source": "https://github.com/open-telemetry/opentelemetry-php"
             },
-            "time": "2026-01-21T04:14:03+00:00"
+            "time": "2026-09-09T22:06:17+00:00"
         },
         {
             "name": "phar-io/manifest",

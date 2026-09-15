@@ -1,0 +1,117 @@
+_meta:
+  version: '1.0'
+  entity_type: node
+  uuid: 1bfd7071-9244-425f-8c7b-a8794b6b42c4
+  bundle: page
+  default_langcode: en
+default:
+  status:
+    -
+      value: true
+  title:
+    -
+      value: 'CKEditor Examples'
+  path:
+    -
+      alias: /ckeditor-examples
+      langcode: en
+  body:
+    -
+      value: |-
+
+        <p>This is a paragraph.</p>
+
+        <h2>Header 2</h2>
+
+        <h3>Header 3</h3>
+
+        <h4>Header 4</h4>
+
+        <h5>Header 5</h5>
+
+        <h6>Header 6</h6>
+
+        <p><strong>Bold</strong>, <em>Italics</em>, <s>Strikethrough,</s> <sup>Superscript</sup> , <sub>Subscript</sub></p>
+
+        <p><span style="color:hsl(0, 75%, 60%);">Color</span>, <span style="background-color:hsl(60, 75%, 60%);">Highlight</span>, <mark class="marker-green">Marker</mark></p>
+
+
+        <p><a href="https://drupal.com">Link</a></p>
+
+        <p><a class="button" href="https://drupal.com">Button</a></p>
+
+        <p><a class="button button--small" href="https://drupal.org">Button small</a></p>
+
+        <p><a class="button button--primary" href="https://drupal.org">Button primary</a></p>
+
+        <div class="page-break" style="page-break-after:always;"><span style="display:none;">&nbsp;</span></div>
+
+        <p>Bulleted List</p>
+
+        <ul>
+        <li><p>Item 01</p></li>
+        <li><p>Item 02</p></li>
+        <li><p>Item 03</p></li>
+        </ul>
+
+        <p>Ordered List</p>
+
+        <ol>
+        <li><p>Item 01</p></li>
+        <li><p>Item 02</p></li>
+        <li><p>Item 03</p></li>
+        </ol>
+
+        <p>Todo List</p>
+
+        <ul class="todo-list">
+        <li><label class="todo-list__label"><input type="checkbox" disabled="disabled"><span class="todo-list__label__description">Item 01</span></label></li>
+        <li><label class="todo-list__label"><input type="checkbox" disabled="disabled"><span class="todo-list__label__description">Item 02</span></label></li>
+        <li><label class="todo-list__label"><input type="checkbox" disabled="disabled"><span class="todo-list__label__description">Item 03</span></label></li>
+        </ul>
+
+        <blockquote>
+        <p>Blockquote</p>
+        </blockquote>
+
+        <hr/>
+
+        <p class="border highlight shadow">
+        A paragraph with border, highlight, and shadow classes.
+        </p>
+        <table>
+        <thead>
+        <tr>
+        <th><strong>Column 01</strong></th>
+
+        <th><strong>Column 02</strong></th>
+
+        <th><strong>Column 3</strong></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+        <td>Row 1 - Column 01</td>
+
+        <td>Row 1 - Column 02</td>
+
+        <td>Row 1 - Column 03</td>
+        </tr>
+        </tbody>
+        </table>
+        <hr />
+
+        <details>
+        <summary>Details widget</summary>
+        <div class="details-wrapper">
+        <p>This is an example of a details widget</p>
+        </div>
+        </details>
+
+        <p><strong>Token:<strong></p>
+
+        <p>current-page:title = [current-page:title]</p>
+
+      format: full_html
+      summary: 'Examples of all the basic components available using CKEditor.'

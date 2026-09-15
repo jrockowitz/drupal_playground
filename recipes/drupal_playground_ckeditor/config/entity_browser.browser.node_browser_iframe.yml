@@ -1,0 +1,40 @@
+langcode: und
+status: true
+dependencies:
+  config:
+    - views.view.node_browser
+  module:
+    - views
+name: node_browser_iframe
+label: 'Browse for Content (iframe)'
+display: iframe
+display_configuration:
+  width: '100%'
+  height: '650'
+  link_text: 'Select content'
+  auto_open: true
+selection_display: no_display
+selection_display_configuration: {  }
+widget_selector: tabs
+widget_selector_configuration: {  }
+widgets:
+  bec2a399-edfb-4143-a0fe-d783dd9f2f2f:
+    id: view
+    uuid: bec2a399-edfb-4143-a0fe-d783dd9f2f2f
+    label: Table
+    weight: 0
+    settings:
+      submit_text: 'Select content'
+      auto_select: false
+      view: node_browser
+      view_display: entity_browser_table
+  93a12a22-6bf5-49ff-b0b6-197f43c6eee1:
+    id: view
+    uuid: 93a12a22-6bf5-49ff-b0b6-197f43c6eee1
+    label: Thumbnails
+    weight: 2
+    settings:
+      submit_text: 'Select content'
+      auto_select: false
+      view: node_browser
+      view_display: entity_browser_thumbnails
