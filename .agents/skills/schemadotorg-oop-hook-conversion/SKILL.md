@@ -70,6 +70,11 @@ copying service method documentation. Use existing tests to check behavior and
 ordering. Do not add, move, or expand tests just because hooks move to classes;
 change an existing test only if the move breaks it, and preserve its assertions.
 Record coverage gaps for a separate testing decision.
+Constructor docblocks on OOP hook classes are optional under Drupal coding
+standards; omit redundant constructor descriptions and parameter documentation
+when dependency types and names are self-explanatory. Keep a constructor
+docblock only for genuinely non-obvious behavior or necessary parameter-specific
+information.
 When a module's `*.module` file has no remaining functions, callbacks, or other
 runtime code and nothing loads it explicitly, delete the empty file. A Drupal
 module does not need a `*.module` file solely to register OOP hooks.

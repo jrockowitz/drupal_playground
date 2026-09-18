@@ -98,6 +98,9 @@ first suggested submodule. Keep Experimental in separate linked work.
   PHPStan-relevant `@var` annotations, storage declarations, and explicit
   type-narrowing variables. Use concise `Implements hook_name().` method
   docblocks instead of copying service method documentation.
+- Omit redundant OOP hook constructor docblocks. Retain one only when it
+  documents genuinely non-obvious constructor behavior or necessary
+  parameter-specific information.
 - Replace the *effect* of `hook_module_implements_alter()` with Drupal 11.2
   ordering attributes (`Hook`, `ReorderHook`, and order objects). That procedural
   meta hook itself is not convertible to an OOP hook. Verify the ordering effect
