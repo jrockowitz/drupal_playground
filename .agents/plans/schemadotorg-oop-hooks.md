@@ -10,7 +10,10 @@ first suggested submodule. Keep Experimental in separate linked work.
 ## Before each module
 
 1. Read the local [issue #3622305 note](../schemadotorg-issue-maintenance/issues/3622305.md),
-   its module ledger and hook inventory, and the current issue/fork/MR state.
+   its module ledger, the [production hook checklist](../schemadotorg-issue-maintenance/issues/3622305-oop-hook-checklist.md),
+   and the historical [Rector POC inventory](../schemadotorg-issue-maintenance/issues/3622305-oop-hook-rector-poc-inventory.md).
+   Use the POC as a lead list, not as the current implementation or completion
+   record. Check the current issue/fork/MR state.
    Follow `schemadotorg-issue-maintenance` and `drupalorg-issue-maintenance`
    for approval and public-write gates. Run `ddev describe` to identify the
    active project, docroot, and PHP environment.
@@ -29,8 +32,10 @@ first suggested submodule. Keep Experimental in separate linked work.
    Trace each hook through delegated service methods and helpers, including
    hidden static service lookups; check all callers before changing a service
    boundary. Record current hook order and behavior, including implementations
-   on behalf of another module. Map every new and existing OOP hook method in
-   the active module to a behavioral test.
+   on behalf of another module. Populate or reconcile one production-checklist
+   row per runtime hook, including existing OOP hooks and skipped POC hooks,
+   and map each row to a behavioral test. Record required procedural functions
+   and named callbacks separately.
 5. Present the module scope, class/dependency design, service IDs and interfaces
    to preserve or remove, translation choice, ordering and procedural-scan
    decision, cross-module edits, files, per-hook test map, and any functional
@@ -92,14 +97,18 @@ first suggested submodule. Keep Experimental in separate linked work.
    with the documented baseline and fix new regressions. Run the complete
    Schema.org suite for the base module, ordering changes, and before each
    main-project merge-request review.
-3. Update the local issue ledger and applicable hook inventory with the design,
-   cross-module edits, per-hook test map and exceptions, commands/results,
-   baseline limitations, scan decision, and next gate. Show the complete diff
-   and test results to the maintainer.
+3. Update the production hook checklist and local issue ledger with the final
+   class/method, retained functions, per-hook test map and exceptions,
+   cross-module edits, commands/results, baseline limitations, scan decision,
+   and next gate. Show the complete diff and test results to the maintainer;
+   every checklist row must be resolved before commit approval. Do not update
+   the historical Rector POC inventory as a progress tracker.
 4. After explicit commit approval, commit that module's coherent change before
    starting the next. Name the module in the subject, for example
    `schemadotorg: Convert runtime hooks to OOP` or
    `schemadotorg_allowed_formats: Convert runtime hooks to OOP`. Describe any
    cross-module dependency fix in the body. End every AI-authored commit message
-   with `AI-assisted by Codex`. Obtain separate approval before push, MR, or
-   public issue update. Tickets and comments begin with that AI-assisted note.
+   with `AI-assisted by Codex`. Record the commit, check the module's completion
+   box in the checklist, and mark it complete in the issue ledger before starting
+   the next. Obtain separate approval before push, MR, or public issue update.
+   Tickets and comments begin with that AI-assisted note.

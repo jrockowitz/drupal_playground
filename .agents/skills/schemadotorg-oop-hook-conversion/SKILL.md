@@ -5,8 +5,13 @@ description: Convert one Schema.org Blueprints base module or submodule from pro
 
 # Schema.org OOP hook conversion
 
-Follow the [production plan](../../plans/schemadotorg-oop-hooks.md) and local
-[issue #3622305 note](../../schemadotorg-issue-maintenance/issues/3622305.md).
+Follow the [production plan](../../plans/schemadotorg-oop-hooks.md), local
+[issue #3622305 note](../../schemadotorg-issue-maintenance/issues/3622305.md),
+and [production hook checklist](../../schemadotorg-issue-maintenance/issues/3622305-oop-hook-checklist.md).
+Use the [Rector POC inventory](../../schemadotorg-issue-maintenance/issues/3622305-oop-hook-rector-poc-inventory.md)
+only as historical evidence and candidate hooks; reconcile it against current
+source. Record each runtime hook's conversion, final class/method, and behavior
+test in the production checklist before marking its module complete.
 Use `schemadotorg-issue-maintenance` and `drupalorg-issue-maintenance` for the
 current tracker, branch, approval, and public-write rules.
 
