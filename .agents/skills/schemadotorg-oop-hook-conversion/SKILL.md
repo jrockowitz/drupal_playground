@@ -37,6 +37,16 @@ upstream divergence, and uncommitted changes. Preserve existing changes and
 follow the issue workflow's approval gates before edits, branch creation,
 commits, pushes, MRs, or public updates.
 
+Before editing, make an explicit conversion decision for every discovered
+function and service. Convert only when an OOP hook preserves behavior and the
+service is hook-specific. Retain procedural code when Drupal requires it or
+when conversion would change installation, callback, or ordering semantics.
+Retain a service or interface when it has callers beyond hook dispatch or
+provides reusable behavior. The agent may recommend no conversion or a partial
+conversion when the hook's responsibility, callback shape, ordering, or public
+API makes conversion inappropriate; record the evidence and recommendation in
+the checklist and issue ledger.
+
 Key conversion traps are hook ordering, publicly used services, named
 callbacks, and procedural-scan eligibility. Replace the ordering effect of
 `hook_module_implements_alter()`; do not convert that meta hook itself. Retain
@@ -46,12 +56,20 @@ required procedural hooks and callbacks. Put every form-alter hook in
 modules in `ModuleNameContribHooks`. Do not create `IntegrationHooks`.
 Group other generic hooks by responsibility, such as Help, Module, Page, Field,
 and Node hook classes. Document the final naming convention in
-`docs/DECISIONS.md` after the conversion. Move
-hook-specific logic out of delegated services, inject its dependencies, and
-present any service API removal in the module design review. Use existing tests
-to check behavior and ordering. Do not add, move, or expand tests just because
-hooks move to classes; change an existing test only if the move breaks it, and
-preserve its assertions. Record coverage gaps for a separate testing decision.
+`docs/DECISIONS.md` after the conversion. Put `schemadotorg_jsonld` and every
+`schemadotorg_jsonld_*` hook in a module-specific `ModuleNameJsonLdHooks`
+class, even when the hook is the module's only JSON-LD hook. Keep unrelated
+field, form, and mapping hooks in their responsibility-specific classes.
+Move hook-specific logic out of delegated services, inject its dependencies,
+and present any service API removal in the module design review. Compare the
+procedural wrapper and delegated service implementation line-by-line. Preserve
+hook signatures, ordering, mutations, return values, inline rationale comments,
+line breaks, `@var` annotations, storage declarations, and type-narrowing
+variables. Use concise `Implements hook_name().` method docblocks rather than
+copying service method documentation. Use existing tests to check behavior and
+ordering. Do not add, move, or expand tests just because hooks move to classes;
+change an existing test only if the move breaks it, and preserve its assertions.
+Record coverage gaps for a separate testing decision.
 When a module's `*.module` file has no remaining functions, callbacks, or other
 runtime code and nothing loads it explicitly, delete the empty file. A Drupal
 module does not need a `*.module` file solely to register OOP hooks.

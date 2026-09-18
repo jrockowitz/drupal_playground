@@ -37,7 +37,15 @@ first suggested submodule. Keep Experimental in separate linked work.
    and record relevant existing behavior coverage or a coverage gap for each
    row. Do not create a test solely to give a hook its own test. Record required
    procedural functions and named callbacks separately.
-5. Present the module scope, class/dependency design, service IDs and interfaces
+5. Make an explicit conversion decision for every function and service. Convert
+   when OOP hooks preserve behavior and the service is hook-specific. Retain
+   procedural code when Drupal requires it or conversion would change callback,
+   installation, or ordering semantics. Retain a service/interface when it has
+   callers beyond hook dispatch or provides reusable behavior. Recommend no
+   conversion or partial conversion when the hook responsibility, callback
+   shape, ordering, or public API makes conversion inappropriate. Record the
+   evidence and recommendation in the checklist and issue ledger.
+6. Present the module scope, class/dependency design, service IDs and interfaces
    to preserve or remove, translation choice, ordering and procedural-scan
    decision, cross-module edits, files, existing test coverage, and gaps.
    Identify each proposed public API removal explicitly for
@@ -64,6 +72,14 @@ first suggested submodule. Keep Experimental in separate linked work.
   `ModuleNameHelpHooks`, `ModuleNameModuleHooks`, `ModuleNamePageHooks`,
   `ModuleNameFieldHooks`, and `ModuleNameNodeHooks` where those responsibilities
   apply. Split other hooks by purpose and dependencies rather than method count.
+  Put `schemadotorg_jsonld` and all `schemadotorg_jsonld_*` hooks in a
+  module-specific `ModuleNameJsonLdHooks` class. Keep JSON-LD hooks together
+  even when the module also has non-JSON-LD hooks, and keep unrelated mapping,
+  field, and form hooks in their responsibility-specific classes. When a
+  module-specific JSON-LD manager only exists to dispatch its hook, move its
+  behavior into the JSON-LD hook class and remove that manager/interface and
+  service registration after design review. Retain shared JSON-LD builders or
+  managers that are used across modules and inject them into the hook class.
   Document the final naming pattern and rationale in `docs/DECISIONS.md` after
   the conversion is complete.
 - Move hook-specific behavior from delegated service methods and helpers into
@@ -76,6 +92,12 @@ first suggested submodule. Keep Experimental in separate linked work.
   translator only when the design or tests require that boundary. A submodule
   conversion may include the smallest necessary dependency fix elsewhere;
   document its scope and tests in that module's commit.
+- Compare the procedural wrapper and delegated service implementation
+  line-by-line before deleting or rewriting it. Preserve hook signatures,
+  ordering, mutations, return values, inline rationale comments, line breaks,
+  PHPStan-relevant `@var` annotations, storage declarations, and explicit
+  type-narrowing variables. Use concise `Implements hook_name().` method
+  docblocks instead of copying service method documentation.
 - Replace the *effect* of `hook_module_implements_alter()` with Drupal 11.2
   ordering attributes (`Hook`, `ReorderHook`, and order objects). That procedural
   meta hook itself is not convertible to an OOP hook. Verify the ordering effect
@@ -111,9 +133,14 @@ first suggested submodule. Keep Experimental in separate linked work.
 3. Update the production hook checklist and local issue ledger with the final
    class/method, retained functions, existing behavior coverage and gaps,
    cross-module edits, commands/results, baseline limitations, scan decision,
-   and next gate. Show the complete diff and test results to the maintainer;
-   every checklist row must be resolved before commit approval. Do not update
-   the historical Rector POC inventory as a progress tracker.
+   and next gate. For every retained or non-converted hook/service, record the
+   item, the reason conversion does not make sense or is not required, the
+   ordering/callback/installation/public-API/reusable-service constraint, and
+   existing coverage or a documented gap. Use `Retained procedural (approved)`
+   or `Removed (approved)` only when the reason and approval are recorded. Show
+   the complete diff and test results to the maintainer; every checklist row
+   must be resolved before commit approval. Do not update the historical Rector
+   POC inventory as a progress tracker.
 4. After explicit commit approval, commit that module's coherent change before
    starting the next. Use
    `Issue #3622305: Convert <module_machine_name> hooks to OOP` as the subject,
