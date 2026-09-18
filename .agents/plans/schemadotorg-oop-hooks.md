@@ -72,6 +72,7 @@ first suggested submodule. Keep Experimental in separate linked work.
   `ModuleNameHelpHooks`, `ModuleNameModuleHooks`, `ModuleNamePageHooks`,
   `ModuleNameFieldHooks`, and `ModuleNameNodeHooks` where those responsibilities
   apply. Split other hooks by purpose and dependencies rather than method count.
+  Put local-task hooks in `ModuleNameLocalTaskHooks`.
   Put `schemadotorg_jsonld` and all `schemadotorg_jsonld_*` hooks in a
   module-specific `ModuleNameJsonLdHooks` class. Keep JSON-LD hooks together
   even when the module also has non-JSON-LD hooks, and keep unrelated mapping,

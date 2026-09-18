@@ -55,7 +55,8 @@ required procedural hooks and callbacks. Put every form-alter hook in
 `ModuleNameHooks`. Put hooks implemented on behalf of optional contributed
 modules in `ModuleNameContribHooks`. Do not create `IntegrationHooks`.
 Group other generic hooks by responsibility, such as Help, Module, Page, Field,
-and Node hook classes. Document the final naming convention in
+and Node hook classes. Put local-task hooks in a dedicated
+`ModuleNameLocalTaskHooks` class. Document the final naming convention in
 `docs/DECISIONS.md` after the conversion. Put `schemadotorg_jsonld` and every
 `schemadotorg_jsonld_*` hook in a module-specific `ModuleNameJsonLdHooks`
 class, even when the hook is the module's only JSON-LD hook. Keep unrelated
