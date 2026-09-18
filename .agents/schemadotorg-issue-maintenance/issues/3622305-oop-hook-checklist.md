@@ -98,6 +98,8 @@ the MR ready for review.
 
 | Module | Source hook/function | Status | Final hook class/method | Existing behavior coverage or gap | Commit/notes |
 |---|---|---|---|---|---|
+| `schemadotorg_allowed_formats` | `schemadotorg_property_field_alter` | Converted | `SchemaDotOrgAllowedFormatsHooks::schemadotorgPropertyFieldAlter()` | `SchemaDotOrgAllowedFormatsKernelTest::testAllowedFormats()` covers allowed formats and widget third-party settings. | Manager logic moved into the hook class; hook-only manager service and interface removed with maintainer approval. |
+| `schemadotorg_allowed_formats` | `form_schemadotorg_properties_settings_form_alter` | Converted | `SchemaDotOrgAllowedFormatsFormHooks::formSchemadotorgPropertiesSettingsFormAlter()` | `SchemaDotOrgAllowedFormatsSettingsFormTest::testSettingsForm()` covers form save behavior; no direct field-definition assertion. | Filter format repository injected; translation uses `TranslatableMarkup`. |
 | `schemadotorg` | `help` | Converted | `SchemaDotOrgHelpHooks::help()` | Gap: no existing help-output assertion. | Base module; `7f98d583`. |
 | `schemadotorg` | `system_info_alter` | Removed (approved) | — | Gap: no existing demo dependency assertion. | Maintainer confirmed `schemadotorg_demo` is deprecated and unsupported; this hook only modified that module's dependencies. |
 | `schemadotorg` | `module_implements_alter` | Ordering replaced | `SchemaDotOrgFormHooks::formAlter()` uses `Order::Last`; procedural meta hook removed. | `SchemaDotOrgFocalPointKernelTest` retains the widget-order sentinel; no existing direct form order assertion. | Meta hook is not an OOP implementation. |
@@ -131,5 +133,6 @@ the MR ready for review.
 | Module | Function | Reason retained | Test or verification | Commit/notes |
 |---|---|---|---|---|
 | `schemadotorg` | `schemadotorg_requirements()`, `schemadotorg_install()`, `schemadotorg_schema()`, `schemadotorg_update_10000()` through `schemadotorg_update_10020()` (defined numbers only) | Drupal install/update entry points must remain procedural. | `SchemaDotOrgInstallerKernelTest` covers installation; update execution remains outside this conversion. | `7f98d583`. |
+| `schemadotorg_allowed_formats` | `schemadotorg_allowed_formats_update_10000()` | Drupal update entry point must remain procedural. | No OOP equivalent. | Update execution remains outside this conversion. |
 | `schemadotorg` | `SchemaDotOrgSettingsFormBase::afterBuildDetails()` and other registered class callbacks | Retained class callbacks; not runtime hook implementations. | `SchemaDotOrgSettingsFormTest` and existing JavaScript tests. | `7f98d583`. |
 | `schemadotorg` | `schemadotorg.api.php` hook definitions | API documentation, not runtime implementations. | Source inspection. | `7f98d583`. |
