@@ -1,109 +1,105 @@
-# Rector OOP Hooks Proof of Concept
+# Schema.org Blueprints OOP hook conversion plan
 
-## Summary
+Convert issue #3622305 from the existing `1.0.x` checkout, one production module
+and one reviewed commit at a time. Start with the base `schemadotorg` module,
+then work through the `schemadotorg_*` submodules in the local issue ledger.
+Use its suggested waves to choose the next submodule; change that order when a
+dependency requires it, and record why. `schemadotorg_allowed_formats` is the
+first suggested submodule. Keep Experimental in separate linked work.
 
-Run Drupal Rector's raw OOP-hook conversion across the entire main
-`schemadotorg` project to evaluate its output, test behavior, and inventory
-service refactoring candidates. Work directly on the existing clean `1.0.x`
-checkout. Do not create a branch or worktree, and do not commit, push, create a
-merge request, or modify `schemadotorg_experimental`.
+## Before each module
 
-The verified standalone dry run found 61 affected input files, 58
-`HookConvertRector` applications, and no Rector errors. The generated Git
-footprint is larger because Rector writes hook classes and service files
-directly to disk. The Allowed Formats baseline passes with 2 tests and 32
-assertions.
+1. Read the local [issue #3622305 note](../schemadotorg-issue-maintenance/issues/3622305.md),
+   its module ledger and hook inventory, and the current issue/fork/MR state.
+   Follow `schemadotorg-issue-maintenance` and `drupalorg-issue-maintenance`
+   for approval and public-write gates. Run `ddev describe` to identify the
+   active project, docroot, and PHP environment.
+2. Inspect both repository statuses, the nested checkout branch, upstream, and
+   ahead/behind state. Do not reset an ahead branch or create a worktree. Obtain
+   approval before creating an issue branch. If the nested checkout has
+   uncommitted changes, stop at read-only analysis until the maintainer resolves
+   the scope; never discard or include unrelated changes.
+3. Run `.agents/skills/schemadotorg-oop-hook-conversion/scripts/inspect-hook-module.sh
+   <base|submodule>`. Its output is a starting inventory, not proof of complete
+   hook discovery or service usage: it scans top-level procedural files and
+   limited reference patterns. Search nested includes, callbacks, service and
+   config references, other modules, and cross-module tests separately.
+4. Classify every relevant function as a runtime hook to convert, required
+   procedural install/update/meta hook, named callback, helper, or API example.
+   Trace each hook through delegated service methods and helpers, including
+   hidden static service lookups; check all callers before changing a service
+   boundary. Record current hook order and behavior, including implementations
+   on behalf of another module. Map every new and existing OOP hook method in
+   the active module to a behavioral test.
+5. Present the module scope, class/dependency design, service IDs and interfaces
+   to preserve or remove, translation choice, ordering and procedural-scan
+   decision, cross-module edits, files, per-hook test map, and any functional
+   test exception. Identify each proposed public API removal explicitly for
+   approval as part of this module's design review. Obtain the local-code
+   approval required by the issue workflow before editing. Pause for
+   maintainer direction on permissions, access, update hooks, generated
+   configuration, or behavior that conflicts with existing tests.
 
-## Implementation
+## Implement one module
 
-- Leave the root `rector.php` unchanged. Follow Drupal Rector's upstream
-  guidance and use its standalone hook-conversion configuration:
-  - Run `ddev exec rector process web/modules/sandbox/schemadotorg --config=/usr/local/composer/vendor/palantirnet/drupal-rector/rector-hook-convert.php`.
-  - Bypass `ddev rector process` because the local wrapper always appends the
-    root `rector.php` and would override the intended standalone configuration.
-  - Keep `HookConvertRector` isolated from the Drupal deprecation sets because
-    Rector cannot feed newly created hook classes back through the same rule
-    pipeline.
-- Capture baseline evidence:
-  - Confirm the nested module checkout is clean and on `1.0.x`.
-  - Run the normal project configuration as a dry run only. It currently
-    reports three unrelated changed files; the only deprecation conversion is
-    `check_markup()` inside an API documentation example. Do not apply these
-    changes during the POC.
-  - Run the complete Schema.org Blueprints PHPUnit suite and code review.
-  - Record existing failures, deprecations, and tool warnings separately.
-- Apply Rector once to `web/modules/sandbox/schemadotorg`.
-  - Preserve the generated `#[LegacyHook]` wrappers and explicit hook-service
-    registrations unchanged for this review.
-  - Do not add dependency injection, remove services, rename generated classes,
-    add procedural-scan parameters, or manually fix generated output.
-  - Leave all generated changes uncommitted on `1.0.x` for maintainer
-    inspection.
-- Inspect and classify the raw output:
-  - Generated hook classes and converted methods.
-  - Procedural hooks Rector intentionally skipped, including install/update
-    hooks and `hook_module_implements_alter()`.
-  - Callbacks and helper functions that remain procedural.
-  - Static `\Drupal` lookups copied into hook methods.
-  - Generated translation-trait usage, class naming, service registrations,
-    formatting, and hook signatures.
-  - Hook ordering behavior that will require later manual conversion.
-  - Incidental import normalization in `*.api.php` and non-hook PHP files caused
-    by the standalone configuration's import-name settings.
-- Update the local issue note for #3622305 with:
-  - Commands and baseline/post-conversion results.
-  - Changed-file counts and observed Rector limitations.
-  - A table with columns: module, hook, generated class/method, service ID or
-    static dependency, delegated method, other callers, recommended action,
-    and rationale.
-  - Recommendations limited to `move into hook class`, `inject retained
-    service`, `manual hook conversion`, `retain procedural-only`, or `refactor
-    callback later`.
-  - No actual service-boundary refactoring during this POC.
+- Put method-level `#[Hook('hook_name')]` methods under
+  `Drupal\MODULE\Hook`. Target Drupal 11.2+; use automatic registration and
+  autowiring when possible, constructor injection, and no new static `\Drupal`
+  lookups in hook classes. Do not retain Rector's `#[LegacyHook]` wrappers or
+  explicit service YAML when automatic registration suffices.
+- Put all `form_alter`, `form_FORM_ID_alter`, and `form_BASE_FORM_ID_alter` hooks
+  in `ModuleNameFormHooks` (for example, `SchemaDotOrgFormHooks` or
+  `SchemaDotOrgAllowedFormatsFormHooks`). Keep associated form handlers there
+  when their callback registration supports class methods; preserve callable
+  signatures and behavior. Group other related hooks by responsibility, as
+  Drupal core does with `EntityHooks`, `TokensHooks`, `ThemeHooks`, and
+  `ViewsHooks`. Use `ModuleNameHooks` for isolated hooks. Split by purpose and
+  dependencies rather than method count.
+- Move hook-specific behavior from delegated service methods and helpers into
+  the hook class, not just the procedural wrapper. Inject the services used by
+  that behavior, including dependencies hidden behind static helpers. Keep
+  reusable behavior in retained managers/builders. Preserve public service IDs
+  and interfaces unless their removal was explicitly approved in the module
+  design review. Use `StringTranslationTrait` for hook-local strings or inject
+  a translator when the design or tests require that boundary. A submodule
+  conversion may include the smallest necessary dependency fix elsewhere;
+  document its scope and tests in that module's commit.
+- Replace the *effect* of `hook_module_implements_alter()` with Drupal 11.2
+  ordering attributes (`Hook`, `ReorderHook`, and order objects) and an order
+  regression test. That procedural meta hook itself is not convertible to an
+  OOP hook. Verify final order alongside remaining procedural implementations.
+  Cover the base module's focal-point widget sentinel and the node module's
+  `local_tasks_alter` ordering when those modules are active.
+- Retain core-required procedural install/update/meta hooks and named
+  callbacks. Enable `MODULE.skip_procedural_hook_scan: true` only after checking
+  all files Drupal may scan and proving no discoverable procedural runtime hook
+  remains, including hooks implemented on behalf of another module. Treat
+  `*.api.php` hook definitions as documentation, not implementations.
 
-## Verification
+## Verify, review, and commit
 
-Run after the raw conversion:
-
-- Rebuild Drupal's container/cache to verify hook discovery and generated
-  service definitions.
-- Run the complete `schemadotorg` PHPUnit tree and compare results with the
-  baseline.
-- Run the two Allowed Formats tests explicitly as a known-good focused check.
-- Run `ddev code-review web/modules/sandbox/schemadotorg`.
-- Run `git diff --check` and inspect both the root-repository and nested-module
-  statuses.
-- Treat every new failure as POC evidence; diagnose and record it without fixing
-  it during this phase.
-
-## Execution results
-
-- Baseline PHPUnit passed with 280 tests, 4,778 assertions, 245 deprecations,
-  and 538 PHPUnit deprecations. Baseline PHPCS, CSpell, and ESLint passed;
-  PHPStan reported 130 errors and Stylelint reported 2,464 errors.
-- Rector completed with 61 changed input files, 58 rule applications, and no
-  Rector errors. The resulting Git footprint is 111 modified tracked files and
-  62 untracked files, including 58 generated hook classes.
-- Drupal container/cache rebuilding passed. The two Allowed Formats tests
-  passed with 32 assertions, and `git diff --check` passed.
-- Post-conversion PHPUnit reported one failure in
-  `SchemaDotOrgFocalPointKernelTest::testFocalPoint()`: `image_focal_point` was
-  replaced by `image_image`, demonstrating hook-order drift in the raw output.
-  A focused rerun reproduced the failure with 1 test and 24 assertions.
-- Post-conversion PHPCS reported 4,194 errors and 429 warnings, PHPStan reported
-  328 errors, and Stylelint reported 2,517 errors. CSpell and ESLint still
-  passed. These results are retained as POC evidence and were not fixed.
-- The local #3622305 note contains the full 236-hook service inventory and the
-  24-function skipped runtime/helper inventory.
-
-## Assumptions and guardrails
-
-- The POC targets the entire main project, not only one pilot submodule.
-- Rector's automated output is intentionally retained exactly as generated for
-  review.
-- No public service IDs, interfaces, or implementations are removed or changed.
-- `schemadotorg_experimental` remains untouched and clean on `1.0.x`.
-- After maintainer review, the reproducible raw output was intentionally
-  discarded on 2026-09-10. The complete findings and inventory were retained,
-  and both module checkouts were returned to clean `1.0.x` before production
-  conversion work begins.
+1. Give each hook class in the active module, including classes that existed
+   before conversion, a corresponding kernel test. Exercise every hook method
+   through Drupal's hook dispatch and assert its observable behavior; a direct
+   method call alone does not satisfy this rule. Extend a clearly corresponding
+   existing kernel test instead of duplicating it. When a kernel test cannot
+   verify a hook's behavior, record the reason and covering functional test in
+   the ledger. Cover relevant form changes, by-reference arguments, and hook
+   order.
+2. Run `ddev drush cr`,
+   `ddev phpunit <file|directory>`, `ddev code-review <file|directory>`, and
+   `git -C web/modules/sandbox/schemadotorg diff --check`. Compare failures
+   with the documented baseline and fix new regressions. Run the complete
+   Schema.org suite for the base module, ordering changes, and before each
+   main-project merge-request review.
+3. Update the local issue ledger and applicable hook inventory with the design,
+   cross-module edits, per-hook test map and exceptions, commands/results,
+   baseline limitations, scan decision, and next gate. Show the complete diff
+   and test results to the maintainer.
+4. After explicit commit approval, commit that module's coherent change before
+   starting the next. Name the module in the subject, for example
+   `schemadotorg: Convert runtime hooks to OOP` or
+   `schemadotorg_allowed_formats: Convert runtime hooks to OOP`. Describe any
+   cross-module dependency fix in the body. End every AI-authored commit message
+   with `AI-assisted by Codex`. Obtain separate approval before push, MR, or
+   public issue update. Tickets and comments begin with that AI-assisted note.

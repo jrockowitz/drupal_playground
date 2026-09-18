@@ -62,9 +62,32 @@ search_hook_classes() {
   fi
 }
 
+search_module_code() {
+  pattern=$1
+  find "$target" -maxdepth 1 -type f \
+    \( -name '*.php' -o -name '*.module' -o -name '*.inc' \
+       -o -name '*.install' -o -name '*.yml' \) \
+    ! -name '*.api.php' \
+    -exec rg -n "$pattern" {} + 2>/dev/null || true
+  if [ -d "$target/src" ]; then
+    rg -n "$pattern" "$target/src" -g '*.php' || true
+  fi
+}
+
 echo "project_root: $project_root"
+echo "project_status:"
+git -C "$project_root" status --short
 echo "checkout: $checkout"
 echo "branch: $(git -C "$checkout" branch --show-current)"
+if upstream=$(git -C "$checkout" rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null); then
+  counts=$(git -C "$checkout" rev-list --left-right --count '@{upstream}...HEAD')
+  read -r behind ahead <<< "$counts"
+  echo "upstream: $upstream"
+  echo "upstream_behind: $behind"
+  echo "upstream_ahead: $ahead"
+else
+  echo "upstream: (none)"
+fi
 echo "checkout_status:"
 git -C "$checkout" status --short
 echo "module: $module_name"
@@ -75,9 +98,7 @@ echo "procedural_hooks_callbacks_and_helpers:"
 search_source_files '^function[[:space:]]+[A-Za-z0-9_]+'
 
 echo "callback_registrations:"
-rg -n "#(ajax|after_build|element_validate|process|submit|validate)|allowed_values_function|value_callback" \
-  "$target" -g '*.php' -g '*.module' -g '*.inc' -g '*.install' \
-  -g '*.yml' || true
+search_module_code '#(ajax|after_build|element_validate|process|submit|validate)|allowed_values_function|value_callback'
 
 echo "install_update_functions:"
 find "$target" -maxdepth 1 -type f -name '*.install' \
@@ -101,10 +122,10 @@ find "$target" -maxdepth 1 -type f -name '*.services.yml' \
   -exec rg -n 'Hook\\|skip_procedural_hook_scan' {} + 2>/dev/null || true
 
 echo "service_and_interface_references:"
-if [ -d "$target/src" ]; then
-  rg -n '\\Drupal::service|ManagerInterface|BuilderInterface' "$target" \
-    -g '*.php' -g '*.module' -g '*.inc' -g '!src/Hook/**' || true
-fi
+search_module_code '\\Drupal::|[A-Za-z_][A-Za-z0-9_]*Interface|#\[Autowire'
+
+echo "static_calls_to_trace_for_hidden_dependencies:"
+search_module_code '[A-Z][A-Za-z0-9_]*::[A-Za-z_][A-Za-z0-9_]*\('
 
 echo "interfaces:"
 if [ -d "$target/src" ]; then
@@ -112,8 +133,8 @@ if [ -d "$target/src" ]; then
 fi
 
 echo "tests:"
-if [ -d "$target/tests" ]; then
-  find "$target/tests" -type f -name '*Test.php' -print | sort
+if [ -d "$target/tests/src" ]; then
+  find "$target/tests/src" -type f -name '*Test.php' -print | sort
 fi
 
 echo "procedural_scan_configuration:"
