@@ -10,8 +10,8 @@ Follow the [production plan](../../plans/schemadotorg-oop-hooks.md), local
 and [production hook checklist](../../schemadotorg-issue-maintenance/issues/3622305-oop-hook-checklist.md).
 Use the [Rector POC inventory](../../schemadotorg-issue-maintenance/issues/3622305-oop-hook-rector-poc-inventory.md)
 only as historical evidence and candidate hooks; reconcile it against current
-source. Record each runtime hook's conversion, final class/method, and behavior
-test in the production checklist before marking its module complete.
+source. Record each runtime hook's conversion, final class/method, and relevant
+existing behavior coverage or coverage gap in the production checklist.
 Use `schemadotorg-issue-maintenance` and `drupalorg-issue-maintenance` for the
 current tracker, branch, approval, and public-write rules.
 
@@ -21,7 +21,9 @@ module's inventory, implementation, focused tests, ledger update, diff review,
 and approved module-named commit before starting another. Keep Experimental in
 separate linked work. A module commit may include a necessary, scoped dependency
 fix in another module; document it and seek a separate decision for public API
-changes.
+changes. Use `Issue #3622305: Convert <module_machine_name> hooks to OOP` as
+the subject for each module conversion commit. End AI-authored commit messages
+with `AI-assisted by Codex`.
 
 Run the read-only inspector from the project root:
 
@@ -39,9 +41,18 @@ Key conversion traps are hook ordering, publicly used services, named
 callbacks, and procedural-scan eligibility. Replace the ordering effect of
 `hook_module_implements_alter()`; do not convert that meta hook itself. Retain
 required procedural hooks and callbacks. Put every form-alter hook in
-`ModuleNameFormHooks`; group other related hooks by responsibility. Move
+`ModuleNameFormHooks`; put the module's own `MODULE_*` hooks in
+`ModuleNameHooks`. Put hooks implemented on behalf of optional contributed
+modules in `ModuleNameContribHooks`. Do not create `IntegrationHooks`.
+Group other generic hooks by responsibility, such as Help, Module, Page, Field,
+and Node hook classes. Document the final naming convention in
+`docs/DECISIONS.md` after the conversion. Move
 hook-specific logic out of delegated services, inject its dependencies, and
-present any service API removal in the module design review. Map every hook
-method in the active module, including existing OOP methods, to a kernel test
-through Drupal's hook dispatch or a documented functional-test exception. The
-plan contains the implementation and verification checklist.
+present any service API removal in the module design review. Use existing tests
+to check behavior and ordering. Do not add, move, or expand tests just because
+hooks move to classes; change an existing test only if the move breaks it, and
+preserve its assertions. Record coverage gaps for a separate testing decision.
+When a module's `*.module` file has no remaining functions, callbacks, or other
+runtime code and nothing loads it explicitly, delete the empty file. A Drupal
+module does not need a `*.module` file solely to register OOP hooks.
+The plan contains the implementation and verification checklist.

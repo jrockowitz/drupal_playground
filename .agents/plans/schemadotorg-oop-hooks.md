@@ -34,12 +34,13 @@ first suggested submodule. Keep Experimental in separate linked work.
    boundary. Record current hook order and behavior, including implementations
    on behalf of another module. Populate or reconcile one production-checklist
    row per runtime hook, including existing OOP hooks and skipped POC hooks,
-   and map each row to a behavioral test. Record required procedural functions
-   and named callbacks separately.
+   and record relevant existing behavior coverage or a coverage gap for each
+   row. Do not create a test solely to give a hook its own test. Record required
+   procedural functions and named callbacks separately.
 5. Present the module scope, class/dependency design, service IDs and interfaces
    to preserve or remove, translation choice, ordering and procedural-scan
-   decision, cross-module edits, files, per-hook test map, and any functional
-   test exception. Identify each proposed public API removal explicitly for
+   decision, cross-module edits, files, existing test coverage, and gaps.
+   Identify each proposed public API removal explicitly for
    approval as part of this module's design review. Obtain the local-code
    approval required by the issue workflow before editing. Pause for
    maintainer direction on permissions, access, update hooks, generated
@@ -56,10 +57,15 @@ first suggested submodule. Keep Experimental in separate linked work.
   in `ModuleNameFormHooks` (for example, `SchemaDotOrgFormHooks` or
   `SchemaDotOrgAllowedFormatsFormHooks`). Keep associated form handlers there
   when their callback registration supports class methods; preserve callable
-  signatures and behavior. Group other related hooks by responsibility, as
-  Drupal core does with `EntityHooks`, `TokensHooks`, `ThemeHooks`, and
-  `ViewsHooks`. Use `ModuleNameHooks` for isolated hooks. Split by purpose and
-  dependencies rather than method count.
+  signatures and behavior. Put the module's own `MODULE_*` hooks in
+  `ModuleNameHooks`; put hooks implemented on behalf of optional contributed
+  modules in `ModuleNameContribHooks`. Do not create an `IntegrationHooks`
+  class. Group generic Drupal hooks by responsibility, using
+  `ModuleNameHelpHooks`, `ModuleNameModuleHooks`, `ModuleNamePageHooks`,
+  `ModuleNameFieldHooks`, and `ModuleNameNodeHooks` where those responsibilities
+  apply. Split other hooks by purpose and dependencies rather than method count.
+  Document the final naming pattern and rationale in `docs/DECISIONS.md` after
+  the conversion is complete.
 - Move hook-specific behavior from delegated service methods and helpers into
   the hook class, not just the procedural wrapper. Inject the services used by
   that behavior, including dependencies hidden behind static helpers. Keep
@@ -70,27 +76,31 @@ first suggested submodule. Keep Experimental in separate linked work.
   conversion may include the smallest necessary dependency fix elsewhere;
   document its scope and tests in that module's commit.
 - Replace the *effect* of `hook_module_implements_alter()` with Drupal 11.2
-  ordering attributes (`Hook`, `ReorderHook`, and order objects) and an order
-  regression test. That procedural meta hook itself is not convertible to an
-  OOP hook. Verify final order alongside remaining procedural implementations.
-  Cover the base module's focal-point widget sentinel and the node module's
-  `local_tasks_alter` ordering when those modules are active.
+  ordering attributes (`Hook`, `ReorderHook`, and order objects). That procedural
+  meta hook itself is not convertible to an OOP hook. Verify the ordering effect
+  with existing behavior tests, including the base module's focal-point widget
+  sentinel and existing node `local_tasks_alter` coverage when those modules
+  are active.
 - Retain core-required procedural install/update/meta hooks and named
   callbacks. Enable `MODULE.skip_procedural_hook_scan: true` only after checking
   all files Drupal may scan and proving no discoverable procedural runtime hook
   remains, including hooks implemented on behalf of another module. Treat
   `*.api.php` hook definitions as documentation, not implementations.
+- Delete a module's `*.module` file when it has no remaining functions,
+  callbacks, or runtime code and no explicit loader requires the file. The
+  empty file is not needed for OOP hook registration.
 
 ## Verify, review, and commit
 
-1. Give each hook class in the active module, including classes that existed
-   before conversion, a corresponding kernel test. Exercise every hook method
-   through Drupal's hook dispatch and assert its observable behavior; a direct
-   method call alone does not satisfy this rule. Extend a clearly corresponding
-   existing kernel test instead of duplicating it. When a kernel test cannot
-   verify a hook's behavior, record the reason and covering functional test in
-   the ledger. Cover relevant form changes, by-reference arguments, and hook
-   order.
+1. Use the existing kernel and functional tests as the behavior baseline for
+   the conversion. Do not add, move, or expand tests solely because hooks move
+   to classes, and do not require a separate dispatch assertion for every hook
+   method. Change an existing test only when the move breaks it, such as a test
+   that calls a removed procedural function; preserve its behavior assertions
+   and make the smallest necessary invocation change. Record existing coverage
+   and gaps in the checklist without treating a per-hook test as a completion
+   gate. If existing coverage does not establish required behavior, report that
+   gap for a separate testing decision.
 2. Run `ddev drush cr`,
    `ddev phpunit <file|directory>`, `ddev code-review <file|directory>`, and
    `git -C web/modules/sandbox/schemadotorg diff --check`. Compare failures
@@ -98,15 +108,15 @@ first suggested submodule. Keep Experimental in separate linked work.
    Schema.org suite for the base module, ordering changes, and before each
    main-project merge-request review.
 3. Update the production hook checklist and local issue ledger with the final
-   class/method, retained functions, per-hook test map and exceptions,
+   class/method, retained functions, existing behavior coverage and gaps,
    cross-module edits, commands/results, baseline limitations, scan decision,
    and next gate. Show the complete diff and test results to the maintainer;
    every checklist row must be resolved before commit approval. Do not update
    the historical Rector POC inventory as a progress tracker.
 4. After explicit commit approval, commit that module's coherent change before
-   starting the next. Name the module in the subject, for example
-   `schemadotorg: Convert runtime hooks to OOP` or
-   `schemadotorg_allowed_formats: Convert runtime hooks to OOP`. Describe any
+   starting the next. Use
+   `Issue #3622305: Convert <module_machine_name> hooks to OOP` as the subject,
+   for example `Issue #3622305: Convert schemadotorg hooks to OOP`. Describe any
    cross-module dependency fix in the body. End every AI-authored commit message
    with `AI-assisted by Codex`. Record the commit, check the module's completion
    box in the checklist, and mark it complete in the issue ledger before starting
