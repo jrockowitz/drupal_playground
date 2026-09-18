@@ -71,8 +71,9 @@ first suggested submodule. Keep Experimental in separate linked work.
   that behavior, including dependencies hidden behind static helpers. Keep
   reusable behavior in retained managers/builders. Preserve public service IDs
   and interfaces unless their removal was explicitly approved in the module
-  design review. Use `StringTranslationTrait` for hook-local strings or inject
-  a translator when the design or tests require that boundary. A submodule
+  design review. Use `StringTranslationTrait` and `$this->t()` for hook-local
+  strings, relying on the trait's existing service resolution. Inject a
+  translator only when the design or tests require that boundary. A submodule
   conversion may include the smallest necessary dependency fix elsewhere;
   document its scope and tests in that module's commit.
 - Replace the *effect* of `hook_module_implements_alter()` with Drupal 11.2
