@@ -113,6 +113,7 @@ yarn-error.log
 !.agents/skills/schemadotorg-module-audit
 !.agents/skills/schemadotorg-issue-maintenance
 !.agents/skills/schemadotorg-oop-hook-conversion
+!.agents/skills/schemadotorg-oop-hook-review
 !.agents/skills/webform-issue-maintenance
 !.agents/skills/webform-security
 .agents/private/

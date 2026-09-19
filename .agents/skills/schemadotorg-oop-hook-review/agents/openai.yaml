@@ -1,0 +1,4 @@
+interface:
+  display_name: "Schema.org OOP Hook Review"
+  short_description: "Audit Schema.org OOP hook conversions"
+  default_prompt: "Use $schemadotorg-oop-hook-review to audit every module's OOP hook conversion against 1.0.x."
