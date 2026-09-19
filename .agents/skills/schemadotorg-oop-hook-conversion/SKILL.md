@@ -1,82 +1,91 @@
 ---
 name: schemadotorg-oop-hook-conversion
-description: Convert one Schema.org Blueprints base module or submodule from procedural runtime hooks to Drupal 11.2+ object-oriented hooks for issue #3622305. Use for module selection, hook/service analysis, implementation, testing, or progress tracking. Do not use for unrelated module audits or general Rector upgrades.
+description: Convert Schema.org Blueprints base module or submodule from procedural runtime hooks to Drupal 11.2+ object-oriented hooks for issue #3622305.
 ---
 
 # Schema.org OOP hook conversion
 
-Follow the [production plan](../../plans/schemadotorg-oop-hooks.md), local
-[issue #3622305 note](../../schemadotorg-issue-maintenance/issues/3622305.md),
-and [production hook checklist](../../schemadotorg-issue-maintenance/issues/3622305-oop-hook-checklist.md).
-Use the [Rector POC inventory](../../schemadotorg-issue-maintenance/issues/3622305-oop-hook-rector-poc-inventory.md)
-only as historical evidence and candidate hooks; reconcile it against current
-source. Record each runtime hook's conversion, final class/method, and relevant
-existing behavior coverage or coverage gap in the production checklist.
-Use `schemadotorg-issue-maintenance` and `drupalorg-issue-maintenance` for the
-current tracker, branch, approval, and public-write rules.
+Convert requested modules  and track completed modules in the
+[issue note](../../schemadotorg-issue-maintenance/issues/3622305.md). Work in the
+existing Schema.org checkout; do not create a worktree. Review the complete
+module diff and verification results before starting another module.
 
-Start with the base `schemadotorg` module. Then convert one `schemadotorg_*`
-submodule at a time, using the issue ledger and dependency order. Finish each
-module's inventory, implementation, focused tests, ledger update, diff review,
-and approved module-named commit before starting another. Keep Experimental in
-separate linked work. A module commit may include a necessary, scoped dependency
-fix in another module; document it and seek a separate decision for public API
-changes. Use `Issue #3622305: Convert <module_machine_name> hooks to OOP` as
-the subject for each module conversion commit. End AI-authored commit messages
-with `AI-assisted by Codex`.
+## Inspect the module
 
-Run the read-only inspector from the project root:
+1. Run `ddev describe`, then inspect the root and nested checkout status,
+   current branch, upstream divergence, and recent conversion commits. Preserve
+   unrelated changes.
+2. Search the module's `*.module`, `*.inc`, `*.install`, `src`, service YAML,
+   and tests. Inventory runtime hooks, install/update/meta hooks, named
+   callbacks, helpers, services, interfaces, callers, and hook ordering. Search
+   other modules for cross-module callers before changing a service or public
+   API.
+3. Compare the procedural hook, delegated service method, and existing tests
+   line by line. Decide which behavior belongs in the hook class, which
+   reusable behavior stays in a service, and which functions must remain
+   procedural.
 
-```bash
-.agents/skills/schemadotorg-oop-hook-conversion/scripts/inspect-hook-module.sh <base|submodule>
-```
+Use `rg` and `find` directly for discovery. Treat lexical matches as review
+leads, not proof that a service is unused or a conversion is complete.
 
-Its scan is incomplete: inspect nested files, callbacks, cross-module callers,
-services, and tests before deciding scope. Check the nested checkout's branch,
-upstream divergence, and uncommitted changes. Preserve existing changes and
-follow the issue workflow's approval gates before edits, branch creation,
-commits, pushes, MRs, or public updates.
+## Convert the hooks
 
-Before editing, make an explicit conversion decision for every discovered
-function and service. Convert only when an OOP hook preserves behavior and the
-service is hook-specific. Retain procedural code when Drupal requires it or
-when conversion would change installation, callback, or ordering semantics.
-Retain a service or interface when it has callers beyond hook dispatch or
-provides reusable behavior. The agent may recommend no conversion or a partial
-conversion when the hook's responsibility, callback shape, ordering, or public
-API makes conversion inappropriate; record the evidence and recommendation in
-the checklist and issue ledger.
+- Add method-level `#[Hook('hook_name')]` methods under
+  `Drupal\MODULE\Hook`. Rely on automatic hook registration and autowiring;
+  inject dependencies through the constructor and introduce no new static
+  `\Drupal` service lookups.
 
-Key conversion traps are hook ordering, publicly used services, named
-callbacks, and procedural-scan eligibility. Replace the ordering effect of
-`hook_module_implements_alter()`; do not convert that meta hook itself. Retain
-required procedural hooks and callbacks. Put every form-alter hook in
-`ModuleNameFormHooks`; put the module's own `MODULE_*` hooks in
-`ModuleNameHooks`. Put hooks implemented on behalf of optional contributed
-modules in `ModuleNameContribHooks`. Do not create `IntegrationHooks`.
-Group other generic hooks by responsibility, such as Help, Module, Page, Field,
-and Node hook classes. Put local-task hooks in a dedicated
-`ModuleNameLocalTaskHooks` class. Document the final naming convention in
-`docs/DECISIONS.md` after the conversion. Put `schemadotorg_jsonld` and every
-`schemadotorg_jsonld_*` hook in a module-specific `ModuleNameJsonLdHooks`
-class, even when the hook is the module's only JSON-LD hook. Keep unrelated
-field, form, and mapping hooks in their responsibility-specific classes.
-Move hook-specific logic out of delegated services, inject its dependencies,
-and present any service API removal in the module design review. Compare the
-procedural wrapper and delegated service implementation line-by-line. Preserve
-hook signatures, ordering, mutations, return values, inline rationale comments,
-line breaks, `@var` annotations, storage declarations, and type-narrowing
-variables. Use concise `Implements hook_name().` method docblocks rather than
-copying service method documentation. Use existing tests to check behavior and
-ordering. Do not add, move, or expand tests just because hooks move to classes;
-change an existing test only if the move breaks it, and preserve its assertions.
-Record coverage gaps for a separate testing decision.
-Constructor docblocks on OOP hook classes are optional under Drupal coding
-standards; omit redundant constructor descriptions and parameter documentation
-when dependency types and names are self-explanatory. Keep a constructor
-docblock only for genuinely non-obvious behavior or necessary parameter-specific
-information.
-When a module's `*.module` file has no remaining functions, callbacks, or other
-runtime code and nothing loads it explicitly, delete the empty file. A Drupal
-module does not need a `*.module` file solely to register OOP hooks.
-The plan contains the implementation and verification checklist.
+- Group hooks by responsibility. Put form alters and their class-callable
+  handlers in `ModuleNameFormHooks`; JSON-LD hooks in
+  `ModuleNameJsonLdHooks`; and help, node, field, entity, page, module,
+  local-task, or similar hooks in corresponding responsibility classes. Use
+  `ModuleNameHooks` for the module's own isolated hooks and
+  `ModuleNameContribHooks` for hooks implemented on behalf of optional
+  contributed modules.
+
+- Move hook-specific orchestration out of pass-through services into OOP hook classes.
+  Consider moving reusable behavior into a base hook class.
+
+- Preserve hook signatures, ordering, mutations, return values, inline
+  rationale comments, line breaks, `@var` annotations, storage declarations,
+  and type-narrowing variables. Use concise `Implements hook_name().` method
+  docblocks and omit redundant constructor docblocks.
+
+- Replace the effect of `hook_module_implements_alter()` with supported hook
+  ordering attributes such as `order`, `ReorderHook`, or `RemoveHook`; do not
+  convert that procedural meta hook itself. Verify ordering-sensitive behavior,
+  including focal-point and local-task behavior where applicable.
+
+- Retain core-required install, update, uninstall, requirements, schema, and
+  meta hooks. Retain named callbacks unless their registration safely supports
+  a class callable, and preserve their callable signatures.
+
+- Remove converted procedural wrappers and `LegacyHook` attributes. Delete an
+  empty `*.module` file only when no runtime code, callback, or explicit loader
+  still requires it.
+
+- Set `MODULE.skip_procedural_hook_scan: true` only after checking every file
+  Drupal may scan and confirming that no discoverable procedural runtime hook
+  remains. `*.api.php` definitions are documentation, not implementations.
+
+## Verify and finish
+
+1. Rebuild caches with `ddev drush cr` and run the module's existing focused
+   kernel and functional tests with `ddev phpunit`. Do not add or expand tests
+   solely because code moved into hook classes; change an existing test only
+   when it directly invokes a removed procedural function, preserving its
+   behavior assertions.
+2. Run `ddev code-review <module-path>` and
+   `git -C web/modules/sandbox/schemadotorg diff --check`. Run broader tests for
+   shared behavior, ordering changes, the base module, and final merge-request
+   review.
+3. Review the full diff for behavior changes, missed callers, public API
+   changes, and retained procedural functions. A module is complete only when
+   every runtime hook and ordering requirement is resolved and verification
+   passes.
+4. After maintainer review, check the module in the issue note. Require explicit
+   maintainer approval before committing or pushing code, changing the merge
+   request, or posting an issue comment. Use
+   `Issue #3622305: Convert <module_machine_name> hooks to OOP` for a module
+   commit and end AI-authored commits with `AI-assisted by Codex`. Begin
+   AI-authored tickets and comments with the same note.
