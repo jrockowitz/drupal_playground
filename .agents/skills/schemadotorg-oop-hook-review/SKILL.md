@@ -3,7 +3,7 @@ name: schemadotorg-oop-hook-review
 description: Review the complete Schema.org Blueprints procedural-to-OOP hook conversion against 1.0.x. Use for read-only, module-by-module conversion audits and maintainer-readiness reports; do not use to implement fixes.
 ---
 
-# Schema.org OOP hook review
+# Schema.org Blueprints OOP hook review
 
 Perform a read-only review of the Schema.org Blueprints OOP hook conversion across the base module and every submodule. Compare all committed, staged, unstaged, and untracked work with `1.0.x`. Do not modify or stage files, create or alter tests, change commits or branches, or update issue or merge-request comments.
 

@@ -3,7 +3,7 @@ name: schemadotorg-oop-hook-conversion
 description: Convert Schema.org Blueprints base module or submodule from procedural runtime hooks to Drupal 11.2+ object-oriented hooks for issue #3622305.
 ---
 
-# Schema.org OOP hook conversion
+# Schema.org Blueprints OOP hook conversion
 
 Convert requested modules  and track completed modules in the
 [issue note](../../schemadotorg-issue-maintenance/issues/3622305.md). Work in the
