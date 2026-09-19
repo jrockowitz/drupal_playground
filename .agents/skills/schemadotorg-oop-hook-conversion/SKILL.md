@@ -7,8 +7,23 @@ description: Convert Schema.org Blueprints base module or submodule from procedu
 
 Convert requested modules  and track completed modules in the
 [issue note](../../schemadotorg-issue-maintenance/issues/3622305.md). Work in the
-existing Schema.org checkout; do not create a worktree. Review the complete
-module diff and verification results before starting another module.
+existing Schema.org checkout; do not create a worktree. This issue uses the
+Drupal.org issue fork `issue/schemadotorg-3622305`, with source branch
+`3622305-oop-hooks` and target branch `1.0.x`. Review the complete module diff
+and verification results before starting another module.
+
+When updating the merge request, push to the issue fork rather than the main
+project repository:
+
+```bash
+git push git@git.drupal.org:issue/schemadotorg-3622305.git HEAD:3622305-oop-hooks
+```
+
+Before pushing, verify the merge request's source project and branch through
+the GitLab API or the merge request page. After pushing, verify that the merge
+request head SHA matches the pushed commit. Remove any duplicate branch
+created accidentally in the main project repository only after confirming the
+issue-fork branch is updated.
 
 ## Inspect the module
 
@@ -35,13 +50,39 @@ leads, not proof that a service is unused or a conversion is complete.
   inject dependencies through the constructor and introduce no new static
   `\Drupal` service lookups.
 
-- Group hooks by responsibility. Put form alters and their class-callable
-  handlers in `ModuleNameFormHooks`; JSON-LD hooks in
-  `ModuleNameJsonLdHooks`; and help, node, field, entity, page, module,
-  local-task, or similar hooks in corresponding responsibility classes. Use
-  `ModuleNameHooks` for the module's own isolated hooks and
-  `ModuleNameContribHooks` for hooks implemented on behalf of optional
-  contributed modules.
+- Group hooks by module and responsibility, using these file/class names:
+  `ModuleNameHooks` for the module's own `schemadotorg_*` hooks,
+  `ModuleNameFormHooks` for form alters and their class-callable submit
+  handlers, `ModuleNameEntityHooks` for every `entity_*` hook,
+  `ModuleNameFieldHooks` for every `field_*` and `field_ui_*` hook,
+  `ModuleNameMediaHooks` for every `media_*` hook,
+  `ModuleNameParagraphsHooks` for every `paragraphs_*` hook,
+  `ModuleNameJsonLdHooks` for every `schemadotorg_jsonld_*` hook,
+  `ModuleNameThemeHooks` for every `gin_*` or other theme-specific hook,
+  `ModuleNameHelpHooks` for `help`, `ModuleNamePageHooks` for every
+  `*page*` hook, `ModuleNameCacheHooks` for every `cache_*` hook,
+  `ModuleNameRequirementsHooks` for every `requirements_*` hook, and
+  `ModuleNameJsonApiHooks` for every `jsonapi_*` hook. Use a
+  `ModuleNameContribHooks` class only for other optional contributed-module
+  hooks that do not fit these explicit groups.
+
+  For example:
+
+  ```php
+  // src/Hook/SchemaDotOrgMediaHooks.php
+  #[Hook('schemadotorg_mapping_defaults_alter')]
+  public function schemadotorgMappingDefaultsAlter(...): void { ... }
+
+  // src/Hook/SchemaDotOrgMediaMediaHooks.php
+  #[Hook('media_type_insert')]
+  public function mediaTypeInsert(...): void { ... }
+  ```
+
+  The class suffix is intentionally part of the grouping contract, even when
+  the module name already contains a term such as `media` or `paragraphs`.
+  Before finishing, verify the mapping with `rg '#\[Hook\\(' src/Hook` and
+  inspect each attribute's containing class/file; do not rely on filenames
+  alone.
 
 - Move hook-specific orchestration out of pass-through services into OOP hook classes.
   Consider moving reusable behavior into a base hook class.
@@ -64,9 +105,14 @@ leads, not proof that a service is unused or a conversion is complete.
   empty `*.module` file only when no runtime code, callback, or explicit loader
   still requires it.
 
-- Set `MODULE.skip_procedural_hook_scan: true` only after checking every file
+- Set the below properties in {module_name}.services.yml only after checking every file
   Drupal may scan and confirming that no discoverable procedural runtime hook
   remains. `*.api.php` definitions are documentation, not implementations.
+
+  ```yaml
+  parameters:
+    schemadotorg_jsonld_endpoint.skip_procedural_hook_scan: true
+  ```
 
 ## Verify and finish
 
