@@ -4,7 +4,7 @@
   "agent": {
     "plan": {
       "model": "github-copilot/gpt-5.6-luna",
-      "variant": "max"
+      "variant": "default"
     }
   },
   "autoupdate": "notify",
@@ -36,6 +36,9 @@
       "php *": "allow",            
       "python3 *": "allow",            
       "rg *": "allow",            
+      "test *": "allow",            
+      "awk *": "allow",            
+      "mkdir *": "allow",            
       "grep *": "allow",
       "find *": "allow",
       "git status": "allow",
@@ -50,6 +53,7 @@
       "ddev status": "allow",
       "ddev checks *": "allow",
       "ddev checks-fixes *": "allow",
+      "ddev checks-ignore *": "allow",
       "ddev parallel-lint *": "allow",
       "ddev phpcs *": "allow",
       "ddev phpcbf *": "allow",
@@ -87,13 +91,6 @@
     },
     "eslint": {
       "command": ["npx", "-y", "--package", "vscode-langservers-extracted", "vscode-eslint-language-server", "--stdio"]
-    }
-  },
-  "mcp": {
-    "playwright": {
-      "type": "local",
-      "enabled": true,
-      "command": ["npx", "-y", "@playwright/mcp"]
     }
   }
 }
