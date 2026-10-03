@@ -1,5 +1,5 @@
 {
-    "_hash": "f2381bd9a62d2ed5ee3e9e8e557669b053d1d4959b10d8a98287cab1dff7dc87",
+    "_hash": "ebcccbddb8638598a3a2b477144160bb9088308fe0e5be5c0753b969fb80fd92",
     "patches": {
         "drupal/config_rewrite": [
             {
@@ -143,6 +143,18 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874",
                     "provenance": "dependency:drupal/coffee"
+                }
+            }
+        ],
+        "drupal/project_browser": [
+            {
+                "package": "drupal/project_browser",
+                "description": "#3622921 Implement getModulesToInstall in TestModuleInstaller",
+                "url": "https://git.drupalcode.org/issue/project_browser-3622921/-/commit/9afcce0676ca61ca1514a14b6d882cbd081c0045.diff",
+                "sha256": "56fb6668c88cf2d6dc81d91a2cc85d0dae112d5d83053230fe18402674cfdf8a",
+                "depth": 1,
+                "extra": {
+                    "provenance": "dependency:drupal/project_browser"
                 }
             }
         ]
