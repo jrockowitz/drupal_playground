@@ -1,10 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "plan",
-  "agent": {
+  "agents": {
     "plan": {
       "model": "github-copilot/gpt-5.6-luna",
-      "variant": "max"
+      "variant": "default"
     }
   },
   "autoupdate": "notify",
@@ -23,55 +23,55 @@
     "skill": "allow",
     "bash": {
       "*": "ask",
-      "git *": "ask",
-      "ddev *": "allow",
-      "head *": "allow",
-      "tail *": "allow",
+      "awk *": "allow",
       "cat *": "allow",
-      "echo *": "allow",
       "composer *": "allow",
-      "mv *": "allow",
-      "ls *": "allow",
+      "composer show *": "allow",
+      "composer show": "allow",
+      "composer validate *": "allow",
+      "composer validate": "allow",
       "curl *": "allow",
-      "php *": "allow",            
-      "python3 *": "allow",            
-      "rg *": "allow",            
-      "grep *": "allow",
-      "find *": "allow",
-      "git status": "allow",
-      "git status *": "allow",
-      "git diff": "allow",
-      "git diff *": "allow",
-      "git log": "allow",
-      "git log *": "allow",
-      "git show *": "allow",
-      "git grep *": "allow",
-      "git ls-files *": "allow",
-      "ddev status": "allow",
+      "ddev *": "allow",
       "ddev checks *": "allow",
       "ddev checks-fixes *": "allow",
-      "ddev parallel-lint *": "allow",
-      "ddev phpcs *": "allow",
-      "ddev phpcbf *": "allow",
-      "ddev phpstan *": "allow",
-      "ddev phpmd *": "allow",
-      "ddev rector *": "allow",
-      "ddev phpunit *": "allow",
-      "ddev eslint *": "allow",
-      "ddev stylelint *": "allow",
+      "ddev checks-ignore *": "allow",
       "ddev cspell *": "allow",
+      "ddev eslint *": "allow",
       "ddev hook *": "allow",
-      "yarn *": "allow",
+      "ddev parallel-lint *": "allow",
+      "ddev phpcbf *": "allow",
+      "ddev phpcs *": "allow",
+      "ddev phpmd *": "allow",
+      "ddev phpstan *": "allow",
+      "ddev phpunit *": "allow",
+      "ddev rector *": "allow",
+      "ddev status": "allow",
+      "ddev stylelint *": "allow",
+      "echo *": "allow",
+      "find *": "allow",
+      "gh *": "allow",
+      "git *": "allow",
+      "grep *": "allow",
+      "head *": "allow",
+      "jq *": "allow",
+      "ls *": "allow",
+      "mkdir *": "allow",
+      "mv *": "allow",
       "npm *": "allow",
-      "composer validate": "allow",
-      "composer validate *": "allow",
-      "composer show": "allow",
-      "composer show *": "allow",
-      "vendor/bin/phpunit *": "allow",
+      "php *": "allow",
+      "printf *": "allow",
+      "python3 *": "allow",
+      "rg *": "allow",
+      "stat *": "allow",
+      "tail *": "allow",
+      "test *": "allow",
       "vendor/bin/phpcs *": "allow",
-      "vendor/bin/phpstan *": "allow",
       "vendor/bin/phpmd *": "allow",
-      "vendor/bin/rector *": "allow"
+      "vendor/bin/phpstan *": "allow",
+      "vendor/bin/phpunit *": "allow",
+      "vendor/bin/rector *": "allow",
+      "xargs *": "allow",
+      "yarn *": "allow"
     }
   },
   "lsp": {
@@ -87,13 +87,6 @@
     },
     "eslint": {
       "command": ["npx", "-y", "--package", "vscode-langservers-extracted", "vscode-eslint-language-server", "--stdio"]
-    }
-  },
-  "mcp": {
-    "playwright": {
-      "type": "local",
-      "enabled": true,
-      "command": ["npx", "-y", "@playwright/mcp"]
     }
   }
 }

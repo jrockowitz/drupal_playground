@@ -132,6 +132,7 @@ yarn-error.log
 /web/modules/sandbox/config_action_report
 /web/modules/sandbox/eca_report
 /web/modules/sandbox/entity_labels
+/web/modules/sandbox/entity_usage_root
 /web/modules/sandbox/field_data
 /web/modules/sandbox/local_tasks_more
 /web/modules/sandbox/menu_export_csv

@@ -29,6 +29,19 @@
         {
             "type": "package",
             "package": {
+                "name": "drupal/entity_usage_root",
+                "type": "drupal-module-sandbox",
+                "version": "1.0.x-dev",
+                "source": {
+                    "url": "git@git.drupal.org:project/entity_usage_root.git",
+                    "type": "git",
+                    "reference": "1.0.x"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
                 "name": "drupal/entity_labels",
                 "type": "drupal-module-sandbox",
                 "version": "1.0.x-dev",
@@ -251,6 +264,7 @@
     "require": {
         "drupal/ai_schemadotorg_jsonld": "*",
         "drupal/eca_report": "*",
+        "drupal/entity_usage_root": "*",
         "drupal/entity_labels": "*",
         "drupal/field_data": "*",
         "drupal/local_tasks_more": "*",
