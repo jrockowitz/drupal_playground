@@ -1,5 +1,5 @@
 {
-    "_hash": "ebcccbddb8638598a3a2b477144160bb9088308fe0e5be5c0753b969fb80fd92",
+    "_hash": "34e6ff5083ad7d35f4e3331f1874686062c51012f1ffc5ca23c6d070cf5865a9",
     "patches": {
         "drupal/config_rewrite": [
             {
@@ -104,7 +104,7 @@
                 "sha256": "0395a3488071793907c07c19ce46072f6154a0c309140a2bc377c44b71691c20",
                 "depth": 1,
                 "extra": {
-                    "provenance": "root"
+                    "provenance": "patches-file:composer.drupal_11.patches.json"
                 }
             }
         ],
@@ -116,7 +116,7 @@
                 "sha256": "a2e5866f2af4c1722833911103365443350cf27329d170d8a06e876853358d58",
                 "depth": 1,
                 "extra": {
-                    "provenance": "root"
+                    "provenance": "patches-file:composer.drupal_11.patches.json"
                 }
             }
         ],

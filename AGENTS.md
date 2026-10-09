@@ -8,6 +8,7 @@
 - Do not create Git worktrees. Work directly in the current repository or worktree.
 - All commits made by an AI agent should end with a note that reads: `AI-assisted by {code agent name}`.
 - Require me to review all changes before committing and pushing code.
+- When cloning repositories hosted on `git.drupalcode.org`, always use the SSH clone URL (`git@git.drupalcode.org:...`). Do not clone Drupal.org repositories over HTTPS.
 
 - All tickets and comments made by an AI agent should start with a note that reads: `AI-assisted by {code agent name}`.
 - Require me to review all tickets or comments and allow me to click save/submit.
@@ -34,6 +35,7 @@ ddev install [preset...]
 # Apply a Recipe from a path relative to the Drupal docroot
 ddev recipe-apply ../recipes/<recipe>
 ```
+
 
 # Architecture
 
