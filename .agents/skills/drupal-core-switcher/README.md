@@ -80,6 +80,75 @@ The patches overlay contains patch behavior that differs for the target major:
 Use the patch schema already used by the project's installed Composer Patches
 version. Report every patch added, replaced, or ignored.
 
+## Testing a new Drupal major
+
+New-major testing often needs three separate compatibility measures. They are
+not interchangeable:
+
+- **Composer Drupal Lenient** bypasses a package's declared Drupal core
+  constraint so Composer can resolve it. It does not change or validate the
+  package's code.
+- **A compatibility patch** may replace deprecated or removed APIs for the new
+  core major. Applying cleanly does not mean the patch is complete or that the
+  module works.
+- **`core_version_requirement`** advertises support to Drupal. Expand it only
+  after remaining static-analysis findings, automated tests, and runtime
+  behavior have been validated.
+
+Prefer a compatible upstream release first. When none exists, find the
+project's current “Automated Drupal VERSION compatibility fixes” issue, read
+the discussion, inspect the latest bot patch or MR, and confirm its target
+branch matches the package being installed.
+
+For example, Schema.org Blueprints issue
+[#3602690](https://www.drupal.org/project/schemadotorg/issues/3602690) contains
+automated Drupal 12 fixes. A corresponding lenient fragment could contain:
+
+```json
+{
+  "require": {
+    "mglaman/composer-drupal-lenient": "*"
+  },
+  "extra": {
+    "drupal-lenient": {
+      "allowed-list": [
+        "drupal/schemadotorg"
+      ]
+    }
+  }
+}
+```
+
+The matching patches fragment can reference the live bot MR diff using the
+expanded Composer Patches format:
+
+```json
+{
+  "extra": {
+    "patches": {
+      "drupal/schemadotorg": [
+        {
+          "description": "Issue #3602690: Automated Drupal 12 compatibility fixes",
+          "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/304.diff"
+        }
+      ]
+    }
+  }
+}
+```
+
+The Project Update Bot overwrites its branch, so this live `.diff` URL is
+intentionally mutable. Each switch regenerates `patches.lock.json`; whenever
+the recorded patch hash changes, inspect the MR diff and review the lock-file
+change before testing. The automated patch is generated using Upgrade Status
+and Drupal Rector, may be incomplete, and may intentionally omit an
+`info.yml` change.
+
+Run Upgrade Status, PHPStan, Rector, the module's automated tests, and manual
+smoke tests where available. Switch back and test the default Drupal major
+after any shared compatibility changes. Remove the lenient exception and live
+patch once a compatible upstream release includes the fixes.
+
 ### `composer.drupal_XX.sandbox.json`
 
 The sandbox overlay defines Composer repositories for Drupal sandbox projects

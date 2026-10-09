@@ -63,6 +63,37 @@ resolve. It is valid to update `composer.json`, shared fragments such as
 needed and valid on both the default and target versions. Preserve unrelated
 formatting and configuration, and verify every shared change on both versions.
 
+## New major compatibility
+
+For an unreleased or newly supported major such as Drupal 12:
+
+1. Prefer a contrib release whose declared core constraint includes the target.
+2. If no such release exists, add only that package to
+   `composer.drupal_VERSION.lenient.json`. Lenient permits dependency
+   resolution; it does not prove that the code is compatible.
+3. Search the project's issue queue for the current “Automated Drupal VERSION
+   compatibility fixes” issue. Read its full discussion and inspect its patch
+   or merge request before using it.
+4. Confirm the automated MR targets the branch used by the installed package.
+5. Add its live `.diff` URL to `composer.drupal_VERSION.patches.json` using the
+   project's expanded Composer Patches schema. For example, Schema.org
+   Blueprints issue [#3602690](https://www.drupal.org/project/schemadotorg/issues/3602690)
+   currently uses
+   `https://git.drupalcode.org/project/schemadotorg/-/merge_requests/304.diff`.
+6. Run the switch so Composer resolves the target dependencies, regenerates
+   `patches.lock.json`, and only then installs the patched packages.
+7. Inspect the applied diff and run compatibility analysis, automated tests,
+   and manual smoke tests. Successful resolution or patch application is not
+   evidence that the module works on the target major.
+
+Project Update Bot overwrites its branch, so a live MR diff can change between
+runs. Whenever its hash changes in `patches.lock.json`, inspect the new MR diff
+and review the lock change before continuing. Automated fixes may be incomplete
+and may deliberately leave `core_version_requirement` unchanged. Expand that
+metadata only after remaining findings and runtime behavior are validated.
+Remove lenient entries and compatibility patches when a compatible upstream
+release contains the fixes.
+
 ## Files to create or update
 
 1. Wire the applicable disabled overlay family into `composer.json` in the
@@ -128,8 +159,9 @@ After the target resolves:
 
 1. Confirm the direct core checks report the target major and the full installed
    Drupal version.
-2. Run the site's relevant checks, including `ddev code-review`, PHPStan, and
-   Rector when configured. Do not invent unavailable commands.
+2. Run the site's relevant checks, including Upgrade Status, `ddev code-review`,
+   PHPStan, Rector, module tests, and manual smoke tests when available. Do not
+   invent unavailable commands.
 3. Update custom project modules, recipes, and their tests as needed to support
    both versions. This includes `*.info.yml` `core_version_requirement` values,
    deprecated or removed APIs, service definitions, configuration, and
