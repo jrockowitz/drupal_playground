@@ -13,7 +13,7 @@
         "source": "https://www.drupal.org/sandbox/jrockowitz/3510477"
     },
     "require": {
-        "drupal/core": "^10.3 || ^11",
+        "drupal/core": "^10.3 || ^11 || ^12",
         "drupal/anchor_link": "^3.0",
         "drupal/asset_injector": "^2.0",
         "drupal/ckeditor5_paste_filter": "^1.0",
@@ -24,8 +24,6 @@
         "drupal/ckeditor5_plugin_pack": "^1.0",
         "drupal/embed": "1.x-dev",
         "drupal/entity_browser": "^2.0",
-        "drupal/embedded_content": "^2.0",
-        "drupal/embedded_content_examples-embedded_content_examples": "^2.0",
         "drupal/entity_embed": "^1.0",
         "drupal/entity_browser_enhanced": "^2.0",
         "drupal/link_attributes": "^2.0",

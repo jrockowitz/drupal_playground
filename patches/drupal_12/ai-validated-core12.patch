@@ -1,0 +1,29 @@
+--- a/tests/modules/ai_test/ai_test.info.yml
++++ b/tests/modules/ai_test/ai_test.info.yml
+@@ -2,7 +2,7 @@
+ type: module
+ description: Adds integrations for testing.
+ package: Testing
+-core_version_requirement: ^10.4 || ^11
++core_version_requirement: ^10.4 || ^11 || ^12
+ 
+ dependencies:
+   - ai:ai
+--- a/tests/src/Kernel/Service/AiValidatorTest.php
++++ b/tests/src/Kernel/Service/AiValidatorTest.php
+@@ -5,6 +5,7 @@
+ namespace Drupal\Tests\ai\Kernel\Service;
+ 
+ use Drupal\KernelTests\KernelTestBase;
++use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+ use Drupal\ai\Service\AiValidatorInterface;
+ 
+ /**
+@@ -12,6 +13,7 @@
+  *
+  * @group ai
+  */
++#[RunTestsInSeparateProcesses]
+ class AiValidatorTest extends KernelTestBase {
+ 
+   /**

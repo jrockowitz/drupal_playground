@@ -2,7 +2,8 @@
 name: drupal-core-switcher
 description: >-
   Use only when explicitly asked to switch between or test different Drupal
-  core major versions on a Composer-managed site in DDEV.
+  core major versions on a Composer-managed site in DDEV, repair broken patches,
+  or prepare compatibility support for a new Drupal major.
 ---
 
 # Drupal Core Switcher
@@ -35,7 +36,8 @@ the underscore-disabled overlay state may be committed.
 4. Check the target core's PHP minimum against DDEV's configured PHP. If it is
    insufficient, report the exact `.ddev/config.yaml` `php_version` change and
    ask before editing it.
-5. Explain the planned file changes and obtain confirmation before editing.
+5. Explain the planned changes. Continue within existing authorization; ask
+   only for choices outside the approved scope.
 
 ## Composer overlay model
 
@@ -61,32 +63,33 @@ resolve. It is valid to update `composer.json`, shared fragments such as
 needed and valid on both the default and target versions. Preserve unrelated
 formatting and configuration, and verify every shared change on both versions.
 
-## New major compatibility
+## First adoption of a new major
 
-For an unreleased or newly supported major such as Drupal 12:
+When the requested major has not been validated on this project, read
+[Adopting a new Drupal major](references/new-drupal-major.md). It covers
+branch selection, sandbox preservation, merged patch review, Git transport,
+installation recovery, runtime requirements, and database updates.
 
-1. Prefer a contrib release whose declared core constraint includes the target.
-2. If no such release exists, add only that package to
-   `composer.drupal_VERSION.lenient.json`. Lenient permits dependency
-   resolution; it does not prove that the code is compatible.
-3. Search the project's issue queue for the current “Automated Drupal VERSION
-   compatibility fixes” issue. Read its full discussion and inspect its patch
-   or merge request before using it.
-4. Confirm the automated MR targets the branch used by the installed package.
-5. Add its live `.diff` URL to `composer.drupal_VERSION.patches.json` using the
-   project's expanded Composer Patches schema. See
-   [README.md](README.md#testing-a-new-drupal-major) for a worked example.
-6. Run the switch, inspect the applied diff, and follow
-   [Resolve and verify](#resolve-and-verify). Successful resolution or patch
-   application is not evidence that the module works on the target major.
+## Routine switching and patch repair
 
-Project Update Bot overwrites its branch, so a live MR diff can change between
-runs. Whenever its hash changes in `patches.lock.json`, inspect the new MR diff
-and review the lock change before continuing. Automated fixes may be incomplete
-and may deliberately leave `core_version_requirement` unchanged. Expand that
-metadata only after remaining findings and runtime behavior are validated.
-Remove lenient entries and compatibility patches when a compatible upstream
-release contains the fixes.
+For a known target, use the existing overlay family. Do not repeat first-time
+upgrade discovery unless new compatibility blockers appear. The developer is
+responsible for snapshots, recoverable sandbox copies, and database backups;
+the DDEV command does not create or manage them. Confirm local source work is
+preserved before using `COMPOSER_DISCARD_CHANGES=true`.
+
+For a broken patch, inspect the merged definitions from root, recipes, and
+sandbox library fragments. Compare the installed package with the resolved
+lock, identify the patch's target branch, and check for upstream inclusion,
+overlap, schema problems, and missing distribution files before changing it.
+Sort project keys while preserving patch application and fragment merge order.
+Record provenance and relevant validation for each changed patch.
+
+Compare the previous patch lock and reviewed diff bytes when hashes change.
+Review changed upstream contents before installation. Use existing Composer
+commands to resolve, relock, review, and install separately when needed; add no
+review option or backup machinery to the DDEV command. For new compatibility
+blockers, read the new-major guide linked above.
 
 ## Files to create or update
 
@@ -97,11 +100,10 @@ release contains the fixes.
 3. Copy [templates/obsolete.patch](templates/obsolete.patch) to
    `patches/drupal_VERSION/obsolete.patch` when an obsolete root patch needs a
    non-applying target.
-4. If the switcher command is missing, copy
-   [templates/drupal-core-switcher](templates/drupal-core-switcher). If it
-   exists, preserve its site-specific hooks. Add a target-specific pre/post
-   `case` branch only when the site needs extra steps. Never hard-code a project
-   or container name.
+4. Use [.ddev/commands/host/drupal-core-switcher](../../../.ddev/commands/host/drupal-core-switcher)
+   as the command implementation. Preserve its site-specific hooks. Add a
+   target-specific pre/post `case` branch only when the site needs extra steps.
+   Use `$DDEV_SITENAME` for service or container names.
 
 The command must reject bad arguments with a nonzero exit. It disables every
 `composer.drupal_VERSION*.json` reference with Perl, enables every matching
@@ -115,8 +117,9 @@ ddev exec env COMPOSER_DISCARD_CHANGES=true /usr/local/bin/composer patches-relo
 ddev exec env COMPOSER_DISCARD_CHANGES=true /usr/local/bin/composer install
 ```
 
-This order rebuilds `patches.lock.json` from the target dependencies before
-installing and patching them.
+This is the command’s resolve → relock → install sequence. During manual patch
+review, pause between relock and install. Check dependency-provided patches
+against the resolved versions because installed fragments can still be older.
 
 When the user supplies `--no-interaction`, append it to the update and install
 commands. Parse it and `--updb` as independent options after `VERSION`, allowing
@@ -133,9 +136,11 @@ a missing overlay from being reported as a successful switch. After all
 optional work completes, use `get_drupal_version()` again to display the full
 installed Drupal version without depending on Drush.
 
-Run `ddev drush updb -y` only when `--updb` was supplied. Database updates may
-be destructive, so first recommend an appropriate backup and require the user
-to confirm before invoking the command with `--updb`.
+Run `ddev drush updb -y` only when requested and already authorized. The
+developer is responsible for the database backup; the command does not manage
+backups. Verify runtime and update requirements before invoking `--updb`;
+after success, confirm no updates remain pending and rebuild caches. Do not
+request authorization again when it was already provided.
 
 ## Resolve and verify
 
@@ -143,8 +148,8 @@ Run the switch without `--updb` first. Let Composer fail normally, then read its
 resolver output. Resolve failures using the
 [overlay rules above](#composer-overlay-model).
 Stop and involve the user when resolution requires removing a package,
-changing PHP, accepting a prerelease, or making another choice that changes
-project behavior.
+changing PHP, accepting an unapproved prerelease, or making another choice
+outside the authorized scope that changes project behavior.
 
 After the target resolves:
 
@@ -161,13 +166,17 @@ After the target resolves:
 4. Report contrib packages without a compatible release, all lenient
    exceptions, failing or obsolete patches, deprecated or removed core modules
    and their contrib replacements, and custom-code findings.
-5. Switch back to the baseline without `--updb` and confirm core reports the
-   baseline major.
-6. Disable all overlays again. Run `composer validate` and
-   `composer update --lock --dry-run` through `/usr/local/bin/composer` in DDEV.
+5. Unless the user requested leaving the target installed, switch back to the
+   baseline without `--updb` and confirm core reports the baseline major. After
+   database updates, establish compatibility or restore the matching backup
+   before restoring older code.
+6. When restoring the baseline, disable all overlays again. Run
+   `composer validate` and `composer update --lock --dry-run` through `/usr/local/bin/composer` in DDEV.
    Verify that target-only state is gone and the default build still resolves
    and works. Intentional shared compatibility changes may remain; review them
    separately from disabled switcher wiring with `git diff` and the user.
 
-If a command failed while an overlay was enabled, explicitly restore the
-underscore-disabled references before handing control back.
+If a command fails, preserve and report the actual overlay, lock, installed-code,
+and database state. Disabling references alone is not a rollback. Follow the
+user’s final-state preference and preserve a recoverable state; never commit
+enabled overlays or temporary target locks.

@@ -1,0 +1,130 @@
+{
+    "extra": {
+        "patches": {
+            "drupal/ai": [
+                {
+                    "description": "Issue #3586796: Drupal 12 compatibility for the installed branch",
+                    "url": "https://git.drupalcode.org/project/ai/-/merge_requests/2097.diff",
+                    "extra": {
+                        "issue-tracker-url": "https://www.drupal.org/project/ai/issues/3586796"
+                    }
+                },
+                {
+                    "description": "Declare Drupal 12 after AI test fixture for Drupal 12 integration tests",
+                    "url": "patches/drupal_12/ai-validated-core12.patch"
+                }
+            ],
+            "drupal/ai_logging": [
+                {
+                    "description": "Backport AI Logging MR !21 declaration to AI-compatible 1.3 branch and modernize isolated install test",
+                    "url": "patches/drupal_12/ai-logging-1-drupal12.patch",
+                    "extra": {
+                        "upstream-url": "https://git.drupalcode.org/project/ai_logging/-/merge_requests/21.diff",
+                        "note": "Upstream targets 2.0.x and requires AI 2; this local backport retains AI 1.3 APIs and is covered by the 1.3 kernel suite."
+                    }
+                }
+            ],
+            "drupal/ai_provider_openai": [
+                {
+                    "description": "Issue #3594765: Drupal 12 compatibility for the installed branch",
+                    "url": "https://git.drupalcode.org/project/ai_provider_openai/-/merge_requests/75.diff",
+                    "extra": {
+                        "issue-tracker-url": "https://www.drupal.org/project/ai_provider_openai/issues/3594765"
+                    }
+                }
+            ],
+            "drupal/coffee": [
+                {
+                    "description": "Issue #3594874: Drupal 12 compatibility for the installed branch",
+                    "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/30.diff",
+                    "extra": {
+                        "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3594874"
+                    }
+                }
+            ],
+            "drupal/core": [
+                {
+                    "description": "Issue #3574003: Avoid collecting legacy requirements hooks before install files are loaded",
+                    "url": "patches/drupal_12/core-3574003-requirements.patch",
+                    "depth": 2,
+                    "extra": {
+                        "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3574003",
+                        "upstream-url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14799.diff",
+                        "note": "Runtime hunks unchanged; test hunks omitted because drupal/core dist excludes tests."
+                    }
+                }
+            ],
+            "drupal/dashboard": [
+                {
+                    "description": "Issue #3596966: Drupal 12 compatibility for the installed branch",
+                    "url": "https://git.drupalcode.org/project/dashboard/-/merge_requests/83.diff",
+                    "extra": {
+                        "issue-tracker-url": "https://www.drupal.org/project/dashboard/issues/3596966"
+                    }
+                },
+                {
+                    "description": "Use requirement severity enum after Drupal 12 removes legacy constants",
+                    "url": "patches/drupal_12/dashboard-requirement-severity.patch"
+                }
+            ],
+            "drupal/devel": [
+                {
+                    "description": "Match Symfony 8 Command::interact() return type",
+                    "url": "patches/drupal_12/devel-symfony8-interact.patch"
+                },
+                {
+                    "description": "Use attribute discovery for Devel dumper plugins on Drupal 12",
+                    "url": "patches/drupal_12/devel-dumper-attributes.patch"
+                },
+                {
+                    "description": "Use attribute discovery for Devel Generate plugins on Drupal 12",
+                    "url": "patches/drupal_12/devel-generate-attributes.patch"
+                },
+                {
+                    "description": "Use requirement severity enum after Drupal 12 removes legacy constants",
+                    "url": "patches/drupal_12/devel-requirement-severity.patch"
+                }
+            ],
+            "drupal/key": [
+                {
+                    "description": "Issue #3484086: Attribute plugin discovery for Key 1.x on Drupal 12",
+                    "url": "https://git.drupalcode.org/project/key/-/merge_requests/34.diff"
+                },
+                {
+                    "description": "Issue #3599449: Drupal 12 compatibility for Key 1.x",
+                    "url": "https://git.drupalcode.org/project/key/-/merge_requests/73.diff"
+                }
+            ],
+            "drupal/project_browser": [
+                {
+                    "description": "Issue #3622921: Implement getModulesToInstall in the test module installer",
+                    "url": "https://git.drupalcode.org/project/project_browser/-/merge_requests/889.diff"
+                }
+            ],
+            "drupal/queue_ui": [
+                {
+                    "description": "Issue #3602278: PHPUnit attributes for Queue UI 4 development branch; runtime compatibility requires separate validation",
+                    "url": "https://git.drupalcode.org/project/queue_ui/-/merge_requests/65.diff"
+                },
+                {
+                    "description": "Declare Drupal 12 after Queue UI kernel and administration smoke tests",
+                    "url": "patches/drupal_12/queue_ui-validated-core12.patch"
+                }
+            ],
+            "drupal/type_tray": [
+                {
+                    "description": "Issue #3604381: Drupal 12 compatibility for Type Tray development branch",
+                    "url": "https://git.drupalcode.org/project/type_tray/-/merge_requests/38.diff"
+                },
+                {
+                    "description": "Declare Drupal 12 after Type Tray kernel, settings and plugin smoke tests",
+                    "url": "patches/drupal_12/type_tray-validated-core12.patch"
+                },
+                {
+                    "description": "Allow Views category filtering before categories are configured, with regression coverage",
+                    "url": "patches/drupal_12/type-tray-missing-categories.patch"
+                }
+            ]
+        }
+    }
+}

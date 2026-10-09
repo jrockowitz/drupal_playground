@@ -7,6 +7,7 @@ namespace Drupal\Tests\clinical_trials_gov\Unit;
 use Drupal\clinical_trials_gov\ClinicalTrialsGovApi;
 use Drupal\Tests\UnitTestCase;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -156,7 +157,7 @@ class ClinicalTrialsGovApiTest extends UnitTestCase {
 
     };
 
-    $too_many_requests = new RequestException(
+    $too_many_requests = new ClientException(
       'Too many requests',
       new Request('GET', '/studies'),
       new Response(429, ['Retry-After' => '1'])

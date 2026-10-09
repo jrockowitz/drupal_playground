@@ -12,61 +12,9 @@
           "reference": "6.2.x"
         }
       }
-    },
-    {
-      "type": "package",
-      "package": {
-        "name": "drupal/schemadotorg",
-        "type": "drupal-module-sandbox",
-        "version": "1.0.x-dev",
-        "source": {
-          "url": "git@git.drupal.org:project/schemadotorg.git",
-          "type": "git",
-          "reference": "1.0.x"
-        }
-      }
-    },
-    {
-      "type": "package",
-      "package": {
-        "name": "drupal/schemadotorg_experimental",
-        "type": "drupal-module-sandbox",
-        "version": "1.0.x-dev",
-        "source": {
-          "url": "git@git.drupal.org:project/schemadotorg_experimental.git",
-          "type": "git",
-          "reference": "1.0.x"
-        }
-      }
-    },
-    {
-      "type": "package",
-      "package": {
-        "name": "drupal/schemadotorg_deprecated",
-        "type": "drupal-module-sandbox",
-        "version": "1.0.x-dev",
-        "source": {
-          "url": "git@git.drupal.org:project/schemadotorg_deprecated.git",
-          "type": "git",
-          "reference": "1.0.x"
-        }
-      }
     }
   ],
   "require": {
-    "drupal/schemadotorg": "1.0.x-dev",
-    "drupal/schemadotorg_deprecated": "1.0.x-dev",
-    "drupal/schemadotorg_experimental": "1.0.x-dev",
     "drupal/webform": "6.2.x-dev"
-  },
-  "extra": {
-    "merge-plugin": {
-      "include": [
-        "web/modules/sandbox/schemadotorg/composer.json",
-        "web/modules/sandbox/schemadotorg_deprecated/composer.json",
-        "web/modules/sandbox/schemadotorg_experimental/composer.json",
-        "web/modules/sandbox/webform/composer.json"
-      ]
-    }
   }
 }

@@ -6,7 +6,7 @@ namespace Drupal\clinical_trials_gov;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\BadResponseException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -74,21 +74,21 @@ class ClinicalTrialsGovApi implements ClinicalTrialsGovApiInterface {
       return FALSE;
     }
 
-    if (!$exception instanceof RequestException) {
+    if (!$exception instanceof BadResponseException) {
       return FALSE;
     }
 
     $response = $exception->getResponse();
-    return ($response && ($response->getStatusCode() === 429));
+    return $response->getStatusCode() === 429;
   }
 
   /**
    * Returns the retry delay for a failed request.
    */
   protected function getRetryDelayMicroseconds(GuzzleException $exception, int $attempt): int {
-    if ($exception instanceof RequestException) {
+    if ($exception instanceof BadResponseException) {
       $response = $exception->getResponse();
-      $retry_after = $response?->getHeaderLine('Retry-After');
+      $retry_after = $response->getHeaderLine('Retry-After');
       if (is_numeric($retry_after)) {
         return max(0, (int) $retry_after) * 1000000;
       }

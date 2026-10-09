@@ -1,7 +1,54 @@
 {
-    "_hash": "94fc38989a1f9e205cf8defbcdf6a7e08acaff1a1a3bb7572cd13b7ce7f4ef7a",
+    "_hash": "cae0bfb57854bbc06c95c6e7d2471d76723bc7bef2042569ba6a1568ecc86066",
     "patches": {
+        "drupal/address": [
+            {
+                "package": "drupal/address",
+                "description": "Issue #2819251: generateSampleValue",
+                "url": "https://www.drupal.org/files/issues/2024-09-10/address-issue-2819251-comment-9.patch",
+                "sha256": "9b00869bf124d5177fa07213751c08c2683eccc7dc1400618c951549ae111736",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/cer": [
+            {
+                "package": "drupal/cer",
+                "description": "Issue #2998138: Could support Remove field name prefix module?",
+                "url": "https://www.drupal.org/files/issues/2026-07-13/cer-issue-2998138-comment-20.patch",
+                "sha256": "51a76ffa3508f7bf23d8403aacbe4c56d5f3463cc3ea8c098f9d91e23a88829a",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
         "drupal/core": [
+            {
+                "package": "drupal/core",
+                "description": "Issue #3345064: Media library field_widget_id is not unique enough",
+                "url": "https://www.drupal.org/files/issues/2023-02-28/3345064.patch",
+                "sha256": "9b2749b9478d994cda95e3095e7ad86ea5469be8e28be4e6ae06050d7c04dd87",
+                "depth": 2,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/core",
+                "description": "Issue #3574003: Avoid collecting legacy requirements hooks before install files are loaded",
+                "url": "patches/drupal_12/core-3574003-requirements.patch",
+                "sha256": "3c86e82addd49a241ecffb9c76a26f26bf68ef8b27450e203407c0d51e718c4b",
+                "depth": 2,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3574003",
+                    "upstream-url": "https://git.drupalcode.org/project/drupal/-/merge_requests/14799.diff",
+                    "note": "Runtime hunks unchanged; test hunks omitted because drupal/core dist excludes tests.",
+                    "provenance": "root"
+                }
+            },
             {
                 "package": "drupal/core",
                 "description": "Page scrolls away on modifying fields in text formats and editor form.",
@@ -11,6 +58,267 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776",
                     "provenance": "dependency:drupal/core"
+                }
+            }
+        ],
+        "drupal/entity_reference_revisions": [
+            {
+                "package": "drupal/entity_reference_revisions",
+                "description": "Issue #3265084: EntityReferenceRevisionsItem:generateSampleValue can break when all bundle types are allowed",
+                "url": "https://www.drupal.org/files/issues/2022-02-18/treat-no-selection-as-all-3265084-2.patch",
+                "sha256": "4260fcb209e9cb45816005f9662ed37773e75c09160c4e6ee475abe2c6d99955",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/jsonapi_extras": [
+            {
+                "package": "drupal/jsonapi_extras",
+                "description": "Issue #3608182: Array to string conversion warning during route rebuild on Drupal 11.4",
+                "url": "https://www.drupal.org/files/issues/2026-07-03/array_to_string_conv-3608182-2.patch",
+                "sha256": "d6e084fd3331ac7af76ecc31c377e253e056c2d1021a4da0aa79252607e47c0a",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/type_tray": [
+            {
+                "package": "drupal/type_tray",
+                "description": "Issue #3417679: Add type tray icon to node edit and related tasks",
+                "url": "patches/type-tray-title.patch",
+                "sha256": "d3ed1357ac37720c4e50d155ef399b7ac814dcbf9bcbf8c0177f22d61d882078",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/type_tray",
+                "description": "Issue #3604381: Drupal 12 compatibility for Type Tray development branch",
+                "url": "https://git.drupalcode.org/project/type_tray/-/merge_requests/38.diff",
+                "sha256": "776d9b1f99555e7979e7dc4910324a10ea66ae6de37dd77720ef972498276a2b",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/type_tray",
+                "description": "Declare Drupal 12 after Type Tray kernel, settings and plugin smoke tests",
+                "url": "patches/drupal_12/type_tray-validated-core12.patch",
+                "sha256": "3c42be4d5498a53176302571c0196f1783e3f77c8cef27ac084ebf45162f478c",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/type_tray",
+                "description": "Allow Views category filtering before categories are configured, with regression coverage",
+                "url": "patches/drupal_12/type-tray-missing-categories.patch",
+                "sha256": "c3ed539a04a8a67055aeabd3ecbaf0c6e0a08741ff69939ea31a7922b4475e87",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/ai": [
+            {
+                "package": "drupal/ai",
+                "description": "Issue #3586796: Drupal 12 compatibility for the installed branch",
+                "url": "https://git.drupalcode.org/project/ai/-/merge_requests/2097.diff",
+                "sha256": "328f3f9d10ddfb49e09502969b7d5225df31d0700b090ce8c33b656844b857c0",
+                "depth": 1,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/ai/issues/3586796",
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/ai",
+                "description": "Declare Drupal 12 after AI test fixture for Drupal 12 integration tests",
+                "url": "patches/drupal_12/ai-validated-core12.patch",
+                "sha256": "4b94db25012811a580cc0995ec3fa8a24eb601c93e0406f1bc73c2b6b402c04b",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/ai_logging": [
+            {
+                "package": "drupal/ai_logging",
+                "description": "Backport AI Logging MR !21 declaration to AI-compatible 1.3 branch and modernize isolated install test",
+                "url": "patches/drupal_12/ai-logging-1-drupal12.patch",
+                "sha256": "71237fffb0968116e3786f9a0a1be4314041496dc152394e41a7b582bcd5f53a",
+                "depth": 1,
+                "extra": {
+                    "upstream-url": "https://git.drupalcode.org/project/ai_logging/-/merge_requests/21.diff",
+                    "note": "Upstream targets 2.0.x and requires AI 2; this local backport retains AI 1.3 APIs and is covered by the 1.3 kernel suite.",
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/ai_provider_openai": [
+            {
+                "package": "drupal/ai_provider_openai",
+                "description": "Issue #3594765: Drupal 12 compatibility for the installed branch",
+                "url": "https://git.drupalcode.org/project/ai_provider_openai/-/merge_requests/75.diff",
+                "sha256": "ed08acfe3858c14625419ee695dcb50f73a5d45a040f0c97fc09b2bdbf3599c3",
+                "depth": 1,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/ai_provider_openai/issues/3594765",
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/coffee": [
+            {
+                "package": "drupal/coffee",
+                "description": "Issue #3594874: Drupal 12 compatibility for the installed branch",
+                "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/30.diff",
+                "sha256": "d75f634b6f39c88efbca66ef6adae5b4fd6938ed6084b549248b3b81148e0147",
+                "depth": 1,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3594874",
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/coffee",
+                "description": "Add Navigation TopBar integration for Gin toolbar",
+                "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/27.diff",
+                "sha256": "e6f9cdc4938ba4c5a830d51a02070b9a50b7fe635434d7b85c28b2cdb64ddbb0",
+                "depth": 1,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874",
+                    "provenance": "dependency:drupal/coffee"
+                }
+            }
+        ],
+        "drupal/dashboard": [
+            {
+                "package": "drupal/dashboard",
+                "description": "Issue #3596966: Drupal 12 compatibility for the installed branch",
+                "url": "https://git.drupalcode.org/project/dashboard/-/merge_requests/83.diff",
+                "sha256": "bc9aae6fbce170bd44deac6586eb6c2e88f33d2b50e48318aa796e4de7574e02",
+                "depth": 1,
+                "extra": {
+                    "issue-tracker-url": "https://www.drupal.org/project/dashboard/issues/3596966",
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/dashboard",
+                "description": "Use requirement severity enum after Drupal 12 removes legacy constants",
+                "url": "patches/drupal_12/dashboard-requirement-severity.patch",
+                "sha256": "8f0e3c834da1c96e2dd41b107b9bfa521c78c9b0bde268c470624827ef2c0036",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/devel": [
+            {
+                "package": "drupal/devel",
+                "description": "Match Symfony 8 Command::interact() return type",
+                "url": "patches/drupal_12/devel-symfony8-interact.patch",
+                "sha256": "c0d7d6b296ef48e9aad3bccc06abd6b1fdf88a2e344162f5e49b70f2686ccb1c",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/devel",
+                "description": "Use attribute discovery for Devel dumper plugins on Drupal 12",
+                "url": "patches/drupal_12/devel-dumper-attributes.patch",
+                "sha256": "7dcc84bc71cb9cef2f06eb214428f0c8a7cd3e1a533c71d0b6ce74b3684461ba",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/devel",
+                "description": "Use attribute discovery for Devel Generate plugins on Drupal 12",
+                "url": "patches/drupal_12/devel-generate-attributes.patch",
+                "sha256": "6e3a07d9aba49f075df2edd4fad559127282b33a13e4db259d5877dda4de9dee",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/devel",
+                "description": "Use requirement severity enum after Drupal 12 removes legacy constants",
+                "url": "patches/drupal_12/devel-requirement-severity.patch",
+                "sha256": "97757ac3fb13d1f964309a9cefa817498ae085bc5068b0e0b388436034a06a70",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/key": [
+            {
+                "package": "drupal/key",
+                "description": "Issue #3484086: Attribute plugin discovery for Key 1.x on Drupal 12",
+                "url": "https://git.drupalcode.org/project/key/-/merge_requests/34.diff",
+                "sha256": "9a8f580a38af2f21e3c498471caac2f8fad32d962b385be5f48835012b3ec58a",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/key",
+                "description": "Issue #3599449: Drupal 12 compatibility for Key 1.x",
+                "url": "https://git.drupalcode.org/project/key/-/merge_requests/73.diff",
+                "sha256": "68d4122e4190ff74b7cdc2010a46fb13238d18b88764f36865d8100b19938395",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/project_browser": [
+            {
+                "package": "drupal/project_browser",
+                "description": "Issue #3622921: Implement getModulesToInstall in the test module installer",
+                "url": "https://git.drupalcode.org/project/project_browser/-/merge_requests/889.diff",
+                "sha256": "56fb6668c88cf2d6dc81d91a2cc85d0dae112d5d83053230fe18402674cfdf8a",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/queue_ui": [
+            {
+                "package": "drupal/queue_ui",
+                "description": "Issue #3602278: PHPUnit attributes for Queue UI 4 development branch; runtime compatibility requires separate validation",
+                "url": "https://git.drupalcode.org/project/queue_ui/-/merge_requests/65.diff",
+                "sha256": "d3ddb938a751be430f3bb5008bc58a22c328eded05aafe42463844983d2e9faf",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            },
+            {
+                "package": "drupal/queue_ui",
+                "description": "Declare Drupal 12 after Queue UI kernel and administration smoke tests",
+                "url": "patches/drupal_12/queue_ui-validated-core12.patch",
+                "sha256": "2abfecf650d44503648b73cff7fd18cc3f49f79855928b95364a97fa4328afc3",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
                 }
             }
         ],
@@ -24,19 +332,6 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/environment_indicator/issues/3457688",
                     "provenance": "dependency:drupal/environment_indicator"
-                }
-            }
-        ],
-        "drupal/coffee": [
-            {
-                "package": "drupal/coffee",
-                "description": "Add Navigation TopBar integration for Gin toolbar",
-                "url": "https://git.drupalcode.org/project/coffee/-/merge_requests/27.diff",
-                "sha256": "e6f9cdc4938ba4c5a830d51a02070b9a50b7fe635434d7b85c28b2cdb64ddbb0",
-                "depth": 1,
-                "extra": {
-                    "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874",
-                    "provenance": "dependency:drupal/coffee"
                 }
             }
         ]

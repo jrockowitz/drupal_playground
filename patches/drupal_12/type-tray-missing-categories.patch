@@ -1,0 +1,50 @@
+--- a/src/Plugin/views/filter/TypeTrayCategoryFilter.php
++++ b/src/Plugin/views/filter/TypeTrayCategoryFilter.php
+@@ -43,7 +43,7 @@
+    */
+   public function getValueOptions() {
+     if (!isset($this->valueOptions)) {
+-      $options = $this->configFactory->get('type_tray.settings')->get('categories');
++      $options = $this->configFactory->get('type_tray.settings')->get('categories') ?? [];
+       asort($options);
+       $this->valueOptions = $options;
+     }
+--- /dev/null
++++ b/tests/src/Kernel/TypeTrayCategoryFilterTest.php
+@@ -0,0 +1,36 @@
++<?php
++
++declare(strict_types=1);
++
++namespace Drupal\Tests\type_tray\Kernel;
++
++use Drupal\KernelTests\KernelTestBase;
++use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
++
++/**
++ * Covers category filters on sites upgraded before categories were configured.
++ */
++#[RunTestsInSeparateProcesses]
++class TypeTrayCategoryFilterTest extends KernelTestBase {
++
++  protected static $modules = ['system', 'user', 'field', 'text', 'filter', 'node', 'views', 'type_tray'];
++
++  /**
++   * Missing category configuration must not crash the Views filter.
++   */
++  public function testMissingCategories(): void {
++    $this->config('type_tray.settings')->clear('categories')->save();
++    $filter = $this->container->get('plugin.manager.views.filter')->createInstance('type_tray_category');
++    $this->assertSame([], $filter->getValueOptions());
++  }
++
++  /**
++   * Configured categories remain sorted for the Views options list.
++   */
++  public function testConfiguredCategories(): void {
++    $this->config('type_tray.settings')->set('categories', ['z' => 'Zulu', 'a' => 'Alpha'])->save();
++    $filter = $this->container->get('plugin.manager.views.filter')->createInstance('type_tray_category');
++    $this->assertSame(['a' => 'Alpha', 'z' => 'Zulu'], $filter->getValueOptions());
++  }
++
++}

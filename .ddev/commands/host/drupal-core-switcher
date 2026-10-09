@@ -53,19 +53,17 @@ composer() {
 }
 
 # Read Drupal's full version directly from core so version detection does not
-# depend on Drush or a working Drupal bootstrap. Support common docroots.
+# depend on Drush or a working Drupal bootstrap.
 get_drupal_version() {
-  ddev exec php -r '
-foreach (["web/core/lib/Drupal.php", "docroot/core/lib/Drupal.php"] as \$file) {
-  if (is_file(\$file)) {
-    require_once \$file;
-    echo \Drupal::VERSION, PHP_EOL;
-    exit(0);
-  }
+  local drupal_php="${DDEV_DOCROOT:-.}/core/lib/Drupal.php"
+  ddev exec php -r "
+if (!is_file('${drupal_php}')) {
+  fwrite(STDERR, 'Could not find ${drupal_php}' . PHP_EOL);
+  exit(1);
 }
-fwrite(STDERR, "Could not find Drupal.php\n");
-exit(1);
-'
+require_once '${drupal_php}';
+echo \\Drupal::VERSION, PHP_EOL;
+"
 }
 
 get_drupal_major_version() {
@@ -77,11 +75,10 @@ get_drupal_major_version() {
 # Add a version branch before the wildcard when a project needs steps such as
 # uninstalling a module whose update hook cannot run on the target version.
 case "${TARGET_DRUPAL_VERSION}" in
-  10)
-    # Drupal 10.
-    ;;
-  11)
-    # Drupal 11.
+  10|11)
+    # Remove the Text with Summary module via config since it can be uninstalled if it is in use.
+    ddev drush config:delete core.extension module.text_with_summary;
+    ddev drush cr
     ;;
   12)
     # Drupal 12.
@@ -97,23 +94,20 @@ esac
 perl -pi -e 's/"composer\.drupal_(\d+)([^"\n]*)\.json"/"_composer.drupal_$1$2.json"/g' composer.json
 perl -pi -e "s/\"_composer\\.drupal_${TARGET_DRUPAL_VERSION}([^\"\\n]*)\\.json\"/\"composer.drupal_${TARGET_DRUPAL_VERSION}\$1.json\"/g" composer.json
 
-# Make sure the host sees every file the container changed.
+# Make sure the container sees the composer.json changes made on the host.
 ddev mutagen sync >/dev/null 2>&1 || true
 
 # Resolve the requested dependency set without installing it. The -W flag is
 # needed to update transitive dependencies required by the target core version.
-COMPOSER_UPDATE_ARGUMENTS=(update -W --no-install)
-COMPOSER_INSTALL_ARGUMENTS=(install)
-if [ -n "${COMPOSER_NO_INTERACTION}" ]; then
-  COMPOSER_UPDATE_ARGUMENTS+=("${COMPOSER_NO_INTERACTION}")
-  COMPOSER_INSTALL_ARGUMENTS+=("${COMPOSER_NO_INTERACTION}")
-fi
-composer "${COMPOSER_UPDATE_ARGUMENTS[@]}"
+composer update -W --no-install ${COMPOSER_NO_INTERACTION:+"$COMPOSER_NO_INTERACTION"}
 
 # Rebuild the patch lock from the newly resolved dependency set, then install
 # it so only patches applicable to the target version are applied.
 composer patches-relock --no-interaction
-composer "${COMPOSER_INSTALL_ARGUMENTS[@]}"
+composer install ${COMPOSER_NO_INTERACTION:+"$COMPOSER_NO_INTERACTION"}
+
+# Make sure the host sees every file Composer changed in the container.
+ddev mutagen sync >/dev/null 2>&1 || true
 
 # Composer may select the default build when no matching overlay is wired.
 # Fail before restoring a database unless Composer installed the requested major.
@@ -132,7 +126,9 @@ case "${TARGET_DRUPAL_VERSION}" in
     # Drupal 11.
     ;;
   12)
-    # Drupal 12.
+    # Drupal 12 moved Text with Summary from core to a contributed module.
+    ddev drush pm:enable text_with_summary -y
+    ddev drush cache:rebuild
     ;;
   *)
     # Other versions.

@@ -1,0 +1,51 @@
+--- /dev/null
++++ b/src/Attribute/DevelDumper.php
+@@ -0,0 +1,23 @@
++<?php
++
++namespace Drupal\devel\Attribute;
++
++use Drupal\Component\Plugin\Attribute\Plugin;
++use Drupal\Core\StringTranslation\TranslatableMarkup;
++
++/**
++ * Defines a Devel dumper plugin.
++ */
++#[\Attribute(\Attribute::TARGET_CLASS)]
++class DevelDumper extends Plugin {
++
++  /**
++   * Constructs a Devel dumper attribute.
++   */
++  public function __construct(
++    public readonly string $id,
++    public readonly TranslatableMarkup $label,
++    public readonly TranslatableMarkup $description,
++  ) {}
++
++}
+--- a/src/DevelDumperPluginManager.php
++++ b/src/DevelDumperPluginManager.php
+@@ -29,7 +29,7 @@
+    *   The module handler to invoke the alter hook with.
+    */
+   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
+-    parent::__construct('Plugin/Devel/Dumper', $namespaces, $module_handler, DevelDumperInterface::class, DevelDumper::class);
++    parent::__construct('Plugin/Devel/Dumper', $namespaces, $module_handler, DevelDumperInterface::class, \Drupal\devel\Attribute\DevelDumper::class, DevelDumper::class);
+     $this->setCacheBackend($cache_backend, 'devel_dumper_plugins');
+     $this->alterInfo('devel_dumper_info');
+   }
+--- a/src/Plugin/Devel/Dumper/VarDumper.php
++++ b/src/Plugin/Devel/Dumper/VarDumper.php
+@@ -17,6 +17,11 @@
+  *   description = @Translation("Wrapper for <a href='https://github.com/symfony/var-dumper'>Symfony var-dumper</a> debugging tool."),
+  * )
+  */
++#[\Drupal\devel\Attribute\DevelDumper(
++  id: 'var_dumper',
++  label: new \Drupal\Core\StringTranslation\TranslatableMarkup('Symfony var-dumper'),
++  description: new \Drupal\Core\StringTranslation\TranslatableMarkup("Wrapper for <a href='https://github.com/symfony/var-dumper'>Symfony var-dumper</a> debugging tool."),
++)]
+ class VarDumper extends DevelDumperBase {
+ 
+   /**

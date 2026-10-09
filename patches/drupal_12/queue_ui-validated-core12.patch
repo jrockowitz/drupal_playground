@@ -1,0 +1,9 @@
+--- a/queue_ui.info.yml
++++ b/queue_ui.info.yml
+@@ -2,5 +2,5 @@
+ type: module
+ description: Interface and manager for Drupal queues.
+ package: Queues
+-core_version_requirement: ^10.3 || ^11.0
++core_version_requirement: ^10.3 || ^11.0 || ^12
+ configure: queue_ui.overview_form

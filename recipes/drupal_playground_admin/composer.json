@@ -5,12 +5,12 @@
     "version": "1.0.0",
     "require": {
         "drupal/coffee": "^2",
-        "drupal/core": "^10 || ^11",
+        "drupal/core": "^10 || ^11 || ^12",
         "drupal/dashboard": "^2",
         "drupal/environment_indicator": "^5",
         "drupal/navigation_extra_tools": "^1",
         "drupal/type_tray": "^1",
-        "drupal/queue_ui": "^3",
+        "drupal/queue_ui": "^3 || ^4",
         "drupal/masquerade": "^2"
     },
     "extra": {

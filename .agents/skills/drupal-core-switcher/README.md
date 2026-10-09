@@ -11,6 +11,9 @@ The normal build remains the default because every overlay is wired into
 `_composer.drupal_12.json`. The DDEV command temporarily removes that
 underscore for the requested major and runs Composer.
 
+The command implementation is
+[.ddev/commands/host/drupal-core-switcher](../../../.ddev/commands/host/drupal-core-switcher).
+
 ## Usage
 
 ```bash
@@ -20,12 +23,16 @@ ddev drupal-core-switcher 12 --updb
 ```
 
 Run without `--updb` first and resolve Composer failures in the overlay family.
-Use `--updb` only after confirming an appropriate database backup exists.
+Use `--updb` only after requirements pass and database updates are authorized.
+Snapshots, sandbox preservation, and database backups are the developer’s
+responsibility. The command does not manage backups or patch-review checkpoints.
+`COMPOSER_DISCARD_CHANGES=true` can discard local source changes.
 
 An enabled overlay and the resulting `composer.lock` are temporary test state.
-Never commit them. Switch back to the default major and verify every overlay
-include has its underscore before committing the disabled wiring and support
-files.
+Never commit them. Honor the user’s chosen final state. Before committing
+disabled wiring and support files, restore and verify the default build and
+ensure every overlay include has its underscore. Leaving the target installed
+keeps its enabled overlays and target locks uncommitted.
 
 ## Where compatibility changes belong
 
@@ -78,7 +85,9 @@ or development branches that are not discoverable as suitable releases from
 the normal repositories. It is commonly used for modules checked out under
 `web/modules/sandbox`.
 
-Use Drupal.org SSH source URLs and define only packages needed by that target.
+Use `git@git.drupal.org:` SSH source URLs and define only packages needed by
+that target. Keep shared definitions in the shared sandbox fragment; add a
+target sandbox fragment only for genuine target-specific definitions.
 Keep ordinary package constraints in the main overlay unless the constraint is
 part of the sandbox package definition itself.
 
@@ -107,74 +116,21 @@ The patches overlay contains patch behavior that differs for the target major:
 Use the patch schema already used by the project's installed Composer Patches
 version. Report every patch added, replaced, or ignored.
 
-## Testing a new Drupal major
+## First adoption of a new Drupal major
 
-New-major testing often needs three separate compatibility measures. They are
-not interchangeable:
+Read [Adopting a new Drupal major](references/new-drupal-major.md) when adding
+support for a major that this project has not yet validated. The guide covers
+compatible releases and development branches, patch provenance and hash review,
+sandbox preservation, SSH endpoints, installation recovery, and runtime and
+database validation.
 
-- **Composer Drupal Lenient** bypasses a package's declared Drupal core
-  constraint so Composer can resolve it. It does not change or validate the
-  package's code.
-- **A compatibility patch** may replace deprecated or removed APIs for the new
-  core major. Applying cleanly does not mean the patch is complete or that the
-  module works.
-- **`core_version_requirement`** advertises support to Drupal. Expand it only
-  after remaining static-analysis findings, automated tests, and runtime
-  behavior have been validated.
-
-Prefer a compatible upstream release first. When none exists, find the
-project's current “Automated Drupal VERSION compatibility fixes” issue, read
-the discussion, inspect the latest bot patch or MR, and confirm its target
-branch matches the package being installed.
-
-For example, Schema.org Blueprints issue
-[#3602690](https://www.drupal.org/project/schemadotorg/issues/3602690) contains
-automated Drupal 12 fixes. A corresponding lenient fragment could contain:
-
-```json
-{
-  "require": {
-    "mglaman/composer-drupal-lenient": "*"
-  },
-  "extra": {
-    "drupal-lenient": {
-      "allowed-list": [
-        "drupal/schemadotorg"
-      ]
-    }
-  }
-}
-```
-
-The matching patches fragment can reference the live bot MR diff using the
-expanded Composer Patches format:
-
-```json
-{
-  "extra": {
-    "patches": {
-      "drupal/schemadotorg": [
-        {
-          "description": "Issue #3602690: Automated Drupal 12 compatibility fixes",
-          "url": "https://git.drupalcode.org/project/schemadotorg/-/merge_requests/304.diff"
-        }
-      ]
-    }
-  }
-}
-```
-
-The Project Update Bot overwrites its branch, so this live `.diff` URL is
-intentionally mutable. Each switch regenerates `patches.lock.json`; whenever
-the recorded patch hash changes, inspect the MR diff and review the lock-file
-change before testing. The automated patch is generated using Upgrade Status
-and Drupal Rector, may be incomplete, and may intentionally omit an
-`info.yml` change.
-
-Run Upgrade Status, PHPStan, Rector, the module's automated tests, and manual
-smoke tests where available. Switch back and test the default Drupal major
-after any shared compatibility changes. Remove the lenient exception and live
-patch once a compatible upstream release includes the fixes.
+Routine switching and repairs to known patches use the existing overlays.
+Inspect patches from all merged fragments, and confirm their target branches
+match the packages selected. Review changed patch contents after relocking and
+before installing, using separate existing Composer commands when needed. Sort
+project keys while preserving patch application and fragment merge order.
+Record upstream provenance, local modifications, validation, and removal
+conditions for changed patches.
 
 ## Merge order
 
@@ -194,6 +150,6 @@ Configure the merge plugin with `replace: true`, `merge-extra: true`, and
 The switcher enables or disables every `composer.drupal_XX*.json` entry as a
 group, so optional variants may be absent. It first resolves the target
 dependency set with `composer update -W --no-install`, then regenerates
-`patches.lock.json`, and finally installs the resolved packages. This ensures
-the patch lock is based on the target major's dependencies rather than the
-previously installed version.
+`patches.lock.json`, and finally installs the resolved packages. Inspect dependency-provided patches against the resolved package versions:
+installed dependency fragments may still describe the previous version during
+relocking. The new-major guide explains the manual review and recovery steps.
