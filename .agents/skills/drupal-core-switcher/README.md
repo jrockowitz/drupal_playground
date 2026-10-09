@@ -11,6 +11,22 @@ The normal build remains the default because every overlay is wired into
 `_composer.drupal_12.json`. The DDEV command temporarily removes that
 underscore for the requested major and runs Composer.
 
+## Usage
+
+```bash
+ddev drupal-core-switcher 12
+ddev drupal-core-switcher 12 --no-interaction
+ddev drupal-core-switcher 12 --updb
+```
+
+Run without `--updb` first and resolve Composer failures in the overlay family.
+Use `--updb` only after confirming an appropriate database backup exists.
+
+An enabled overlay and the resulting `composer.lock` are temporary test state.
+Never commit them. Switch back to the default major and verify every overlay
+include has its underscore before committing the disabled wiring and support
+files.
+
 ## Where compatibility changes belong
 
 Use a version-specific `composer.drupal_XX*.json` overlay when a constraint,
@@ -54,6 +70,17 @@ The main overlay contains the target's ordinary Composer overrides:
 Keep only values that differ from the root build. Do not copy the entire root
 `composer.json`, and never change its baseline constraints to resolve the
 target version.
+
+### `composer.drupal_XX.sandbox.json`
+
+The sandbox overlay defines Composer repositories for Drupal sandbox projects
+or development branches that are not discoverable as suitable releases from
+the normal repositories. It is commonly used for modules checked out under
+`web/modules/sandbox`.
+
+Use Drupal.org SSH source URLs and define only packages needed by that target.
+Keep ordinary package constraints in the main overlay unless the constraint is
+part of the sandbox package definition itself.
 
 ### `composer.drupal_XX.lenient.json`
 
@@ -149,17 +176,6 @@ smoke tests where available. Switch back and test the default Drupal major
 after any shared compatibility changes. Remove the lenient exception and live
 patch once a compatible upstream release includes the fixes.
 
-### `composer.drupal_XX.sandbox.json`
-
-The sandbox overlay defines Composer repositories for Drupal sandbox projects
-or development branches that are not discoverable as suitable releases from
-the normal repositories. It is commonly used for modules checked out under
-`web/modules/sandbox`.
-
-Use Drupal.org SSH source URLs and define only packages needed by that target.
-Keep ordinary package constraints in the main overlay unless the constraint is
-part of the sandbox package definition itself.
-
 ## Merge order
 
 Wire the family into `extra.merge-plugin.include` in this order:
@@ -181,19 +197,3 @@ dependency set with `composer update -W --no-install`, then regenerates
 `patches.lock.json`, and finally installs the resolved packages. This ensures
 the patch lock is based on the target major's dependencies rather than the
 previously installed version.
-
-## Usage
-
-```bash
-ddev drupal-core-switcher 12
-ddev drupal-core-switcher 12 --no-interaction
-ddev drupal-core-switcher 12 --updb
-```
-
-Run without `--updb` first and resolve Composer failures in the overlay family.
-Use `--updb` only after confirming an appropriate database backup exists.
-
-An enabled overlay and the resulting `composer.lock` are temporary test state.
-Never commit them. Switch back to the default major and verify every overlay
-include has its underscore before committing the disabled wiring and support
-files.

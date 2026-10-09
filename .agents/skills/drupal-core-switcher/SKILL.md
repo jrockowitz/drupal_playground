@@ -1,10 +1,8 @@
 ---
 name: drupal-core-switcher
 description: >-
-  Set up or maintain an opt-in Composer overlay to switch Drupal core version
-  on any Composer-managed Drupal site in DDEV, including requests to test
-  Drupal 12 or create composer.drupal_VERSION.json without replacing the
-  default build.
+  Use only when explicitly asked to switch between or test different Drupal
+  core major versions on a Composer-managed site in DDEV.
 ---
 
 # Drupal Core Switcher
@@ -76,15 +74,11 @@ For an unreleased or newly supported major such as Drupal 12:
    or merge request before using it.
 4. Confirm the automated MR targets the branch used by the installed package.
 5. Add its live `.diff` URL to `composer.drupal_VERSION.patches.json` using the
-   project's expanded Composer Patches schema. For example, Schema.org
-   Blueprints issue [#3602690](https://www.drupal.org/project/schemadotorg/issues/3602690)
-   currently uses
-   `https://git.drupalcode.org/project/schemadotorg/-/merge_requests/304.diff`.
-6. Run the switch so Composer resolves the target dependencies, regenerates
-   `patches.lock.json`, and only then installs the patched packages.
-7. Inspect the applied diff and run compatibility analysis, automated tests,
-   and manual smoke tests. Successful resolution or patch application is not
-   evidence that the module works on the target major.
+   project's expanded Composer Patches schema. See
+   [README.md](README.md#testing-a-new-drupal-major) for a worked example.
+6. Run the switch, inspect the applied diff, and follow
+   [Resolve and verify](#resolve-and-verify). Successful resolution or patch
+   application is not evidence that the module works on the target major.
 
 Project Update Bot overwrites its branch, so a live MR diff can change between
 runs. Whenever its hash changes in `patches.lock.json`, inspect the new MR diff
@@ -121,10 +115,8 @@ ddev exec env COMPOSER_DISCARD_CHANGES=true /usr/local/bin/composer patches-relo
 ddev exec env COMPOSER_DISCARD_CHANGES=true /usr/local/bin/composer install
 ```
 
-Resolve the target dependency set with `composer update -W --no-install`, then
-run `composer patches-relock --no-interaction`, and finally `composer install`.
-This rebuilds `patches.lock.json` from the newly resolved target dependencies
-before Composer installs and patches them.
+This order rebuilds `patches.lock.json` from the target dependencies before
+installing and patching them.
 
 When the user supplies `--no-interaction`, append it to the update and install
 commands. Parse it and `--updb` as independent options after `VERSION`, allowing
@@ -148,9 +140,8 @@ to confirm before invoking the command with `--updb`.
 ## Resolve and verify
 
 Run the switch without `--updb` first. Let Composer fail normally, then read its
-resolver output. Put target-only constraints, lenient exceptions, obsolete
-patch handling, and repository overrides in the target overlay. Put genuine
-cross-version compatibility fixes in shared Composer fragments or project code.
+resolver output. Resolve failures using the
+[overlay rules above](#composer-overlay-model).
 Stop and involve the user when resolution requires removing a package,
 changing PHP, accepting a prerelease, or making another choice that changes
 project behavior.
@@ -178,6 +169,5 @@ After the target resolves:
    and works. Intentional shared compatibility changes may remain; review them
    separately from disabled switcher wiring with `git diff` and the user.
 
-Do not commit or push. If a command failed while an overlay was enabled,
-explicitly restore the underscore-disabled references before handing control
-back.
+If a command failed while an overlay was enabled, explicitly restore the
+underscore-disabled references before handing control back.
