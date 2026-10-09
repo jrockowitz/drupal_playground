@@ -3,9 +3,9 @@
 
 set -euo pipefail
 
-## Description: Install Drupal, optionally with one or more presets.
-## Usage: install [preset...]
-## Example: ddev install\nddev install ai\nddev install ckeditor\nddev install openai\nddev install anthropic\nddev install gemini\nddev install anthropic ai\nddev install eca\nddev install elastic\nddev install entity-usage\nddev install schemadotorg\nddev install translation\nddev install webform-setup\nddev install webform-ai\nddev install webform-test\nddev install trials\nddev install trials-fields\nddev install trials-fields-setup\nddev install trials-fields-setup --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-data-setup trials-data-elastic --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-fields-elastic\nddev install trials-fields-milvus\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
+## Description: Install Drupal with one or more presets.
+## Usage: install <preset...> [--limit=10] [--query=QUERY]
+## Example: ddev install site\nddev install ai\nddev install ckeditor\nddev install openai\nddev install anthropic\nddev install gemini\nddev install anthropic ai\nddev install eca\nddev install elastic\nddev install entity-usage\nddev install schemadotorg\nddev install translation\nddev install webform-setup\nddev install webform-ai\nddev install webform-test\nddev install trials\nddev install trials-fields\nddev install trials-fields-setup\nddev install trials-fields-setup --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-data-setup trials-data-elastic --limit=50 --query="query.cond=Cancer&query.locn=New%20York&filter.overallStatus=RECRUITING%7CNOT_YET_RECRUITING"\nddev install trials-fields-elastic\nddev install trials-fields-milvus\nddev install trials-data-setup\nddev install trials-data-elastic\nddev install trials-data-milvus\nddev install trials-data-elastic trials-data-milvus
 ## Milvus indexing throttles provider requests by running 5 passes of 200 items with 30 second pauses.
 ## ProjectTypes: drupal,drupal11
 
@@ -17,6 +17,113 @@ DRUPAL_VERSION=""
 DRUPAL_MAJOR_VERSION=""
 PRESETS=()
 
+# Display supported presets, options, and examples.
+usage() {
+  cat <<'EOF'
+Usage: ddev install <preset...> [--limit=10] [--query=QUERY]
+
+Install Drupal with one or more presets. Every install replaces the database.
+Use site for the default installation. Presets can be combined.
+
+Presets:
+  site                     Default installation with no additional preset recipes.
+
+  # AI
+  ai                       AI chat, CKEditor, content suggestions, automation, and Schema.org JSON-LD demos.
+  openai                   Configure the OpenAI provider (the default provider).
+  anthropic                Configure the Anthropic provider.
+  gemini                   Configure the Gemini provider.
+
+  # Demos
+  ckeditor                 CKEditor demo.
+  eca                      ECA Starterkit demo.
+  elastic                  Elasticsearch demo.
+  entity-usage             Entity Usage demo with rebuilt usage and root data.
+  translation              Translation demo with updated translations.
+
+  # Schema.org Blueprints
+  schemadotorg             Schema.org Blueprints and API demos.
+
+  # Webform
+  webform                  Webform setup (alias of webform-setup).
+  webform-setup            Webform setup.
+  webform-ai               Webform setup and AI Webform Generator.
+  webform-test             Webform test recipe and test modules.
+
+  # ClinicalTrials.gov
+  trials                   Enable ClinicalTrials.gov modules.
+  trials-fields            Run fields setup, Elasticsearch, and Milvus flows.
+  trials-fields-setup      Fields setup and study import.
+  trials-fields-elastic    Fields Elasticsearch indexing.
+  trials-fields-milvus     Fields Milvus indexing.
+  trials-data              Run data setup, Elasticsearch, and Milvus flows.
+  trials-data-setup        Data setup and study import.
+  trials-data-elastic      Data Elasticsearch import and indexing.
+  trials-data-milvus       Data Milvus indexing.
+
+Options:
+  --limit=NUMBER  Study import limit (default: 10).
+  --query=QUERY   ClinicalTrials.gov query for fields/data setup.
+
+Examples:
+  ddev install site
+  ddev install anthropic ai
+  ddev install webform
+  ddev install webform-ai
+  ddev install schemadotorg
+  ddev install trials-fields-setup --limit=50 --query="query.cond=Cancer"
+EOF
+}
+
+# Validate one preset and display usage when it is unsupported.
+preset_validate() {
+  local preset="$1"
+
+  # Accept supported presets, grouped by feature.
+  case "$preset" in
+    site|ai|ckeditor|openai|anthropic|gemini|\
+    schemadotorg|eca|elastic|entity-usage|translation|\
+    webform|webform-setup|webform-ai|webform-test|\
+    trials|trials-fields|trials-fields-setup|trials-fields-elastic|trials-fields-milvus|\
+    trials-data|trials-data-setup|trials-data-elastic|trials-data-milvus)
+      return 0
+      ;;
+
+    *)
+      printf 'Invalid preset: %s\n\n' "$preset" >&2
+      usage >&2
+      return 1
+      ;;
+  esac
+}
+
+# Expand convenience presets in place while preserving the requested order.
+presets_expand() {
+  local preset
+  local expanded_presets=()
+
+  # Replace aliases with their setup and indexing flows.
+  for preset in "${PRESETS[@]}"; do
+    case "$preset" in
+      trials-data)
+        expanded_presets+=("trials-data-setup" "trials-data-elastic" "trials-data-milvus")
+        ;;
+
+      trials-fields)
+        expanded_presets+=("trials-fields-setup" "trials-fields-elastic" "trials-fields-milvus")
+        ;;
+
+      *)
+        expanded_presets+=("$preset")
+        ;;
+    esac
+  done
+
+  # Use the expanded list for the installation.
+  PRESETS=("${expanded_presets[@]}")
+}
+
+# Reset and index ClinicalTrials.gov studies in Milvus with provider throttling.
 search_api_index_trials_milvus() {
   echo "Resetting ClinicalTrials.gov studies in Milvus..."
   drush search-api:clear trials_milvus -y
@@ -33,6 +140,7 @@ search_api_index_trials_milvus() {
   drush search-api:index trials_milvus --limit=200 -y
 }
 
+# Reset and index ClinicalTrials.gov studies in Elasticsearch.
 search_api_index_trials_elasticsearch() {
   echo "Resetting ClinicalTrials.gov studies in Elasticsearch..."
   curl -fsS -X DELETE "http://elasticsearch:9200/trials_elasticsearch" >/dev/null 2>&1 || true
@@ -60,22 +168,19 @@ for argument in "$@"; do
   esac
 done
 
-# Expand convenience presets into their corresponding flows.
-expanded_presets=()
-for PRESET in "${PRESETS[@]}"; do
-  if [ "$PRESET" = "trials-data" ]; then
-    expanded_presets+=("trials-data-setup" "trials-data-elastic" "trials-data-milvus")
-    continue
-  fi
+# Display usage when no preset was supplied.
+if [ "${#PRESETS[@]}" -eq 0 ]; then
+  usage
+  exit 0
+fi
 
-  if [ "$PRESET" = "trials-fields" ]; then
-    expanded_presets+=("trials-fields-setup" "trials-fields-elastic" "trials-fields-milvus")
-    continue
-  fi
-
-  expanded_presets+=("$PRESET")
+# Validate all presets before any installation commands run.
+for preset in "${PRESETS[@]}"; do
+  preset_validate "$preset" || exit 1
 done
-PRESETS=("${expanded_presets[@]}")
+
+# Expand convenience presets into their corresponding flows.
+presets_expand
 
 drush sql:drop -y
 
@@ -229,14 +334,6 @@ for PRESET in "${PRESETS[@]}"; do
     echo "Applying AI Webform Generator recipe..."
     /mnt/ddev_config/commands/web/recipe-apply ../recipes/drupal_playground_webform_ai
     uli_path="/admin/structure/webform/ai-generator"
-
-  fi
-
-  # Contrib
-
-  if [ "$PRESET" = "modules" ]; then
-
-    drush en -y telephone_filter entity_labels
 
   fi
 
