@@ -1,0 +1,6 @@
+interface:
+  display_name: "Drupal Core Switcher"
+  short_description: "Switch Drupal core versions safely in DDEV"
+  default_prompt: "Use $drupal-core-switcher to set up an opt-in Drupal core version overlay for this DDEV site."
+policy:
+  allow_implicit_invocation: false

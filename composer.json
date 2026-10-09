@@ -115,9 +115,9 @@
         },
         "composer-exit-on-patch-failure": false,
         "composer-patches": {
-            "patches-file": "composer.drupal_11.patches.json",
             "ignore-dependency-patches": [
-                "drupal/media_library_media_modify"
+                "drupal/media_library_media_modify",
+                "drupal/project_browser"
             ]
         },
         "patchLevel": {
@@ -125,15 +125,19 @@
         },
         "merge-plugin": {
             "include": [
-                "composer.drupal_11.json",
-                "composer.drupal_11.sandbox.json",
-                "composer.drupal_11.lenient.json",
+                "composer.drupal_10.json",
+                "composer.drupal_10.sandbox.json",
+                "_composer.drupal_11.json",
+                "_composer.drupal_11.sandbox.json",
+                "_composer.drupal_11.lenient.json",
+                "_composer.drupal_11.patches.json",
                 "composer.libraries.json",
                 "composer.recipes.json"
             ],
             "merge-extra": true,
             "merge-extra-deep": true,
-            "merge-dev": true
+            "merge-dev": true,
+            "replace": true
         }
     },
     "require-dev": {

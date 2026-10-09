@@ -34,5 +34,12 @@
     "drupal/token": "^1",
     "drupal/trash": "^3.0",
     "drupal/type_tray": "^1"
+  },
+  "extra": {
+    "composer-patches": {
+      "ignore-dependency-patches": [
+        "drupal/project_browser"
+      ]
+    }
   }
 }

@@ -1,0 +1,150 @@
+#!/bin/bash
+
+## Description: Switch the codebase between Drupal core versions (experimental)
+## Usage: drupal-core-switcher <VERSION> [--updb] [--no-interaction]
+## Example: ddev drupal-core-switcher 12 --no-interaction
+
+set -euo pipefail
+cd "${DDEV_APPROOT}"
+
+usage() {
+  echo "Usage: ddev drupal-core-switcher <VERSION> [--updb] [--no-interaction]" >&2
+}
+
+if [ "$#" -lt 1 ]; then
+  usage
+  exit 2
+fi
+
+TARGET_DRUPAL_VERSION="$1"
+DRUSH_UPDB=""
+COMPOSER_NO_INTERACTION=""
+shift
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --updb)
+      DRUSH_UPDB="--updb"
+      ;;
+    --no-interaction)
+      COMPOSER_NO_INTERACTION="--no-interaction"
+      ;;
+    *)
+      usage
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+if ! [[ "${TARGET_DRUPAL_VERSION}" =~ ^[0-9]+$ ]]; then
+  echo "VERSION must be an integer Drupal major." >&2
+  exit 2
+fi
+
+# Do not use 'ddev composer' here. It runs the first 'composer' on the
+# container PATH, which may be vendor/bin/composer (installed by the project).
+# That copy can be replaced during the update and break mid-run, so call the
+# image's /usr/local/bin/composer directly.
+# 'ddev composer' also cannot pass COMPOSER_DISCARD_CHANGES, which allows
+# Composer to replace patched VCS checkouts when --no-interaction is supplied.
+composer() {
+  ddev exec env COMPOSER_DISCARD_CHANGES=true /usr/local/bin/composer "$@"
+}
+
+# Read Drupal's full version directly from core so version detection does not
+# depend on Drush or a working Drupal bootstrap. Support common docroots.
+get_drupal_version() {
+  ddev exec php -r '
+foreach (["web/core/lib/Drupal.php", "docroot/core/lib/Drupal.php"] as \$file) {
+  if (is_file(\$file)) {
+    require_once \$file;
+    echo \Drupal::VERSION, PHP_EOL;
+    exit(0);
+  }
+}
+fwrite(STDERR, "Could not find Drupal.php\n");
+exit(1);
+'
+}
+
+get_drupal_major_version() {
+  DRUPAL_VERSION="$(get_drupal_version)"
+  echo "${DRUPAL_VERSION%%.*}"
+}
+
+# Version-specific steps that run before Composer switches the codebase.
+# Add a version branch before the wildcard when a project needs steps such as
+# uninstalling a module whose update hook cannot run on the target version.
+case "${TARGET_DRUPAL_VERSION}" in
+  10)
+    # Drupal 10.
+    ;;
+  11)
+    # Drupal 11.
+    ;;
+  12)
+    # Drupal 12.
+    ;;
+  *)
+    # Other versions.
+    ;;
+esac
+
+# Disable every composer.drupal_XX.json overlay, then enable the one for the
+# requested version when it is wired into composer.json. A version supplied by
+# the default root constraints may not need an overlay.
+perl -pi -e 's/"composer\.drupal_(\d+)([^"\n]*)\.json"/"_composer.drupal_$1$2.json"/g' composer.json
+perl -pi -e "s/\"_composer\\.drupal_${TARGET_DRUPAL_VERSION}([^\"\\n]*)\\.json\"/\"composer.drupal_${TARGET_DRUPAL_VERSION}\$1.json\"/g" composer.json
+
+# Make sure the host sees every file the container changed.
+ddev mutagen sync >/dev/null 2>&1 || true
+
+# Resolve the requested dependency set without installing it. The -W flag is
+# needed to update transitive dependencies required by the target core version.
+COMPOSER_UPDATE_ARGUMENTS=(update -W --no-install)
+COMPOSER_INSTALL_ARGUMENTS=(install)
+if [ -n "${COMPOSER_NO_INTERACTION}" ]; then
+  COMPOSER_UPDATE_ARGUMENTS+=("${COMPOSER_NO_INTERACTION}")
+  COMPOSER_INSTALL_ARGUMENTS+=("${COMPOSER_NO_INTERACTION}")
+fi
+composer "${COMPOSER_UPDATE_ARGUMENTS[@]}"
+
+# Rebuild the patch lock from the newly resolved dependency set, then install
+# it so only patches applicable to the target version are applied.
+composer patches-relock --no-interaction
+composer "${COMPOSER_INSTALL_ARGUMENTS[@]}"
+
+# Composer may select the default build when no matching overlay is wired.
+# Fail before restoring a database unless Composer installed the requested major.
+SWITCHED_DRUPAL_VERSION="$(get_drupal_major_version)"
+if [ "${SWITCHED_DRUPAL_VERSION}" != "${TARGET_DRUPAL_VERSION}" ]; then
+  echo "Requested Drupal ${TARGET_DRUPAL_VERSION}, but Composer installed Drupal ${SWITCHED_DRUPAL_VERSION}." >&2
+  exit 1
+fi
+
+# Version-specific steps that run after Composer switches the codebase.
+case "${TARGET_DRUPAL_VERSION}" in
+  10)
+    # Drupal 10.
+    ;;
+  11)
+    # Drupal 11.
+    ;;
+  12)
+    # Drupal 12.
+    ;;
+  *)
+    # Other versions.
+    ;;
+esac
+
+# Run database updates only when requested.
+# Updates may be destructive, so the default is to leave them for review.
+if [ "${DRUSH_UPDB}" = "--updb" ]; then
+  ddev drush updb -y
+fi
+
+# Display the full Drupal version to confirm that the switch worked.
+DRUPAL_VERSION="$(get_drupal_version)"
+echo "Drupal version: ${DRUPAL_VERSION}"

@@ -1,0 +1,6 @@
+diff --git a/__drupal_core_switcher_obsolete__ b/__drupal_core_switcher_obsolete__
+--- a/__drupal_core_switcher_obsolete__
++++ b/__drupal_core_switcher_obsolete__
+@@ -1 +1 @@
+-This placeholder intentionally has no source file.
++Obsolete patches must never apply to this Drupal core version.

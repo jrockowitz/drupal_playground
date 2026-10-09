@@ -1,29 +1,7 @@
 {
-    "_hash": "34e6ff5083ad7d35f4e3331f1874686062c51012f1ffc5ca23c6d070cf5865a9",
+    "_hash": "94fc38989a1f9e205cf8defbcdf6a7e08acaff1a1a3bb7572cd13b7ce7f4ef7a",
     "patches": {
-        "drupal/config_rewrite": [
-            {
-                "package": "drupal/config_rewrite",
-                "description": "Issue #3528767: Tried to rewrite config by module without initial config",
-                "url": "https://www.drupal.org/files/issues/2025-06-24/config_rewrite-issue-3528767-comment-2.patch",
-                "sha256": "cff05269fd67c99674ff4100aa100f95c5553dc9be0126e39b1da275c357fb70",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
         "drupal/core": [
-            {
-                "package": "drupal/core",
-                "description": "Issue #3345064: Media library field_widget_id is not unique enough",
-                "url": "https://www.drupal.org/files/issues/2023-02-28/3345064.patch",
-                "sha256": "9b2749b9478d994cda95e3095e7ad86ea5469be8e28be4e6ae06050d7c04dd87",
-                "depth": 2,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
             {
                 "package": "drupal/core",
                 "description": "Page scrolls away on modifying fields in text formats and editor form.",
@@ -33,90 +11,6 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776",
                     "provenance": "dependency:drupal/core"
-                }
-            }
-        ],
-        "drupal/address": [
-            {
-                "package": "drupal/address",
-                "description": "Issue #2819251: generateSampleValue",
-                "url": "https://www.drupal.org/files/issues/2024-09-10/address-issue-2819251-comment-9.patch",
-                "sha256": "9b00869bf124d5177fa07213751c08c2683eccc7dc1400618c951549ae111736",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/cer": [
-            {
-                "package": "drupal/cer",
-                "description": "Issue #2998138: Could support Remove field name prefix module?",
-                "url": "https://www.drupal.org/files/issues/2026-07-13/cer-issue-2998138-comment-20.patch",
-                "sha256": "51a76ffa3508f7bf23d8403aacbe4c56d5f3463cc3ea8c098f9d91e23a88829a",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/entity_reference_revisions": [
-            {
-                "package": "drupal/entity_reference_revisions",
-                "description": "Issue #3265084: EntityReferenceRevisionsItem:generateSampleValue can break when all bundle types are allowed",
-                "url": "https://www.drupal.org/files/issues/2022-02-18/treat-no-selection-as-all-3265084-2.patch",
-                "sha256": "4260fcb209e9cb45816005f9662ed37773e75c09160c4e6ee475abe2c6d99955",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/jsonapi_extras": [
-            {
-                "package": "drupal/jsonapi_extras",
-                "description": "Issue #3608182: Array to string conversion warning during route rebuild on Drupal 11.4",
-                "url": "https://www.drupal.org/files/issues/2026-07-03/array_to_string_conv-3608182-2.patch",
-                "sha256": "d6e084fd3331ac7af76ecc31c377e253e056c2d1021a4da0aa79252607e47c0a",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/type_tray": [
-            {
-                "package": "drupal/type_tray",
-                "description": "Issue #3417679: Add type tray icon to node edit and related tasks",
-                "url": "https://www.drupal.org/files/issues/2024-01-28/issue-3417679-mr-22.patch",
-                "sha256": "0c67cc70ee72dbb72eace828d547335922877fc9be324f0cb8739261b966d40b",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/inline_entity_form": [
-            {
-                "package": "drupal/inline_entity_form",
-                "description": "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form",
-                "url": "patches/drupal/inline_entity_form-3271293-3.0.0-reroll.patch",
-                "sha256": "0395a3488071793907c07c19ce46072f6154a0c309140a2bc377c44b71691c20",
-                "depth": 1,
-                "extra": {
-                    "provenance": "patches-file:composer.drupal_11.patches.json"
-                }
-            }
-        ],
-        "drupal/ai_rag_search_chat": [
-            {
-                "package": "drupal/ai_rag_search_chat",
-                "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",
-                "url": "patches/drupal/ai_rag_search_chat-multi-value-excerpts.patch",
-                "sha256": "a2e5866f2af4c1722833911103365443350cf27329d170d8a06e876853358d58",
-                "depth": 1,
-                "extra": {
-                    "provenance": "patches-file:composer.drupal_11.patches.json"
                 }
             }
         ],
@@ -143,18 +37,6 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874",
                     "provenance": "dependency:drupal/coffee"
-                }
-            }
-        ],
-        "drupal/project_browser": [
-            {
-                "package": "drupal/project_browser",
-                "description": "#3622921 Implement getModulesToInstall in TestModuleInstaller",
-                "url": "https://git.drupalcode.org/issue/project_browser-3622921/-/commit/9afcce0676ca61ca1514a14b6d882cbd081c0045.diff",
-                "sha256": "56fb6668c88cf2d6dc81d91a2cc85d0dae112d5d83053230fe18402674cfdf8a",
-                "depth": 1,
-                "extra": {
-                    "provenance": "dependency:drupal/project_browser"
                 }
             }
         ]
