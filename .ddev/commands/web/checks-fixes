@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+#ddev-generated
+
+## Description: Auto-fix code style violations (phpcbf, eslint --fix, stylelint --fix)
+## Usage: checks-fixes [path]
+## Example: "ddev checks-fixes" or "ddev checks-fixes web/modules/custom/mymodule"
+## ExecRaw: true
+## HostWorkingDir: true
+## MutagenSync: true
+
+# Directory containing the individual tool command scripts.
+COMMANDS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Normalize absolute host-path arguments before parsing, so an absolute host path
+# given as TARGET becomes a container path here. This matters because TARGET is
+# used to build derived arguments such as "${TARGET}/**/*.css" for stylelint — a
+# glob that the per-command normalization deliberately leaves untouched, so it must
+# already be a container path by the time it is constructed.
+# shellcheck source=../../module-developer/lib/init.sh
+source /mnt/ddev_config/module-developer/lib/init.sh
+
+# ---------------------------------------------------------------------------
+# Argument parsing
+# ---------------------------------------------------------------------------
+
+TARGET="."
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --*) ;; # Ignore unrecognised flags.
+    *)   TARGET="$1" ;;
+  esac
+  shift
+done
+
+# ---------------------------------------------------------------------------
+# Result accumulators
+# ---------------------------------------------------------------------------
+
+pass=0
+fail=0
+results=()
+
+run_fix() {
+  local label="${1}" script="${2}"
+  shift 2
+  printf "\n── %s ─────────────────────────────────────────────\n" "${label}"
+  if bash "${COMMANDS_DIR}/${script}" "$@"; then
+    results+=("  ✓  ${label}")
+    pass=$((pass + 1))
+  else
+    results+=("  ✗  ${label}")
+    fail=$((fail + 1))
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# Run fixers
+# ---------------------------------------------------------------------------
+
+printf "Running auto-fixers on: %s\n" "${TARGET}"
+
+run_fix "PHP Code Beautifier and Fixer" phpcbf    "${TARGET}"
+run_fix "ESLint"                        eslint    --fix "${TARGET}"
+run_fix "Stylelint"                     stylelint --fix "${TARGET}/**/*.css"
+
+# ---------------------------------------------------------------------------
+# Summary
+# ---------------------------------------------------------------------------
+
+printf "\n══════════════════════════════════════════════════════\n"
+printf '%s\n' "${results[@]}"
+printf "\n"
+
+if [ "${fail}" -gt 0 ]; then
+  printf "Result: FAILED  (%d failed, %d passed)\n" "${fail}" "${pass}"
+  exit 1
+else
+  printf "Result: passed  (%d passed)\n" "${pass}"
+  exit 0
+fi
