@@ -281,7 +281,6 @@
         }
     ],
     "require": {
-        "drupal/ai_schemadotorg_jsonld": "*",
         "drupal/eca_report": "*",
         "drupal/entity_usage_root": "*",
         "drupal/entity_labels": "*",

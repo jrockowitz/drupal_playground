@@ -77,7 +77,7 @@ get_drupal_major_version() {
 case "${TARGET_DRUPAL_VERSION}" in
   10|11)
     # Remove the Text with Summary module via config since it can be uninstalled if it is in use.
-    ddev drush config:delete core.extension module.text_with_summary;
+    ddev drush config:delete core.extension module.text_with_summary >/dev/null 2>&1 || true
     ddev drush cr
     ;;
   12)

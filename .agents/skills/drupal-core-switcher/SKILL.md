@@ -39,7 +39,7 @@ an integer major), and verify the site works on both.
 4. If DDEV's `php_version` is below the target's minimum, propose the exact
    change and ask.
 5. For a major not yet validated here, follow
-   [Adopting a new Drupal major](references/new-drupal-major.md).
+   [Adopting a new Drupal major](references/drupal-core-major-upgrade.md).
 
 ## Overlays
 
@@ -91,14 +91,15 @@ needed, using `$DDEV_SITENAME` for names. It must:
 
 ## Verify
 
-1. Switch without `--updb`; resolve Composer failures per the overlay rules.
-2. Run available checks (Upgrade Status, `ddev code-review`, PHPStan, Rector,
-   tests, smoke tests).
-3. Make custom modules, recipes, and tests support both versions; report
-   sandbox projects needing equivalent work.
-4. Report incompatible contrib, lenient exceptions, failing/obsolete patches,
+1. On the baseline, run `ddev drush upgrade_status:analyze --all
+   --ignore-uninstalled`.
+2. Switch without `--updb`; resolve Composer failures per the overlay rules.
+3. Run `ddev code-review`, `ddev phpstan`, `ddev phpunit`, and smoke tests.
+4. Make blocking extensions and recipes compatible per
+   [drupal-contrib-core-upgrade.md](references/drupal-contrib-core-upgrade.md).
+5. Report incompatible contrib, lenient exceptions, failing/obsolete patches,
    removed core modules and their replacements, and custom-code findings.
-5. Unless told to stay on the target, switch back to the baseline (after any
+6. Unless told to stay on the target, switch back to the baseline (after any
    `updb`, establish compatibility or restore the backup first), with all
    overlays disabled. Run `composer validate` and
    `composer update --lock --dry-run`, then confirm no target-only state

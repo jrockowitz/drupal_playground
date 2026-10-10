@@ -38,8 +38,10 @@ backups.
   libraries, not just the root `composer.json`.
 - Find extensions with no compatible release, and core modules or themes the
   target removes.
-- For each blocker, look for a compatible release first, then a development
-  branch, then an upstream issue or patch.
+- On the baseline, run `ddev drush upgrade_status:analyze --all
+  --ignore-uninstalled`; deprecations cannot be detected after switching.
+- Make each blocking extension compatible per
+  [drupal-contrib-core-upgrade.md](drupal-contrib-core-upgrade.md).
 - Put target-only changes in the overlays (see [README.md](../README.md)).
   Never change the root core constraints.
 
@@ -92,9 +94,7 @@ ddev mutagen sync
 **Do**
 - Read the full core version from `Drupal.php` and confirm it is the target.
 - Confirm Drush bootstraps and `drush cr` works.
-- Fix custom code before widening `core_version_requirement`.
-- Run the available checks: Upgrade Status, `ddev code-review`, PHPStan,
-  Rector, and tests.
+- Run `ddev code-review`, `ddev phpstan`, and `ddev phpunit` on the target.
 - Smoke-test in the browser: admin pages, content editing, affected widgets,
   themes, and integrations.
 
@@ -134,3 +134,22 @@ ddev mutagen sync
 - If sources stay unavailable, use a verified Composer cache or an official
   archive of an exact reviewed commit. Keep the SSH source URL and record how
   to remove the workaround.
+
+## References
+
+**Planning (Step 1)**
+
+- [Upgrading Drupal](https://www.drupal.org/docs/upgrading-drupal/upgrading-drupal)
+- [Core release schedule](https://www.drupal.org/about/core/policies/core-release-cycles/schedule)
+- [PHP requirements](https://www.drupal.org/docs/getting-started/system-requirements/php-requirements)
+
+**Dependencies (Steps 3 and 5)**
+
+- [Updating Drupal core via Composer](https://www.drupal.org/docs/updating-drupal/updating-drupal-core-via-composer)
+- [Updating modules and themes using Composer](https://www.drupal.org/docs/updating-drupal/updating-modules-and-themes-using-composer)
+- [Composer version constraints and stability](https://getcomposer.org/doc/articles/versions.md)
+- [Deprecated and obsolete core modules and themes](https://www.drupal.org/docs/core-modules-and-themes/deprecated-and-obsolete)
+- [Project Analysis](https://www.drupal.org/project/project_analysis)
+
+Module-level references are in
+[drupal-contrib-core-upgrade.md](drupal-contrib-core-upgrade.md#references).
