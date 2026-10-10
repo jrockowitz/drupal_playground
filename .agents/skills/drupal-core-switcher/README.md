@@ -13,10 +13,11 @@ underscore for the requested major, then runs `composer update -W --no-install`,
 ## Usage
 
 ```bash
-ddev drupal-core-switcher 12 [--updb] [--no-interaction]
+ddev drupal-core-switcher 12 [--updb]
 ```
 
-Run without `--updb` first. Backups and snapshots are your responsibility, and
+Composer always runs noninteractively. Run without `--updb` first.
+Backups and snapshots are your responsibility, and
 `COMPOSER_DISCARD_CHANGES=true` discards local source changes. Enabled overlays
 and the resulting `composer.lock` are temporary state: commit only the disabled
 wiring, after restoring and verifying the baseline build.

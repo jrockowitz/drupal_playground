@@ -1,14 +1,14 @@
 #!/bin/bash
 
 ## Description: Switch the codebase between Drupal core versions (experimental)
-## Usage: drupal-core-switcher <VERSION> [--updb] [--no-interaction]
-## Example: ddev drupal-core-switcher 12 --no-interaction
+## Usage: drupal-core-switcher <VERSION> [--updb]
+## Example: ddev drupal-core-switcher 12
 
 set -euo pipefail
 cd "${DDEV_APPROOT}"
 
 usage() {
-  echo "Usage: ddev drupal-core-switcher <VERSION> [--updb] [--no-interaction]" >&2
+  echo "Usage: ddev drupal-core-switcher <VERSION> [--updb]" >&2
 }
 
 if [ "$#" -lt 1 ]; then
@@ -18,16 +18,12 @@ fi
 
 TARGET_DRUPAL_VERSION="$1"
 DRUSH_UPDB=""
-COMPOSER_NO_INTERACTION=""
 shift
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --updb)
       DRUSH_UPDB="--updb"
-      ;;
-    --no-interaction)
-      COMPOSER_NO_INTERACTION="--no-interaction"
       ;;
     *)
       usage
@@ -47,9 +43,11 @@ fi
 # That copy can be replaced during the update and break mid-run, so call the
 # image's /usr/local/bin/composer directly.
 # 'ddev composer' also cannot pass COMPOSER_DISCARD_CHANGES, which allows
-# Composer to replace patched VCS checkouts when --no-interaction is supplied.
+# Composer to replace patched VCS checkouts in noninteractive mode.
+# Composer-created branches such as Webform's 6.2 can otherwise be incorrectly
+# reported as unpushed because the remote branch is named 6.2.x.
 composer() {
-  ddev exec env COMPOSER_DISCARD_CHANGES=true /usr/local/bin/composer "$@"
+  ddev exec env COMPOSER_DISCARD_CHANGES=true /usr/local/bin/composer --no-interaction "$@"
 }
 
 # Read Drupal's full version directly from core so version detection does not
@@ -99,12 +97,12 @@ ddev mutagen sync >/dev/null 2>&1 || true
 
 # Resolve the requested dependency set without installing it. The -W flag is
 # needed to update transitive dependencies required by the target core version.
-composer update -W --no-install ${COMPOSER_NO_INTERACTION:+"$COMPOSER_NO_INTERACTION"}
+composer update -W --no-install
 
 # Rebuild the patch lock from the newly resolved dependency set, then install
 # it so only patches applicable to the target version are applied.
-composer patches-relock --no-interaction
-composer install ${COMPOSER_NO_INTERACTION:+"$COMPOSER_NO_INTERACTION"}
+composer patches-relock
+composer install
 
 # Make sure the host sees every file Composer changed in the container.
 ddev mutagen sync >/dev/null 2>&1 || true

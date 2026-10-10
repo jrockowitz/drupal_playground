@@ -5,13 +5,6 @@
             "url": "recipes/drupal_playground_eca"
         }
     ],
-    "conflict": {
-        "drupal/core": "11.4.4",
-        "drupal/core-composer-scaffold": "11.4.4",
-        "drupal/core-dev": "11.4.4",
-        "drupal/core-project-message": "11.4.4",
-        "drupal/core-recommended": "11.4.4"
-    },
     "require": {
         "drupal/ai_schemadotorg_jsonld": "*",
         "drupal/core-composer-scaffold": "^11",

@@ -10,7 +10,7 @@ description: >-
 
 Make a Composer-managed DDEV site switchable between its baseline Drupal major
 and a target major via
-`ddev drupal-core-switcher VERSION [--updb] [--no-interaction]` (`VERSION` is
+`ddev drupal-core-switcher VERSION [--updb]` (`VERSION` is
 an integer major), and verify the site works on both.
 
 ## Ground rules
@@ -78,12 +78,12 @@ Use [.ddev/commands/host/drupal-core-switcher](../../../.ddev/commands/host/drup
 preserving site hooks; add a target-specific pre/post `case` branch only if
 needed, using `$DDEV_SITENAME` for names. It must:
 
-- Accept `--updb` and `--no-interaction` in any order after `VERSION`; reject
+- Accept `--updb` after `VERSION`; reject
   unknown options and extra arguments with a nonzero exit.
 - Disable all `composer.drupal_*` references with Perl, enable those for
   `VERSION`, and run Mutagen sync (non-fatal).
-- Run `update -W --no-install`, `patches-relock --no-interaction`, `install`
-  (appending `--no-interaction` to update/install when given).
+- Run `update -W --no-install`, `patches-relock`, and `install`, always passing
+  `--no-interaction` through the Composer wrapper.
 - Fail unless `get_drupal_major_version()` of `get_drupal_version()` matches
   `VERSION`; print the full version at the end.
 - With `--updb`, run `ddev drush updb -y`, confirm nothing is pending, and
