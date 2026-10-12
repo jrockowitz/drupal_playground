@@ -4,6 +4,20 @@
 ## Usage: drupal-core-switcher <VERSION> [--updb]
 ## Example: ddev drupal-core-switcher 12
 
+# Core switcher steps:
+#
+# 1. Validate the requested Drupal major and optional --updb argument.
+# 2. Run version-specific steps before switching core.
+# 3. Disable all Drupal Composer overlays, then enable the requested version.
+# 4. Sync composer.json to the container with Mutagen (non-fatal).
+# 5. Resolve dependencies with Composer update -W --no-install.
+# 6. Rebuild the patch lock, then install dependencies and patches.
+# 7. Sync Composer changes back to the host with Mutagen (non-fatal).
+# 8. Verify that the installed Drupal major matches the requested version.
+# 9. Run version-specific steps after switching core.
+# 10. Run database updates only when --updb is supplied.
+# 11. Display the full installed Drupal version.
+
 set -euo pipefail
 cd "${DDEV_APPROOT}"
 
