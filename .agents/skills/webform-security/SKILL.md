@@ -17,10 +17,23 @@ description: Triage and fix private Webform security issues in Drupal GitLab.
 
 ## 1. Triage
 
-- Open the [queue][queue]: open issues, most recently updated. Skip titles
-  starting `webform: [D7ES] Backport of` unless the maintainer asks.
-- Update `.agents/private/webform-security/gitlab/<security-id>.md`, then
-  `gitlab/index.md` (both Git ignored). Link evidence. Record:
+Private notes live in `.agents/private/webform-security/gitlab/` (Git
+ignored): one `<security-id>.md` per issue and an `index.md` following the
+[index template][index-template].
+
+When asked to check the queue:
+
+1. Open the [queue][queue] (open issues, oldest first). Skip titles starting
+   `webform: [D7ES] Backport of` unless the maintainer asks.
+2. Add a note and an index row for each new issue.
+3. Update labels, status, and next action for changed issues.
+4. Remove closed issues from the table; keep their notes, mark them closed,
+   and list them under "Queue scope and sources".
+5. Refresh the snapshot date, counts, category overview, and work-next
+   summary.
+6. Report the changes in chat.
+
+Each issue note links evidence and records:
   - Snapshot date and state
   - Exact labels
   - Primary category
@@ -50,9 +63,10 @@ description: Triage and fix private Webform security issues in Drupal GitLab.
   versions, mitigation, and fix); similar impact is not enough. Link the
   issues and ask the security team to confirm. See [one advisory per
   vulnerability][advisory].
-- Rank required responses and validated high-impact issues first; rank the
-  rest by reported impact, attacker access, exposure, and reproducibility.
-  Re-rank after validation.
+- Work oldest first by creation date. Interrupt only for a `Needs …` or
+  `Needs attention` label, a newly validated high-impact issue, or a
+  `Security risk::…` label. Local priority (reported impact, attacker access,
+  exposure, reproducibility) is informational.
 - Before reproducing, show a short plan: impact, affected-version
   questions, proposed functional test, private branch/remote, and next
   decision.
@@ -150,7 +164,8 @@ description: Triage and fix private Webform security issues in Drupal GitLab.
 
 [procedure]: https://www.drupal.org/node/3507907
 [labels]: https://git.drupalcode.org/groups/security/-/labels
-[queue]: https://git.drupalcode.org/search?group_id=183118&scope=issues&search=%22Project-webform%22
+[queue]: https://git.drupalcode.org/search?group_id=183118&scope=issues&search=%22Project-webform%22&sort=created_asc&state=opened
 [advisory]: https://www.drupal.org/node/3627681
 [template]: references/security-advisory-template.md
+[index-template]: references/security-index-template.md
 [test-template]: references/reproduction-test-template.md
