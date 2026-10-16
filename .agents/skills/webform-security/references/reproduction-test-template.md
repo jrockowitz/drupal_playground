@@ -137,9 +137,20 @@ as the payload so execution can be detected without alerts.
 
 ## Checklist
 
-- Fails on the vulnerable branch for the expected reason.
-- Passes after the fix without changes.
-- Lives in the feature folder; no security ID in names or comments.
-- Comments describe secure behavior, not exploit steps.
-- Fully exercises the reported path with harmless local fixtures or test
-  endpoints. Does not contact live external systems or use secrets.
+- Uses `WebformBrowserTestBase` by default; uses `WebformWebDriverTestBase`
+  only when the vulnerability needs JavaScript (client-side rendering, states,
+  dialogs).
+- Lives in the feature folder (`Access`, `Element`, `Handler`, …). Named after
+  the behavior; no security ID in names or comments, because the test becomes
+  public.
+- Asserts the secure behavior: fails on the vulnerable branch for the expected
+  reason and passes unchanged after the fix.
+- Enables only needed modules; uses the smallest webform and the fewest
+  permissions the attack requires.
+- Tests one attack path per method: legitimate use works, then the attack is
+  blocked or escaped with specific checks (403, escaped markup, unchanged
+  entity).
+- Fully exercises the reported path with harmless local fixtures and markers.
+  Outbound requests use a local endpoint or test double. Does not contact live
+  external systems or use secrets.
+- Comments describe secure behavior at a high level, not exploit steps.
