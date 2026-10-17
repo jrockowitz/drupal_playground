@@ -1,12 +1,24 @@
 {
-    "_hash": "f2381bd9a62d2ed5ee3e9e8e557669b053d1d4959b10d8a98287cab1dff7dc87",
+    "_hash": "7a0ffefe655784174af842f65d18a2fa8c78dcdfc91f91a247dfcaa09ce2722d",
     "patches": {
-        "drupal/config_rewrite": [
+        "drupal/address": [
             {
-                "package": "drupal/config_rewrite",
-                "description": "Issue #3528767: Tried to rewrite config by module without initial config",
-                "url": "https://www.drupal.org/files/issues/2025-06-24/config_rewrite-issue-3528767-comment-2.patch",
-                "sha256": "cff05269fd67c99674ff4100aa100f95c5553dc9be0126e39b1da275c357fb70",
+                "package": "drupal/address",
+                "description": "Issue #2819251: generateSampleValue",
+                "url": "https://www.drupal.org/files/issues/2024-09-10/address-issue-2819251-comment-9.patch",
+                "sha256": "9b00869bf124d5177fa07213751c08c2683eccc7dc1400618c951549ae111736",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/cer": [
+            {
+                "package": "drupal/cer",
+                "description": "Issue #2998138: Could support Remove field name prefix module?",
+                "url": "https://www.drupal.org/files/issues/2026-07-13/cer-issue-2998138-comment-20.patch",
+                "sha256": "51a76ffa3508f7bf23d8403aacbe4c56d5f3463cc3ea8c098f9d91e23a88829a",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
@@ -33,30 +45,6 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/drupal/issues/3511776",
                     "provenance": "dependency:drupal/core"
-                }
-            }
-        ],
-        "drupal/address": [
-            {
-                "package": "drupal/address",
-                "description": "Issue #2819251: generateSampleValue",
-                "url": "https://www.drupal.org/files/issues/2024-09-10/address-issue-2819251-comment-9.patch",
-                "sha256": "9b00869bf124d5177fa07213751c08c2683eccc7dc1400618c951549ae111736",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/cer": [
-            {
-                "package": "drupal/cer",
-                "description": "Issue #2998138: Could support Remove field name prefix module?",
-                "url": "https://www.drupal.org/files/issues/2026-07-13/cer-issue-2998138-comment-20.patch",
-                "sha256": "51a76ffa3508f7bf23d8403aacbe4c56d5f3463cc3ea8c098f9d91e23a88829a",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
                 }
             }
         ],
@@ -88,20 +76,20 @@
             {
                 "package": "drupal/type_tray",
                 "description": "Issue #3417679: Add type tray icon to node edit and related tasks",
-                "url": "https://www.drupal.org/files/issues/2024-01-28/issue-3417679-mr-22.patch",
-                "sha256": "0c67cc70ee72dbb72eace828d547335922877fc9be324f0cb8739261b966d40b",
+                "url": "patches/type-tray-title.patch",
+                "sha256": "d3ed1357ac37720c4e50d155ef399b7ac814dcbf9bcbf8c0177f22d61d882078",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
                 }
             }
         ],
-        "drupal/inline_entity_form": [
+        "drupal/config_rewrite": [
             {
-                "package": "drupal/inline_entity_form",
-                "description": "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form",
-                "url": "patches/drupal/inline_entity_form-3271293-3.0.0-reroll.patch",
-                "sha256": "0395a3488071793907c07c19ce46072f6154a0c309140a2bc377c44b71691c20",
+                "package": "drupal/config_rewrite",
+                "description": "Issue #3528767: Tried to rewrite config by module without initial config",
+                "url": "https://www.drupal.org/files/issues/2025-06-24/config_rewrite-issue-3528767-comment-2.patch",
+                "sha256": "cff05269fd67c99674ff4100aa100f95c5553dc9be0126e39b1da275c357fb70",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
@@ -114,6 +102,18 @@
                 "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",
                 "url": "patches/drupal/ai_rag_search_chat-multi-value-excerpts.patch",
                 "sha256": "a2e5866f2af4c1722833911103365443350cf27329d170d8a06e876853358d58",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/inline_entity_form": [
+            {
+                "package": "drupal/inline_entity_form",
+                "description": "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form",
+                "url": "patches/drupal/inline_entity_form-3271293-3.0.0-reroll.patch",
+                "sha256": "0395a3488071793907c07c19ce46072f6154a0c309140a2bc377c44b71691c20",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
@@ -143,6 +143,18 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874",
                     "provenance": "dependency:drupal/coffee"
+                }
+            }
+        ],
+        "drupal/project_browser": [
+            {
+                "package": "drupal/project_browser",
+                "description": "#3622921 Implement getModulesToInstall in TestModuleInstaller",
+                "url": "https://git.drupalcode.org/issue/project_browser-3622921/-/commit/9afcce0676ca61ca1514a14b6d882cbd081c0045.diff",
+                "sha256": "56fb6668c88cf2d6dc81d91a2cc85d0dae112d5d83053230fe18402674cfdf8a",
+                "depth": 1,
+                "extra": {
+                    "provenance": "dependency:drupal/project_browser"
                 }
             }
         ]

@@ -1,0 +1,96 @@
+diff --git a/core/lib/Drupal/Core/Extension/ModuleHandler.php b/core/lib/Drupal/Core/Extension/ModuleHandler.php
+index 391d10c4567f7dfe60951a5f83e347086b16a022..fcd475862437f764ab8b02bd9abf3a09474670ab 100644
+--- a/core/lib/Drupal/Core/Extension/ModuleHandler.php
++++ b/core/lib/Drupal/Core/Extension/ModuleHandler.php
+@@ -8,6 +8,7 @@
+ use Drupal\Core\Cache\CacheBackendInterface;
+ use Drupal\Core\Extension\Exception\UnknownExtensionException;
+ use Drupal\Core\Hook\Attribute\LegacyHook;
++use Drupal\Core\Hook\Attribute\LegacyRequirementsHook;
+ use Drupal\Core\Hook\ImplementationList;
+ use Drupal\Core\Hook\OrderOperation\OrderOperation;
+ use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
+@@ -282,9 +283,26 @@ public function hasImplementations(string $hook, $modules = NULL): bool {
+    * {@inheritdoc}
+    */
+   public function invokeAllWith(string $hook, callable $callback): void {
+-    $list = $this->getHookImplementationList($hook);
+-    foreach ($list->iterateByModule() as $module => $listener) {
+-      $callback($listener, $module);
++    if ($hook == 'requirements') {
++      // hook_requirements() is special, it typically resides in .install files
++      // and is not collected in \Drupal\Core\Hook\HookCollectorPass to avoid
++      // edge cases when those files have not yet been loaded. Fall back to an
++      // implementation similar to legacyInvoke(). Callers are responsible to
++      // load the .install files first.
++      foreach ($this->moduleList as $module => $filename) {
++        $function = $module . '_' . $hook;
++        if (function_exists($function) && !(new \ReflectionFunction($function))->getAttributes(LegacyRequirementsHook::class)) {
++          $message = "$function without a #[LegacyRequirementsHook] attribute is deprecated in drupal:11.3.0 and removed in drupal:13.0.0. See https://www.drupal.org/node/3549685";
++          @trigger_error($message, E_USER_DEPRECATED);
++          $callback($function, $module);
++        }
++      }
++    }
++    else {
++      $list = $this->getHookImplementationList($hook);
++      foreach ($list->iterateByModule() as $module => $listener) {
++        $callback($listener, $module);
++      }
+     }
+   }
+ 
+diff --git a/core/lib/Drupal/Core/Hook/HookCollectorPass.php b/core/lib/Drupal/Core/Hook/HookCollectorPass.php
+index 247a2ec875a043706152179151f7b072a3c4b796..08ec2ce3cd11d13e592fda1aab6caed2b30d8dae 100644
+--- a/core/lib/Drupal/Core/Hook/HookCollectorPass.php
++++ b/core/lib/Drupal/Core/Hook/HookCollectorPass.php
+@@ -48,7 +48,7 @@ class HookCollectorPass extends HookCollectorBase implements CompilerPassInterfa
+    *
+    * @var string[]
+    */
+-  protected array $proceduralFileExtensions = ['module', 'profile', 'install'];
++  protected array $proceduralFileExtensions = ['module', 'profile'];
+ 
+   /**
+    * OOP implementation module names keyed by hook name and "$class::$method".
+@@ -434,27 +434,6 @@ protected function collectModuleHookImplementations($dir, $module, $current_modu
+ 
+             $legacy_attributes = [LegacyHook::class, LegacyRequirementsHook::class];
+             if (!static::hasAnyAttribute($attributes, $legacy_attributes) && (preg_match($current_module_preg, $function, $matches) || preg_match($all_modules_preg, $function, $matches))) {
+-              // Skip hooks that are not supported by the new hook system, they
+-              // do not need to be added to the BC layer. Note that is different
+-              // from static::checkForProceduralOnlyHooks(). hook_requirements
+-              // is allowed and only update hooks are considered as dynamic
+-              // exclusion, since post updates are not expected to be parsed.
+-              // Also, update hooks are checked as ends with, since the regular
+-              // expression sometimes attributes them to the wrong module,
+-              // resulting in a prefix.
+-              $staticDenyHooks = [
+-                'install',
+-                'install_tasks',
+-                'install_tasks_alter',
+-                'schema',
+-                'uninstall',
+-                'update_last_removed',
+-                'update_dependencies',
+-              ];
+-              if (in_array($matches['hook'], $staticDenyHooks) || preg_match('/update_\d+$/', $function)) {
+-                continue;
+-              }
+-
+               assert($function === $matches['module'] . '_' . $matches['hook']);
+               $implementations[] = ['module' => $matches['module'], 'hook' => $matches['hook']];
+             }
+@@ -501,12 +480,6 @@ public static function hasAnyAttribute(array $existingAttributes, array $attribu
+    *   implemented.
+    */
+   protected function addProceduralImplementation(string $hook, string $module): void {
+-    $function = $module . '_' . $hook;
+-
+-    if (in_array($hook, ['requirements', 'requirements_alter'])) {
+-      $message = "$function without a #[LegacyRequirementsHook] attribute is deprecated in drupal:11.3.0 and removed in drupal:13.0.0. See https://www.drupal.org/node/3549685";
+-      @trigger_error($message, E_USER_DEPRECATED);
+-    }
+     $this->proceduralImplementations[$hook][] = $module;
+   }
+ 

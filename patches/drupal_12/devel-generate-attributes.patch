@@ -1,0 +1,219 @@
+--- /dev/null
++++ b/devel_generate/src/Attribute/DevelGenerate.php
+@@ -0,0 +1,37 @@
++<?php
++
++namespace Drupal\devel_generate\Attribute;
++
++use Drupal\Component\Plugin\Attribute\Plugin;
++use Drupal\Core\StringTranslation\TranslatableMarkup;
++
++/**
++ * Defines a Devel Generate plugin.
++ */
++#[\Attribute(\Attribute::TARGET_CLASS)]
++class DevelGenerate extends Plugin {
++
++  /**
++   * Constructs a Devel Generate attribute.
++   */
++  public function __construct(
++    public readonly string $id,
++    public readonly TranslatableMarkup $label,
++    public readonly TranslatableMarkup $description,
++    public readonly string $url,
++    public readonly string $permission,
++    public readonly array $settings = [],
++    public readonly array $moduleDependencies = [],
++  ) {}
++
++  /**
++   * {@inheritdoc}
++   */
++  public function get(): array {
++    $definition = parent::get();
++    $definition['dependencies'] = $this->moduleDependencies;
++    unset($definition['moduleDependencies']);
++    return $definition;
++  }
++
++}
+--- a/devel_generate/src/DevelGeneratePluginManager.php
++++ b/devel_generate/src/DevelGeneratePluginManager.php
+@@ -48,7 +48,7 @@
+     protected TranslationInterface $stringTranslation,
+     protected EntityFieldManagerInterface $entityFieldManager,
+   ) {
+-    parent::__construct('Plugin/DevelGenerate', $namespaces, $module_handler, NULL, DevelGenerate::class);
++    parent::__construct('Plugin/DevelGenerate', $namespaces, $module_handler, NULL, \Drupal\devel_generate\Attribute\DevelGenerate::class, DevelGenerate::class);
+     $this->moduleHandler = $module_handler;
+     $this->alterInfo('devel_generate_info');
+     $this->setCacheBackend($cache_backend, 'devel_generate_plugins');
+--- a/devel_generate/src/Plugin/DevelGenerate/ContentDevelGenerate.php
++++ b/devel_generate/src/Plugin/DevelGenerate/ContentDevelGenerate.php
+@@ -47,6 +47,23 @@
+  *   },
+  * )
+  */
++#[\Drupal\devel_generate\Attribute\DevelGenerate(
++  id: "content",
++  label: new \Drupal\Core\StringTranslation\TranslatableMarkup("content"),
++  description: new \Drupal\Core\StringTranslation\TranslatableMarkup("Generate a given number of content. Optionally delete current content."),
++  url: "content",
++  permission: "administer devel_generate",
++  settings: [
++    "num" => 50,
++    "kill" => FALSE,
++    "max_comments" => 0,
++    "title_length" => 4,
++    "add_type_label" => FALSE
++  ],
++  moduleDependencies: [
++    "node",
++  ],
++)]
+ class ContentDevelGenerate extends DevelGenerateBase implements ContainerFactoryPluginInterface {
+ 
+   /**
+--- a/devel_generate/src/Plugin/DevelGenerate/MediaDevelGenerate.php
++++ b/devel_generate/src/Plugin/DevelGenerate/MediaDevelGenerate.php
+@@ -35,6 +35,21 @@
+  *   },
+  * )
+  */
++#[\Drupal\devel_generate\Attribute\DevelGenerate(
++  id: "media",
++  label: new \Drupal\Core\StringTranslation\TranslatableMarkup("media"),
++  description: new \Drupal\Core\StringTranslation\TranslatableMarkup("Generate a given number of media entities."),
++  url: "media",
++  permission: "administer devel_generate",
++  settings: [
++    "num" => 50,
++    "kill" => FALSE,
++    "name_length" => 4,
++  ],
++  moduleDependencies: [
++    "media",
++  ],
++)]
+ class MediaDevelGenerate extends DevelGenerateBase implements ContainerFactoryPluginInterface {
+ 
+   /**
+--- a/devel_generate/src/Plugin/DevelGenerate/MenuDevelGenerate.php
++++ b/devel_generate/src/Plugin/DevelGenerate/MenuDevelGenerate.php
+@@ -29,6 +29,21 @@
+  *   }
+  * )
+  */
++#[\Drupal\devel_generate\Attribute\DevelGenerate(
++  id: "menu",
++  label: new \Drupal\Core\StringTranslation\TranslatableMarkup("menus"),
++  description: new \Drupal\Core\StringTranslation\TranslatableMarkup("Generate a given number of menus and menu
++  links. Optionally delete current menus."),
++  url: "menu",
++  permission: "administer devel_generate",
++  settings: [
++    "num_menus" => 2,
++    "num_links" => 50,
++    "title_length" => 12,
++    "max_width" => 6,
++    "kill" => FALSE,
++  ],
++)]
+ class MenuDevelGenerate extends DevelGenerateBase implements ContainerFactoryPluginInterface {
+ 
+   /**
+--- a/devel_generate/src/Plugin/DevelGenerate/BlockContentDevelGenerate.php
++++ b/devel_generate/src/Plugin/DevelGenerate/BlockContentDevelGenerate.php
+@@ -31,6 +31,20 @@
+  *   },
+  * )
+  */
++#[\Drupal\devel_generate\Attribute\DevelGenerate(
++  id: "block_content",
++  label: new \Drupal\Core\StringTranslation\TranslatableMarkup("Block Content"),
++  description: new \Drupal\Core\StringTranslation\TranslatableMarkup("Generate a given number of Block content blocks. Optionally delete current blocks."),
++  url: "block-content",
++  permission: "administer devel_generate",
++  settings: [
++    "num" => 50,
++    "kill" => FALSE,
++    "title_length" => 4,
++    "add_type_label" => FALSE,
++    "reusable" => TRUE
++  ],
++)]
+ class BlockContentDevelGenerate extends DevelGenerateBase implements ContainerFactoryPluginInterface {
+ 
+   /**
+--- a/devel_generate/src/Plugin/DevelGenerate/UserDevelGenerate.php
++++ b/devel_generate/src/Plugin/DevelGenerate/UserDevelGenerate.php
+@@ -28,6 +28,18 @@
+  *   }
+  * )
+  */
++#[\Drupal\devel_generate\Attribute\DevelGenerate(
++  id: "user",
++  label: new \Drupal\Core\StringTranslation\TranslatableMarkup("users"),
++  description: new \Drupal\Core\StringTranslation\TranslatableMarkup("Generate a given number of users. Optionally delete current users."),
++  url: "user",
++  permission: "administer devel_generate",
++  settings: [
++    "num" => 50,
++    "kill" => FALSE,
++    "pass" => ""
++  ],
++)]
+ class UserDevelGenerate extends DevelGenerateBase implements ContainerFactoryPluginInterface {
+ 
+   /**
+--- a/devel_generate/src/Plugin/DevelGenerate/TermDevelGenerate.php
++++ b/devel_generate/src/Plugin/DevelGenerate/TermDevelGenerate.php
+@@ -36,6 +36,23 @@
+  *   },
+  * )
+  */
++#[\Drupal\devel_generate\Attribute\DevelGenerate(
++  id: "term",
++  label: new \Drupal\Core\StringTranslation\TranslatableMarkup("terms"),
++  description: new \Drupal\Core\StringTranslation\TranslatableMarkup("Generate a given number of terms. Optionally delete current terms."),
++  url: "term",
++  permission: "administer devel_generate",
++  settings: [
++    "num" => 10,
++    "title_length" => 12,
++    "minimum_depth" => 1,
++    "maximum_depth" => 4,
++    "kill" => FALSE,
++  ],
++  moduleDependencies: [
++    "taxonomy",
++  ],
++)]
+ class TermDevelGenerate extends DevelGenerateBase implements ContainerFactoryPluginInterface {
+ 
+   /**
+--- a/devel_generate/src/Plugin/DevelGenerate/VocabularyDevelGenerate.php
++++ b/devel_generate/src/Plugin/DevelGenerate/VocabularyDevelGenerate.php
+@@ -28,6 +28,21 @@
+  *   },
+  * )
+  */
++#[\Drupal\devel_generate\Attribute\DevelGenerate(
++  id: "vocabulary",
++  label: new \Drupal\Core\StringTranslation\TranslatableMarkup("vocabularies"),
++  description: new \Drupal\Core\StringTranslation\TranslatableMarkup("Generate a given number of vocabularies. Optionally delete current vocabularies."),
++  url: "vocabs",
++  permission: "administer devel_generate",
++  settings: [
++    "num" => 1,
++    "title_length" => 12,
++    "kill" => FALSE
++  ],
++  moduleDependencies: [
++    "taxonomy",
++  ],
++)]
+ class VocabularyDevelGenerate extends DevelGenerateBase implements ContainerFactoryPluginInterface {
+ 
+   /**

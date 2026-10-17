@@ -1,0 +1,19 @@
+--- a/devel.install
++++ b/devel.install
+@@ -5,6 +5,7 @@
+  * Install, update and uninstall functions for the devel module.
+  */
+ 
++use Drupal\Core\Extension\Requirement\RequirementSeverity;
+ use Drupal\devel\Plugin\Devel\Dumper\VarDumper;
+ 
+ /**
+@@ -34,7 +35,7 @@
+     $requirements['devel'] = [
+       'title' => t('Devel module enabled'),
+       'description' => t("The Devel module provides access to internal debugging information; therefore it's recommended to disable this module on sites in production."),
+-      'severity' => REQUIREMENT_INFO,
++      'severity' => RequirementSeverity::Info,
+     ];
+   }
+ 

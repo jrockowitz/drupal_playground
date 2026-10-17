@@ -42,7 +42,7 @@ fi
 # --exclude flags prevent scanning vendored and generated code.
 # shellcheck disable=SC2086
 exec "${PARALLEL_LINT}" \
-  --extensions php,module,install,theme,inc,profile \
+  -e php,module,install,theme,inc,profile \
   --exclude vendor \
   --exclude node_modules \
   ${_PARALLEL_LINT_EXTRA} \

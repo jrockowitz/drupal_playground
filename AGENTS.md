@@ -16,28 +16,26 @@
     nodejs_version
   }'
   ```
-- Custom DDEV service and command logic must use `$DDEV_SITENAME`; do not
-  hard-code project or container names.
+- Custom DDEV services and commands must use `$DDEV_SITENAME`,
+  never hard-coded project or container names.
 
 # Agents
 
-- Do not create Git worktrees. Work directly in the current repository or
-  worktree.
-- All commits made by an AI agent should end with a note that reads:
-  `AI-assisted by {code agent name}`.
-- Require my review before commits and pushes, except when a
-  skill or prompt says you can skip the review.
-- Require me to review all tickets or comments and allow me to click
-  save/submit.
-- All tickets and comments made by an AI agent should start with a note that
-  reads: `AI-assisted by {code agent name}`.
+- All commits made by an AI agent should end with the note `AI-assisted by {code agent name}`,
+  and all tickets and comments made by an AI agent should begin with the same note.
+- Do not create Git worktrees. Work directly in the current repository
+  or worktree.
+- Review all changes before committing or pushing code, and all tickets
+  or comments before saving or submitting, unless a skill or prompt
+  permits skipping review.
+- When cloning repositories hosted on `git.drupalcode.org`, always use the SSH
+  clone URL (`git@git.drupalcode.org:...`). Do not clone Drupal.org repositories
+  over HTTPS.
 - When an in-app /browser is available, use it instead of Playwright.
 - Wrap Markdown prose at 80-100 characters when practical; keep lines at
   100 characters or fewer.
 
 # Commands
-
-## DDEV
 
 ```bash
 # Runs PHPUnit
@@ -58,8 +56,5 @@ ddev recipe-apply ../recipes/<recipe>
 
 # Architecture
 
-## Directories
-
-- `web/modules/custom` modules that are under development via the main
-  repo.
+- `web/modules/custom` modules that are under development via the main repo.
 - `web/modules/sandbox` modules checked out from https://git.drupalcode.org/

@@ -32,8 +32,6 @@ install:
   - ckeditor_emoji
   - ckeditor_link_styles
   - embed
-  - embedded_content
-  - embedded_content_examples
   - entity_browser
   - entity_browser_enhanced
   - entity_embed
@@ -45,8 +43,6 @@ install:
 config:
   strict: false
   import:
-    embedded_content: "*"
-    embedded_content_examples: "*"
     entity_embed: "*"
     linkit: "*"
     media_library: "*"
@@ -91,7 +87,6 @@ config:
         dependencies:
           module:
             - editor
-            - embedded_content
             - entity_embed
             - linkit
             - media
@@ -114,12 +109,6 @@ config:
             provider: editor
             status: true
             weight: -45
-            settings: { }
-          embedded_content:
-            id: embedded_content
-            provider: embedded_content
-            status: true
-            weight: -41
             settings: { }
           entity_embed:
             id: entity_embed
@@ -151,7 +140,7 @@ config:
             status: true
             weight: -43
             settings:
-              allowed_html: '<br> <p class> <h2 class> <h3 class> <h4 class> <h5 class> <h6 class> <strong> <em> <code class="language-*"> <pre> <s> <sub> <sup> <blockquote> <a href id class data-entity-type data-entity-uuid data-entity-substitution> <ul class> <ol reversed start> <li> <hr> <table> <tr> <td rowspan colspan> <th rowspan colspan> <thead> <tbody> <tfoot> <caption> <drupal-media data-entity-type data-entity-uuid alt data-caption data-align> <span class contenteditable> <mark class> <h1 class> <div class> <label class> <input type tabindex disabled> <details> <summary> <embedded-content data-plugin-config data-plugin-id data-button-id> <embedded-content-inline data-plugin-config data-plugin-id data-button-id> <drupal-entity alt title data-align data-caption data-entity-embed-display data-entity-embed-display-settings data-view-mode data-entity-uuid data-langcode data-embed-button="node" data-entity-type="node">'
+              allowed_html: '<br> <p class> <h2 class> <h3 class> <h4 class> <h5 class> <h6 class> <strong> <em> <code class="language-*"> <pre> <s> <sub> <sup> <blockquote> <a href id class data-entity-type data-entity-uuid data-entity-substitution> <ul class> <ol reversed start> <li> <hr> <table> <tr> <td rowspan colspan> <th rowspan colspan> <thead> <tbody> <tfoot> <caption> <drupal-media data-entity-type data-entity-uuid alt data-caption data-align> <span class contenteditable> <mark class> <h1 class> <div class> <label class> <input type tabindex disabled> <details> <summary> <drupal-entity alt title data-align data-caption data-entity-embed-display data-entity-embed-display-settings data-view-mode data-entity-uuid data-langcode data-embed-button="node" data-entity-type="node">'
               filter_html_help: true
               filter_html_nofollow: false
           filter_html_escape:
@@ -247,7 +236,6 @@ config:
           - '|'
           - drupalMedia
           - node
-          - embeddedContent__examples
           - detail
           - insertTable
           - insertTemplate

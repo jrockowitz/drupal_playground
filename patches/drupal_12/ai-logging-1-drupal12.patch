@@ -1,0 +1,28 @@
+--- a/ai_logging.info.yml
++++ b/ai_logging.info.yml
+@@ -2,7 +2,7 @@
+ description: This enables you to log any AI request and response as well as additional contextual information.
+ package: AI
+ type: module
+-core_version_requirement: ^10.4 || ^11
++core_version_requirement: ^10.4 || ^11 || ^12
+ configure: ai_logging.settings_form
+ tags:
+   - developer
+--- a/tests/src/Kernel/InstallAiSearchTest.php
++++ b/tests/src/Kernel/InstallAiSearchTest.php
+@@ -3,12 +3,14 @@
+ namespace Drupal\Tests\ai_logging\Kernel;
+ 
+ use Drupal\KernelTests\KernelTestBase;
++use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+ 
+ /**
+  * Tests enabling AI Logging.
+  *
+  * @group ai_logging
+  */
++#[RunTestsInSeparateProcesses]
+ class InstallAiSearchTest extends KernelTestBase {
+ 
+   /**
