@@ -14,6 +14,8 @@ description: Triage and fix private Webform security issues in Drupal GitLab.
   comments, or MRs.
 - AI-written commits end with, and AI-written tickets, comments, and MRs
   start with, `AI-assisted by Codex`.
+- Keep local verification commands and results out of GitLab comments and
+  commit messages.
 
 ## 1. Triage
 
@@ -162,10 +164,10 @@ Each issue note links evidence and records:
   the `validated` status change above, never change GitLab metadata
   automatically.
 
-[procedure]: https://www.drupal.org/node/3507907
-[labels]: https://git.drupalcode.org/groups/security/-/labels
-[queue]: https://git.drupalcode.org/search?group_id=183118&scope=issues&search=%22Project-webform%22&sort=created_asc&state=opened
-[advisory]: https://www.drupal.org/node/3627681
-[template]: references/security-advisory-template.md
+[drupal-security-issue-procedure]: https://www.drupal.org/node/3507907
+[drupal-gitlabl-labels]: https://git.drupalcode.org/groups/security/-/labels
+[webform-security-queue]: https://git.drupalcode.org/search?group_id=183118&scope=issues&search=%22Project-webform%22&sort=created_asc&state=opened
+[security-advisory-drafting]: https://www.drupal.org/node/3627681
+[security-advisory-template]: references/security-advisory-template.md
 [index-template]: references/security-index-template.md
 [test-template]: references/reproduction-test-template.md
