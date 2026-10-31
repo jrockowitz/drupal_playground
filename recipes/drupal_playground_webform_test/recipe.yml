@@ -27,6 +27,7 @@ install:
   - webform_test_options
   - webform_test_views
   - webform_test_block_submission_limit
+  - webform_javascript_setting_test
 config:
   strict: false
   import:
@@ -48,4 +49,5 @@ config:
     webform_test_options: '*'
     webform_test_views: '*'
     webform_test_block_submission_limit: '*'
+    webform_javascript_setting_test: '*'
     bartik:

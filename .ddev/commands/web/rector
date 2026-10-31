@@ -40,9 +40,9 @@ for config in rector.php rector.php.dist; do
 done
 
 # No project config found. Generate a temporary rector.php that targets
-# custom modules and applies all available Drupal upgrade sets.
+# the current directory and applies all available Drupal upgrade sets.
 TMPCONFIG=$(mktemp /tmp/rector-XXXXXX.php)
-cat > "${TMPCONFIG}" <<'EOF'
+cat > "${TMPCONFIG}" <<EOF
 <?php
 
 declare(strict_types=1);
@@ -54,7 +54,10 @@ use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()
     ->withPaths([
-        '/var/www/html/web/modules/custom',
+        '${PWD}',
+    ])
+    ->withBootstrapFiles([
+        '${DDEV_APPROOT}/vendor/autoload.php',
     ])
     ->withSets([
         Drupal9SetList::DRUPAL_9,
@@ -64,7 +67,7 @@ return RectorConfig::configure()
 EOF
 
 echo "Note: No rector.php found in project root."
-echo "Using auto-generated config targeting web/modules/custom."
+echo "Using auto-generated config targeting current directory."
 echo "Create a rector.php in your project root to customise paths and rule sets."
 echo ""
 
@@ -72,9 +75,9 @@ if [ $# -eq 0 ]; then
   echo "No subcommand given; defaulting to 'process --dry-run'."
   echo "Run 'ddev rector process' to apply changes."
   echo ""
-  "${RECTOR}" --config="${TMPCONFIG}" process --dry-run
+  "${RECTOR}" process --config="${TMPCONFIG}" --dry-run
 else
-  "${RECTOR}" --config="${TMPCONFIG}" "$@"
+  "${RECTOR}" "$@" --config="${TMPCONFIG}"
 fi
 EXIT_CODE=$?
 rm -f "${TMPCONFIG}"

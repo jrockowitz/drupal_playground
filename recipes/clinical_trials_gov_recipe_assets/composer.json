@@ -6,6 +6,6 @@
     "version": "1.0.0",
     "require": {
         "drupal/asset_injector": "^2",
-        "drupal/core": "^10 || ^11"
+        "drupal/core": "^10 || ^11 || ^12"
     }
 }

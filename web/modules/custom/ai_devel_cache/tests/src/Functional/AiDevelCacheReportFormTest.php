@@ -6,12 +6,14 @@ namespace Drupal\Tests\ai_devel_cache\Functional;
 
 use Drupal\ai\OperationType\Embeddings\EmbeddingsInput;
 use Drupal\Tests\BrowserTestBase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Verifies the AI Devel Cache report form end-to-end.
  *
  * @group ai_devel_cache
  */
+#[RunTestsInSeparateProcesses]
 class AiDevelCacheReportFormTest extends BrowserTestBase {
 
   /**

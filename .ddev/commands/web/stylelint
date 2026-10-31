@@ -41,6 +41,7 @@ for cfg in .stylelintrc .stylelintrc.json .stylelintrc.yaml .stylelintrc.yml \
   fi
 done
 
+STYLELINT_TMPDIR=""
 STYLELINT_CONFIG=""
 if [ "${FOUND_LOCAL_CONFIG}" = "false" ]; then
   CORE_STYLELINTRC="${DDEV_APPROOT}/${WEB_ROOT}/core/.stylelintrc.json"
@@ -48,9 +49,56 @@ if [ "${FOUND_LOCAL_CONFIG}" = "false" ]; then
   if [ -f "${CORE_STYLELINTRC}" ] && [ -d "${CORE_NODE_MODULES}" ]; then
     STYLELINT_CONFIG="--config ${CORE_STYLELINTRC}"
   else
-    STYLELINT_CONFIG="--config ${DDEV_APPROOT}/.ddev/module-developer/config/.stylelintrc.json"
+    if [ -f "${CORE_STYLELINTRC}" ] && [ ! -d "${CORE_NODE_MODULES}" ]; then
+      echo "Note: web/core/node_modules is not installed; using bundled stylelint config." >&2
+      echo "      CI uses the prettier version pinned in web/core/yarn.lock, which may" >&2
+      echo "      format CSS differently. Run 'yarn install' in web/core for parity." >&2
+    fi
+    # Bundled fallback: stylelint resolves plugins from the config file's
+    # directory, so a plain --config path won't find globally installed packages.
+    # Stage the config in a temp dir with a node_modules symlink pointing at the
+    # global npm install — the same technique the eslint command uses.
+    _STYLELINT_REAL="$(readlink -f "$(command -v "${STYLELINT}")" 2>/dev/null)"
+    _GLOBAL_MODULES="$(echo "${_STYLELINT_REAL}" | sed 's|/node_modules/stylelint/.*||')/node_modules"
+    if [ ! -d "${_GLOBAL_MODULES}" ]; then
+      _GLOBAL_MODULES="$(npm root -g 2>/dev/null)"
+    fi
+    STYLELINT_TMPDIR="$(mktemp -d)"
+    cp "${DDEV_APPROOT}/.ddev/module-developer/config/.stylelintrc.json" "${STYLELINT_TMPDIR}/.stylelintrc.json"
+    ln -s "${_GLOBAL_MODULES}" "${STYLELINT_TMPDIR}/node_modules"
+    STYLELINT_CONFIG="--config ${STYLELINT_TMPDIR}/.stylelintrc.json"
   fi
 fi
+
+# Prettier config: match CI behaviour — if no local Prettier config exists and
+# core's .prettierrc.json is available, symlink it so stylelint-prettier uses the
+# same formatting rules as the pipeline. The symlink is removed on exit.
+FOUND_LOCAL_PRETTIER=false
+for cfg in .prettierrc .prettierrc.json .prettierrc.yml .prettierrc.yaml \
+           .prettierrc.js .prettierrc.cjs .prettierrc.mjs \
+           prettier.config.js prettier.config.cjs prettier.config.mjs; do
+  if [ -f "./${cfg}" ]; then
+    FOUND_LOCAL_PRETTIER=true
+    break
+  fi
+done
+
+PRETTIER_SYMLINK_CREATED=false
+if [ "${FOUND_LOCAL_PRETTIER}" = "false" ]; then
+  CORE_PRETTIERRC="${DDEV_APPROOT}/${WEB_ROOT}/core/.prettierrc.json"
+  if [ -f "${CORE_PRETTIERRC}" ]; then
+    ln -s "${CORE_PRETTIERRC}" ./.prettierrc.json
+    PRETTIER_SYMLINK_CREATED=true
+  fi
+fi
+
+cleanup() {
+  if [ "${PRETTIER_SYMLINK_CREATED}" = "true" ]; then
+    rm -f ./.prettierrc.json
+  fi
+  [ -n "${STYLELINT_TMPDIR}" ] && rm -rf "${STYLELINT_TMPDIR}"
+}
+trap cleanup EXIT
 
 # Separate flags (--*) from file patterns so that flag-only invocations like
 # "ddev stylelint --fix" still get the default glob. Quoted so stylelint's own
@@ -69,5 +117,13 @@ if [ "${#PATTERNS[@]}" -eq 0 ]; then
   PATTERNS=('./**/*.css')
 fi
 
+# Only pass --ignore-path when the file exists. stylelint v16+ treats a missing
+# --ignore-path target as a fatal error (exit 2) rather than silently ignoring it.
+IGNORE_PATH_ARGS=()
+if [ -f "./.stylelintignore" ]; then
+  IGNORE_PATH_ARGS=("--ignore-path" "./.stylelintignore")
+fi
+
 # shellcheck disable=SC2086
-exec "${STYLELINT}" --allow-empty-input --ignore-path ./.stylelintignore ${STYLELINT_CONFIG} "${FLAGS[@]}" "${PATTERNS[@]}" --formatter verbose --color ${_STYLELINT_EXTRA}
+"${STYLELINT}" --allow-empty-input "${IGNORE_PATH_ARGS[@]}" ${STYLELINT_CONFIG} "${FLAGS[@]}" "${PATTERNS[@]}" --formatter verbose --color ${_STYLELINT_EXTRA}
+exit $?

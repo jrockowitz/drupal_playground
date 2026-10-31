@@ -15,13 +15,18 @@
         }
     ],
     "require": {
-        "composer/installers": "^2.3",
+        "composer/installers": "^2",
         "cweagans/composer-patches": "^2",
-        "drupal/core-composer-scaffold": "^10 || ^11",
-        "drupal/core-project-message": "^10 || ^11",
-        "drupal/core-recommended": "^10 || ^11",
-        "drush/drush": "^13.7",
-        "wikimedia/composer-merge-plugin": "^2.1"
+        "drupal/core-composer-scaffold": "^10 || ^11 || ^12",
+        "drupal/core-project-message": "^10 || ^11 || ^12",
+        "drupal/core-recommended": "^10 || ^11 || ^12",
+        "drush/drush": "^13",
+        "mglaman/composer-drupal-lenient": "^1",
+        "wikimedia/composer-merge-plugin": "^2"
+    },
+    "require-dev": {
+        "drupal/core-dev": "^10 || ^11 || ^12",
+        "drupal/upgrade_status": "^5"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -116,21 +121,8 @@
         "composer-exit-on-patch-failure": false,
         "composer-patches": {
             "ignore-dependency-patches": [
-                "drupal/media_library_media_modify"
-            ]
-        },
-        "patches": {
-            "drupal/inline_entity_form": [
-                {
-                    "description": "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form",
-                    "url": "patches/drupal/inline_entity_form-3271293-3.0.0-reroll.patch"
-                }
-            ],
-            "drupal/ai_rag_search_chat": [
-                {
-                    "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",
-                    "url": "patches/drupal/ai_rag_search_chat-multi-value-excerpts.patch"
-                }
+                "drupal/media_library_media_modify",
+                "drupal/project_browser"
             ]
         },
         "patchLevel": {
@@ -138,19 +130,22 @@
         },
         "merge-plugin": {
             "include": [
-                "composer.drupal_11.json",
-                "composer.drupal_11.sandbox.json",
-                "composer.drupal_11.lenient.json",
+                "composer.sandbox.json",
                 "composer.libraries.json",
-                "composer.recipes.json"
+                "composer.recipes.json",
+                "_composer.drupal_10.json",
+                "_composer.drupal_10.sandbox.json",
+                "composer.drupal_11.json",
+                "composer.drupal_11.lenient.json",
+                "composer.drupal_11.patches.json",
+                "_composer.drupal_12.json",
+                "_composer.drupal_12.lenient.json",
+                "_composer.drupal_12.patches.json"
             ],
             "merge-extra": true,
             "merge-extra-deep": true,
-            "merge-dev": true
+            "merge-dev": true,
+            "replace": true
         }
-    },
-    "require-dev": {
-        "drupal/core-dev": "^10 || ^11",
-        "drupal/embedded_content": "^2.0"
     }
 }

@@ -1,0 +1,111 @@
+diff --git a/css/type_tray_title.css b/css/type_tray_title.css
+new file mode 100644
+index 0000000..ce23e02
+--- /dev/null
++++ b/css/type_tray_title.css
+@@ -0,0 +1,11 @@
++/**
++ * @file type_tray_title.css
++ */
++
++.type-tray-title {
++  width: auto;
++  max-width: 1.2em;
++  max-height: 1.2em;
++  margin: -0.2em 0.2em 0 0;
++  vertical-align: middle;
++}
+diff --git a/type_tray.libraries.yml b/type_tray.libraries.yml
+index 5e0862c..979c54f 100644
+--- a/type_tray.libraries.yml
++++ b/type_tray.libraries.yml
+@@ -9,3 +9,8 @@ type_tray:
+     - core/drupal
+     - core/drupalSettings
+     - core/drupal.debounce
++
++type_tray_title:
++  css:
++    theme:
++      css/type_tray_title.css: {}
+--- a/type_tray.module
++++ b/type_tray.module
+@@ -98,6 +98,78 @@
+       $type->setThirdPartySetting('type_tray', $key, $value);
+     }
+   }
++}
++
++
++/**
++ * Implements hook_preprocess_HOOK() for page title templates.
++ */
++function type_tray_preprocess_page_title(array &$variables) {
++  // Only alter the page title for admin routes.
++  if (!\Drupal::service('router.admin_context')->isAdminRoute()) {
++    return;
++  }
++
++  // Get node type from the current node, edit, or operation route.
++  /** @var \Drupal\node\NodeTypeInterface|null $type */
++  $type = NULL;
++  if (\Drupal::routeMatch()->getRouteName() ===  'node.add') {
++    $type = \Drupal::routeMatch()->getParameter('node_type');
++  }
++  elseif (preg_match('/entity\.node\..*/', \Drupal::routeMatch()->getRouteName())) {
++    $node = \Drupal::routeMatch()->getParameter('node');
++    if ($node instanceof \Drupal\node\NodeInterface) {
++      $type = \Drupal::entityTypeManager()
++        ->getStorage('node_type')
++        ->load($node->getType());
++    }
++  }
++
++  if (empty($type)) {
++    return;
++  }
++
++  // Get the custom or default type tray icon.
++  $type_icon = $type->getThirdPartySetting('type_tray', 'type_icon');
++  if (empty($type_icon)) {
++    $module_path = \Drupal::service('extension.list.module')->getPath('type_tray');
++    $type_icon = base_path() . $module_path . \Drupal\type_tray\Controller\TypeTrayController::TYPE_TRAY_DEFAULT_ICON_PATH;
++  }
++
++  // Preprend the type tray icon to the node's page title.
++  $variables['title'] = [
++    'image' => [
++      [
++        '#theme' => 'image',
++        '#uri' => $type_icon,
++        '#alt' => t('Icon of a @label content type.', ['@label' => $type->label()]),
++        '#attributes' => ['class' => ['type-tray-title']],
++        '#attached' => ['library' => ['type_tray/type_tray_title']],
++      ],
++    ],
++    'title' => [
++      '#markup' => $variables['title'],
++    ],
++  ];
++}
++
++/**
++ * Implements hook_theme_registry_alter().
++ *
++ * Ensure that type_tray_preprocess_page_title() is always executed last,
++ * even if the admin theme declares a preprocess page title function.
++ *
++ * @see gin_preprocess_page_title().
++ */
++function type_tray_theme_registry_alter(array &$theme_registry) {
++  $preprocess_functions =& $theme_registry['page_title']['preprocess functions'];
++  foreach ($preprocess_functions as $index => $preprocess_function) {
++    if ($preprocess_function === 'type_tray_preprocess_page_title') {
++      unset($preprocess_functions[$index]);
++    }
++  }
++  $preprocess_functions = array_values($theme_registry['page_title']['preprocess functions']);
++  $preprocess_functions[] = 'type_tray_preprocess_page_title';
+ }
+ 
+ /**

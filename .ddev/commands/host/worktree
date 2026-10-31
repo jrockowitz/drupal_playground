@@ -73,7 +73,7 @@ rsync -a \
 cd "${target_root}"
 ddev start
 ddev composer install
-ddev install
+ddev install site
 npx skill update
 
 echo "Worktree setup complete: ${target_root}"

@@ -5,8 +5,28 @@
     "license": "GPL-2.0-or-later",
     "version": "1.0.0",
     "require": {
-        "drupal/core": "^10 || ^11",
+        "drupal/address": "^2",
+        "drupal/allowed_formats": "^3",
+        "drupal/auto_entitylabel": "^3",
+        "drupal/cer": "^5@beta",
+        "drupal/core": "^10 || ^11 || ^12",
+        "drupal/custom_field": "^4 || ^5",
+        "drupal/entity_usage": "^2.3 || ^5",
+        "drupal/epp": "^1",
+        "drupal/existing_values_autocomplete_widget": "^2@RC",
+        "drupal/field_group": "^4",
+        "drupal/field_validation": "^3",
+        "drupal/focal_point": "^2",
+        "drupal/geolocation": "^4",
+        "drupal/jsonapi_extras": "^3",
+        "drupal/metatag": "^2",
+        "drupal/office_hours": "^1",
+        "drupal/pathauto": "^1",
+        "drupal/physical": "^1",
         "drupal/schemadotorg": "^1@alpha",
-        "drupal/schemadotorg_experimental": "^1@alpha"
+        "drupal/schemadotorg_experimental": "^1@alpha",
+        "drupal/simple_sitemap": "^4",
+        "drupal/smart_date": "^4",
+        "drupal/type_tray": "^1"
     }
 }
