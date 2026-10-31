@@ -61,6 +61,7 @@ fi
 # Composer-created branches such as Webform's 6.2 can otherwise be incorrectly
 # reported as unpushed because the remote branch is named 6.2.x.
 composer() {
+  ddev auth ssh;
   ddev exec env COMPOSER_DISCARD_CHANGES=true /usr/local/bin/composer --no-interaction "$@"
 }
 
