@@ -8808,78 +8808,6 @@
             "type": "drupal-module-sandbox"
         },
         {
-            "name": "drupal/markup",
-            "version": "2.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/markup.git",
-                "reference": "2.0.1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/markup-2.0.1.zip",
-                "reference": "2.0.1",
-                "shasum": "7b9d3690fac10536a8be6544b3495b718a5562a6"
-            },
-            "require": {
-                "drupal/core": "^9 || ^10 || ^11"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.0.1",
-                    "datestamp": "1733915904",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "anybody",
-                    "homepage": "https://www.drupal.org/user/291091"
-                },
-                {
-                    "name": "bcostlow",
-                    "homepage": "https://www.drupal.org/user/1340686"
-                },
-                {
-                    "name": "cyu",
-                    "homepage": "https://www.drupal.org/user/202205"
-                },
-                {
-                    "name": "deciphered",
-                    "homepage": "https://www.drupal.org/user/103796"
-                },
-                {
-                    "name": "ebeyrent",
-                    "homepage": "https://www.drupal.org/user/23897"
-                },
-                {
-                    "name": "grevil",
-                    "homepage": "https://www.drupal.org/user/3668491"
-                },
-                {
-                    "name": "mqanneh",
-                    "homepage": "https://www.drupal.org/user/2833163"
-                },
-                {
-                    "name": "mrfelton",
-                    "homepage": "https://www.drupal.org/user/305669"
-                }
-            ],
-            "description": "Defines a field type for markup.",
-            "homepage": "https://www.drupal.org/project/markup",
-            "support": {
-                "source": "https://git.drupalcode.org/project/markup"
-            }
-        },
-        {
             "name": "drupal/masquerade",
             "version": "2.2.0",
             "source": {
@@ -8948,76 +8876,6 @@
                 "source": "https://git.drupal.org/project/masquerade.git",
                 "issues": "https://www.drupal.org/project/issues/masquerade",
                 "irc": "irc://irc.freenode.org/drupal-contribute"
-            }
-        },
-        {
-            "name": "drupal/media_library_media_modify",
-            "version": "2.0.0-beta2",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/media_library_media_modify.git",
-                "reference": "2.0.0-beta2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/media_library_media_modify-2.0.0-beta2.zip",
-                "reference": "2.0.0-beta2",
-                "shasum": "4143559d70345ccd483862c4c0f2e1a49da04a01"
-            },
-            "require": {
-                "drupal/core": "^10.3 || ^11"
-            },
-            "require-dev": {
-                "drupal/diff": "^1.0",
-                "drupal/inline_entity_form": "^1.0||^3.0",
-                "drush/drush": "^12.0 || ^13.0"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.0.0-beta2",
-                    "datestamp": "1786610915",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
-                    }
-                },
-                "patches": {
-                    "drupal/core": {
-                        "Issue #3263397: Simplify form logic in media library": "https://www.drupal.org/files/issues/2023-01-19/3263397-16.patch"
-                    },
-                    "drupal/inline_entity_form": {
-                        "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form": "https://www.drupal.org/files/issues/2022-09-22/47-8.diff"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Christian Fritsch",
-                    "homepage": "https://www.drupal.org/user/157725",
-                    "email": "christian.fritsch@burda.com"
-                },
-                {
-                    "name": "chr.fritsch",
-                    "homepage": "https://www.drupal.org/user/2103716"
-                },
-                {
-                    "name": "daniel.bosen",
-                    "homepage": "https://www.drupal.org/user/404865"
-                },
-                {
-                    "name": "volkerk",
-                    "homepage": "https://www.drupal.org/user/57527"
-                }
-            ],
-            "description": "Store context specific overrides for entity reference fields.",
-            "homepage": "https://www.drupal.org/project/media_library_media_modify",
-            "support": {
-                "source": "https://git.drupalcode.org/project/media_library_media_modify"
             }
         },
         {
@@ -10313,50 +10171,6 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/queue_ui",
                 "issues": "https://www.drupal.org/project/issues/queue_ui"
-            }
-        },
-        {
-            "name": "drupal/range",
-            "version": "1.6.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/range.git",
-                "reference": "8.x-1.6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/range-8.x-1.6.zip",
-                "reference": "8.x-1.6",
-                "shasum": "bb675518aec91a2f1a17c566b975934fd8f15643"
-            },
-            "require": {
-                "drupal/core": ">=9.5 <12"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-1.6",
-                    "datestamp": "1723585725",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "taran2l",
-                    "homepage": "https://www.drupal.org/user/473438"
-                }
-            ],
-            "description": "Defines a numeric range field type.",
-            "homepage": "https://www.drupal.org/project/range",
-            "support": {
-                "source": "https://git.drupalcode.org/project/range"
             }
         },
         {
