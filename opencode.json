@@ -21,6 +21,7 @@
     "webfetch": "allow",
     "lsp": "allow",
     "skill": "allow",
+    "rally_rally_openapi_invoke_tool": "allow",
     "bash": {
       "*": "ask",
       "awk *": "allow",
@@ -62,6 +63,7 @@
       "printf *": "allow",
       "python3 *": "allow",
       "rg *": "allow",
+      "set *": "allow",
       "stat *": "allow",
       "tail *": "allow",
       "test *": "allow",
@@ -71,7 +73,8 @@
       "vendor/bin/phpunit *": "allow",
       "vendor/bin/rector *": "allow",
       "xargs *": "allow",
-      "yarn *": "allow"
+      "yarn *": "allow",
+      "wc *": "allow"
     }
   },
   "lsp": {
