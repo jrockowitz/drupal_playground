@@ -1,5 +1,5 @@
 {
-    "_hash": "d7ed258424db6f8490544e1af56b401032db45ef63a71ca75e5e0194f168ae96",
+    "_hash": "ededfacf839856236ea4aad613ea7038713ac43d48db4bd226ed55a7c675ad49",
     "patches": {
         "drupal/core": [
             {
@@ -17,16 +17,6 @@
                 "description": "Issue #3356667: Error: Cannot read properties of undefined (reading 'settings') with dialog.position.js",
                 "url": "https://www.drupal.org/files/issues/2024-08-11/3356667-undefined-settings-dialog-position-52.patch",
                 "sha256": "43d1f88a2caed517967c800a6bdb2608d2ee5f7d814d7af7b856a565099fe7ce",
-                "depth": 2,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/core",
-                "description": "Issue #2780839: Optimize migration of specific source IDs for SQL sources",
-                "url": "https://www.drupal.org/files/issues/2022-04-25/2780839-9.4.x-optimize-migrate-source-filter-53.patch",
-                "sha256": "54458452f06e6cbd3a61a5c4b944d4634c499b091cfad2b47ce27bc9cf4d6bd8",
                 "depth": 2,
                 "extra": {
                     "provenance": "root"
@@ -120,50 +110,6 @@
                 "description": "Issue #3417679: Add type tray icon to node edit and related tasks",
                 "url": "https://www.drupal.org/files/issues/2024-01-28/issue-3417679-mr-22.patch",
                 "sha256": "0c67cc70ee72dbb72eace828d547335922877fc9be324f0cb8739261b966d40b",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/migrate_tools": [
-            {
-                "package": "drupal/migrate_tools",
-                "description": "Issue #3470892: drush migrate:reset additional options like --all",
-                "url": "https://www.drupal.org/files/issues/2025-03-10/migrate_tools-issue-3470892-mr-72.patch",
-                "sha256": "d9e99346a0cc1ac88d7d630d2fcd616147a6ff8a92d41a344adeb8afabb4f352",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/migrate_tools",
-                "description": "Issue #3439811: Migration process UI assumes default_value is text",
-                "url": "https://www.drupal.org/files/issues/2025-01-29/migrate_tools-issue-3439811-mr-63.patch",
-                "sha256": "9fa48728bd65c9957b81152275af9e171a5796b8fbce4773b44537e38e6fb494",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            },
-            {
-                "package": "drupal/migrate_tools",
-                "description": "Issue #3104268: Sync is too strict during id comparison and can roll back everything",
-                "url": "https://www.drupal.org/files/issues/2025-03-10/migrate_tools-issue-3104268-mr-77.patch",
-                "sha256": "08945723a32f6cba9803eec30e9d40ba06acf86bf9141e62cdf76d5942beba0d",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
-        "drupal/migrate_drupal_d8": [
-            {
-                "package": "drupal/migrate_drupal_d8",
-                "description": "Issue #3126365: Support translated content",
-                "url": "https://www.drupal.org/files/issues/2024-08-20/3126365-support-translated-content-23.patch",
-                "sha256": "98a69d6cf605b3517346f8fac30f8ae4d8902ba164b07edc5cd8846509d69771",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
