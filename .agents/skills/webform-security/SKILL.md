@@ -133,6 +133,24 @@ Each issue note links evidence and records:
   handler, or rendering changes. Report failures and uncertainty.
 - Before any push or MR, check `git remote -v` and the MR target.
 
+### Keep the private issue fork current
+
+- Without asking for another approval, update the private issue fork's
+  `6.3.x` and `6.2.x` branches from their corresponding upstream branches.
+  Fetch and compare each branch first. Fast-forward only; stop and report a
+  divergent branch rather than merge or rewrite it.
+- Rebase an existing `codex/<security-id>-security-fix` or
+  `codex/<security-id>-security-fix-6.2.x` branch onto the updated matching
+  private fork branch without another approval. Resolve routine conflicts
+  while preserving the existing fix and regression test. Run the relevant
+  verification again after the rebase.
+- Before pushing, confirm the private remote, branch, MR target, and
+  resulting diff. Push the updated fork branches normally and rebased fix
+  branches with `--force-with-lease` only to the private issue fork. Stop
+  if the branch contains someone else's unpublished work, the fix changes
+  substantively, or verification fails. Report the updated refs, test
+  results, and any changed MR or pipeline state.
+
 ### MR titles
 
 - Reproduction: `test: #<issue> - webform <branch>: reproduce <issue title>`
@@ -166,6 +184,7 @@ Each issue note links evidence and records:
 | Listed reproduction batch using subagents | Proceed after one batch confirmation. |
 | Fix branch and code | Get approval of the fix plan. |
 | Fix stage, commit, push | Wait for human diff review. |
+| Private fork sync and fix-branch rebase | Proceed without another review under the checks above. |
 | Other tickets, comments, labels, MRs, advisories, releases | Draft only; human submits. |
 
 - Never merge, enable auto-merge, publish, or release automatically. Except for
