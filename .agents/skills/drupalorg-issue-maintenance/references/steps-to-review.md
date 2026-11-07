@@ -7,7 +7,14 @@ result was observed or explicitly reported.
 
 ## Drafting
 
-- For a new section, use a `Steps to review` heading and a numbered list.
+- Use the exact standalone bold label below followed by a bulleted list:
+
+  ```markdown
+  **Steps to Review (⚫ => step ✅ = pass ❌ = fail ❓ = question)**
+  ```
+
+  An existing section with the older label, without `❓ = question`, is the same
+  section; update its label when editing it.
 - Write one action and its observable expected result per step. Identify the
   relevant page, control, content, or message; avoid vague results such as
   “works as expected.”
@@ -21,8 +28,11 @@ result was observed or explicitly reported.
   messages, or test data. Name a page or navigation route if its path is unknown.
 - Use known site-relative paths, such as `/admin/structure/types`, instead of
   absolute site URLs. Do not guess unknown paths.
-- Omit status markers and requirement IDs unless the existing issue uses them or
-  the user requests them.
+- Start new or materially changed checks with ⚫. Use ✅ or ❌ only for results
+  actually observed or reported. Use ❓ for a reviewer question or an unclear
+  expected result, and add the question as a nested bullet.
+- Omit requirement IDs unless the existing issue uses them or the user requests
+  them. Preserve skipped checks with strikethrough rather than deleting them.
 
 ## Updating existing steps
 
@@ -33,19 +43,21 @@ are ambiguous, ask before replacing content.
 ## Destination format
 
 Draft in Markdown for local review and GitLab. Convert the steps to HTML when
-preparing a Drupal.org ticket update. Preserve unrelated description content
-and use the destination's supported markup. Obtain the maintainer's approval
-before submitting any public update, as required by the parent skill.
+preparing a Drupal.org ticket update: use `strong` for the label, `ul` and `li`
+for bullets, and retain the status icons as text. Use `strike` for skipped
+checks. Preserve unrelated description content and use the destination's
+supported markup. Obtain the maintainer's approval before submitting any public
+update, as required by the parent skill.
 
 ## Example
 
 ```markdown
-## Steps to review
-
-1. Visit `/admin/structure/types` and select the relevant content type; confirm
-   that its configuration page opens.
-2. Change the setting described in the issue and save; confirm that the saved
-   value appears when the page is reopened.
+**Steps to Review (⚫ => step ✅ = pass ❌ = fail ❓ = question)**
+- ⚫ Visit `/admin/structure/types` and select the relevant content type; confirm
+  that its configuration page opens.
+- ❓ Change the setting described in the issue and save; confirm that the saved
+  value appears when the page is reopened.
+  - Question: Which setting should the reviewer change?
 ```
 
 Use this example only as a format illustration; derive actual steps and
