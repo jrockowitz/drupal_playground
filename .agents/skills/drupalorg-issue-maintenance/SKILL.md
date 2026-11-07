@@ -53,6 +53,7 @@ values that cannot be determined from the current workspace or user request.
 |---|---|
 | Traverse a queue, shortlist candidates, or inspect issue details | `references/queue-traversal.md` |
 | Reproduce, review, test, fix, or draft a maintainer comment for a selected issue | `references/issue-workflow.md` |
+| Draft or update manual review steps for an issue | `references/steps-to-review.md` |
 | Create or update the local Markdown tracker | `references/local-tracker.md` |
 
 ## Cross-cutting guardrails
