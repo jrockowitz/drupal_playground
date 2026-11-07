@@ -7,7 +7,7 @@ description: >-
 
 # Schema.org Blueprints OOP hook conversion
 
-Convert requested modules  and track completed modules in the
+Convert requested modules and track completed modules in the
 [issue note](../../schemadotorg-issue-maintenance/issues/3622305.md). Work in the
 existing Schema.org checkout; do not create a worktree. This issue uses the
 Drupal.org issue fork `issue/schemadotorg-3622305`, with source branch
