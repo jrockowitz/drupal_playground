@@ -146,6 +146,14 @@ Each issue note links evidence and records:
 - If needed, use the [template][template], the [drafting
   guide][advisory], and the issue's drupalbot draft link. Confirm branches,
   related issues, and credits against the live form.
+- Before presenting an advisory draft for review, calculate its proposed
+  risk with the live form's widget. Use the [risk calculator][calculator]
+  and [risk level definitions][risk-levels] to select and check `AC`, `A`,
+  `CI`, `II`, `E`, and `TD` against validated impact and prerequisites.
+  Record all six inputs, the generated score, and the level in the private
+  draft. If an input is uncertain, flag the missing evidence and leave the
+  calculation pending rather than guessing. The security team confirms the
+  final risk; do not change GitLab risk labels from this calculation.
 - Follow the issue's disclosure instructions. Push to the public repo only
   when the security team says so; a private MR doesn't touch it.
 
@@ -164,10 +172,12 @@ Each issue note links evidence and records:
   the `validated` status change above, never change GitLab metadata
   automatically.
 
-[drupal-security-issue-procedure]: https://www.drupal.org/node/3507907
-[drupal-gitlabl-labels]: https://git.drupalcode.org/groups/security/-/labels
-[webform-security-queue]: https://git.drupalcode.org/search?group_id=183118&scope=issues&search=%22Project-webform%22&sort=created_asc&state=opened
-[security-advisory-drafting]: https://www.drupal.org/node/3627681
-[security-advisory-template]: references/security-advisory-template.md
+[procedure]: https://www.drupal.org/node/3507907
+[labels]: https://git.drupalcode.org/groups/security/-/labels
+[queue]: https://git.drupalcode.org/search?group_id=183118&scope=issues&search=%22Project-webform%22&sort=created_asc&state=opened
+[advisory]: https://www.drupal.org/node/3627681
+[template]: references/security-advisory-template.md
+[calculator]: https://www.drupal.org/drupal-security-team/security-risk-calculator
+[risk-levels]: https://www.drupal.org/drupal-security-team/security-risk-levels-defined
 [index-template]: references/security-index-template.md
 [test-template]: references/reproduction-test-template.md
