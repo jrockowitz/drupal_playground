@@ -8,6 +8,7 @@ install:
   - help
   - navigation
   - navigation_extra_tools
+  - same_page_preview
   - type_tray
   - queue_ui
   - masquerade
@@ -17,3 +18,10 @@ config:
     navigation:
       - system.menu.content
       - system.menu.navigation-user-links
+  actions:
+    same_page_preview.settings:
+      simpleConfigUpdate:
+        preview_on_by_default: true
+    user.role.content_editor:
+      grantPermissions:
+        - 'access same_page_preview'

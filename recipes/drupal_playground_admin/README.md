@@ -3,8 +3,11 @@
 Sets up shared admin modules and configuration for Drupal Playground.
 
 This base recipe installs admin tooling that is shared across supported Drupal
-versions: Coffee, Dashboard, Help, Navigation, Navigation Extra Tools, Type Tray,
-and Queue UI.
+versions: Coffee, Dashboard, Help, Navigation, Navigation Extra Tools, Same Page Preview,
+Type Tray, and Queue UI.
+
+Same Page Preview opens automatically on supported content forms, and the
+Content editor role can use it.
 
 Admin theme setup lives in dedicated recipes:
 
