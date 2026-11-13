@@ -21,7 +21,7 @@ config:
   actions:
     same_page_preview.settings:
       simpleConfigUpdate:
-        preview_on_by_default: true
+        preview_on_by_default: false
     user.role.content_editor:
       grantPermissions:
         - 'access same_page_preview'
