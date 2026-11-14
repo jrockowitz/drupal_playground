@@ -117,7 +117,8 @@ yarn-error.log
 !.agents/skills/schemadotorg-oop-hook-review
 !.agents/skills/webform-issue-maintenance
 !.agents/skills/webform-security
-!.agents/skills/step-to-review
+!.agents/skills/steps-to-review
+!.agents/skills/trust
 .agents/private/
 
 # =============================================================================
