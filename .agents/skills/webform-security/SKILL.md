@@ -168,10 +168,36 @@ Each issue note links evidence and records:
   risk with the live form's widget. Use the [risk calculator][calculator]
   and [risk level definitions][risk-levels] to select and check `AC`, `A`,
   `CI`, `II`, `E`, and `TD` against validated impact and prerequisites.
-  Record all six inputs, the generated score, and the level in the private
-  draft. If an input is uncertain, flag the missing evidence and leave the
-  calculation pending rather than guessing. The security team confirms the
-  final risk; do not change GitLab risk labels from this calculation.
+  Before selecting values, write down the least-privileged demonstrated
+  attacker path, required permissions and configuration, the victim action,
+  and the data the exploit can actually read or change. Score the attacker
+  path, not the victim's ability to visit an affected page.
+  - `AC`: distinguish a simple visit from an attacker who must follow a
+    specific path, such as editing a Webform. Requiring a Webform edit can
+    make `AC:Basic` appropriate even when the injected result appears on a
+    page that anyone can visit. Reserve `AC:Complex` for genuinely unusual
+    dependencies; do not use it merely because several routine steps exist.
+  - `A`: record the attacker's minimum required privilege separately from
+    `AC`. Anonymous submission, ordinary account access, and Webform builder
+    access are different paths. Do not assign `A:None` when the attacker must
+    edit Webform configuration.
+  - `CI` and `II`: tie `All`, `Some`, or `None` to the demonstrated scope of
+    non-public data access and data modification. Do not infer `All` from
+    the generic ability of XSS to act in a victim's browser. For XSS, check
+    the security team's usual `CI:Some/II:Some` baseline, then document
+    evidence for any broader or narrower impact.
+  - `E`: a private reproduction test or private proof of concept alone does
+    not establish a public exploit or public proof of concept.
+  - `TD`: distinguish default or common configuration from uncommon
+    permissions, enabled submodules, and feature settings.
+  Record the six values, a short justification for each, the widget's score
+  and level, and any unresolved evidence in the private draft. Reopen the
+  calculation when a reviewer challenges an input or the demonstrated path
+  changes. Compare the resulting level with the draft advisory and GitLab
+  risk label, and propose corrections for human review. If an input is
+  uncertain, leave the calculation pending rather than guessing. The
+  security team confirms the final risk; do not change GitLab risk labels
+  from this calculation.
 - Follow the issue's disclosure instructions. Push to the public repo only
   when the security team says so; a private MR doesn't touch it.
 

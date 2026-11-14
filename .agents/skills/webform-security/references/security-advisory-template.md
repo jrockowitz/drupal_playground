@@ -11,8 +11,15 @@ issue's drupalbot draft link; one advisory per vulnerability, per
   widget. Consult the [risk calculator][calculator] and [risk level
   definitions][risk-levels] when selecting inputs from validated impact and
   prerequisites. Record the proposed calculation in this private draft:
+  - Attacker path: `[minimum permissions, configuration, required actions]`
+  - Victim action: `[if any]`
+  - Demonstrated scope: `[data read and/or changed, with evidence link]`
   - Inputs: `AC:[value]/A:[value]/CI:[value]/II:[value]/E:[value]/TD:[value]`
+  - Rationale: `[one evidence-based reason per input, including why any
+    XSS impact is broader or narrower than CI:Some/II:Some]`
   - Result: `[level] [score]/25` (pending security team confirmation)
+  - Existing draft and label: `[level and vector, if already set; explain
+    any proposed change]`
   - Uncertainty: `[missing evidence, or "none"]`
 
   If any input is uncertain, flag it for review and leave the score pending;
