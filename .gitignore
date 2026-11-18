@@ -109,16 +109,6 @@ yarn-error.log
 # Agents / Claude skills
 # =============================================================================
 .agents/skills/*
-!.agents/skills/drupal-core-switcher
-!.agents/skills/drupalorg-issue-maintenance
-!.agents/skills/schemadotorg-module-audit
-!.agents/skills/schemadotorg-issue-maintenance
-!.agents/skills/schemadotorg-oop-hook-conversion
-!.agents/skills/schemadotorg-oop-hook-review
-!.agents/skills/webform-issue-maintenance
-!.agents/skills/webform-security
-!.agents/skills/steps-to-review
-!.agents/skills/trust
 .agents/private/
 
 # =============================================================================
