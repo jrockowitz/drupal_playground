@@ -91,5 +91,17 @@
     "eslint": {
       "command": ["npx", "-y", "--package", "vscode-langservers-extracted", "vscode-eslint-language-server", "--stdio"]
     }
+  },
+  "mcp": {
+    "servers": {
+      "playwright": {
+        "type": "local",
+        "command": [
+          "npx",
+          "@playwright/mcp@latest"
+        ],
+        "disabled": true
+      }
+    }
   }
 }

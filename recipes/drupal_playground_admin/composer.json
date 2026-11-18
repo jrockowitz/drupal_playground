@@ -9,6 +9,7 @@
         "drupal/dashboard": "^2",
         "drupal/environment_indicator": "^5",
         "drupal/navigation_extra_tools": "^1",
+        "drupal/same_page_preview": "^3.0",
         "drupal/type_tray": "^1",
         "drupal/queue_ui": "^3 || ^4",
         "drupal/masquerade": "^2"
@@ -30,6 +31,15 @@
                     "url": "https://git.drupalcode.org/project/environment_indicator/-/merge_requests/148.diff",
                     "extra": {
                         "issue-tracker-url": "https://www.drupal.org/project/environment_indicator/issues/3457688"
+                    }
+                }
+            ],
+            "drupal/same_page_preview": [
+                {
+                    "description": "Give the preview settings menu a background in Default Admin",
+                    "url": "https://git.drupalcode.org/project/same_page_preview/-/merge_requests/120.diff",
+                    "extra": {
+                        "issue-tracker-url": "https://git.drupalcode.org/project/same_page_preview/-/work_items/3619947"
                     }
                 }
             ]

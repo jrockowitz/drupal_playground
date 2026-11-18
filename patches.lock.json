@@ -1,5 +1,5 @@
 {
-    "_hash": "ededfacf839856236ea4aad613ea7038713ac43d48db4bd226ed55a7c675ad49",
+    "_hash": "21b8015cd23d29080a5604e7c03658013933c26c9e4a3cb68a33db05f8f622c8",
     "patches": {
         "drupal/core": [
             {
@@ -126,6 +126,19 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/environment_indicator/issues/3457688",
                     "provenance": "dependency:drupal/environment_indicator"
+                }
+            }
+        ],
+        "drupal/same_page_preview": [
+            {
+                "package": "drupal/same_page_preview",
+                "description": "Give the preview settings menu a background in Default Admin",
+                "url": "https://git.drupalcode.org/project/same_page_preview/-/merge_requests/120.diff",
+                "sha256": "7efe46fdd114aee9a4c7bc99e592310b203e84e846d9cacfa095b3f40c515029",
+                "depth": 1,
+                "extra": {
+                    "issue-tracker-url": "https://git.drupalcode.org/project/same_page_preview/-/work_items/3619947",
+                    "provenance": "dependency:drupal/same_page_preview"
                 }
             }
         ],
