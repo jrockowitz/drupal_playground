@@ -25,13 +25,13 @@
   and all tickets and comments made by an AI agent should begin with the same note.
 - Do not create Git worktrees. Work directly in the current repository
   or worktree.
-- Review all changes before committing or pushing code, and all tickets
+- Let me review all changes before committing or pushing code, and all tickets
   or comments before saving or submitting, unless a skill or prompt
   permits skipping review.
 - When cloning repositories hosted on `git.drupalcode.org`, always use the SSH
   clone URL (`git@git.drupalcode.org:...`). Do not clone Drupal.org repositories
   over HTTPS.
-- When an in-app /browser is available, use it instead of Playwright.
+- When an in-app /browser when it is available.
 - Wrap Markdown prose at 80-100 characters when practical; keep lines at
   100 characters or fewer.
 
