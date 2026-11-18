@@ -12,6 +12,16 @@
                     "description": "Issue #3271293: Changes are lost when collapsing a paragraphs subform including an inline_entity_form",
                     "url": "patches/drupal/inline_entity_form-3271293-3.0.0-reroll.patch"
                 }
+            ],
+            "drupal/migrate_tools": [
+                {
+                    "description": "Issue #3470892: Reset migrations by ID, all, group, or tag on Migrate Tools 6.1.x",
+                    "url": "https://git.drupalcode.org/project/migrate_tools/-/merge_requests/118.diff",
+                    "extra": {
+                        "issue-tracker-url": "https://www.drupal.org/project/migrate_tools/issues/3470892",
+                        "upstream-url": "https://git.drupalcode.org/project/migrate_tools/-/merge_requests/118"
+                    }
+                }
             ]
         }
     }
