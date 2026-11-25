@@ -1,0 +1,352 @@
+diff --git a/README.md b/README.md
+index ad94deb..c23f143 100644
+--- a/README.md
++++ b/README.md
+@@ -8,6 +8,7 @@ This module improves the usability of the "Content -> Add" page by:
+  * Adding the ability to assign a thumbnail to a content type, in the list
+    version
+  * Allowing an extended description (rich-text) to be used in the list version
++ * Showing the content type icon beside node administration page titles
+ 
+ ## Configuration
+ 
+@@ -27,8 +28,11 @@ Now edit each content type (for example `/admin/structure/types/manage/article`
+    look like on the page. It will be displayed in the "List" version of the
+    Type Tray page.
+  * The path to an icon file. This is a graphic image that conceptually
+-   represents the content, and will be displayed both in the "Grid" and "List"
+-   versions of the Type Tray page.
++   represents the content. It is displayed in the "Grid" and "List" versions of
++   the Type Tray page and beside titles on node add, edit, and related
++   administration pages. If no icon is set, the included default icon is used
++   for page titles. The title icon is decorative for screen readers because
++   the content type is already identified in the title text.
+  * The extended description text. Optionally, you can use this field to describe
+    when editors should use this type, or any other editorial indications. When
+    visiting the Type Tray in the "List" version, this value will be displayed
+@@ -40,6 +44,10 @@ Now edit each content type (for example `/admin/structure/types/manage/article`
+ Note: The order of groups (categories) in the Type Tray page will be the same
+  as the order categories are defined in the Settings page mentioned above.
+ 
++The title icon appears when Drupal treats the node page as an administration
++ route. Enable "Use the administration theme when editing or creating content"
++ at `/admin/appearance` to show it on node operation pages.
++
+ ## Icons and Thumbnails / Licensing
+ 
+ This module encourages sites to use their own art work to best describe their
+diff --git a/css/type_tray.title.css b/css/type_tray.title.css
+new file mode 100644
+index 0000000..038ae23
+--- /dev/null
++++ b/css/type_tray.title.css
+@@ -0,0 +1,13 @@
++/**
++ * @file
++ * Styles the decorative icon in node page titles.
++ */
++
++.type-tray-title {
++  display: inline-block;
++  width: 1em;
++  height: 1em;
++  margin-inline-end: 0.25em;
++  vertical-align: -0.1em;
++  object-fit: contain;
++}
+diff --git a/src/Hook/ThemeHooks.php b/src/Hook/ThemeHooks.php
+new file mode 100644
+index 0000000..c8f18e5
+--- /dev/null
++++ b/src/Hook/ThemeHooks.php
+@@ -0,0 +1,106 @@
++<?php
++
++declare(strict_types=1);
++
++namespace Drupal\type_tray\Hook;
++
++use Drupal\Core\Entity\EntityTypeManagerInterface;
++use Drupal\Core\Extension\ModuleExtensionList;
++use Drupal\Core\Hook\Attribute\Hook;
++use Drupal\Core\Routing\AdminContext;
++use Drupal\Core\Routing\RouteMatchInterface;
++use Drupal\node\NodeInterface;
++use Drupal\node\NodeTypeInterface;
++use Drupal\type_tray\Controller\TypeTrayController;
++
++/**
++ * Theme hook implementations for the type_tray module.
++ */
++class ThemeHooks {
++
++  /**
++   * Creates a new ThemeHooks class.
++   */
++  public function __construct(
++    protected readonly ModuleExtensionList $moduleExtensionList,
++    protected readonly RouteMatchInterface $routeMatch,
++    protected readonly AdminContext $adminContext,
++    protected readonly EntityTypeManagerInterface $entityTypeManager,
++  ) {}
++
++  /**
++   * Implements hook_theme_registry_alter().
++   *
++   * Ensures that this module's page title preprocessor follows the theme's.
++   */
++  #[Hook('theme_registry_alter')]
++  public function themeRegistryAlter(array &$theme_registry): void {
++    $preprocess_functions = array_values(array_filter(
++      $theme_registry['page_title']['preprocess functions'],
++      static fn (string $function): bool => $function !== 'type_tray_preprocess_page_title',
++    ));
++    $preprocess_functions[] = 'type_tray_preprocess_page_title';
++    $theme_registry['page_title']['preprocess functions'] = $preprocess_functions;
++  }
++
++  /**
++   * Implements hook_preprocess_HOOK() for page title templates.
++   */
++  #[Hook('preprocess_page_title')]
++  public function preprocessPageTitle(array &$variables): void {
++    if (!$this->adminContext->isAdminRoute()) {
++      return;
++    }
++
++    $type = $this->getNodeTypeForPageTitle();
++    if ($type === NULL) {
++      return;
++    }
++
++    // The image theme generates the URL from this URI, including base paths.
++    $icon_uri = $type->getThirdPartySetting('type_tray', 'type_icon');
++    if (empty($icon_uri)) {
++      $module_path = $this->moduleExtensionList->getPath('type_tray');
++      $icon_uri = $module_path . TypeTrayController::TYPE_TRAY_DEFAULT_ICON_PATH;
++    }
++
++    // Preserve titles that other preprocessors have already made render arrays.
++    $title = is_array($variables['title'])
++      ? $variables['title']
++      : ['#markup' => $variables['title']];
++    $variables['title'] = [
++      'image' => [
++        '#theme' => 'image',
++        '#uri' => $icon_uri,
++        '#alt' => '',
++        '#attributes' => ['class' => ['type-tray-title']],
++        '#attached' => ['library' => ['type_tray/type_tray.title']],
++      ],
++      'title' => $title,
++    ];
++  }
++
++  /**
++   * Gets the node type associated with the current node administration route.
++   */
++  private function getNodeTypeForPageTitle(): ?NodeTypeInterface {
++    $route_name = $this->routeMatch->getRouteName();
++    if ($route_name === 'node.add') {
++      $type = $this->routeMatch->getParameter('node_type');
++      return $type instanceof NodeTypeInterface ? $type : NULL;
++    }
++
++    if (!str_starts_with($route_name ?? '', 'entity.node.')) {
++      return NULL;
++    }
++
++    $node = $this->routeMatch->getParameter('node');
++    if (!$node instanceof NodeInterface) {
++      return NULL;
++    }
++
++    $type = $this->entityTypeManager->getStorage('node_type')->load($node->bundle());
++    return $type instanceof NodeTypeInterface ? $type : NULL;
++  }
++
++}
+diff --git a/tests/modules/type_tray_title_test/type_tray_title_test.info.yml b/tests/modules/type_tray_title_test/type_tray_title_test.info.yml
+new file mode 100644
+index 0000000..513a1dd
+--- /dev/null
++++ b/tests/modules/type_tray_title_test/type_tray_title_test.info.yml
+@@ -0,0 +1,5 @@
++name: Type Tray title test
++type: module
++description: Alters page titles to test Type Tray render array handling.
++package: Testing
++core_version_requirement: ^10 || ^11
+diff --git a/tests/modules/type_tray_title_test/type_tray_title_test.module b/tests/modules/type_tray_title_test/type_tray_title_test.module
+new file mode 100644
+index 0000000..e35d22a
+--- /dev/null
++++ b/tests/modules/type_tray_title_test/type_tray_title_test.module
+@@ -0,0 +1,17 @@
++<?php
++
++/**
++ * @file
++ * Test hooks for page titles supplied as render arrays.
++ */
++
++/**
++ * Implements hook_preprocess_HOOK() for page titles.
++ */
++function type_tray_title_test_preprocess_page_title(array &$variables): void {
++  if (\Drupal::routeMatch()->getRouteName() === 'entity.node.edit_form') {
++    $variables['title'] = [
++      '#markup' => '<span class="original-title">Original title</span>',
++    ];
++  }
++}
+diff --git a/tests/src/Functional/TitleIconTest.php b/tests/src/Functional/TitleIconTest.php
+new file mode 100644
+index 0000000..8685f30
+--- /dev/null
++++ b/tests/src/Functional/TitleIconTest.php
+@@ -0,0 +1,84 @@
++<?php
++
++namespace Drupal\Tests\type_tray\Functional;
++
++use Drupal\Tests\BrowserTestBase;
++
++/**
++ * Tests the decorative icon on node administration page titles.
++ *
++ * @group type_tray
++ */
++class TitleIconTest extends BrowserTestBase {
++
++  /**
++   * {@inheritdoc}
++   */
++  protected $defaultTheme = 'stark';
++
++  /**
++   * {@inheritdoc}
++   */
++  protected static $modules = [
++    'block',
++    'node',
++    'type_tray',
++    'type_tray_title_test',
++  ];
++
++  /**
++   * Tests node routes, custom and default icons, and render array titles.
++   */
++  public function testTitleIcons(): void {
++    $this->drupalPlaceBlock('page_title_block');
++    $this->drupalLogin($this->drupalCreateUser([
++      'administer nodes',
++      'bypass node access',
++      'view all revisions',
++    ]));
++
++    $type = $this->drupalCreateContentType(['type' => 'article']);
++    $type->setThirdPartySetting('type_tray', 'type_icon',
++      '/modules/contrib/type_tray/assets/icons/book-open.svg');
++    $type->save();
++    $node = $this->drupalCreateNode(['type' => 'article']);
++
++    // Check the custom icon on the node add page.
++    $this->drupalGet('node/add/article');
++    $this->assertIcon('book-open.svg');
++
++    // Check the custom icon and an existing render array title on edit.
++    $this->drupalGet($node->toUrl('edit-form'));
++    $this->assertIcon('book-open.svg');
++    $this->assertSession()->elementExists('css', 'h1 .original-title');
++
++    // Check the custom icon on the delete confirmation page.
++    $this->drupalGet($node->toUrl('delete-form'));
++    $this->assertIcon('book-open.svg');
++
++    // Check the custom icon on the revisions page.
++    $this->drupalGet($node->toUrl('version-history'));
++    $this->assertIcon('book-open.svg');
++
++    // Check the default icon when the content type has no custom icon.
++    $type->unsetThirdPartySetting('type_tray', 'type_icon')->save();
++    $this->drupalGet($node->toUrl('edit-form'));
++    $this->assertIcon('file-text.svg');
++
++    // Check that the non-administration node view has no title icon.
++    $this->drupalGet($node->toUrl());
++    $this->assertSession()->elementNotExists('css', 'h1 img.type-tray-title');
++  }
++
++  /**
++   * Asserts that a page title contains the expected decorative icon.
++   */
++  private function assertIcon(string $filename): void {
++    // Check that the title has one decorative image with the expected source.
++    $this->assertSession()->elementsCount('css', 'h1 img.type-tray-title', 1);
++    $this->assertSession()->elementExists('css', 'h1 img.type-tray-title[alt=""]');
++    $this->assertSession()->elementAttributeContains(
++      'css', 'h1 img.type-tray-title', 'src', $filename);
++  }
++
++}
+diff --git a/type_tray.libraries.yml b/type_tray.libraries.yml
+index 5e0862c..3a488b9 100644
+--- a/type_tray.libraries.yml
++++ b/type_tray.libraries.yml
+@@ -9,3 +9,8 @@ type_tray:
+     - core/drupal
+     - core/drupalSettings
+     - core/drupal.debounce
++
++type_tray.title:
++  css:
++    theme:
++      css/type_tray.title.css: {}
+diff --git a/type_tray.module b/type_tray.module
+index e198086..7c54675 100644
+--- a/type_tray.module
++++ b/type_tray.module
+@@ -7,8 +7,10 @@
+ 
+ use Drupal\Core\Config\Entity\ThirdPartySettingsInterface;
+ use Drupal\Core\Form\FormStateInterface;
++use Drupal\Core\Hook\Attribute\LegacyHook;
+ use Drupal\node\Entity\NodeType;
+ use Drupal\type_tray\Controller\TypeTrayController;
++use Drupal\type_tray\Hook\ThemeHooks;
+ use Drupal\Core\Url;
+ 
+ /**
+@@ -130,3 +132,19 @@ function type_tray_theme($existing, $type, $theme, $path) {
+     ],
+   ];
+ }
++
++/**
++ * Implements hook_theme_registry_alter() for Drupal versions before 11.2.
++ */
++#[LegacyHook]
++function type_tray_theme_registry_alter(array &$theme_registry): void {
++  \Drupal::service(ThemeHooks::class)->themeRegistryAlter($theme_registry);
++}
++
++/**
++ * Implements hook_preprocess_HOOK() for Drupal versions before 11.2.
++ */
++#[LegacyHook]
++function type_tray_preprocess_page_title(array &$variables): void {
++  \Drupal::service(ThemeHooks::class)->preprocessPageTitle($variables);
++}
+diff --git a/type_tray.services.yml b/type_tray.services.yml
+index 706d06f..02da7d8 100644
+--- a/type_tray.services.yml
++++ b/type_tray.services.yml
+@@ -4,3 +4,7 @@ services:
+     autowire: true
+     tags:
+     - { name: event_subscriber }
++
++  Drupal\type_tray\Hook\ThemeHooks:
++    class: Drupal\type_tray\Hook\ThemeHooks
++    autowire: true

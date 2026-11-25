@@ -1,6 +1,12 @@
 {
     "extra": {
         "patches": {
+            "drupal/type_tray": [
+                {
+                    "description": "Issue #3417679: Add type tray icons to node administration titles (MR !22, rerolled for 1.3.2)",
+                    "url": "patches/drupal/type_tray-3417679-1.3.2.patch"
+                }
+            ],
             "drupal/ai_rag_search_chat": [
                 {
                     "description": "Preserve multi-value excerpt fields for ClinicalTrials.gov RAG results",

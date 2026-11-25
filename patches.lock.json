@@ -1,5 +1,5 @@
 {
-    "_hash": "be763705a59ebbf7cae2539e2fc6b7cf22c07849d64489efc8627cb0b79f5e9f",
+    "_hash": "17535bd6052f3dcebcb4bda76102a229a3cf0b941fd08ce922a2a1a0a2158ca6",
     "patches": {
         "drupal/address": [
             {
@@ -72,24 +72,24 @@
                 }
             }
         ],
-        "drupal/type_tray": [
-            {
-                "package": "drupal/type_tray",
-                "description": "Issue #3417679: Add type tray icon to node edit and related tasks",
-                "url": "patches/type-tray-title.patch",
-                "sha256": "d3ed1357ac37720c4e50d155ef399b7ac814dcbf9bcbf8c0177f22d61d882078",
-                "depth": 1,
-                "extra": {
-                    "provenance": "root"
-                }
-            }
-        ],
         "drupal/config_rewrite": [
             {
                 "package": "drupal/config_rewrite",
                 "description": "Issue #3528767: Tried to rewrite config by module without initial config",
                 "url": "https://www.drupal.org/files/issues/2025-06-24/config_rewrite-issue-3528767-comment-2.patch",
                 "sha256": "cff05269fd67c99674ff4100aa100f95c5553dc9be0126e39b1da275c357fb70",
+                "depth": 1,
+                "extra": {
+                    "provenance": "root"
+                }
+            }
+        ],
+        "drupal/type_tray": [
+            {
+                "package": "drupal/type_tray",
+                "description": "Issue #3417679: Add type tray icons to node administration titles (MR !22, rerolled for 1.3.2)",
+                "url": "patches/drupal/type_tray-3417679-1.3.2.patch",
+                "sha256": "d3927d4fbf015d44aa6f8c3df4ebf27a7c0d7089936c02619910f95a0f718af6",
                 "depth": 1,
                 "extra": {
                     "provenance": "root"
@@ -156,28 +156,6 @@
                 "extra": {
                     "issue-tracker-url": "https://www.drupal.org/project/coffee/issues/3535874",
                     "provenance": "dependency:drupal/coffee"
-                }
-            }
-        ],
-        "drupal/project_browser": [
-            {
-                "package": "drupal/project_browser",
-                "description": "#3622921 Implement getModulesToInstall in TestModuleInstaller",
-                "url": "https://git.drupalcode.org/issue/project_browser-3622921/-/commit/9afcce0676ca61ca1514a14b6d882cbd081c0045.diff",
-                "sha256": "56fb6668c88cf2d6dc81d91a2cc85d0dae112d5d83053230fe18402674cfdf8a",
-                "depth": 1,
-                "extra": {
-                    "provenance": "dependency:drupal/project_browser"
-                }
-            },
-            {
-                "package": "drupal/project_browser",
-                "description": "#3631657 Implement getModulesToUninstall in TestModuleInstaller",
-                "url": "https://git.drupalcode.org/issue/project_browser-3631657/-/commit/1c06d55c8c1ec8983d2ddd74542dee125102a378.diff",
-                "sha256": "7873a261e4fe23fdc0cf9ba18fef2a9fe178916ddc449698445fa23994fe8730",
-                "depth": 1,
-                "extra": {
-                    "provenance": "dependency:drupal/project_browser"
                 }
             }
         ]
